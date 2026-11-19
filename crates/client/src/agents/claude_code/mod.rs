@@ -1,13 +1,38 @@
-use crate::agents::AgentIntegration;
+use crate::agents::{AgentInstance, AgentIntegration};
 
-pub struct AgentClaudeCode;
+pub struct AgentIntegrationClaudeCode;
 
-impl AgentIntegration for AgentClaudeCode {
+impl AgentIntegration for AgentIntegrationClaudeCode {
     fn get_name(&self) -> String {
         "Claude Code".to_string()
     }
 
-    fn get_instances(&self) -> Vec<super::AgentInstance> {
-        Vec::new()
+    fn get_instances(&self) -> Option<Vec<impl AgentInstance>> {
+        Some(Vec::<AgentInstanceClaudeCode>::new()) // Placeholder
+    }
+
+    fn install(&self) -> Result<(), String> {
+        Err("Not yet implemented".to_string()) // Self-explanatory
+    }
+
+    fn is_installed(&self) -> bool {
+        false // Placeholder for now
+    }
+}
+
+// TODO: This needs to have some way of storing a session id
+pub struct AgentInstanceClaudeCode {
+    title: String
+}
+
+impl AgentInstance for AgentInstanceClaudeCode {
+    fn get_title(&self) -> String {
+        self.title.clone()
+    }
+
+    fn get_uuid(&self) -> String {
+        // TODO: Calculate a uuid for this claude session
+
+        "00000000-0000-0000-0000-000000000000".to_string() // Obviously a placeholder
     }
 }
