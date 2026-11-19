@@ -1,0 +1,7 @@
+[package]
+name = "sisyphus-server"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+sisyphus-common.workspace = true
