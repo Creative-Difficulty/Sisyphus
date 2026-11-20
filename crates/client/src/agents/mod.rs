@@ -22,6 +22,9 @@ pub trait AgentInstance {
     fn get_project_path(&self) -> Option<PathBuf>;
     /// Last time the session was written to (unix ms), if known.
     fn get_last_activity_ms(&self) -> Option<u64>;
+    /// True while the agent is working on a turn rather than waiting for
+    /// the user, as of when the session was loaded.
+    fn is_running(&self) -> bool;
 
     /// Read every event the session has recorded so far.
     fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError>;
@@ -98,6 +101,20 @@ impl Integration {
             Integration::OpenCode(i) => Box::new(i.get_instance(id)?),
         })
     }
+}
+
+/// A session counts as running only if it was active this recently, so an
+/// agent that crashed mid-turn doesn't show as running forever.
+const RUNNING_TIMEOUT_MS: u64 = 15 * 60 * 1000;
+
+/// Whether a session is still working on a turn: the turn is open and the
+/// session was written to recently.
+pub(crate) fn is_running(turn_open: bool, last_activity_ms: Option<u64>) -> bool {
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0);
+    turn_open && last_activity_ms.is_some_and(|t| now.saturating_sub(t) < RUNNING_TIMEOUT_MS)
 }
 
 /// Size and modification time of a file, to notice when it changed.

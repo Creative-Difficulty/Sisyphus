@@ -34,7 +34,14 @@ fn list_sessions() {
                 .get_project_path()
                 .map(|p| p.display().to_string())
                 .unwrap_or_default();
-            println!("  {:<36}  {:<50}  {}", i.get_uuid(), i.get_title(), path);
+            let state = if i.is_running() { "running" } else { "" };
+            println!(
+                "  {:<36}  {:<7}  {:<50}  {}",
+                i.get_uuid(),
+                state,
+                i.get_title(),
+                path
+            );
         }
     }
 }

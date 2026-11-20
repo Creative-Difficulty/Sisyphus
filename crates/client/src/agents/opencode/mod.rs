@@ -16,7 +16,8 @@ use std::time::Duration;
 use rusqlite::{Connection, OpenFlags, OptionalExtension, params};
 
 use crate::agents::{
-    AgentError, AgentEvent, AgentInstance, AgentIntegration, AttachMode, Attachment, shorten,
+    AgentError, AgentEvent, AgentInstance, AgentIntegration, AttachMode, Attachment, is_running,
+    shorten,
 };
 
 pub mod history;
@@ -140,6 +141,7 @@ pub struct AgentInstanceOpenCode {
     title: String,
     project_path: PathBuf,
     last_activity_ms: Option<u64>,
+    running: bool,
     database_path: PathBuf,
 }
 
@@ -150,11 +152,16 @@ impl AgentInstanceOpenCode {
             .filter(|t| !is_placeholder_title(t))
             .or_else(|| first_prompt(conn, &row.id).map(|p| shorten(&p, 60)))
             .unwrap_or_else(|| "Untitled session".to_string());
+        let last_activity_ms = u64::try_from(row.time_updated).ok();
+        // Only sessions active recently can be running; skip the query for
+        // the rest.
+        let running = is_running(true, last_activity_ms) && turn_open(conn, &row.id);
         Self {
             session_id: row.id,
             title,
             project_path: PathBuf::from(row.directory),
-            last_activity_ms: u64::try_from(row.time_updated).ok(),
+            last_activity_ms,
+            running,
             database_path: conn.path().map(PathBuf::from).unwrap_or_default(),
         }
     }
@@ -176,6 +183,10 @@ impl AgentInstance for AgentInstanceOpenCode {
 
     fn get_last_activity_ms(&self) -> Option<u64> {
         self.last_activity_ms
+    }
+
+    fn is_running(&self) -> bool {
+        self.running
     }
 
     fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError> {
@@ -302,6 +313,39 @@ fn is_placeholder_title(title: &str) -> bool {
     title.trim().is_empty()
         || title.starts_with("New session - ")
         || title.starts_with("Child session - ")
+}
+
+/// Whether the session's newest prompt or reply step leaves the turn open:
+/// a prompt waiting for a reply, or a step that hasn't finished or will be
+/// followed by more tool calls. `idle` rows mark a finished turn.
+fn turn_open(conn: &Connection, session_id: &str) -> bool {
+    let last: Option<(String, String)> = conn
+        .query_row(
+            "SELECT type, data FROM session_message
+             WHERE session_id = ?1 AND type IN ('user', 'assistant', 'idle')
+             ORDER BY seq DESC LIMIT 1",
+            params![session_id],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .optional()
+        .ok()
+        .flatten();
+    let Some((kind, data)) = last else {
+        return false;
+    };
+    match kind.as_str() {
+        "user" => true,
+        "assistant" => {
+            let Ok(data) = serde_json::from_str::<serde_json::Value>(&data) else {
+                return false;
+            };
+            let failed = data.get("error").is_some_and(|e| !e.is_null());
+            let completed = data.pointer("/time/completed").is_some();
+            let more_steps = data.get("finish").and_then(|f| f.as_str()) == Some("tool-calls");
+            !failed && (!completed || more_steps)
+        }
+        _ => false,
+    }
 }
 
 fn first_prompt(conn: &Connection, session_id: &str) -> Option<String> {

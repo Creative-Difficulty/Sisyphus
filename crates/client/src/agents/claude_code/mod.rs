@@ -12,11 +12,11 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::Ordering;
 use std::time::UNIX_EPOCH;
 
-use crate::agents::tail;
 use crate::agents::{
     AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
     Attachment, shorten,
 };
+use crate::agents::{is_running, tail};
 
 pub mod history;
 pub mod transcript;
@@ -108,6 +108,7 @@ pub struct AgentInstanceClaudeCode {
     project_path: PathBuf,
     transcript_path: PathBuf,
     last_activity_ms: Option<u64>,
+    running: bool,
 }
 
 impl AgentInstanceClaudeCode {
@@ -129,6 +130,7 @@ impl AgentInstanceClaudeCode {
             title: meta.title,
             project_path: meta.cwd,
             transcript_path: transcript_path.to_path_buf(),
+            running: is_running(meta.turn_open, last_activity_ms),
             last_activity_ms,
         })
     }
@@ -162,6 +164,10 @@ impl AgentInstance for AgentInstanceClaudeCode {
 
     fn get_last_activity_ms(&self) -> Option<u64> {
         self.last_activity_ms
+    }
+
+    fn is_running(&self) -> bool {
+        self.running
     }
 
     fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError> {
@@ -206,6 +212,8 @@ impl AgentInstance for AgentInstanceClaudeCode {
 struct Metadata {
     title: String,
     cwd: PathBuf,
+    /// The newest event is neither a turn end nor an interrupt.
+    turn_open: bool,
 }
 
 /// Bytes read from the start of a transcript (working directory, first
@@ -222,22 +230,24 @@ fn scan_metadata(path: &Path) -> Option<Metadata> {
     let mut cwd: Option<PathBuf> = None;
     let mut first_prompt: Option<String> = None;
 
-    for line in head_and_tail_lines(path).ok()? {
+    let lines = head_and_tail_lines(path).ok()?;
+    for line in &lines {
+        let line = line.as_str();
         if line.contains("\"customTitle\"")
             || line.contains("\"aiTitle\"")
             || line.contains("\"type\":\"summary\"")
         {
-            parser.parse_line(&line);
+            parser.parse_line(line);
             continue;
         }
         if cwd.is_none() && line.contains("\"cwd\"") {
-            cwd = serde_json::from_str::<serde_json::Value>(&line)
+            cwd = serde_json::from_str::<serde_json::Value>(line)
                 .ok()
                 .and_then(|v| v.get("cwd")?.as_str().map(PathBuf::from));
         }
         if first_prompt.is_none() && line.contains("\"type\":\"user\"") {
             first_prompt = parser
-                .parse_line(&line)
+                .parse_line(line)
                 .into_iter()
                 .find_map(|e| match e.kind {
                     AgentEventKind::Prompt { text, .. } => Some(text),
@@ -251,7 +261,26 @@ fn scan_metadata(path: &Path) -> Option<Metadata> {
         .map(str::to_string)
         .or_else(|| first_prompt.map(|p| shorten(&p, 60)))
         .unwrap_or_else(|| "Untitled session".to_string());
-    Some(Metadata { title, cwd: cwd? })
+    // Read backwards to the newest line that is an actual event (title and
+    // bookkeeping lines come after a turn ends).
+    let last_event = lines.iter().rev().find_map(|line| {
+        TranscriptParser::new()
+            .parse_line(line)
+            .into_iter()
+            .map(|e| e.kind)
+            .rfind(|k| !matches!(k, AgentEventKind::TitleChanged { .. }))
+    });
+    let turn_open = last_event.is_some_and(|kind| {
+        !matches!(
+            kind,
+            AgentEventKind::TurnEnd { .. } | AgentEventKind::Interrupt { .. }
+        )
+    });
+    Some(Metadata {
+        title,
+        cwd: cwd?,
+        turn_open,
+    })
 }
 
 /// Complete lines in the first [`SCAN_HEAD`] and last [`SCAN_TAIL`] bytes of
