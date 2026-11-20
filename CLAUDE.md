@@ -25,20 +25,22 @@ cargo test --workspace                       # all tests
 cargo test -p sisyphus-common --test chain   # one integration test file
 cargo test -p sisyphus-client opencode::session::tests::abort_is_an_interrupt  # one test, by path filter
 cargo clippy --workspace --all-targets
-cargo fmt -p sisyphus-client                 # crates/common is not rustfmt-clean yet; don't reformat it unasked
+cargo fmt -p sisyphus-client -p sisyphus-gui # crates/common is not rustfmt-clean yet; don't reformat it unasked
 
 cargo run -p sisyphus-client -- sessions                      # list Claude Code / opencode sessions
 cargo run -p sisyphus-client -- watch [SESSION_ID] [--replay] # print a session's events live
+cargo run -p sisyphus-gui                                     # agent picker window
 ```
 
 No `rust-toolchain` file or CI config exists. Edition 2024, resolver 3. Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
 
 ## Architecture
 
-Three crates in `crates/`:
+Four crates in `crates/`:
 
 - **`sisyphus-common`**: types shared by client and server. Data flow (see `lib.rs` docs): collectors produce `Heartbeat`s → the client signs them into a per-device hash chain (`chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature) and queues them offline → batches are uploaded (`api.rs`); the server verifies the batch continues the stored `ChainTip`, stamps its own receive time, and flags heartbeats received more than 5 min after their claimed time as offline. Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps, and no contents, paths or titles. Changing the hashed format means bumping the domain tag. The tamper-detection tests in `crates/common/tests/` must keep passing.
-- **`sisyphus-client`**: currently a CLI over the agent integrations in `src/agents/`. It does not yet use the chain or upload anything.
+- **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`) plus a CLI (`main.rs`) over the agent integrations in `src/agents/`. It does not yet use the chain or upload anything. `config.rs` stores local settings as JSON in the OS config directory (`~/.config/sisyphus/config.json` on Linux), currently only `connected_agents`, a list of `Integration::id()`s.
+- **`sisyphus-gui`**: an iced window listing `Integration::ALL` as cards with logo, name and a Connect/Disconnect button. Connect calls the integration's `install()` if `is_installed()` is false, then saves it to the config. Logos are SVGs in `crates/gui/assets/`, embedded with `include_bytes!`. It is a separate binary so iced stays out of the client binary.
 - **`sisyphus-server`**: an empty `main`.
 
 ### Heartbeat design (decided 2026-11-20, not implemented yet)

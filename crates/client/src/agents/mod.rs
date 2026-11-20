@@ -56,6 +56,28 @@ impl Integration {
         }
     }
 
+    /// Stable id, used in the config file. Never change an existing one.
+    pub fn id(&self) -> &'static str {
+        match self {
+            Integration::ClaudeCode(_) => "claude-code",
+            Integration::OpenCode(_) => "opencode",
+        }
+    }
+
+    pub fn is_installed(&self) -> bool {
+        match self {
+            Integration::ClaudeCode(i) => i.is_installed(),
+            Integration::OpenCode(i) => i.is_installed(),
+        }
+    }
+
+    pub fn install(&self) -> Result<(), String> {
+        match self {
+            Integration::ClaudeCode(i) => i.install(),
+            Integration::OpenCode(i) => i.install(),
+        }
+    }
+
     /// The integration's sessions as trait objects. `None` if not installed.
     pub fn instances(&self) -> Option<Vec<Box<dyn AgentInstance + '_>>> {
         fn boxed<'a>(v: Vec<impl AgentInstance + 'a>) -> Vec<Box<dyn AgentInstance + 'a>> {

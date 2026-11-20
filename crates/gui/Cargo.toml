@@ -1,0 +1,8 @@
+[package]
+name = "sisyphus-gui"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+sisyphus-client.workspace = true
+iced.workspace = true

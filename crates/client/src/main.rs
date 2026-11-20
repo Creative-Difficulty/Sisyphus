@@ -1,6 +1,4 @@
-mod agents;
-
-use agents::{AgentEvent, AgentEventKind, AgentInstance, AttachMode, Integration};
+use sisyphus_client::agents::{AgentEvent, AgentEventKind, AgentInstance, AttachMode, Integration};
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
