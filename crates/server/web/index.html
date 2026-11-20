@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sisyphus</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    // Apply a saved light/dark choice before the page paints.
+    try {
+      const saved = localStorage.getItem("sisyphus-theme");
+      if (saved) document.documentElement.dataset.theme = saved;
+    } catch (_) {}
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Sisyphus</h1>
+    <button id="theme" class="icon" aria-label="Switch light or dark mode">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.2 6.2 0 0 0 10.1 10.1Z"/>
+      </svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5"/>
+        <line x1="12" y1="1.5" x2="12" y2="4"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(45 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(90 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(135 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(180 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(225 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(270 12 12)"/>
+        <line x1="12" y1="1.5" x2="12" y2="4" transform="rotate(315 12 12)"/>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="today">
+      <p class="muted">Recorded today</p>
+      <!-- Placeholder until the server credits time. -->
+      <p class="big">0h 00m</p>
+      <div class="figures">
+        <div><strong id="device-count">0</strong><span class="muted">devices</span></div>
+        <div><strong id="heartbeat-count">0</strong><span class="muted">heartbeats</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recent heartbeats</h2>
+      <ul id="recent" class="bubbles"></ul>
+    </section>
+
+    <section>
+      <h2>Devices</h2>
+      <ul id="devices" class="bubbles"></ul>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

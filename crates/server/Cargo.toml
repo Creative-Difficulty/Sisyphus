@@ -5,3 +5,9 @@ edition.workspace = true
 
 [dependencies]
 sisyphus-common.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+axum.workspace = true
+tokio.workspace = true
+sqlx.workspace = true
+dotenvy.workspace = true

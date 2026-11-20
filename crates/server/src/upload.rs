@@ -1,0 +1,124 @@
+//! `POST /api/upload`: a batch of signed heartbeats from one device.
+//!
+//! The batch must continue the device's hash chain exactly where the stored
+//! chain tip ends (see `sisyphus_common::api`). On success the heartbeats are
+//! stored with the server's receive time and the new tip is returned.
+
+use axum::Json;
+use axum::extract::State;
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
+use serde::Serialize;
+use sisyphus_common::api::{UploadAck, UploadBatch, UploadError, verify_batch};
+use sisyphus_common::chain::ChainTip;
+use sisyphus_common::hex::Hash;
+use sqlx::{PgPool, Row};
+
+use crate::now_ms;
+
+pub async fn upload(State(db): State<PgPool>, Json(batch): Json<UploadBatch>) -> Response {
+    match store(&db, &batch).await {
+        Ok(ack) => Json(ack).into_response(),
+        Err(Rejected::Upload(e)) => {
+            let status = match e {
+                UploadError::OutOfSync { .. } => StatusCode::CONFLICT,
+                UploadError::Empty | UploadError::Invalid(_) => StatusCode::BAD_REQUEST,
+            };
+            (status, Json(e)).into_response()
+        }
+        Err(Rejected::Database(e)) => {
+            eprintln!("upload failed: {e}");
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(ServerError {
+                    error: "database error",
+                }),
+            )
+                .into_response()
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct ServerError {
+    error: &'static str,
+}
+
+enum Rejected {
+    Upload(UploadError),
+    Database(sqlx::Error),
+}
+
+impl From<sqlx::Error> for Rejected {
+    fn from(e: sqlx::Error) -> Self {
+        Rejected::Database(e)
+    }
+}
+
+async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> {
+    let now = now_ms();
+    let device = batch.device.to_string();
+    let mut tx = db.begin().await?;
+
+    // A new device starts at the genesis tip. Locking its row serialises
+    // concurrent uploads from the same device.
+    sqlx::query(
+        "INSERT INTO devices (device_id, next_seq, prev, first_seen_ms, last_seen_ms)
+         VALUES ($1, 0, $2, $3, $3) ON CONFLICT (device_id) DO NOTHING",
+    )
+    .bind(&device)
+    .bind(Hash::ZERO.to_string())
+    .bind(now)
+    .execute(&mut *tx)
+    .await?;
+    let row = sqlx::query("SELECT next_seq, prev FROM devices WHERE device_id = $1 FOR UPDATE")
+        .bind(&device)
+        .fetch_one(&mut *tx)
+        .await?;
+    let tip = ChainTip {
+        next_seq: row.get::<i64, _>("next_seq") as u64,
+        prev: parse_hash(&row.get::<String, _>("prev")),
+    };
+
+    let new_tip = verify_batch(batch, &tip).map_err(Rejected::Upload)?;
+
+    for signed in &batch.heartbeats {
+        let body = serde_json::to_string(&signed.heartbeat).expect("heartbeat serializes");
+        sqlx::query(
+            "INSERT INTO heartbeats
+                 (device_id, seq, hash, prev, sig, claimed_ms, received_ms, body)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)",
+        )
+        .bind(&device)
+        .bind(signed.seq as i64)
+        .bind(signed.hash.to_string())
+        .bind(signed.prev.to_string())
+        .bind(signed.sig.to_string())
+        .bind(signed.heartbeat.time_ms as i64)
+        .bind(now)
+        .bind(body)
+        .execute(&mut *tx)
+        .await?;
+    }
+    sqlx::query(
+        "UPDATE devices SET next_seq = $2, prev = $3, last_seen_ms = $4 WHERE device_id = $1",
+    )
+    .bind(&device)
+    .bind(new_tip.next_seq as i64)
+    .bind(new_tip.prev.to_string())
+    .bind(now)
+    .execute(&mut *tx)
+    .await?;
+    tx.commit().await?;
+
+    Ok(UploadAck {
+        tip: new_tip,
+        received_at_ms: now as u64,
+    })
+}
+
+/// Hashes are stored as the same hex text they serialize to.
+fn parse_hash(hex: &str) -> Hash {
+    serde_json::from_value(serde_json::Value::String(hex.to_string()))
+        .expect("stored hashes are valid hex")
+}

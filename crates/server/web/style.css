@@ -1,0 +1,126 @@
+/* Same look as the client window: pink, Fredoka, rounded bubbles. */
+
+@font-face {
+  font-family: "Fredoka";
+  src: url("/fonts/Fredoka-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Fredoka";
+  src: url("/fonts/Fredoka-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+}
+
+:root {
+  --bg: #ffd6e7;
+  --text: #4a1942;
+  --pink: #e02a78;
+  --muted: rgba(74, 25, 66, 0.55);
+  --bubble: rgba(224, 42, 120, 0.14);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #2a1022;
+    --text: #ffe0ee;
+    --pink: #ff6fae;
+    --muted: rgba(255, 224, 238, 0.55);
+    --bubble: rgba(255, 111, 174, 0.14);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #2a1022;
+  --text: #ffe0ee;
+  --pink: #ff6fae;
+  --muted: rgba(255, 224, 238, 0.55);
+  --bubble: rgba(255, 111, 174, 0.14);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Fredoka", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+header, main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+h1 { font-weight: 600; font-size: 30px; }
+h2 { font-weight: 600; font-size: 22px; margin-bottom: 12px; }
+section { margin-top: 36px; }
+main { padding-bottom: 48px; }
+
+.muted { color: var(--muted); }
+
+.icon {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  width: 32px;
+  height: 32px;
+}
+.icon:hover { color: var(--pink); }
+.icon svg { width: 24px; height: 24px; }
+/* Moon in light mode, sun in dark mode. */
+.icon .sun { display: none; }
+:root[data-theme="dark"] .icon .sun { display: block; }
+:root[data-theme="dark"] .icon .moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon .sun { display: block; }
+  :root:not([data-theme="light"]) .icon .moon { display: none; }
+}
+
+.today { text-align: center; }
+.big {
+  font-weight: 600;
+  font-size: 84px;
+  line-height: 1.1;
+  color: var(--pink);
+}
+.figures {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  margin-top: 6px;
+}
+.figures div { display: flex; flex-direction: column; align-items: center; }
+.figures strong { font-weight: 600; font-size: 30px; }
+.figures span { font-size: 14px; }
+
+.bubbles { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.bubbles li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bubble);
+  border-radius: 999px;
+  padding: 10px 22px;
+}
+.bubbles .about { flex: 1; min-width: 0; }
+.bubbles .title {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bubbles .sub { font-size: 13px; color: var(--muted); }
+.bubbles .age { font-size: 14px; color: var(--muted); white-space: nowrap; }
+.bubbles .empty { background: none; justify-content: center; color: var(--muted); }
