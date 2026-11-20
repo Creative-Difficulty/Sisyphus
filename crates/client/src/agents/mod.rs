@@ -1,11 +1,31 @@
+use std::fmt;
+use std::io;
+use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::mpsc::{self, Receiver, RecvTimeoutError, Sender, TryRecvError};
+use std::thread::JoinHandle;
+use std::time::Duration;
+
 use crate::agents::claude_code::AgentIntegrationClaudeCode;
 
-mod claude_code;
+pub mod claude_code;
+mod tail;
 
-// TODO: Expand
 pub trait AgentInstance {
     fn get_title(&self) -> String;
     fn get_uuid(&self) -> String; // UUID must be unique for the sisyphus client instance
+
+    /// Directory the agent was working in, if known.
+    fn get_project_path(&self) -> Option<PathBuf>;
+    /// Last time the session was written to (unix ms), if known.
+    fn get_last_activity_ms(&self) -> Option<u64>;
+
+    /// Read every event the session has recorded so far.
+    fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError>;
+    /// Start listening to the session. Events arrive on the returned
+    /// [`Attachment`] until it is dropped.
+    fn attach(&self, mode: AttachMode) -> Result<Attachment, AgentError>;
 }
 
 // This has been written by a human
@@ -16,12 +36,141 @@ pub trait AgentIntegration: Sync {
     fn is_installed(&self) -> bool;
 }
 
-enum Integration {
-    ClaudeCode(AgentIntegrationClaudeCode)
+pub enum Integration {
+    ClaudeCode(AgentIntegrationClaudeCode),
 }
 
 impl Integration {
-    const ALL: [Integration; 1] = [
-        Integration::ClaudeCode(AgentIntegrationClaudeCode)
-    ];
+    pub const ALL: [Integration; 1] = [Integration::ClaudeCode(AgentIntegrationClaudeCode)];
+}
+
+/// Where an [`Attachment`] starts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AttachMode {
+    /// Send every event already in the session first, then new ones.
+    ReplayHistory,
+    /// Only send events that happen after attaching.
+    NewOnly,
+}
+
+/// Something that happened in an agent session.
+#[derive(Debug, Clone, PartialEq)]
+pub struct AgentEvent {
+    /// When it happened (unix ms), as recorded by the agent.
+    pub time_ms: u64,
+    pub kind: AgentEventKind,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum AgentEventKind {
+    /// The user sent a prompt.
+    Prompt { text: String },
+    /// The user ran a slash command such as `/clear`.
+    Command { name: String, args: String },
+    /// The agent wrote text to the user.
+    Response { text: String },
+    /// The agent's reasoning. `text` may be empty when the agent hides it.
+    Thinking { text: String },
+    /// The agent called a tool.
+    ToolCall { id: String, name: String, input: serde_json::Value },
+    /// A tool call finished, failed, or was rejected by the user.
+    ToolResult { id: String, outcome: ToolOutcome },
+    /// The user stopped the agent mid-turn.
+    Interrupt { during_tool_use: bool },
+    /// The agent finished its turn and is waiting for the user.
+    TurnEnd { duration_ms: Option<u64> },
+    /// The conversation was summarized to free up context.
+    Compacted,
+    /// The session's title changed.
+    TitleChanged { title: String },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ToolOutcome {
+    Success,
+    Error,
+    /// The user denied permission to run the tool.
+    Rejected,
+}
+
+#[derive(Debug)]
+pub enum AgentError {
+    NotInstalled,
+    /// The session no longer exists.
+    SessionNotFound(String),
+    Io(io::Error),
+}
+
+impl fmt::Display for AgentError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AgentError::NotInstalled => write!(f, "agent is not installed"),
+            AgentError::SessionNotFound(id) => write!(f, "session {id} not found"),
+            AgentError::Io(e) => write!(f, "{e}"),
+        }
+    }
+}
+
+impl std::error::Error for AgentError {}
+
+impl From<io::Error> for AgentError {
+    fn from(e: io::Error) -> Self {
+        AgentError::Io(e)
+    }
+}
+
+/// A live connection to an agent session. A background worker pushes
+/// [`AgentEvent`]s into it; dropping it stops the worker.
+pub struct Attachment {
+    events: Receiver<AgentEvent>,
+    stop: Arc<AtomicBool>,
+    worker: Option<JoinHandle<()>>,
+}
+
+impl Attachment {
+    /// Run `worker` on a new thread. It should send events until the stop
+    /// flag is set or sending fails, checking the flag at least every few
+    /// hundred milliseconds so dropping the attachment doesn't hang.
+    pub fn spawn<F>(worker: F) -> Self
+    where
+        F: FnOnce(Sender<AgentEvent>, Arc<AtomicBool>) + Send + 'static,
+    {
+        let (tx, rx) = mpsc::channel();
+        let stop = Arc::new(AtomicBool::new(false));
+        let flag = stop.clone();
+        let worker = std::thread::spawn(move || worker(tx, flag));
+        Self { events: rx, stop, worker: Some(worker) }
+    }
+
+    /// Wait for the next event. `None` once the worker has exited.
+    pub fn recv(&self) -> Option<AgentEvent> {
+        self.events.recv().ok()
+    }
+
+    pub fn recv_timeout(&self, timeout: Duration) -> Result<AgentEvent, RecvTimeoutError> {
+        self.events.recv_timeout(timeout)
+    }
+
+    pub fn try_recv(&self) -> Result<AgentEvent, TryRecvError> {
+        self.events.try_recv()
+    }
+
+    /// Blocking iterator over events.
+    pub fn iter(&self) -> impl Iterator<Item = AgentEvent> + '_ {
+        self.events.iter()
+    }
+
+    /// True while the worker is still running.
+    pub fn is_alive(&self) -> bool {
+        self.worker.as_ref().is_some_and(|w| !w.is_finished())
+    }
+}
+
+impl Drop for Attachment {
+    fn drop(&mut self) {
+        self.stop.store(true, Ordering::Relaxed);
+        if let Some(worker) = self.worker.take() {
+            let _ = worker.join();
+        }
+    }
 }
