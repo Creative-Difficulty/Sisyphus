@@ -58,23 +58,54 @@ Three crates in `crates/`:
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
   - `heartbeat.rs` is still the v1 shape (WakaTime-style gaps, free-form `app` string). The final v2 scheme is in `REQUIREMENTS.md` ("Heartbeat scheme"); only switch to it when the user asks.
-- **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`, `gui`) plus a binary (`main.rs`).
+- **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`, `device`, `gui`, `login`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions` and `watch` are CLI commands over the same integrations.
+  - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
+  - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
   - It does not yet build heartbeats, use the chain or upload anything.
-- **`sisyphus-server`**: axum + Postgres (sqlx). Configured by `DATABASE_URL` and `BIND_ADDR` (default `0.0.0.0:8080`), read from the environment or `.env` (`.env` is git-ignored; `.env.example` documents it).
-  - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start. Tables: `devices` (device key, chain tip, first/last seen) and `heartbeats` (device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB`, so the v2 format won't need a table rewrite).
+- **`sisyphus-server`**: axum + Postgres (sqlx).
+  - Configured from the environment or `.env` (`.env` is git-ignored; `.env.example` lists every key): `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), `PUBLIC_URL` (login redirect and whether cookies are `Secure`), `HACKCLUB_CLIENT_ID` / `HACKCLUB_CLIENT_SECRET` (login is disabled without them), optional `HACKCLUB_AUTH_URL`.
+  - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start.
+    - `devices`: device key, chain tip, first/last seen, owning user.
+    - `heartbeats`: device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB` (so the v2 format won't need a table rewrite).
+    - `users`, `sessions`, `login_attempts`, `app_codes`: see "Accounts" below.
   - Queries are runtime-checked (`sqlx::query`, not the `query!` macros), so building needs no database.
   - `POST /api/upload` (`upload.rs`): an `UploadBatch` from `sisyphus-common::api`.
+    - Only devices linked to an account may upload (403 otherwise).
     - The device's row is locked and its chain tip checked with `verify_batch`.
     - On success the heartbeats are stored with the server's receive time and an `UploadAck` with the new tip comes back.
     - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`.
-  - `GET /api/dashboard` (`dashboard.rs`): devices, total heartbeats and the 50 latest heartbeats, each flagged offline if received more than 5 min after its claimed time. The offline flag is for the backend only; the page doesn't show it. No accounts or login yet.
+  - `GET /api/dashboard` (`dashboard.rs`): the logged-in user's devices, total heartbeats and 50 latest heartbeats, each flagged offline if received more than 5 min after its claimed time (backend only; the page doesn't show it). 401 without a session.
   - `GET /health` returns `ok`.
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
     - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles, and a placeholder "Recorded today".
+    - Logged out it shows a "Log in with Hack Club" button; logged in, the dashboard plus the name and "Log out" in the header.
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
+    - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`). It has never been built here; see the Docker rule above.
   - It does not yet build session UUIDs, compute attention or credit, or know the v2 heartbeat.
+
+### Accounts (Hack Club Auth)
+
+Hack Club Auth (OpenID Connect) requires the client secret on every token request, so **only the server is an OAuth client**; the website and the app both log in through it. Hack Club tokens are used once to learn who logged in and are never stored.
+
+- Website (`auth.rs`, `oidc.rs`):
+  1. `/auth/login` stores a one-time login attempt (random `state` stored as a hash, `nonce`, PKCE verifier; 10 min) and sets a short-lived `login` cookie holding the state, scoped to `/auth/callback`.
+  2. It redirects to Hack Club Auth with scopes `openid profile slack_id` (no email, no verification status) and PKCE S256.
+  3. `/auth/callback`:
+     - checks the cookie matches `state`, then deletes the attempt so it can't be replayed
+     - exchanges the code (with the secret and PKCE verifier) and verifies the ID token: RS256 against the provider's keys (cached, re-fetched on an unknown key id), issuer, audience, expiry, nonce
+     - upserts the user
+     - sets a session cookie: 256-bit random, only its SHA-256 stored, 30 days, `HttpOnly`, `SameSite=Lax`, plus `Secure` and the `__Host-` prefix on https
+  4. `POST /auth/logout` requires the `Origin` header to match `PUBLIC_URL`. `GET /api/me` returns the name.
+- Desktop app:
+  1. The app listens on a random `127.0.0.1` port and opens `/auth/app?port&challenge&device`, where `challenge` = SHA-256 hex of a random verifier and `device` = its public key.
+  2. After the same Hack Club login, the callback redirects the browser to `http://127.0.0.1:<port>/done?code=…`. The code is one-time, 2 minutes, stored hashed.
+  3. The app posts `AppTokenRequest` to `/auth/app/token`: the code, the verifier, and a device signature over `device_link_message(code)` (`sisyphus-common::api`).
+  4. The server checks all three and links the device to the user. A device linked to another account can't be taken over (409).
+  - The app gets no bearer token: uploads are already signed by the device key, and the server accepts uploads only from linked devices.
+- Discovery endpoints must be https; plain http is only accepted when `HACKCLUB_AUTH_URL` is itself `http://localhost` / `http://127.0.0.1` (local testing).
+- Not built yet: unlinking a device from the website, and rate limiting. "Log out" in the app only forgets the account locally; the device stays linked on the server.
 
 ### Agent integrations (`crates/client/src/agents/`)
 
@@ -121,14 +152,23 @@ JSON in the OS config directory:
 Fields:
 - `connected_agents`: a list of `Integration::id()`s.
 - `dark_mode`: the window's light/dark choice; absent means follow the OS.
+- `server_url`: the Sisyphus server; absent means `http://localhost:8080`.
+- `account`: `{ "name": … }` once logged in, absent when logged out.
+
+`device.key` (the device's private key) lives next to it.
 
 Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Window (`crates/client/src/gui/`, iced 0.14)
 
-- `mod.rs`: the app state, `Message`s and screens. Settings (`agents.rs`) shows agent tiles with Connect/Disconnect and is the start screen until an agent is connected. The dashboard (`sessions.rs`) shows everything else.
-  - Top left: a gear icon opens settings; in settings it becomes a back arrow once an agent is connected.
-  - Top right: a sun/moon icon switches light/dark and saves the choice.
+- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; otherwise the dashboard.
+- First start (`onboarding.rs`), never the settings screen:
+  1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
+  2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
+- Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
+  - an account row (name, "Hack Club", "Log out"; logging out returns to the login step)
+  - one row per agent (small logo, name, Connect/Disconnect)
+- Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
   - Bottom half: "Recorded today" and three figures. These are placeholders (zero) until time is recorded; don't compute anything there unless asked.
@@ -150,6 +190,12 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Start the server with `DATABASE_URL=postgres://sisyphus@localhost:54329/sisyphus` and a free `BIND_ADDR`.
 - Signed test batches can be produced with `sisyphus_common::chain::ChainWriter` (for example from a temporary example program that isn't committed).
 - Screenshot the page with `chromium --headless=new --screenshot --virtual-time-budget=4000`. Add `--force-dark-mode` for dark mode.
+- Login can be tested end to end without real Hack Club credentials:
+  - Run a small fake OIDC provider on `127.0.0.1` (discovery, authorize, token with PKCE check, JWKS; RS256-signed ID tokens, e.g. Python with the `cryptography` library), and point `HACKCLUB_AUTH_URL` at it. Give it a fresh key id per run, or the server keeps its cached key.
+  - Drive the website flow with `curl -c/-b` cookie jars.
+  - Drive the app flow by putting a stand-in `xdg-open` on `PATH` that follows the redirects with curl.
+  - Keep these helpers in the scratchpad, not the repo.
+- Start helper processes with a PID file and stop them by PID. `pkill -f <pattern>` also kills the shell whose command line contains the pattern.
 - Stop everything afterwards: `pkill -x sisyphus-server`, `pg_ctl -D <dir> stop`.
 
 ### Testing the window

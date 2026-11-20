@@ -1,9 +1,10 @@
 //! The client's window.
 //!
-//! Screens: the dashboard ([`sessions`]), refreshed every few seconds, and
-//! settings, where agents are connected ([`agents`]). The window opens on
-//! settings until an agent is connected.
-//! The window opens on the sessions list if an agent is already connected.
+//! Screens:
+//! - first start ([`onboarding`]): log in with Hack Club, then connect
+//!   agents. The window resumes at whichever step isn't done yet.
+//! - the dashboard ([`sessions`]), refreshed every few seconds
+//! - settings ([`settings`], gear icon): account and agents as a compact list
 
 use std::time::Duration;
 
@@ -15,8 +16,9 @@ use iced::{Element, Fill, Subscription, Task, Theme};
 use crate::agents::Integration;
 use crate::config::Config;
 
-mod agents;
+mod onboarding;
 mod sessions;
+mod settings;
 mod style;
 
 use sessions::SessionSummary;
@@ -42,10 +44,17 @@ struct App {
     screen: Screen,
     /// Last error per integration, shown under its card.
     errors: Vec<Option<String>>,
+    /// A login in the browser is under way.
+    login_pending: bool,
+    login_error: Option<String>,
 }
 
 enum Screen {
-    /// Connect and disconnect agents.
+    /// First start, step 1: log in with Hack Club.
+    Login,
+    /// First start, step 2: connect agents.
+    ConnectAgents,
+    /// Account and agents, from the gear icon.
     Settings,
     /// `None` while loading.
     Sessions(Option<Vec<SessionSummary>>),
@@ -64,6 +73,14 @@ pub enum Message {
     SystemTheme(Mode),
     /// The user switched between light and dark mode.
     ToggleDark,
+    /// Log in with Hack Club in the browser.
+    Login,
+    /// The browser login ended: the account name, or what went wrong.
+    LoginFinished(Result<Option<String>, String>),
+    /// Forget the account on this device.
+    Logout,
+    /// Next first-start step.
+    Continue,
 }
 
 impl App {
@@ -71,14 +88,12 @@ impl App {
         let mut app = Self {
             config: Config::load(),
             system_dark: false,
-            screen: Screen::Settings,
+            screen: Screen::Login,
             errors: vec![None; Integration::ALL.len()],
+            login_pending: false,
+            login_error: None,
         };
-        let task = if app.config.connected_agents.is_empty() {
-            Task::none()
-        } else {
-            app.show_sessions()
-        };
+        let task = app.resume();
         let theme = iced::system::theme().map(Message::SystemTheme);
         (app, Task::batch([task, theme]))
     }
@@ -86,7 +101,7 @@ impl App {
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Toggle(index) => {
-                self.errors[index] = agents::toggle(&mut self.config, index).err();
+                self.errors[index] = settings::toggle(&mut self.config, index).err();
                 Task::none()
             }
             Message::ShowSettings => {
@@ -119,22 +134,63 @@ impl App {
                 self.config = config;
                 Task::none()
             }
+            Message::Login => {
+                self.login_pending = true;
+                self.login_error = None;
+                let server_url = self.config.server_url();
+                Task::perform(
+                    on_thread(move || crate::login::login(&server_url)),
+                    Message::LoginFinished,
+                )
+            }
+            Message::LoginFinished(result) => {
+                self.login_pending = false;
+                match result {
+                    Ok(name) => {
+                        let mut config = self.config.clone();
+                        config.account = Some(crate::config::Account { name });
+                        if let Err(e) = config.save() {
+                            self.login_error = Some(format!("Could not save: {e}"));
+                        }
+                        self.config = config;
+                    }
+                    Err(e) => self.login_error = Some(e),
+                }
+                Task::none()
+            }
+            Message::Logout => {
+                let mut config = self.config.clone();
+                config.account = None;
+                if let Err(e) = config.save() {
+                    self.login_error = Some(format!("Could not save: {e}"));
+                }
+                self.config = config;
+                self.screen = Screen::Login;
+                Task::none()
+            }
+            Message::Continue => self.resume(),
         }
     }
 
     fn view(&self) -> Element<'_, Message> {
         let screen = match &self.screen {
-            Screen::Settings => agents::view(&self.config, &self.errors),
+            Screen::Login => onboarding::login(
+                &self.config,
+                onboarding::LoginState {
+                    pending: self.login_pending,
+                    error: self.login_error.as_deref(),
+                },
+            ),
+            Screen::ConnectAgents => onboarding::agents(&self.config, &self.errors),
+            Screen::Settings => settings::view(&self.config, &self.errors),
             Screen::Sessions(list) => sessions::view(list.as_deref()),
         };
-        // Top left: settings from the dashboard, back from settings (once
-        // there is a dashboard to go back to). Top right: light/dark.
+        // Top left: settings from the dashboard, back from settings.
+        // Nothing during first start. Top right: light/dark.
         let nav: Element<'_, Message> = match self.screen {
             Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
-            Screen::Settings if !self.config.connected_agents.is_empty() => {
-                icon_button(style::Icon::Back, Message::ShowSessions)
-            }
-            Screen::Settings => space().into(),
+            Screen::Settings => icon_button(style::Icon::Back, Message::ShowSessions),
+            Screen::Login | Screen::ConnectAgents => space().into(),
         };
         let theme_icon = if self.is_dark() {
             style::Icon::Sun
@@ -168,6 +224,19 @@ impl App {
     /// The user's choice if they made one, otherwise the OS setting.
     fn is_dark(&self) -> bool {
         self.config.dark_mode.unwrap_or(self.system_dark)
+    }
+
+    /// Go to the first unfinished first-start step, or the dashboard.
+    fn resume(&mut self) -> Task<Message> {
+        if self.config.account.is_none() {
+            self.screen = Screen::Login;
+            Task::none()
+        } else if self.config.connected_agents.is_empty() {
+            self.screen = Screen::ConnectAgents;
+            Task::none()
+        } else {
+            self.show_sessions()
+        }
     }
 
     /// Switch to the session list and load it in the background.
