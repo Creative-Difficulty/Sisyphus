@@ -18,7 +18,7 @@ pub struct LoginState<'a> {
 pub fn login<'a>(config: &'a Config, login: LoginState<'a>) -> Element<'a, Message> {
     let mut content = column![
         text("Sisyphus").size(44).font(style::BOLD),
-        text("Time you spend building with AI, counted honestly.").style(style::muted),
+        text("Track the time you spend building with AI").style(style::muted),
     ]
     .spacing(10)
     .align_x(Center);
