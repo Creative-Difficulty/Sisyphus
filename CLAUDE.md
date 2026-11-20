@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+All requirements, decisions and ideas: @REQUIREMENTS.md
+
 ## Project
 
 Sisyphus is an open-source (AGPLv3) passive time tracker in Rust. It measures the hours of "productive struggle" that teenagers spend building projects with AI. It is the team's entry for the Hack Club AI time tracking bounty. The server is the source of truth: reviewers read what the server stored, never the client.
@@ -41,9 +43,9 @@ Three crates in `crates/`:
 - **`sisyphus-common`**: types shared by client and server. Data flow (see `lib.rs` docs): collectors produce `Heartbeat`s → the client signs them into a per-device hash chain (`chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature) and queues them offline → batches are uploaded (`api.rs`); the server verifies the batch continues the stored `ChainTip`, stamps its own receive time, and flags heartbeats received more than 5 min after their claimed time as offline. Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps, and no contents, paths or titles. Changing the hashed format means bumping the domain tag. The tamper-detection tests in `crates/common/tests/` must keep passing.
 - **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`, `gui`) plus a binary (`main.rs`). Run without arguments it opens the iced window (`gui/`); `sessions` and `watch` are CLI commands over the same integrations. It does not yet use the chain or upload anything.
   - `config.rs` stores local settings as JSON in the OS config directory (`~/.config/sisyphus/config.json` on Linux), `connected_agents` (a list of `Integration::id()`s) and `dark_mode` (the window's light/dark choice; absent means follow the OS).
-  - The window starts with agent cards (logo, name, Connect). Connect calls the integration's `install()` if `is_installed()` is false, then saves it to the config. Logos are SVGs in `crates/client/assets/`, embedded with `include_bytes!`.
-  - Once an agent is connected, the window shows a dashboard: recent sessions of all connected agents, newest first, as a list with age, logo, title and project folder. A running session (`AgentInstance::is_running()`) shows "working" and a pink edge mark. It reloads every 10 s on a worker thread. Sessions are not clickable.
-  - Look (`gui/style.rs`): a light and a dark pink theme, following the OS (`iced::system::theme`) unless the user picks one with the Dark/Light switch. Font is Fredoka, embedded from `crates/client/assets/fonts/` (SIL OFL; keep `Fredoka-OFL.txt` next to the font files). The static files register as family "Fredoka Light".
+  - Settings (gear icon, top left) has the agent cards (logo, name, Connect); the window opens there until an agent is connected. Connect calls the integration's `install()` if `is_installed()` is false, then saves it to the config. Logos are SVGs in `crates/client/assets/`, embedded with `include_bytes!`.
+  - Otherwise it opens on the dashboard. Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. Bottom half: "Recorded today" and three figures, all placeholders (zero) until time is recorded. A running session (`AgentInstance::is_running()`) shows "working" and a deeper pink bubble. It reloads every 10 s on a worker thread. Sessions are not clickable.
+  - Look (`gui/style.rs`): a light and a dark pink theme, following the OS (`iced::system::theme`) unless the user picks one with the sun/moon icon (top right). Font is Fredoka, embedded from `crates/client/assets/fonts/` (SIL OFL; keep `Fredoka-OFL.txt` next to the font files). The static files register as family "Fredoka Light". Icons in `assets/icons/` are drawn for this project and tinted at runtime.
   - `is_running()` means the agent is mid-turn: the newest event isn't a turn end or interrupt (Claude Code), or the newest prompt/reply row leaves the turn open (opencode). Both also require activity in the last 15 min, so a crashed session doesn't stay "running".
 - **`sisyphus-server`**: an empty `main`.
 
@@ -51,20 +53,35 @@ Three crates in `crates/`:
 
 The team decided on this design. `heartbeat.rs` still has the older shape (WakaTime-style gaps, free-form `app` string). Only change it when the user asks.
 
-- One heartbeat per minute per user while an agent is running or the user is working on a prompt. The server credits at most one minute per real minute, even with several agents or devices.
-- The client sends only integer observations, never a 0.0–1.0 value of its own:
+- **Per session.** Time is counted and calculated per agent session. Every session is independent and sends its own heartbeat each minute while its agent is running or the user is working on its prompt, with the session id attached. The session id must be unique.
+- **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session still has a name.
+- **Overlap.** If the multipliers of concurrent sessions for the same real minute add up to more than 1.0, each session gets its share of one minute (two sessions at 1.0 each get 30 s each). Running several agents never earns more than one minute per real minute.
+- **Integers only.** The client sends only integer observations, never a 0.0–1.0 value of its own:
   - which of the minute's six 10-second slots had input while the agent's terminal or editor was focused
   - seconds focused on the agent's app vs other apps, by app class only (terminal / editor / browser / other)
   - whether the agent was running
   - prompt characters submitted, and how many were pasted
-- The server computes attention and the 0.0–1.0 multiplier from these. The client runs the same formula only for display and to compare against the server.
-- Attention resets to 1.0 on input. It drops slowly while the agent's window stays focused and quickly in other apps. It is computed across minutes on the server.
-- No keylogging and no root. Input is detected only through OS idle-time APIs:
+  - code changes, as two sets of counts of non-whitespace characters added and removed (never file paths or contents): what changed in the agent's working directory, and what the agent's edit calls say they changed
+  - prompt classification labels (see below), never the prompt text
+- **Server computes.** The server computes attention and the 0.0–1.0 multiplier from these. The client runs the same formula only for display and to compare against the server.
+- **Struggle value.** Each heartbeat has a struggle value, calculated on both the client and the server like the multiplier. Struggle does not affect credit for now; it is only kept.
+- **Attention** resets to 1.0 on input. It drops slowly while the agent's window stays focused and quickly in other apps. It is computed across minutes on the server.
+- **No keylogging and no root.** Input is detected only through OS idle-time APIs:
   - Windows: `GetLastInputInfo`
   - macOS: `CGEventSourceSecondsSinceLastEventType`
   - Linux X11: XScreenSaver extension
-  - Linux Wayland: `ext-idle-notify`; there is no standard way to read the focused app, so that part is per compositor and still open.
+  - Linux Wayland: `ext-idle-notify`. Reading the focused app needs the user's permission: a popup asks for it and explains how the data is used. How it is read per compositor is still open.
+- **Edits must match.** While an agent runs, the client watches its working directory. The agent's edit calls and the actual file changes must match up; the server flags it when the agent claims more than actually changed.
+- **Prompt classification.** A really small local embedding model classifies each prompt on the device. Which model is deliberately not chosen yet: the architecture comes first. Correction prompts ("no, you did this wrong, redo it") add to struggle; they don't reduce time, for now. Only the label leaves the machine.
+- **Pasted prompts** earn less than typed ones.
+- **AI-generated prompts:** detecting them is a low-priority idea.
 - Not possible with this design: detecting deleting or rewriting inside a prompt draft.
+
+Open questions (not decided, ask before choosing):
+- What file changes the agent didn't make mean (for example, the user's own edits), and how they count.
+- Session names: agent titles are generated from prompts, so sending them may conflict with "prompt text never leaves the machine".
+
+Noted for later: pasted error logs and stack traces are real struggle; they may need an exemption from the paste penalty. Also later: how struggle affects credit, and which embedding model.
 
 ### Agent integrations (`crates/client/src/agents/`)
 
