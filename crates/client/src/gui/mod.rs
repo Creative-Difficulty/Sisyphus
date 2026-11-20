@@ -1,15 +1,16 @@
 //! The client's window.
 //!
-//! Screens: connect agents ([`agents`]) → recent sessions ([`sessions`]),
-//! refreshed every few seconds.
+//! Screens: the dashboard ([`sessions`]), refreshed every few seconds, and
+//! settings, where agents are connected ([`agents`]). The window opens on
+//! settings until an agent is connected.
 //! The window opens on the sessions list if an agent is already connected.
 
 use std::time::Duration;
 
 use iced::futures::{SinkExt, Stream, StreamExt};
 use iced::theme::Mode;
-use iced::widget::{button, column, container, text};
-use iced::{Element, Right, Subscription, Task, Theme};
+use iced::widget::{button, column, row, space};
+use iced::{Element, Fill, Subscription, Task, Theme};
 
 use crate::agents::Integration;
 use crate::config::Config;
@@ -44,7 +45,8 @@ struct App {
 }
 
 enum Screen {
-    Agents,
+    /// Connect and disconnect agents.
+    Settings,
     /// `None` while loading.
     Sessions(Option<Vec<SessionSummary>>),
 }
@@ -53,7 +55,7 @@ enum Screen {
 pub enum Message {
     /// Connect or disconnect `Integration::ALL[index]`.
     Toggle(usize),
-    ShowAgents,
+    ShowSettings,
     ShowSessions,
     SessionsLoaded(Vec<SessionSummary>),
     /// Time to reload the session list.
@@ -69,7 +71,7 @@ impl App {
         let mut app = Self {
             config: Config::load(),
             system_dark: false,
-            screen: Screen::Agents,
+            screen: Screen::Settings,
             errors: vec![None; Integration::ALL.len()],
         };
         let task = if app.config.connected_agents.is_empty() {
@@ -87,8 +89,8 @@ impl App {
                 self.errors[index] = agents::toggle(&mut self.config, index).err();
                 Task::none()
             }
-            Message::ShowAgents => {
-                self.screen = Screen::Agents;
+            Message::ShowSettings => {
+                self.screen = Screen::Settings;
                 Task::none()
             }
             Message::ShowSessions => self.show_sessions(),
@@ -122,18 +124,30 @@ impl App {
 
     fn view(&self) -> Element<'_, Message> {
         let screen = match &self.screen {
-            Screen::Agents => agents::view(&self.config, &self.errors),
+            Screen::Settings => agents::view(&self.config, &self.errors),
             Screen::Sessions(list) => sessions::view(list.as_deref()),
         };
-        let switch = button(text(if self.is_dark() { "Light" } else { "Dark" }).size(15))
-            .padding(0)
-            .style(style::link)
-            .on_press(Message::ToggleDark);
+        // Top left: settings from the dashboard, back from settings (once
+        // there is a dashboard to go back to). Top right: light/dark.
+        let nav: Element<'_, Message> = match self.screen {
+            Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
+            Screen::Settings if !self.config.connected_agents.is_empty() => {
+                icon_button(style::Icon::Back, Message::ShowSessions)
+            }
+            Screen::Settings => space().into(),
+        };
+        let theme_icon = if self.is_dark() {
+            style::Icon::Sun
+        } else {
+            style::Icon::Moon
+        };
         column![
-            container(switch)
-                .width(iced::Fill)
-                .align_x(Right)
-                .padding([14, 40]),
+            row![
+                nav,
+                space().width(Fill),
+                icon_button(theme_icon, Message::ToggleDark)
+            ]
+            .padding([14, 20]),
             screen,
         ]
         .into()
@@ -176,6 +190,14 @@ impl App {
             Message::SessionsLoaded,
         )
     }
+}
+
+fn icon_button(icon: style::Icon, message: Message) -> Element<'static, Message> {
+    button(style::icon(icon))
+        .padding(4)
+        .style(|_, _| button::Style::default())
+        .on_press(message)
+        .into()
 }
 
 /// How often the session list reloads, to keep "Running" current.

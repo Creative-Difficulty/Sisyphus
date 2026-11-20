@@ -3,8 +3,8 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use iced::widget::{button, center, column, container, row, rule, scrollable, text};
-use iced::{Center, Element, Fill};
+use iced::widget::{center, column, container, row, scrollable, text};
+use iced::{Center, Element, Fill, FillPortion};
 
 use super::{Message, style};
 use crate::agents::{AgentInstance, Integration};
@@ -62,46 +62,69 @@ fn summary(agent: usize, instance: &dyn AgentInstance) -> SessionSummary {
 
 /// `None` while loading.
 pub fn view(sessions: Option<&[SessionSummary]>) -> Element<'_, Message> {
-    let header = row![
-        text("Sessions").size(34).font(style::BOLD).width(Fill),
-        button(text("Agents").size(16))
-            .padding(0)
-            .style(style::link)
-            .on_press(Message::ShowAgents),
-    ]
-    .align_y(Center);
-
     let quiet =
         |label| -> Element<'_, Message> { center(text(label).size(13).style(style::muted)).into() };
     let body = match sessions {
         None => quiet("loading"),
         Some([]) => quiet("no sessions yet"),
         Some(sessions) => {
-            let mut ledger = column![rule::horizontal(1).style(style::rule)];
-            for session in sessions {
-                ledger = ledger
-                    .push(entry(session))
-                    .push(rule::horizontal(1).style(style::rule));
-            }
-            scrollable(ledger.padding(iced::Padding::ZERO.right(16)))
+            let bubbles = column(sessions.iter().map(entry)).spacing(10);
+            scrollable(bubbles.padding(iced::Padding::ZERO.right(16)))
                 .direction(scrollable::Direction::Vertical(
-                    scrollable::Scrollbar::new().width(2).scroller_width(2),
+                    scrollable::Scrollbar::new().width(8).scroller_width(8),
                 ))
+                .style(style::scrollbar)
                 .height(Fill)
                 .into()
         }
     };
 
-    container(container(column![header, body].spacing(28)).max_width(760))
+    // Top half: the list. Bottom half: today's figures.
+    let list = column![text("Sessions").size(26).font(style::BOLD), body]
+        .spacing(14)
+        .height(FillPortion(1));
+
+    container(container(column![list, stats()].spacing(24)).max_width(760))
         .padding(iced::Padding::from([0, 40]).bottom(32))
         .center_x(Fill)
         .into()
 }
 
-/// One ledger entry: age, agent, title, project.
+/// Today's recorded time and a few figures.
+///
+/// Placeholders: nothing is recorded yet, so every value is zero.
+fn stats<'a>() -> Element<'a, Message> {
+    let figure = |value: &'a str, label: &'a str| {
+        column![
+            text(value).size(30).font(style::BOLD),
+            text(label).size(14).style(style::muted),
+        ]
+        .align_x(Center)
+    };
+    center(
+        column![
+            text("Recorded today").size(16).style(style::muted),
+            text("0h 00m")
+                .size(84)
+                .font(style::BOLD)
+                .style(style::accent),
+            row![
+                figure("0", "prompts"),
+                figure("0", "sessions"),
+                figure("0m", "agent time"),
+            ]
+            .spacing(56),
+        ]
+        .spacing(6)
+        .align_x(Center),
+    )
+    .height(FillPortion(1))
+    .into()
+}
+
+/// One session as a bubble: agent, title, project, age. A running
+/// session's age reads "working" and its bubble is a deeper pink.
 fn entry(session: &SessionSummary) -> Element<'_, Message> {
-    // A running session's age reads "working", and an accent mark sits at
-    // its edge.
     let running = session.running;
     let age = if running {
         text("working").size(14).style(style::accent)
@@ -110,25 +133,22 @@ fn entry(session: &SessionSummary) -> Element<'_, Message> {
         text(age).size(14).style(style::muted)
     };
 
-    row![
-        container(text(""))
-            .width(2)
-            .height(Fill)
-            .style(move |theme| style::mark(theme, running)),
-        age.width(64),
-        style::logo(&Integration::ALL[session.agent], 22.0),
-        text(&session.title)
-            .size(17)
-            .width(Fill)
-            .wrapping(text::Wrapping::None),
-        text(&session.project)
-            .size(14)
-            .style(style::muted)
-            .wrapping(text::Wrapping::None),
-    ]
-    .spacing(14)
-    .height(54)
-    .align_y(Center)
+    let mut about = column![text(&session.title).size(16).wrapping(text::Wrapping::None)];
+    if !session.project.is_empty() {
+        about = about.push(text(&session.project).size(13).style(style::muted));
+    }
+
+    container(
+        row![
+            style::logo(&Integration::ALL[session.agent], 26.0),
+            about.width(Fill),
+            age,
+        ]
+        .spacing(14)
+        .align_y(Center),
+    )
+    .padding([10, 22])
+    .style(move |theme| style::bubble(theme, running))
     .into()
 }
 

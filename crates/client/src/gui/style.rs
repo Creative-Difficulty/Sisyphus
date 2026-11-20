@@ -3,7 +3,7 @@
 
 use iced::font::Weight;
 use iced::theme::Palette;
-use iced::widget::{button, container, rule, svg, text};
+use iced::widget::{button, container, scrollable, svg, text};
 use iced::{Border, Color, Font, Theme};
 
 use crate::agents::Integration;
@@ -64,23 +64,54 @@ pub fn accent(theme: &Theme) -> text::Style {
     }
 }
 
-/// The line between list entries.
-pub fn rule(theme: &Theme) -> rule::Style {
-    rule::Style {
-        color: theme.palette().primary.scale_alpha(0.25),
-        ..rule::default(theme)
-    }
-}
-
-/// The mark at the edge of an entry; invisible unless `shown`.
-pub fn mark(theme: &Theme, shown: bool) -> container::Style {
+/// A session in the list: a pink pill, a deeper pink while running.
+pub fn bubble(theme: &Theme, running: bool) -> container::Style {
+    let pink = theme.palette().primary;
     container::Style {
-        background: shown.then(|| theme.palette().primary.into()),
+        background: Some(pink.scale_alpha(if running { 0.3 } else { 0.14 }).into()),
         border: Border {
-            radius: 2.0.into(),
+            radius: 999.0.into(),
             ..Border::default()
         },
         ..container::Style::default()
+    }
+}
+
+/// How much white lies over the background on raised surfaces.
+fn veil(theme: &Theme) -> f32 {
+    if theme.extended_palette().is_dark {
+        0.06
+    } else {
+        0.45
+    }
+}
+
+/// Scrollbar: a round pink blob on an invisible track, stronger while
+/// hovered or dragged.
+pub fn scrollbar(theme: &Theme, status: scrollable::Status) -> scrollable::Style {
+    let pink = theme.palette().primary;
+    let strong = matches!(
+        status,
+        scrollable::Status::Hovered {
+            is_vertical_scrollbar_hovered: true,
+            ..
+        } | scrollable::Status::Dragged { .. }
+    );
+    let rail = scrollable::Rail {
+        background: None,
+        border: Border::default(),
+        scroller: scrollable::Scroller {
+            background: pink.scale_alpha(if strong { 0.75 } else { 0.4 }).into(),
+            border: Border {
+                radius: 999.0.into(),
+                ..Border::default()
+            },
+        },
+    };
+    scrollable::Style {
+        vertical_rail: rail,
+        horizontal_rail: rail,
+        ..scrollable::default(theme, status)
     }
 }
 
@@ -88,13 +119,8 @@ pub fn mark(theme: &Theme, shown: bool) -> container::Style {
 /// accent once connected.
 pub fn tile(theme: &Theme, connected: bool) -> container::Style {
     let palette = theme.palette();
-    let veil = if theme.extended_palette().is_dark {
-        0.06
-    } else {
-        0.45
-    };
     container::Style {
-        background: Some(Color::WHITE.scale_alpha(veil).into()),
+        background: Some(Color::WHITE.scale_alpha(veil(theme)).into()),
         border: Border {
             width: 2.0,
             radius: 22.0.into(),
@@ -105,18 +131,6 @@ pub fn tile(theme: &Theme, connected: bool) -> container::Style {
             },
         },
         ..container::Style::default()
-    }
-}
-
-/// A plain text link that turns pink on hover.
-pub fn link(theme: &Theme, status: button::Status) -> button::Style {
-    let palette = theme.palette();
-    button::Style {
-        text_color: match status {
-            button::Status::Hovered | button::Status::Pressed => palette.primary,
-            _ => palette.text.scale_alpha(0.6),
-        },
-        ..button::Style::default()
     }
 }
 
@@ -137,6 +151,36 @@ pub fn rounded(
         style.border.radius = 999.0.into();
         style
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Icon {
+    Sun,
+    Moon,
+    Gear,
+    Back,
+}
+
+/// A line icon in the text color that turns pink on hover.
+pub fn icon(icon: Icon) -> svg::Svg<'static> {
+    let bytes: &'static [u8] = match icon {
+        Icon::Sun => include_bytes!("../../assets/icons/sun.svg"),
+        Icon::Moon => include_bytes!("../../assets/icons/moon.svg"),
+        Icon::Gear => include_bytes!("../../assets/icons/gear.svg"),
+        Icon::Back => include_bytes!("../../assets/icons/back.svg"),
+    };
+    svg(svg::Handle::from_memory(bytes))
+        .width(24)
+        .height(24)
+        .style(|theme: &Theme, status| {
+            let palette = theme.palette();
+            svg::Style {
+                color: Some(match status {
+                    svg::Status::Hovered => palette.primary,
+                    svg::Status::Idle => palette.text.scale_alpha(0.65),
+                }),
+            }
+        })
 }
 
 pub fn logo(integration: &Integration, size: f32) -> svg::Svg<'static> {

@@ -1,4 +1,4 @@
-//! First screen: connect the agents to track.
+//! Settings: connect and disconnect the agents to track.
 
 use iced::widget::{button, center, column, container, row, text};
 use iced::{Center, Element, Fill};
@@ -32,18 +32,7 @@ pub fn view<'a>(config: &'a Config, errors: &'a [Option<String>]) -> Element<'a,
         .enumerate()
         .map(|(index, integration)| card(config, index, integration, errors[index].as_deref()));
 
-    let mut content = column![row(cards).spacing(24)].spacing(32).align_x(Center);
-
-    if !config.connected_agents.is_empty() {
-        content = content.push(
-            button(text("Continue").center())
-                .padding([10, 32])
-                .style(style::rounded(style::pink))
-                .on_press(Message::ShowSessions),
-        );
-    }
-
-    center(content).padding(24).into()
+    center(row(cards).spacing(24)).padding(24).into()
 }
 
 fn card<'a>(
