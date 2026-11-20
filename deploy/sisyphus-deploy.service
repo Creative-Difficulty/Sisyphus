@@ -1,0 +1,11 @@
+[Unit]
+Description=Deploy the latest Sisyphus main branch
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/sisyphus/app/deploy/deploy.sh
+# Builds can take a while on the first run.
+TimeoutStartSec=45min

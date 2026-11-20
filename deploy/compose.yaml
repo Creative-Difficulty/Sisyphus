@@ -1,0 +1,47 @@
+# Production stack: Postgres + the Sisyphus server on port 80.
+#
+# Run from the repo root on the server (deploy.sh does this):
+#   docker compose -f deploy/compose.yaml --env-file /opt/sisyphus/sisyphus.env up -d --build
+#
+# The env file (root-only, never in the repo) must set POSTGRES_PASSWORD,
+# PUBLIC_URL, HACKCLUB_CLIENT_ID and HACKCLUB_CLIENT_SECRET.
+
+name: sisyphus
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sisyphus
+      POSTGRES_DB: sisyphus
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in the env file}
+    volumes:
+      - db:/var/lib/postgresql/data
+    # Not published: only the server can reach the database.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sisyphus -d sisyphus"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  server:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: sisyphus-server:latest
+    restart: unless-stopped
+    environment:
+      BIND_ADDR: 0.0.0.0:8080
+      DATABASE_URL: postgres://sisyphus:${POSTGRES_PASSWORD}@db:5432/sisyphus
+      PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL in the env file}
+      HACKCLUB_CLIENT_ID: ${HACKCLUB_CLIENT_ID:-}
+      HACKCLUB_CLIENT_SECRET: ${HACKCLUB_CLIENT_SECRET:-}
+    ports:
+      - "80:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db:

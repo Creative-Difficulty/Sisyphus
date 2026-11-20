@@ -82,8 +82,21 @@ Three crates in `crates/`:
     - Logged out it shows a "Log in with Hack Club" button; logged in, the dashboard plus the name and "Log out" in the header.
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
-  - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`). It has never been built here; see the Docker rule above.
+  - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.
   - It does not yet build session UUIDs, compute attention or credit, or know the v2 heartbeat.
+
+### Deployment (`deploy/`)
+
+Production runs on a Hetzner Ubuntu server at `2.29.187.1`, reached with `ssh -i ~/.ssh/sisyphus-ssh root@2.29.187.1`.
+- `deploy/compose.yaml`: Postgres 17 (named volume, not published) and the server on port 80. Run from the repo root with `--env-file /opt/sisyphus/sisyphus.env`.
+- `/opt/sisyphus/sisyphus.env` (root-only, never in the repo) holds `POSTGRES_PASSWORD`, `PUBLIC_URL`, `HACKCLUB_CLIENT_ID` and `HACKCLUB_CLIENT_SECRET`.
+- The repo is cloned to `/opt/sisyphus/app`.
+- Auto-deploy: `sisyphus-deploy.timer` runs `deploy/deploy.sh` every minute.
+  - The script fetches `main`, and if it differs from the last successfully deployed commit (`/opt/sisyphus/deployed-commit`), it resets the clone and runs `docker compose up -d --build`.
+  - A failed build is retried on the next run. `deploy.sh --force` redeploys regardless.
+- Logs: `journalctl -u sisyphus-deploy` (deploys), `docker compose -f deploy/compose.yaml logs server` (the app).
+- The firewall (ufw) allows only 22 and 80. Note that Docker-published ports bypass ufw.
+- Pushing to `main` deploys. Don't push untested server changes.
 
 ### Accounts (Hack Club Auth)
 
