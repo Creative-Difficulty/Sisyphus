@@ -15,6 +15,8 @@ pub struct Config {
     /// Ids of the agent integrations the user connected
     /// (see [`crate::agents::Integration::id`]).
     pub connected_agents: Vec<String>,
+    /// Dark mode chosen in the window. `None` follows the OS.
+    pub dark_mode: Option<bool>,
 }
 
 impl Config {
@@ -76,11 +78,18 @@ impl Config {
                     .collect()
             })
             .unwrap_or_default();
-        Self { connected_agents }
+        let dark_mode = v.get("dark_mode").and_then(Value::as_bool);
+        Self {
+            connected_agents,
+            dark_mode,
+        }
     }
 
     fn to_json(&self) -> Value {
-        json!({ "connected_agents": self.connected_agents })
+        json!({
+            "connected_agents": self.connected_agents,
+            "dark_mode": self.dark_mode,
+        })
     }
 }
 
@@ -103,6 +112,7 @@ mod tests {
     fn json_round_trip_ignores_unknown_fields() {
         let mut c = Config::default();
         c.set_connected("claude-code", true);
+        c.dark_mode = Some(true);
         assert_eq!(Config::from_json(&c.to_json()), c);
         let v = json!({ "connected_agents": ["a", 3], "other": true });
         assert_eq!(Config::from_json(&v).connected_agents, vec!["a"]);

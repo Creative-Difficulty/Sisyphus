@@ -1,8 +1,9 @@
-//! Recent sessions of all connected agents, newest first.
+//! Recent sessions of all connected agents, newest first, and whether
+//! each is running.
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use iced::widget::{button, center, column, container, row, scrollable, text};
+use iced::widget::{button, center, column, container, row, rule, scrollable, text};
 use iced::{Center, Element, Fill};
 
 use super::{Message, style};
@@ -22,6 +23,8 @@ pub struct SessionSummary {
     /// Name of the project folder.
     pub project: String,
     pub last_activity_ms: Option<u64>,
+    /// The agent is working on a turn right now.
+    pub running: bool,
 }
 
 /// Sessions of the given agents, most recently active first. Blocking.
@@ -53,78 +56,95 @@ fn summary(agent: usize, instance: &dyn AgentInstance) -> SessionSummary {
         title: instance.get_title(),
         project,
         last_activity_ms: instance.get_last_activity_ms(),
+        running: instance.is_running(),
     }
 }
 
 /// `None` while loading.
 pub fn view(sessions: Option<&[SessionSummary]>) -> Element<'_, Message> {
     let header = row![
-        text("Recent sessions").size(24).width(Fill),
-        button(text("Agents"))
-            .style(style::rounded(button::secondary))
+        text("Sessions").size(34).font(style::BOLD).width(Fill),
+        button(text("Agents").size(16))
+            .padding(0)
+            .style(style::link)
             .on_press(Message::ShowAgents),
     ]
     .align_y(Center);
 
-    let body: Element<'_, Message> = match sessions {
-        None => center(text("Loading…").style(text::secondary)).into(),
-        Some([]) => center(text("No sessions yet").style(text::secondary)).into(),
-        Some(sessions) => scrollable(
-            column(sessions.iter().enumerate().map(|(i, s)| session_row(i, s)))
-                .spacing(8)
-                .padding(iced::Padding::ZERO.right(12)),
-        )
-        .height(Fill)
-        .into(),
+    let quiet =
+        |label| -> Element<'_, Message> { center(text(label).size(13).style(style::muted)).into() };
+    let body = match sessions {
+        None => quiet("loading"),
+        Some([]) => quiet("no sessions yet"),
+        Some(sessions) => {
+            let mut ledger = column![rule::horizontal(1).style(style::rule)];
+            for session in sessions {
+                ledger = ledger
+                    .push(entry(session))
+                    .push(rule::horizontal(1).style(style::rule));
+            }
+            scrollable(ledger.padding(iced::Padding::ZERO.right(16)))
+                .direction(scrollable::Direction::Vertical(
+                    scrollable::Scrollbar::new().width(2).scroller_width(2),
+                ))
+                .height(Fill)
+                .into()
+        }
     };
 
-    container(container(column![header, body].spacing(20)).max_width(720))
-        .padding(24)
+    container(container(column![header, body].spacing(28)).max_width(760))
+        .padding(iced::Padding::from([0, 40]).bottom(32))
         .center_x(Fill)
         .into()
 }
 
-fn session_row(index: usize, session: &SessionSummary) -> Element<'_, Message> {
-    let mut details = vec![];
-    if !session.project.is_empty() {
-        details.push(session.project.clone());
-    }
-    if let Some(ms) = session.last_activity_ms {
-        details.push(ago(ms));
-    }
+/// One ledger entry: age, agent, title, project.
+fn entry(session: &SessionSummary) -> Element<'_, Message> {
+    // A running session's age reads "working", and an accent mark sits at
+    // its edge.
+    let running = session.running;
+    let age = if running {
+        text("working").size(14).style(style::accent)
+    } else {
+        let age = session.last_activity_ms.map(age).unwrap_or_default();
+        text(age).size(14).style(style::muted)
+    };
 
-    let content = row![
-        style::logo(&Integration::ALL[session.agent], 32.0),
-        column![
-            text(&session.title).size(16),
-            text(details.join(" · ")).size(13).style(text::secondary),
-        ]
-        .spacing(2),
+    row![
+        container(text(""))
+            .width(2)
+            .height(Fill)
+            .style(move |theme| style::mark(theme, running)),
+        age.width(64),
+        style::logo(&Integration::ALL[session.agent], 22.0),
+        text(&session.title)
+            .size(17)
+            .width(Fill)
+            .wrapping(text::Wrapping::None),
+        text(&session.project)
+            .size(14)
+            .style(style::muted)
+            .wrapping(text::Wrapping::None),
     ]
     .spacing(14)
-    .align_y(Center);
-
-    button(content)
-        .width(Fill)
-        .padding([12, 16])
-        .style(style::row)
-        .on_press(Message::Open(index))
-        .into()
+    .height(54)
+    .align_y(Center)
+    .into()
 }
 
-/// "5 min ago", "3 h ago", "yesterday", ...
-fn ago(time_ms: u64) -> String {
+/// Compact age, like a log timestamp: "now", "4m", "2h", "3d", "5w".
+fn age(time_ms: u64) -> String {
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis() as u64)
         .unwrap_or(time_ms);
     let minutes = now.saturating_sub(time_ms) / 60_000;
     match minutes {
-        0 => "just now".to_string(),
-        1..60 => format!("{minutes} min ago"),
-        60..1440 => format!("{} h ago", minutes / 60),
-        1440..2880 => "yesterday".to_string(),
-        _ => format!("{} days ago", minutes / 1440),
+        0 => "now".to_string(),
+        1..60 => format!("{minutes}m"),
+        60..1440 => format!("{}h", minutes / 60),
+        1440..10080 => format!("{}d", minutes / 1440),
+        _ => format!("{}w", minutes / 10080),
     }
 }
 
@@ -133,15 +153,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn relative_times() {
+    fn compact_ages() {
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_millis() as u64;
-        assert_eq!(ago(now), "just now");
-        assert_eq!(ago(now - 5 * 60_000), "5 min ago");
-        assert_eq!(ago(now - 3 * 3_600_000), "3 h ago");
-        assert_eq!(ago(now - 30 * 3_600_000), "yesterday");
-        assert_eq!(ago(now - 4 * 86_400_000), "4 days ago");
+        assert_eq!(age(now), "now");
+        assert_eq!(age(now - 5 * 60_000), "5m");
+        assert_eq!(age(now - 3 * 3_600_000), "3h");
+        assert_eq!(age(now - 30 * 3_600_000), "1d");
+        assert_eq!(age(now - 20 * 86_400_000), "2w");
     }
 }

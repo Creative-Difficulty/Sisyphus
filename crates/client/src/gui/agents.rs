@@ -38,7 +38,7 @@ pub fn view<'a>(config: &'a Config, errors: &'a [Option<String>]) -> Element<'a,
         content = content.push(
             button(text("Continue").center())
                 .padding([10, 32])
-                .style(style::rounded(button::primary))
+                .style(style::rounded(style::pink))
                 .on_press(Message::ShowSessions),
         );
     }
@@ -56,12 +56,12 @@ fn card<'a>(
     let (label, base): (_, fn(&_, _) -> _) = if connected {
         ("Disconnect", button::secondary)
     } else {
-        ("Connect", button::primary)
+        ("Connect", style::pink)
     };
 
     let mut content = column![
         style::logo(integration, 64.0),
-        text(integration.name()).size(18),
+        text(integration.name()).size(22).font(style::BOLD),
         button(text(label).width(Fill).center())
             .width(Fill)
             .style(style::rounded(base))
@@ -77,6 +77,6 @@ fn card<'a>(
     container(content)
         .width(200)
         .padding(24)
-        .style(move |theme| style::card(theme, connected))
+        .style(move |theme| style::tile(theme, connected))
         .into()
 }
