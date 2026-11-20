@@ -11,7 +11,7 @@ Sisyphus is an open-source (AGPLv3) passive time tracker in Rust. It measures th
 ## Rules
 
 - Only implement what the user explicitly asked for in the current conversation. Plans and ideas are context, not tasks. If a request is ambiguous, ask.
-- Privacy: never collect or upload file contents, file paths, window titles, keystroke content or prompt text. Only counts, timings and coarse app classes. AI chat history and prompts stay local. (`AgentEvent`s carry full prompt and response text in memory on the client; anything that leaves the machine must be reduced to counts and timings.)
+- Privacy: never collect or upload file contents, absolute paths, window titles, keystroke content or prompt text. Only counts, timings, coarse app classes, paths of edited files relative to the project folder, and the agent's session titles; paths and titles are visible only to the user and reviewers. AI chat history and prompts stay local. (`AgentEvent`s carry full prompt and response text in memory on the client; anything that leaves the machine must be reduced to counts and timings.)
 - Never write to, commit to or modify a user's repository. Everything runs in the background.
 - Never credit more time than was actually tracked. Multipliers from 0.0 to 1.0 are applied server-side.
 - Never trust the client clock for anything audited. The server timestamps.
@@ -51,17 +51,16 @@ Three crates in `crates/`:
 
 ### Heartbeat design (decided 2026-11-20, not implemented yet)
 
-The team decided on this design. `heartbeat.rs` still has the older shape (WakaTime-style gaps, free-form `app` string). Only change it when the user asks.
+The final heartbeat JSON scheme is in `REQUIREMENTS.md` ("Heartbeat scheme"). The team decided on this design. `heartbeat.rs` still has the older shape (WakaTime-style gaps, free-form `app` string). Only change it when the user asks.
 
 - **Per session.** Time is counted and calculated per agent session. Every session is independent and sends its own heartbeat each minute while its agent is running or the user is working on its prompt, with the session id attached. The session id must be unique.
-- **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session still has a name.
+- **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session has a name: the agent's own session title.
 - **Overlap.** If the multipliers of concurrent sessions for the same real minute add up to more than 1.0, each session gets its share of one minute (two sessions at 1.0 each get 30 s each). Running several agents never earns more than one minute per real minute.
 - **Integers only.** The client sends only integer observations, never a 0.0–1.0 value of its own:
-  - which of the minute's six 10-second slots had input while the agent's terminal or editor was focused
-  - seconds focused on the agent's app vs other apps, by app class only (terminal / editor / browser / other)
+  - the minute's six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `none`)
   - whether the agent was running
   - prompt characters submitted, and how many were pasted
-  - code changes, as two sets of counts of non-whitespace characters added and removed (never file paths or contents): what changed in the agent's working directory, and what the agent's edit calls say they changed
+  - per edited file (path relative to the project folder, never contents): non-whitespace characters added and removed in the working directory, and what the agent's edit calls say they changed
   - prompt classification labels (see below), never the prompt text
 - **Server computes.** The server computes attention and the 0.0–1.0 multiplier from these. The client runs the same formula only for display and to compare against the server.
 - **Struggle value.** Each heartbeat has a struggle value, calculated on both the client and the server like the multiplier. Struggle does not affect credit for now; it is only kept.
@@ -79,7 +78,6 @@ The team decided on this design. `heartbeat.rs` still has the older shape (WakaT
 
 Open questions (not decided, ask before choosing):
 - What file changes the agent didn't make mean (for example, the user's own edits), and how they count.
-- Session names: agent titles are generated from prompts, so sending them may conflict with "prompt text never leaves the machine".
 
 Noted for later: pasted error logs and stack traces are real struggle; they may need an exemption from the paste penalty. Also later: how struggle affects credit, and which embedding model.
 
