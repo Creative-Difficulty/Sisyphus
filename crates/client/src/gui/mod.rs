@@ -1,11 +1,12 @@
-//! Sisyphus GUI: pick which AI agents to connect.
+//! The client's window: pick which AI agents to connect.
 
+use crate::agents::Integration;
+use crate::config::Config;
 use iced::widget::{button, center, column, container, row, svg, text};
 use iced::{Border, Center, Element, Fill, Theme};
-use sisyphus_client::agents::Integration;
-use sisyphus_client::config::Config;
 
-fn main() -> iced::Result {
+/// Open the window. Blocks until it is closed.
+pub fn run() -> iced::Result {
     iced::application(App::new, App::update, App::view)
         .title("Sisyphus")
         .window_size((520.0, 320.0))
@@ -124,7 +125,7 @@ fn card_style(theme: &Theme, connected: bool) -> container::Style {
 
 fn logo(integration: &Integration) -> &'static [u8] {
     match integration {
-        Integration::ClaudeCode(_) => include_bytes!("../assets/claude-code.svg"),
-        Integration::OpenCode(_) => include_bytes!("../assets/opencode.svg"),
+        Integration::ClaudeCode(_) => include_bytes!("../../assets/claude-code.svg"),
+        Integration::OpenCode(_) => include_bytes!("../../assets/opencode.svg"),
     }
 }

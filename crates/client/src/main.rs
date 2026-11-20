@@ -8,9 +8,10 @@ fn main() {
             Ok(())
         }
         Some("watch") => watch(&args[1..]),
-        _ => {
-            println!("sisyphus client");
-            println!("usage: sisyphus-client sessions");
+        None => sisyphus_client::gui::run().map_err(Into::into),
+        Some(_) => {
+            println!("usage: sisyphus-client                 open the window");
+            println!("       sisyphus-client sessions        list sessions");
             println!("       sisyphus-client watch [SESSION_ID] [--replay]");
             Ok(())
         }
