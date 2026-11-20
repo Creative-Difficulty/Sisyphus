@@ -124,7 +124,7 @@ fn user_events(entry: &Value) -> Vec<AgentEventKind> {
                     Some("text") => {
                         let text = block.get("text").and_then(Value::as_str).unwrap_or("");
                         match text_events(text, from_human) {
-                            Some(AgentEventKind::Prompt { text }) => prompt.push(text),
+                            Some(AgentEventKind::Prompt { text, .. }) => prompt.push(text),
                             Some(other) => out.push(other),
                             None => {}
                         }
@@ -136,6 +136,7 @@ fn user_events(entry: &Value) -> Vec<AgentEventKind> {
             if !prompt.is_empty() {
                 out.push(AgentEventKind::Prompt {
                     text: prompt.join("\n"),
+                    pasted_chars: None,
                 });
             }
             out
@@ -175,8 +176,10 @@ fn text_events(text: &str, from_human: bool) -> Option<AgentEventKind> {
     if trimmed.is_empty() {
         return None;
     }
+    // Paste counts come from the prompt history, see `history.rs`.
     Some(AgentEventKind::Prompt {
         text: text.to_string(),
+        pasted_chars: None,
     })
 }
 
@@ -359,7 +362,8 @@ mod tests {
             vec![AgentEvent {
                 time_ms: 1000,
                 kind: AgentEventKind::Prompt {
-                    text: "Fix it".into()
+                    text: "Fix it".into(),
+                    pasted_chars: None,
                 }
             }]
         );

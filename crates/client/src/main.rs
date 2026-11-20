@@ -90,7 +90,13 @@ fn watch(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
 
 fn describe(event: &AgentEvent) -> String {
     let what = match &event.kind {
-        AgentEventKind::Prompt { text } => format!("prompt     {}", one_line(text)),
+        AgentEventKind::Prompt { text, pasted_chars } => {
+            let pasted = match pasted_chars {
+                Some(n) => format!("{n}/{} pasted", text.chars().count()),
+                None => "paste unknown".to_string(),
+            };
+            format!("prompt     [{pasted}] {}", one_line(text))
+        }
         AgentEventKind::Command { name, args } => format!("command    {name} {args}"),
         AgentEventKind::Response { text } => format!("response   {}", one_line(text)),
         AgentEventKind::Thinking { text } => format!("thinking   {} chars", text.len()),

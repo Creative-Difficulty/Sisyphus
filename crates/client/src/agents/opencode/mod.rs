@@ -19,8 +19,10 @@ use crate::agents::{
     AgentError, AgentEvent, AgentInstance, AgentIntegration, AttachMode, Attachment, shorten,
 };
 
+pub mod history;
 pub mod session;
 
+use history::PromptHistory;
 use session::SessionParser;
 
 /// How often an attachment checks the database for changes.
@@ -213,6 +215,7 @@ impl AgentInstance for AgentInstanceOpenCode {
 struct Poller {
     session_id: String,
     parser: SessionParser,
+    prompts: PromptHistory,
     /// Highest `time_updated` seen. Rows at exactly this time are read again
     /// next poll (the parser ignores repeats), so writes landing in the same
     /// millisecond are not missed.
@@ -224,6 +227,9 @@ impl Poller {
         Self {
             session_id: session_id.to_string(),
             parser: SessionParser::new(),
+            prompts: PromptHistory::default_path()
+                .map(|p| PromptHistory::load(&p))
+                .unwrap_or_default(),
             watermark: 0,
         }
     }
@@ -271,6 +277,7 @@ impl Poller {
             self.parser
                 .set_title(title.as_deref(), session_updated.max(0) as u64),
         );
+        self.prompts.fill(&mut events);
         Ok(events)
     }
 }

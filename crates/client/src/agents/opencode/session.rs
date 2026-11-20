@@ -80,6 +80,8 @@ impl SessionParser {
                 if !text.trim().is_empty()
                     && out.once("prompt", created, || AgentEventKind::Prompt {
                         text: text.to_string(),
+                        // Filled in from the prompt history, see `history.rs`.
+                        pasted_chars: None,
                     })
                 {
                     out.parser.last_prompt_ms = Some(created);
@@ -267,7 +269,10 @@ mod tests {
             p.process("m1", "user", 5, row),
             vec![AgentEvent {
                 time_ms: 5,
-                kind: AgentEventKind::Prompt { text: "Hi".into() }
+                kind: AgentEventKind::Prompt {
+                    text: "Hi".into(),
+                    pasted_chars: None,
+                }
             }]
         );
         assert_eq!(p.process("m1", "user", 6, row), vec![]);

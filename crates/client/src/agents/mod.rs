@@ -78,6 +78,23 @@ impl Integration {
     }
 }
 
+/// Size and modification time of a file, to notice when it changed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct FileStamp {
+    len: u64,
+    modified: Option<std::time::SystemTime>,
+}
+
+impl FileStamp {
+    pub(crate) fn of(path: &std::path::Path) -> Option<Self> {
+        let meta = std::fs::metadata(path).ok()?;
+        Some(Self {
+            len: meta.len(),
+            modified: meta.modified().ok(),
+        })
+    }
+}
+
 /// First line of `text`, cut to `max` characters.
 pub(crate) fn shorten(text: &str, max: usize) -> String {
     let line = text.trim().lines().next().unwrap_or("");
@@ -109,7 +126,14 @@ pub struct AgentEvent {
 #[derive(Debug, Clone, PartialEq)]
 pub enum AgentEventKind {
     /// The user sent a prompt.
-    Prompt { text: String },
+    Prompt {
+        text: String,
+        /// Characters of `text` that were pasted, as recorded in the agent's
+        /// prompt history. Agents only record large pastes (shown as a
+        /// placeholder like `[Pasted text #1 +40 lines]`), so small pastes
+        /// count as typed. `None` if the prompt is not in the history.
+        pasted_chars: Option<usize>,
+    },
     /// The user ran a slash command such as `/clear`.
     Command { name: String, args: String },
     /// The agent wrote text to the user.

@@ -18,8 +18,10 @@ use crate::agents::{
     Attachment, shorten,
 };
 
+pub mod history;
 pub mod transcript;
 
+use history::PromptHistory;
 use transcript::TranscriptParser;
 
 pub struct AgentIntegrationClaudeCode;
@@ -32,6 +34,13 @@ impl AgentIntegrationClaudeCode {
         }
         let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE"))?;
         Some(PathBuf::from(home).join(".claude"))
+    }
+
+    fn history() -> PromptHistory {
+        match Self::config_dir() {
+            Some(dir) => PromptHistory::load(&dir.join("history.jsonl")),
+            None => PromptHistory::default(),
+        }
     }
 
     fn projects_dir() -> Option<PathBuf> {
@@ -162,21 +171,25 @@ impl AgentInstance for AgentInstanceClaudeCode {
         for line in BufReader::new(File::open(&self.transcript_path)?).lines() {
             events.extend(parser.parse_line(&line?));
         }
+        AgentIntegrationClaudeCode::history().fill(&self.session_id, &mut events);
         Ok(events)
     }
 
     fn attach(&self, mode: AttachMode) -> Result<Attachment, AgentError> {
         self.ensure_exists()?;
         let path = self.transcript_path.clone();
+        let session_id = self.session_id.clone();
         Ok(Attachment::spawn(move |tx, stop| {
             // History is always parsed so titles are known, but only sent
             // when asked for.
             let mut parser = TranscriptParser::new();
+            let mut prompts = AgentIntegrationClaudeCode::history();
             let result = tail::follow_lines(&path, &stop, |line, is_history| {
-                let events = parser.parse_line(line);
+                let mut events = parser.parse_line(line);
                 if is_history && mode == AttachMode::NewOnly {
                     return true;
                 }
+                prompts.fill(&session_id, &mut events);
                 events.into_iter().all(|e| tx.send(e).is_ok())
             });
             if let Err(e) = result {
@@ -227,7 +240,7 @@ fn scan_metadata(path: &Path) -> Option<Metadata> {
                 .parse_line(&line)
                 .into_iter()
                 .find_map(|e| match e.kind {
-                    AgentEventKind::Prompt { text } => Some(text),
+                    AgentEventKind::Prompt { text, .. } => Some(text),
                     _ => None,
                 });
         }
