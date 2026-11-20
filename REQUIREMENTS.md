@@ -62,6 +62,13 @@ product must:
   - a pink light and dark theme that follows the OS
 - `sisyphus-common`: an ed25519-signed hash chain of heartbeats with
   tamper-detection tests.
+- Server (axum + Postgres):
+  - accepts signed heartbeat batches, checks the chain and signatures, and
+    stores them with its own receive time
+  - a read-only web dashboard in the client's style, with devices, recent
+    heartbeats and a placeholder "Recorded today"
+  - a Dockerfile for deployment
+  - No accounts, sessions, projects or credit yet.
 
 ## Decided, not built
 
@@ -95,11 +102,11 @@ product must:
 
     "agent_running": true,
     "slots": [
-      { "input": true,  "focus": "agent" },
-      { "input": true,  "focus": "agent" },
+      { "input": true, "focus": "agent" },
+      { "input": true, "focus": "agent" },
       { "input": false, "focus": "agent" },
       { "input": false, "focus": "browser" },
-      { "input": true,  "focus": "editor" },
+      { "input": true, "focus": "editor" },
       { "input": false, "focus": "editor" }
     ],
 
@@ -132,7 +139,8 @@ product must:
   - `input` is any keyboard or mouse input, read from the OS idle time; keys
     are never recorded.
   - `focus` is one of `agent` (the agent's own window), `terminal`, `editor`,
-    `browser`, `other` or `none`.
+    `browser`, `other` or `none`: the app that held focus for most of the
+    slot, so a short flash into another window doesn't change it.
 - `prompts`: counts only, never text.
   - `corrections` counts prompts the local model labelled as corrections.
 - `files`: one entry per file edited this minute, sorted by path.
@@ -163,12 +171,28 @@ product must:
 - Attention returns to 1.0 on input. It drops slowly while the agent's window
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
+- Quick switches don't farm attention. Switching to the agent's window for a
+  few seconds (around 5) without real interaction gives little or no
+  attention, because it could just be flicking between windows:
+  - input (including the alt-tab key press) only counts in slots where the
+    agent's terminal or editor held focus
+  - watching without input only counts once the agent's window has held focus
+    for about 20 seconds (two slots in a row); exact thresholds get tuned
+    with real data
 
 ### Struggle
 
 - Each heartbeat has a struggle value, calculated on both the client and the
   server.
 - Struggle does not affect credit for now; it is only kept.
+- Decided input: correction prompts (see prompt analysis).
+- Possible future signals (not decided; ask before using them):
+  - interrupts: the user stopped the agent mid-turn
+  - rejected tool calls: the user denied an action the agent wanted to take
+  - re-prompting: many near-identical prompts for the same task
+  - reverts: Claude Code rewinds and opencode reverts
+    The client already sees interrupts and rejected tool calls as events, and
+    the data for re-prompting and reverts exists in the agents' files.
 
 ### Prompt analysis, on the device
 

@@ -26,6 +26,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 - Keep Windows, macOS and Linux working, and keep the client light (low-spec machines).
 - Never commit unless the user asks. After every commit, push (`git push origin main`). Before pushing, `git fetch` and check nobody else pushed in the meantime. Keep commits separate by topic.
 - Before committing: `cargo build`, `cargo test --workspace` and `cargo clippy` clean, `cargo fmt` applied to the crates you touched.
+- Never build, pull or run Docker/Podman images. The `Dockerfile` is for deployment only; the user dislikes Docker locally.
 
 ## Commands
 
@@ -41,6 +42,8 @@ cargo fmt -p sisyphus-client                 # crates/common is not rustfmt-clea
 cargo run -p sisyphus-client                                  # open the window
 cargo run -p sisyphus-client -- sessions                      # list sessions of all agents, with running state
 cargo run -p sisyphus-client -- watch [SESSION_ID] [--replay] # print a session's events live; never exits on its own
+
+cargo run -p sisyphus-server                 # needs DATABASE_URL (from the environment or .env, see .env.example)
 ```
 
 No `rust-toolchain` file or CI config exists. Edition 2024, resolver 3 (let-chains are used). Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
@@ -58,7 +61,20 @@ Three crates in `crates/`:
 - **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`, `gui`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions` and `watch` are CLI commands over the same integrations.
   - It does not yet build heartbeats, use the chain or upload anything.
-- **`sisyphus-server`**: an empty `main`.
+- **`sisyphus-server`**: axum + Postgres (sqlx). Configured by `DATABASE_URL` and `BIND_ADDR` (default `0.0.0.0:8080`), read from the environment or `.env` (`.env` is git-ignored; `.env.example` documents it).
+  - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start. Tables: `devices` (device key, chain tip, first/last seen) and `heartbeats` (device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB`, so the v2 format won't need a table rewrite).
+  - Queries are runtime-checked (`sqlx::query`, not the `query!` macros), so building needs no database.
+  - `POST /api/upload` (`upload.rs`): an `UploadBatch` from `sisyphus-common::api`.
+    - The device's row is locked and its chain tip checked with `verify_batch`.
+    - On success the heartbeats are stored with the server's receive time and an `UploadAck` with the new tip comes back.
+    - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`.
+  - `GET /api/dashboard` (`dashboard.rs`): devices, total heartbeats and the 50 latest heartbeats, each flagged offline if received more than 5 min after its claimed time. The offline flag is for the backend only; the page doesn't show it. No accounts or login yet.
+  - `GET /health` returns `ok`.
+  - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
+    - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles, and a placeholder "Recorded today".
+    - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
+  - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`). It has never been built here; see the Docker rule above.
+  - It does not yet build session UUIDs, compute attention or credit, or know the v2 heartbeat.
 
 ### Agent integrations (`crates/client/src/agents/`)
 
@@ -128,6 +144,14 @@ Unknown fields are ignored. Saving replaces the file atomically.
   - Simple, friendly and playful: pink, Fredoka, rounded bubbles, icons instead of text where possible, no unneeded text.
   - Avoid the generic "AI-generated" look the user rejected: status pills and badges, "·"-separated detail lines, outlines around list items, coloured status dots, monospace "dashboard" styling, default blue-grey themes.
 
+### Testing the server
+
+- Run a throwaway Postgres in a temporary directory: `initdb -D <dir> -A trust -U sisyphus`, then `pg_ctl -D <dir> -o "-p 54329 -k '' -c listen_addresses=localhost" start`, then create the database with `psql`. `-k ''` disables the Unix socket, whose path is too long inside the scratchpad.
+- Start the server with `DATABASE_URL=postgres://sisyphus@localhost:54329/sisyphus` and a free `BIND_ADDR`.
+- Signed test batches can be produced with `sisyphus_common::chain::ChainWriter` (for example from a temporary example program that isn't committed).
+- Screenshot the page with `chromium --headless=new --screenshot --virtual-time-budget=4000`. Add `--force-dark-mode` for dark mode.
+- Stop everything afterwards: `pkill -x sisyphus-server`, `pg_ctl -D <dir> stop`.
+
 ### Testing the window
 
 - Agents can't click in the window on Wayland. Verify by launching it and taking a screenshot (on Hyprland: `hyprctl clients -j` for the window geometry, then `grim -g`), and ask the user to click-test.
@@ -151,7 +175,13 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 - **Server computes** attention and the 0.0–1.0 multiplier per session. The client runs the same formulas only for display and to compare against the server.
 - **Overlap.** If the multipliers of concurrent sessions for the same real minute add up to more than 1.0, each session gets its share of one minute (two sessions at 1.0 each get 30 s each).
 - **Attention** resets to 1.0 on input. It drops slowly while the agent's window stays focused and quickly in other apps. An agent working alone earns no credit; that time still counts as AI time.
+- **No quick-switch farming.** Switching to the agent's window for ~5 s without real interaction gives little or no attention.
+  - A slot's `focus` is the app that held focus for most of the slot.
+  - Input (including alt-tab) only counts in slots where the agent's terminal or editor held focus.
+  - Watching without input only counts after ~20 s (two slots) of continuous focus. Thresholds get tuned with real data.
 - **Struggle value.** Each heartbeat has one, calculated on both the client and the server. Struggle does not affect credit for now; it is only kept.
+  - Decided input: correction prompts.
+  - Possible future signals, not decided (ask first): interrupts, rejected tool calls, re-prompting (near-identical prompts) and reverts (Claude Code rewinds, opencode reverts). Interrupts and rejected tool calls are already `AgentEvent`s.
 - **No keylogging and no root.** Input is detected only through OS idle-time APIs:
   - Windows: `GetLastInputInfo`
   - macOS: `CGEventSourceSecondsSinceLastEventType`
