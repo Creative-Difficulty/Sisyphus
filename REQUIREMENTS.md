@@ -68,7 +68,12 @@ product must:
   - a read-only web dashboard in the client's style, with devices, recent
     heartbeats and a placeholder "Recorded today"
   - a Dockerfile for deployment
-  - No accounts, sessions, projects or credit yet.
+  - accounts via Hack Club Auth (OpenID Connect) for the website and the
+    app: the server is the only OAuth client; the app logs in through it and
+    links its device key to the account
+  - uploads accepted only from devices linked to an account; each user sees
+    only their own devices and heartbeats
+  - No sessions, projects or credit yet.
 
 ## Decided, not built
 

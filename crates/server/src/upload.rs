@@ -1,8 +1,10 @@
 //! `POST /api/upload`: a batch of signed heartbeats from one device.
 //!
-//! The batch must continue the device's hash chain exactly where the stored
-//! chain tip ends (see `sisyphus_common::api`). On success the heartbeats are
-//! stored with the server's receive time and the new tip is returned.
+//! Only devices linked to an account (see `auth.rs`) may upload; others get
+//! 403. The batch must continue the device's hash chain exactly where the
+//! stored chain tip ends (see `sisyphus_common::api`). On success the
+//! heartbeats are stored with the server's receive time and the new tip is
+//! returned.
 
 use axum::Json;
 use axum::extract::State;
@@ -14,10 +16,10 @@ use sisyphus_common::chain::ChainTip;
 use sisyphus_common::hex::Hash;
 use sqlx::{PgPool, Row};
 
-use crate::now_ms;
+use crate::{AppState, now_ms};
 
-pub async fn upload(State(db): State<PgPool>, Json(batch): Json<UploadBatch>) -> Response {
-    match store(&db, &batch).await {
+pub async fn upload(State(state): State<AppState>, Json(batch): Json<UploadBatch>) -> Response {
+    match store(&state.db, &batch).await {
         Ok(ack) => Json(ack).into_response(),
         Err(Rejected::Upload(e)) => {
             let status = match e {
@@ -26,6 +28,13 @@ pub async fn upload(State(db): State<PgPool>, Json(batch): Json<UploadBatch>) ->
             };
             (status, Json(e)).into_response()
         }
+        Err(Rejected::NotLinked) => (
+            StatusCode::FORBIDDEN,
+            Json(ServerError {
+                error: "device is not linked to an account",
+            }),
+        )
+            .into_response(),
         Err(Rejected::Database(e)) => {
             eprintln!("upload failed: {e}");
             (
@@ -46,6 +55,7 @@ struct ServerError {
 
 enum Rejected {
     Upload(UploadError),
+    NotLinked,
     Database(sqlx::Error),
 }
 
@@ -60,21 +70,16 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
     let device = batch.device.to_string();
     let mut tx = db.begin().await?;
 
-    // A new device starts at the genesis tip. Locking its row serialises
-    // concurrent uploads from the same device.
-    sqlx::query(
-        "INSERT INTO devices (device_id, next_seq, prev, first_seen_ms, last_seen_ms)
-         VALUES ($1, 0, $2, $3, $3) ON CONFLICT (device_id) DO NOTHING",
+    // Linking a device creates its row at the genesis tip. Locking the row
+    // serialises concurrent uploads from the same device.
+    let row = sqlx::query(
+        "SELECT next_seq, prev FROM devices
+         WHERE device_id = $1 AND user_id IS NOT NULL FOR UPDATE",
     )
     .bind(&device)
-    .bind(Hash::ZERO.to_string())
-    .bind(now)
-    .execute(&mut *tx)
-    .await?;
-    let row = sqlx::query("SELECT next_seq, prev FROM devices WHERE device_id = $1 FOR UPDATE")
-        .bind(&device)
-        .fetch_one(&mut *tx)
-        .await?;
+    .fetch_optional(&mut *tx)
+    .await?
+    .ok_or(Rejected::NotLinked)?;
     let tip = ChainTip {
         next_seq: row.get::<i64, _>("next_seq") as u64,
         prev: parse_hash(&row.get::<String, _>("prev")),

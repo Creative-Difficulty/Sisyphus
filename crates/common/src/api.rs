@@ -71,3 +71,37 @@ pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, Upl
     }
     chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)
 }
+
+/// Domain tag for the signature that links a device to a user account.
+/// Bump the version when the signed message changes.
+pub const DEVICE_LINK_CONTEXT: &[u8] = b"sisyphus/device-link/v1\0";
+
+/// What the app signs with its device key to prove it owns that key when
+/// exchanging the one-time login `code` (see the server's
+/// `POST /auth/app/token`).
+pub fn device_link_message(code: &str) -> Vec<u8> {
+    let mut message = DEVICE_LINK_CONTEXT.to_vec();
+    message.extend_from_slice(code.as_bytes());
+    message
+}
+
+/// Body of `POST /auth/app/token`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AppTokenRequest {
+    /// One-time code the server handed to the app's loopback listener.
+    pub code: String,
+    /// The secret whose SHA-256 (hex) the app sent as `challenge` when it
+    /// started the login.
+    pub verifier: String,
+    /// The device's ed25519 public key.
+    pub device: DeviceId,
+    /// Device signature over [`device_link_message`] of `code`.
+    pub signature: crate::hex::SigBytes,
+}
+
+/// Reply to a successful `POST /auth/app/token`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AppTokenResponse {
+    /// The account's display name, if Hack Club Auth provided one.
+    pub name: Option<String>,
+}

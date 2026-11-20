@@ -1,19 +1,87 @@
-//! Sisyphus server: accepts signed heartbeat uploads, stores them in
-//! Postgres, and serves a small read-only web dashboard.
+//! Sisyphus server: accounts via Hack Club Auth, signed heartbeat uploads
+//! stored in Postgres, and a small web dashboard.
 //!
-//! Configuration comes from the environment (or a `.env` file):
+//! Configuration comes from the environment (or a `.env` file, see
+//! `.env.example`):
 //! - `DATABASE_URL`: Postgres connection URL (required)
 //! - `BIND_ADDR`: address to listen on (default `0.0.0.0:8080`)
+//! - `PUBLIC_URL`: the URL people reach the server at, e.g.
+//!   `https://sisyphus.example` (default `http://localhost:8080`). Used for
+//!   the login redirect and to decide whether cookies are `Secure`.
+//! - `HACKCLUB_CLIENT_ID`, `HACKCLUB_CLIENT_SECRET`: the Hack Club Auth app.
+//!   Without them, login is disabled.
+//! - `HACKCLUB_AUTH_URL`: Hack Club Auth's base URL (default
+//!   `https://auth.hackclub.com`).
 
+use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use axum::Router;
+use axum::extract::Request;
+use axum::http::HeaderValue;
+use axum::middleware::{self, Next};
+use axum::response::Response;
 use axum::routing::{get, post};
+use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 
+mod auth;
+mod crypto;
 mod dashboard;
+mod oidc;
 mod upload;
 mod web;
+
+/// Shared by every request handler.
+#[derive(Clone)]
+pub struct AppState {
+    pub db: PgPool,
+    /// `None` when login isn't configured.
+    pub hackclub: Option<Arc<oidc::HackClubAuth>>,
+    /// Without a trailing slash.
+    pub public_url: Arc<str>,
+    /// Cookies are only `Secure` (and use the `__Host-` prefix) on https.
+    pub secure: bool,
+}
+
+impl AppState {
+    pub fn cookie_name(&self, base: &str) -> String {
+        if self.secure {
+            format!("__Host-sisyphus_{base}")
+        } else {
+            format!("sisyphus_{base}")
+        }
+    }
+
+    /// A `Set-Cookie` value. `__Host-` cookies must use `Path=/`, so cookies
+    /// with a narrower path drop to the `__Secure-` prefix.
+    pub fn cookie(&self, base: &str, value: &str, path: &str, max_age_s: i64) -> HeaderValue {
+        let name = if self.secure && path != "/" {
+            format!("__Secure-sisyphus_{base}")
+        } else {
+            self.cookie_name(base)
+        };
+        let secure = if self.secure { "; Secure" } else { "" };
+        HeaderValue::from_str(&format!(
+            "{name}={value}; Path={path}; Max-Age={max_age_s}; HttpOnly; SameSite=Lax{secure}"
+        ))
+        .expect("cookie values are hex")
+    }
+
+    pub fn clear_cookie(&self, base: &str, path: &str) -> HeaderValue {
+        self.cookie(base, "", path, 0)
+    }
+
+    /// `scheme://host[:port]` of `PUBLIC_URL`, as browsers send it in
+    /// `Origin`.
+    pub fn public_origin(&self) -> &str {
+        let after_scheme = self.public_url.find("://").map_or(0, |i| i + 3);
+        match self.public_url[after_scheme..].find('/') {
+            Some(i) => &self.public_url[..after_scheme + i],
+            None => &self.public_url,
+        }
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -25,6 +93,27 @@ async fn main() {
         std::process::exit(1);
     });
     let bind_addr = std::env::var("BIND_ADDR").unwrap_or_else(|_| "0.0.0.0:8080".to_string());
+    let public_url = std::env::var("PUBLIC_URL")
+        .ok()
+        .filter(|v| !v.trim().is_empty())
+        .unwrap_or_else(|| "http://localhost:8080".to_string())
+        .trim_end_matches('/')
+        .to_string();
+    let secure = public_url.starts_with("https://");
+    if !secure {
+        eprintln!("warning: PUBLIC_URL is not https, so cookies are not marked Secure");
+    }
+
+    let hackclub = oidc::HackClubAuth::from_env(&public_url).map(Arc::new);
+    match &hackclub {
+        Some(h) => println!(
+            "login with Hack Club enabled, redirect URI {}",
+            h.redirect_uri()
+        ),
+        None => eprintln!(
+            "warning: HACKCLUB_CLIENT_ID / HACKCLUB_CLIENT_SECRET not set, login is disabled"
+        ),
+    }
 
     let db = PgPoolOptions::new()
         .max_connections(10)
@@ -39,12 +128,23 @@ async fn main() {
         std::process::exit(1);
     }
 
+    let state = AppState {
+        db,
+        hackclub,
+        public_url: public_url.into(),
+        secure,
+    };
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
         .route("/api/upload", post(upload::upload))
         .route("/api/dashboard", get(dashboard::dashboard))
+        .merge(auth::routes())
         .merge(web::routes())
-        .with_state(db);
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            security_headers,
+        ))
+        .with_state(state);
 
     let listener = tokio::net::TcpListener::bind(&bind_addr)
         .await
@@ -59,6 +159,35 @@ async fn main() {
         })
         .await
         .expect("server error");
+}
+
+/// Security headers on every response: no framing, no MIME sniffing, no
+/// referrer (login URLs carry codes), a strict content security policy
+/// (no inline scripts), and HSTS on https.
+async fn security_headers(
+    axum::extract::State(state): axum::extract::State<AppState>,
+    request: Request,
+    next: Next,
+) -> Response {
+    let mut response = next.run(request).await;
+    let headers = response.headers_mut();
+    let set = |headers: &mut axum::http::HeaderMap, name: &'static str, value: &'static str| {
+        headers.insert(name, HeaderValue::from_static(value));
+    };
+    set(
+        headers,
+        "content-security-policy",
+        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; \
+         font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; \
+         form-action 'self'",
+    );
+    set(headers, "x-frame-options", "DENY");
+    set(headers, "x-content-type-options", "nosniff");
+    set(headers, "referrer-policy", "no-referrer");
+    if state.secure {
+        set(headers, "strict-transport-security", "max-age=31536000");
+    }
+    response
 }
 
 /// The server's clock (unix ms). This is the trusted time.

@@ -1,13 +1,14 @@
-//! `GET /api/dashboard`: what the web page shows. Read-only, no accounts yet.
+//! `GET /api/dashboard`: the logged-in user's own devices and heartbeats.
+//! 401 without a session.
 
 use axum::Json;
 use axum::extract::State;
-use axum::http::StatusCode;
+use axum::http::{HeaderMap, StatusCode};
 use serde::Serialize;
 use sisyphus_common::api::OFFLINE_THRESHOLD_MS;
 use sqlx::{PgPool, Row};
 
-use crate::now_ms;
+use crate::{AppState, auth, now_ms};
 
 /// How many recent heartbeats the page lists.
 const RECENT: i64 = 50;
@@ -38,24 +39,36 @@ struct Recent {
     offline: bool,
 }
 
-pub async fn dashboard(State(db): State<PgPool>) -> Result<Json<Dashboard>, StatusCode> {
-    load(&db).await.map(Json).map_err(|e| {
+pub async fn dashboard(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> Result<Json<Dashboard>, StatusCode> {
+    let user = auth::current_user(&state, &headers)
+        .await
+        .ok_or(StatusCode::UNAUTHORIZED)?;
+    load(&state.db, user.id).await.map(Json).map_err(|e| {
         eprintln!("dashboard failed: {e}");
         StatusCode::INTERNAL_SERVER_ERROR
     })
 }
 
-async fn load(db: &PgPool) -> Result<Dashboard, sqlx::Error> {
-    let total_heartbeats: i64 = sqlx::query("SELECT count(*) AS n FROM heartbeats")
-        .fetch_one(db)
-        .await?
-        .get("n");
+async fn load(db: &PgPool, user_id: i64) -> Result<Dashboard, sqlx::Error> {
+    let total_heartbeats: i64 = sqlx::query(
+        "SELECT count(*) AS n FROM heartbeats h
+         JOIN devices d ON d.device_id = h.device_id WHERE d.user_id = $1",
+    )
+    .bind(user_id)
+    .fetch_one(db)
+    .await?
+    .get("n");
 
     let devices = sqlx::query(
         "SELECT d.device_id, d.last_seen_ms, count(h.seq) AS heartbeats
          FROM devices d LEFT JOIN heartbeats h ON h.device_id = d.device_id
+         WHERE d.user_id = $1
          GROUP BY d.device_id ORDER BY d.last_seen_ms DESC",
     )
+    .bind(user_id)
     .fetch_all(db)
     .await?
     .into_iter()
@@ -67,10 +80,13 @@ async fn load(db: &PgPool) -> Result<Dashboard, sqlx::Error> {
     .collect();
 
     let recent = sqlx::query(
-        "SELECT device_id, claimed_ms, received_ms,
-                body->>'app' AS app, body->>'project' AS project
-         FROM heartbeats ORDER BY received_ms DESC, seq DESC LIMIT $1",
+        "SELECT h.device_id, h.claimed_ms, h.received_ms,
+                h.body->>'app' AS app, h.body->>'project' AS project
+         FROM heartbeats h JOIN devices d ON d.device_id = h.device_id
+         WHERE d.user_id = $1
+         ORDER BY h.received_ms DESC, h.seq DESC LIMIT $2",
     )
+    .bind(user_id)
     .bind(RECENT)
     .fetch_all(db)
     .await?

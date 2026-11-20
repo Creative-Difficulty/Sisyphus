@@ -57,9 +57,43 @@ header, main {
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   padding-top: 20px;
 }
+header h1 { flex: 1; }
+
+[hidden] { display: none !important; }
+
+.account { display: flex; align-items: center; gap: 14px; font-size: 15px; }
+
+/* A plain text button that turns pink on hover. */
+.link {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+}
+.link:hover { color: var(--pink); }
+
+/* The main button: pink with a white label, fully rounded like the client. */
+.pill {
+  display: inline-block;
+  background: var(--pink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 12px 30px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.pill:hover { filter: brightness(1.08); }
+
+.welcome, .message {
+  text-align: center;
+  padding-top: 18vh;
+}
+.welcome p, .message p { margin-bottom: 24px; }
+.message h1 { margin-bottom: 16px; }
 
 h1 { font-weight: 600; font-size: 30px; }
 h2 { font-weight: 600; font-size: 22px; margin-bottom: 12px; }

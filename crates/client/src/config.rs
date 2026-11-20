@@ -10,6 +10,9 @@ use std::path::PathBuf;
 
 use serde_json::{Value, json};
 
+/// Where the Sisyphus server is, unless the config says otherwise.
+pub const DEFAULT_SERVER_URL: &str = "http://localhost:8080";
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Config {
     /// Ids of the agent integrations the user connected
@@ -17,6 +20,16 @@ pub struct Config {
     pub connected_agents: Vec<String>,
     /// Dark mode chosen in the window. `None` follows the OS.
     pub dark_mode: Option<bool>,
+    /// The Sisyphus server; `None` uses [`DEFAULT_SERVER_URL`].
+    pub server_url: Option<String>,
+    /// The account this device was linked to, once logged in.
+    pub account: Option<Account>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Account {
+    /// Display name from Hack Club, if it has one.
+    pub name: Option<String>,
 }
 
 impl Config {
@@ -56,6 +69,16 @@ impl Config {
         std::fs::rename(tmp, path)
     }
 
+    /// The Sisyphus server's URL, without a trailing slash.
+    pub fn server_url(&self) -> String {
+        self.server_url
+            .as_deref()
+            .filter(|u| !u.trim().is_empty())
+            .unwrap_or(DEFAULT_SERVER_URL)
+            .trim_end_matches('/')
+            .to_string()
+    }
+
     pub fn is_connected(&self, agent_id: &str) -> bool {
         self.connected_agents.iter().any(|a| a == agent_id)
     }
@@ -79,9 +102,18 @@ impl Config {
             })
             .unwrap_or_default();
         let dark_mode = v.get("dark_mode").and_then(Value::as_bool);
+        let server_url = v
+            .get("server_url")
+            .and_then(Value::as_str)
+            .map(str::to_string);
+        let account = v.get("account").filter(|a| a.is_object()).map(|a| Account {
+            name: a.get("name").and_then(Value::as_str).map(str::to_string),
+        });
         Self {
             connected_agents,
             dark_mode,
+            server_url,
+            account,
         }
     }
 
@@ -89,6 +121,8 @@ impl Config {
         json!({
             "connected_agents": self.connected_agents,
             "dark_mode": self.dark_mode,
+            "server_url": self.server_url,
+            "account": self.account.as_ref().map(|a| json!({ "name": a.name })),
         })
     }
 }
@@ -113,7 +147,13 @@ mod tests {
         let mut c = Config::default();
         c.set_connected("claude-code", true);
         c.dark_mode = Some(true);
+        c.server_url = Some("https://sisyphus.example/".to_string());
+        c.account = Some(Account {
+            name: Some("Ada".to_string()),
+        });
         assert_eq!(Config::from_json(&c.to_json()), c);
+        assert_eq!(c.server_url(), "https://sisyphus.example");
+        assert_eq!(Config::default().server_url(), DEFAULT_SERVER_URL);
         let v = json!({ "connected_agents": ["a", 3], "other": true });
         assert_eq!(Config::from_json(&v).connected_agents, vec!["a"]);
     }

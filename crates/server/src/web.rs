@@ -5,17 +5,19 @@ use axum::Router;
 use axum::http::header;
 use axum::response::IntoResponse;
 use axum::routing::get;
-use sqlx::PgPool;
+
+use crate::AppState;
 
 const INDEX: &str = include_str!("../web/index.html");
 const STYLE: &str = include_str!("../web/style.css");
 const SCRIPT: &str = include_str!("../web/app.js");
+const THEME_SCRIPT: &str = include_str!("../web/theme.js");
 // The same Fredoka files as the client (SIL Open Font License).
 const FONT_REGULAR: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-Regular.ttf");
 const FONT_SEMIBOLD: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-SemiBold.ttf");
 const FONT_LICENSE: &str = include_str!("../../client/assets/fonts/Fredoka-OFL.txt");
 
-pub fn routes() -> Router<PgPool> {
+pub fn routes() -> Router<AppState> {
     Router::new()
         .route(
             "/",
@@ -25,6 +27,10 @@ pub fn routes() -> Router<PgPool> {
         .route(
             "/app.js",
             get(|| async { asset("text/javascript", SCRIPT) }),
+        )
+        .route(
+            "/theme.js",
+            get(|| async { asset("text/javascript", THEME_SCRIPT) }),
         )
         .route(
             "/fonts/Fredoka-Regular.ttf",

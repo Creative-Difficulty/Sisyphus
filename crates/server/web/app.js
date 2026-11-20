@@ -1,5 +1,6 @@
-// Fills the page from /api/dashboard and refreshes it every 10 seconds.
-// Data is only ever inserted as text, never as HTML.
+// Shows the login screen or, once logged in, the user's dashboard from
+// /api/dashboard, refreshed every 10 seconds. Data is only ever inserted as
+// text, never as HTML.
 
 const REFRESH_MS = 10_000;
 
@@ -59,10 +60,27 @@ function render(data) {
   );
 }
 
+function show(loggedIn, name) {
+  document.getElementById("welcome").hidden = loggedIn;
+  document.getElementById("dashboard").hidden = !loggedIn;
+  document.getElementById("logout").hidden = !loggedIn;
+  const account = document.getElementById("account-name");
+  account.hidden = !loggedIn || !name;
+  account.textContent = name || "";
+}
+
 async function refresh() {
   try {
-    const response = await fetch("/api/dashboard");
-    if (response.ok) render(await response.json());
+    const response = await fetch("/api/dashboard", { credentials: "same-origin" });
+    if (response.status === 401) {
+      show(false);
+      return;
+    }
+    if (!response.ok) return;
+    const data = await response.json();
+    const me = await fetch("/api/me", { credentials: "same-origin" });
+    show(true, me.ok ? (await me.json()).name : null);
+    render(data);
   } catch (_) {
     // Keep showing the last data; the next refresh tries again.
   }

@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sisyphus</title>
   <link rel="stylesheet" href="/style.css">
-  <script>
-    // Apply a saved light/dark choice before the page paints.
-    try {
-      const saved = localStorage.getItem("sisyphus-theme");
-      if (saved) document.documentElement.dataset.theme = saved;
-    } catch (_) {}
-  </script>
+  <script src="/theme.js"></script>
 </head>
 <body>
   <header>
     <h1>Sisyphus</h1>
+    <div class="account">
+      <span id="account-name" class="muted" hidden></span>
+      <form id="logout" method="post" action="/auth/logout" hidden>
+        <button class="link" type="submit">Log out</button>
+      </form>
+    </div>
     <button id="theme" class="icon" aria-label="Switch light or dark mode">
       <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
         <path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.2 6.2 0 0 0 10.1 10.1Z"/>
@@ -34,7 +34,12 @@
     </button>
   </header>
 
-  <main>
+  <main id="welcome" class="welcome" hidden>
+    <p class="muted">Time you spend building with AI, counted honestly.</p>
+    <a class="pill" href="/auth/login">Log in with Hack Club</a>
+  </main>
+
+  <main id="dashboard" hidden>
     <section class="today">
       <p class="muted">Recorded today</p>
       <!-- Placeholder until the server credits time. -->

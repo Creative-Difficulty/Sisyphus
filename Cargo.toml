@@ -17,5 +17,8 @@ axum = "0.8"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal"] }
 sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "postgres", "migrate", "macros"] }
 dotenvy = "0.15"
+ureq = { version = "3", features = ["json"] }
+jsonwebtoken = { version = "11", default-features = false, features = ["rust_crypto"] }
+getrandom = "0.4"
 sisyphus-common = { path = "crates/common" }
 iced = { version = "0.14", features = ["svg"] }
