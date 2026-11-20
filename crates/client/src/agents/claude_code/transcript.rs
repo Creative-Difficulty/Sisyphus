@@ -50,7 +50,11 @@ impl TranscriptParser {
         let Ok(entry) = serde_json::from_str::<Value>(line) else {
             return Vec::new();
         };
-        if let Some(t) = entry.get("timestamp").and_then(Value::as_str).and_then(parse_timestamp_ms) {
+        if let Some(t) = entry
+            .get("timestamp")
+            .and_then(Value::as_str)
+            .and_then(parse_timestamp_ms)
+        {
             self.last_time_ms = t;
         }
         let time_ms = self.last_time_ms;
@@ -70,7 +74,10 @@ impl TranscriptParser {
             Some("summary") => self.title_events(&entry, "summary", false),
             _ => Vec::new(),
         };
-        kinds.into_iter().map(|kind| AgentEvent { time_ms, kind }).collect()
+        kinds
+            .into_iter()
+            .map(|kind| AgentEvent { time_ms, kind })
+            .collect()
     }
 
     fn title_events(&mut self, entry: &Value, field: &str, custom: bool) -> Vec<AgentEventKind> {
@@ -86,7 +93,9 @@ impl TranscriptParser {
             return Vec::new();
         }
         self.title = Some(title.to_string());
-        vec![AgentEventKind::TitleChanged { title: title.to_string() }]
+        vec![AgentEventKind::TitleChanged {
+            title: title.to_string(),
+        }]
     }
 }
 
@@ -125,7 +134,9 @@ fn user_events(entry: &Value) -> Vec<AgentEventKind> {
             }
             // A prompt with pasted images is split into several text blocks.
             if !prompt.is_empty() {
-                out.push(AgentEventKind::Prompt { text: prompt.join("\n") });
+                out.push(AgentEventKind::Prompt {
+                    text: prompt.join("\n"),
+                });
             }
             out
         }
@@ -164,13 +175,20 @@ fn text_events(text: &str, from_human: bool) -> Option<AgentEventKind> {
     if trimmed.is_empty() {
         return None;
     }
-    Some(AgentEventKind::Prompt { text: text.to_string() })
+    Some(AgentEventKind::Prompt {
+        text: text.to_string(),
+    })
 }
 
 fn tool_result_event(entry: &Value, block: &Value) -> AgentEventKind {
-    let id = block.get("tool_use_id").and_then(Value::as_str).unwrap_or("").to_string();
+    let id = block
+        .get("tool_use_id")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
     let is_error = block.get("is_error").and_then(Value::as_bool) == Some(true);
-    let rejected = entry.get("toolUseResult").and_then(Value::as_str) == Some("User rejected tool use")
+    let rejected = entry.get("toolUseResult").and_then(Value::as_str)
+        == Some("User rejected tool use")
         || content_text(block.get("content")).is_some_and(|t| t.starts_with(REJECTED));
     let outcome = match (rejected, is_error) {
         (true, _) => ToolOutcome::Rejected,
@@ -185,7 +203,9 @@ fn tool_result_event(entry: &Value, block: &Value) -> AgentEventKind {
 fn content_text(content: Option<&Value>) -> Option<&str> {
     match content? {
         Value::String(s) => Some(s),
-        Value::Array(blocks) => blocks.iter().find_map(|b| b.get("text").and_then(Value::as_str)),
+        Value::Array(blocks) => blocks
+            .iter()
+            .find_map(|b| b.get("text").and_then(Value::as_str)),
         _ => None,
     }
 }
@@ -200,11 +220,23 @@ fn assistant_events(entry: &Value) -> Vec<AgentEventKind> {
     blocks
         .iter()
         .filter_map(|block| {
-            let str_field = |name| block.get(name).and_then(Value::as_str).unwrap_or("").to_string();
+            let str_field = |name| {
+                block
+                    .get(name)
+                    .and_then(Value::as_str)
+                    .unwrap_or("")
+                    .to_string()
+            };
             match block.get("type").and_then(Value::as_str)? {
-                "text" => Some(AgentEventKind::Response { text: str_field("text") }),
-                "thinking" => Some(AgentEventKind::Thinking { text: str_field("thinking") }),
-                "redacted_thinking" => Some(AgentEventKind::Thinking { text: String::new() }),
+                "text" => Some(AgentEventKind::Response {
+                    text: str_field("text"),
+                }),
+                "thinking" => Some(AgentEventKind::Thinking {
+                    text: str_field("thinking"),
+                }),
+                "redacted_thinking" => Some(AgentEventKind::Thinking {
+                    text: String::new(),
+                }),
                 "tool_use" | "server_tool_use" => Some(AgentEventKind::ToolCall {
                     id: str_field("id"),
                     name: str_field("name"),
@@ -240,7 +272,9 @@ pub fn parse_timestamp_ms(s: &str) -> Option<u64> {
     let b = s.as_bytes();
     let num = |r: std::ops::Range<usize>| -> Option<i64> {
         let part = s.get(r)?;
-        part.bytes().all(|c| c.is_ascii_digit()).then(|| part.parse().ok())?
+        part.bytes()
+            .all(|c| c.is_ascii_digit())
+            .then(|| part.parse().ok())?
     };
     if b.len() < 20 || b[4] != b'-' || b[7] != b'-' || !matches!(b[10], b'T' | b't' | b' ') {
         return None;
@@ -302,8 +336,14 @@ mod tests {
     #[test]
     fn timestamps() {
         assert_eq!(parse_timestamp_ms("1970-01-01T00:00:00Z"), Some(0));
-        assert_eq!(parse_timestamp_ms("2026-11-01T20:17:04.957Z"), Some(1_793_564_224_957));
-        assert_eq!(parse_timestamp_ms("2026-11-01T21:17:04.9+01:00"), Some(1_793_564_224_900));
+        assert_eq!(
+            parse_timestamp_ms("2026-11-01T20:17:04.957Z"),
+            Some(1_793_564_224_957)
+        );
+        assert_eq!(
+            parse_timestamp_ms("2026-11-01T21:17:04.9+01:00"),
+            Some(1_793_564_224_900)
+        );
         assert_eq!(parse_timestamp_ms("2026-11-01"), None);
         assert_eq!(parse_timestamp_ms("2026-13-01T00:00:00Z"), None);
     }
@@ -314,7 +354,15 @@ mod tests {
         let ev = p.parse_line(
             r#"{"type":"user","message":{"role":"user","content":"Fix it"},"timestamp":"1970-01-01T00:00:01Z","origin":{"kind":"human"}}"#,
         );
-        assert_eq!(ev, vec![AgentEvent { time_ms: 1000, kind: AgentEventKind::Prompt { text: "Fix it".into() } }]);
+        assert_eq!(
+            ev,
+            vec![AgentEvent {
+                time_ms: 1000,
+                kind: AgentEventKind::Prompt {
+                    text: "Fix it".into()
+                }
+            }]
+        );
     }
 
     #[test]
@@ -335,7 +383,13 @@ mod tests {
     fn command() {
         let mut p = TranscriptParser::new();
         let line = r#"{"type":"user","message":{"content":"<command-name>/model</command-name>\n<command-message>model</command-message>\n<command-args>opus</command-args>"}}"#;
-        assert_eq!(kinds(&mut p, line), vec![AgentEventKind::Command { name: "/model".into(), args: "opus".into() }]);
+        assert_eq!(
+            kinds(&mut p, line),
+            vec![AgentEventKind::Command {
+                name: "/model".into(),
+                args: "opus".into()
+            }]
+        );
     }
 
     #[test]
@@ -343,8 +397,18 @@ mod tests {
         let mut p = TranscriptParser::new();
         let plain = r#"{"type":"user","message":{"content":[{"type":"text","text":"[Request interrupted by user]"}]}}"#;
         let tool = r#"{"type":"user","message":{"content":"[Request interrupted by user for tool use]\n"}}"#;
-        assert_eq!(kinds(&mut p, plain), vec![AgentEventKind::Interrupt { during_tool_use: false }]);
-        assert_eq!(kinds(&mut p, tool), vec![AgentEventKind::Interrupt { during_tool_use: true }]);
+        assert_eq!(
+            kinds(&mut p, plain),
+            vec![AgentEventKind::Interrupt {
+                during_tool_use: false
+            }]
+        );
+        assert_eq!(
+            kinds(&mut p, tool),
+            vec![AgentEventKind::Interrupt {
+                during_tool_use: true
+            }]
+        );
     }
 
     #[test]
@@ -354,9 +418,15 @@ mod tests {
         assert_eq!(
             kinds(&mut p, line),
             vec![
-                AgentEventKind::Thinking { text: String::new() },
+                AgentEventKind::Thinking {
+                    text: String::new()
+                },
                 AgentEventKind::Response { text: "Hi".into() },
-                AgentEventKind::ToolCall { id: "t1".into(), name: "Bash".into(), input: serde_json::json!({"command":"ls"}) },
+                AgentEventKind::ToolCall {
+                    id: "t1".into(),
+                    name: "Bash".into(),
+                    input: serde_json::json!({"command":"ls"})
+                },
             ]
         );
     }
@@ -367,7 +437,10 @@ mod tests {
         let ok = r#"{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","content":"out"}]}}"#;
         let err = r#"{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","is_error":true,"content":"boom"}]}}"#;
         let rej = r#"{"type":"user","toolUseResult":"User rejected tool use","message":{"content":[{"type":"tool_result","tool_use_id":"c","is_error":true,"content":"The user doesn't want to proceed with this tool use."}]}}"#;
-        let result = |id: &str, outcome| AgentEventKind::ToolResult { id: id.into(), outcome };
+        let result = |id: &str, outcome| AgentEventKind::ToolResult {
+            id: id.into(),
+            outcome,
+        };
         assert_eq!(kinds(&mut p, ok), vec![result("a", ToolOutcome::Success)]);
         assert_eq!(kinds(&mut p, err), vec![result("b", ToolOutcome::Error)]);
         assert_eq!(kinds(&mut p, rej), vec![result("c", ToolOutcome::Rejected)]);
@@ -391,7 +464,12 @@ mod tests {
         let mut p = TranscriptParser::new();
         let end = r#"{"type":"system","subtype":"turn_duration","durationMs":42}"#;
         let compact = r#"{"type":"system","subtype":"compact_boundary"}"#;
-        assert_eq!(kinds(&mut p, end), vec![AgentEventKind::TurnEnd { duration_ms: Some(42) }]);
+        assert_eq!(
+            kinds(&mut p, end),
+            vec![AgentEventKind::TurnEnd {
+                duration_ms: Some(42)
+            }]
+        );
         assert_eq!(kinds(&mut p, compact), vec![AgentEventKind::Compacted]);
     }
 }

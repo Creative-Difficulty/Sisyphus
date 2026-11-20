@@ -8,8 +8,10 @@ use std::thread::JoinHandle;
 use std::time::Duration;
 
 use crate::agents::claude_code::AgentIntegrationClaudeCode;
+use crate::agents::opencode::AgentIntegrationOpenCode;
 
 pub mod claude_code;
+pub mod opencode;
 mod tail;
 
 pub trait AgentInstance {
@@ -38,10 +40,53 @@ pub trait AgentIntegration: Sync {
 
 pub enum Integration {
     ClaudeCode(AgentIntegrationClaudeCode),
+    OpenCode(AgentIntegrationOpenCode),
 }
 
 impl Integration {
-    pub const ALL: [Integration; 1] = [Integration::ClaudeCode(AgentIntegrationClaudeCode)];
+    pub const ALL: [Integration; 2] = [
+        Integration::ClaudeCode(AgentIntegrationClaudeCode),
+        Integration::OpenCode(AgentIntegrationOpenCode),
+    ];
+
+    pub fn name(&self) -> String {
+        match self {
+            Integration::ClaudeCode(i) => i.get_name(),
+            Integration::OpenCode(i) => i.get_name(),
+        }
+    }
+
+    /// The integration's sessions as trait objects. `None` if not installed.
+    pub fn instances(&self) -> Option<Vec<Box<dyn AgentInstance + '_>>> {
+        fn boxed<'a>(v: Vec<impl AgentInstance + 'a>) -> Vec<Box<dyn AgentInstance + 'a>> {
+            v.into_iter()
+                .map(|i| Box::new(i) as Box<dyn AgentInstance>)
+                .collect()
+        }
+        match self {
+            Integration::ClaudeCode(i) => i.get_instances().map(boxed),
+            Integration::OpenCode(i) => i.get_instances().map(boxed),
+        }
+    }
+
+    /// Look up one session by id.
+    pub fn instance(&self, id: &str) -> Result<Box<dyn AgentInstance>, AgentError> {
+        Ok(match self {
+            Integration::ClaudeCode(i) => Box::new(i.get_instance(id)?),
+            Integration::OpenCode(i) => Box::new(i.get_instance(id)?),
+        })
+    }
+}
+
+/// First line of `text`, cut to `max` characters.
+pub(crate) fn shorten(text: &str, max: usize) -> String {
+    let line = text.trim().lines().next().unwrap_or("");
+    if line.chars().count() <= max {
+        line.to_string()
+    } else {
+        let cut: String = line.chars().take(max - 1).collect();
+        format!("{}…", cut.trim_end())
+    }
 }
 
 /// Where an [`Attachment`] starts.
@@ -72,7 +117,11 @@ pub enum AgentEventKind {
     /// The agent's reasoning. `text` may be empty when the agent hides it.
     Thinking { text: String },
     /// The agent called a tool.
-    ToolCall { id: String, name: String, input: serde_json::Value },
+    ToolCall {
+        id: String,
+        name: String,
+        input: serde_json::Value,
+    },
     /// A tool call finished, failed, or was rejected by the user.
     ToolResult { id: String, outcome: ToolOutcome },
     /// The user stopped the agent mid-turn.
@@ -139,7 +188,11 @@ impl Attachment {
         let stop = Arc::new(AtomicBool::new(false));
         let flag = stop.clone();
         let worker = std::thread::spawn(move || worker(tx, flag));
-        Self { events: rx, stop, worker: Some(worker) }
+        Self {
+            events: rx,
+            stop,
+            worker: Some(worker),
+        }
     }
 
     /// Wait for the next event. `None` once the worker has exited.

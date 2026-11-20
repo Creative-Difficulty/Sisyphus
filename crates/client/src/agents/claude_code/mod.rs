@@ -13,7 +13,10 @@ use std::sync::atomic::Ordering;
 use std::time::UNIX_EPOCH;
 
 use crate::agents::tail;
-use crate::agents::{AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode, Attachment};
+use crate::agents::{
+    AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
+    Attachment, shorten,
+};
 
 pub mod transcript;
 
@@ -37,7 +40,9 @@ impl AgentIntegrationClaudeCode {
 
     /// Look up one session by its id.
     pub fn get_instance(&self, session_id: &str) -> Result<AgentInstanceClaudeCode, AgentError> {
-        let projects = Self::projects_dir().filter(|d| d.is_dir()).ok_or(AgentError::NotInstalled)?;
+        let projects = Self::projects_dir()
+            .filter(|d| d.is_dir())
+            .ok_or(AgentError::NotInstalled)?;
         let file = format!("{session_id}.jsonl");
         for project in fs::read_dir(projects)?.flatten() {
             let path = project.path().join(&file);
@@ -205,7 +210,10 @@ fn scan_metadata(path: &Path) -> Option<Metadata> {
     let mut first_prompt: Option<String> = None;
 
     for line in head_and_tail_lines(path).ok()? {
-        if line.contains("\"customTitle\"") || line.contains("\"aiTitle\"") || line.contains("\"type\":\"summary\"") {
+        if line.contains("\"customTitle\"")
+            || line.contains("\"aiTitle\"")
+            || line.contains("\"type\":\"summary\"")
+        {
             parser.parse_line(&line);
             continue;
         }
@@ -215,10 +223,13 @@ fn scan_metadata(path: &Path) -> Option<Metadata> {
                 .and_then(|v| v.get("cwd")?.as_str().map(PathBuf::from));
         }
         if first_prompt.is_none() && line.contains("\"type\":\"user\"") {
-            first_prompt = parser.parse_line(&line).into_iter().find_map(|e| match e.kind {
-                AgentEventKind::Prompt { text } => Some(text),
-                _ => None,
-            });
+            first_prompt = parser
+                .parse_line(&line)
+                .into_iter()
+                .find_map(|e| match e.kind {
+                    AgentEventKind::Prompt { text } => Some(text),
+                    _ => None,
+                });
         }
     }
 
@@ -239,30 +250,20 @@ fn head_and_tail_lines(path: &Path) -> std::io::Result<Vec<String>> {
         return BufReader::new(file).lines().collect();
     }
 
-    let mut read_lines = |start: u64, size: u64, skip_first: bool| -> std::io::Result<Vec<String>> {
-        file.seek(SeekFrom::Start(start))?;
-        let mut bytes = Vec::with_capacity(size as usize);
-        (&mut file).take(size).read_to_end(&mut bytes)?;
-        let text = String::from_utf8_lossy(&bytes);
-        let mut lines: Vec<&str> = text.split('\n').collect();
-        lines.pop(); // the part after the last newline is incomplete (or empty)
-        let skip = usize::from(skip_first); // starts mid-line
-        Ok(lines.into_iter().skip(skip).map(str::to_string).collect())
-    };
+    let mut read_lines =
+        |start: u64, size: u64, skip_first: bool| -> std::io::Result<Vec<String>> {
+            file.seek(SeekFrom::Start(start))?;
+            let mut bytes = Vec::with_capacity(size as usize);
+            (&mut file).take(size).read_to_end(&mut bytes)?;
+            let text = String::from_utf8_lossy(&bytes);
+            let mut lines: Vec<&str> = text.split('\n').collect();
+            lines.pop(); // the part after the last newline is incomplete (or empty)
+            let skip = usize::from(skip_first); // starts mid-line
+            Ok(lines.into_iter().skip(skip).map(str::to_string).collect())
+        };
     let mut lines = read_lines(0, SCAN_HEAD, false)?;
     lines.extend(read_lines(len - SCAN_TAIL, SCAN_TAIL, true)?);
     Ok(lines)
-}
-
-/// First line of `text`, cut to `max` characters.
-fn shorten(text: &str, max: usize) -> String {
-    let line = text.trim().lines().next().unwrap_or("");
-    if line.chars().count() <= max {
-        line.to_string()
-    } else {
-        let cut: String = line.chars().take(max - 1).collect();
-        format!("{}…", cut.trim_end())
-    }
 }
 
 fn is_uuid(s: &str) -> bool {
