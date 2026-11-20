@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crate::agents::{AgentInstance, AgentIntegration};
 
 pub struct AgentIntegrationClaudeCode;
@@ -22,7 +24,14 @@ impl AgentIntegration for AgentIntegrationClaudeCode {
 
 // TODO: This needs to have some way of storing a session id
 pub struct AgentInstanceClaudeCode {
-    title: String
+    title: String,
+    project_path: PathBuf,
+}
+
+impl Default for AgentInstanceClaudeCode {
+    fn default() -> Self {
+        Self { title: "Placeholder".to_string(), project_path: PathBuf::from("~") }
+    }
 }
 
 impl AgentInstance for AgentInstanceClaudeCode {
