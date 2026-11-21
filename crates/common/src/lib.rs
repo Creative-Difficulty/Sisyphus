@@ -12,6 +12,7 @@
 //! 4. The server computes attention, credit and struggle per session.
 
 pub mod api;
+pub mod attention;
 pub mod chain;
 pub mod heartbeat;
 pub mod hex;
