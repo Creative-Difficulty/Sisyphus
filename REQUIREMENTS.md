@@ -56,7 +56,19 @@ product must:
 - Running detection: whether an agent is mid-turn.
 - Pasted characters per prompt, from the prompt history. Agents only record
   large pastes, so small pastes count as typed.
+- Activity on every OS, without a keylogger or root: time since the last
+  input and the focused app's class, including whether the focused window
+  runs the session's agent (matched through the process tree). Not in
+  heartbeats yet.
+  - Windows: `GetLastInputInfo`, the foreground window's process.
+  - macOS: CoreGraphics idle time, `NSWorkspace`'s frontmost app.
+  - Linux X11: XScreenSaver, `_NET_ACTIVE_WINDOW`.
+  - Linux Wayland: `ext-idle-notify` (GNOME: Mutter's IdleMonitor); focus
+    from Hyprland IPC, Sway IPC, the "Window Calls" GNOME Shell extension,
+    a KWin script on KDE, or `wlr-foreign-toplevel-management`.
 - Client window (iced):
+  - on Wayland, a one-time consent popup for reading the focused app, also
+    changeable in settings
   - settings to connect and disconnect agents
   - a dashboard of recent sessions with placeholder "Recorded today" figures
   - a pink light and dark theme that follows the OS
@@ -157,7 +169,13 @@ product must:
 - Input is detected without a keylogger and without root: OS "time since last
   input" APIs plus the class of the focused app.
 - On Wayland, reading the focused app needs the user's permission: a popup
-  asks for it and explains how the data is used.
+  asks for it and explains how the data is used. Decided 2026-11-21: use the
+  most cross-compositor way that needs no root (see Built). Root would be
+  acceptable behind a clear popup, but nothing needs it: root only adds raw
+  `/dev/input` access, which is keylogger-level access.
+- GNOME doesn't expose the focused window. For now it is read through the
+  third-party "Window Calls" extension when installed, otherwise unknown.
+  Shipping our own GNOME Shell extension is for later.
 - The agent's edit calls and the working directory's changes must match up,
   file by file.
 
@@ -214,11 +232,13 @@ product must:
 
 - What file changes the agent didn't make mean (for example, edits the user
   made), and how they count.
-- How the focused app is read on Wayland once the user agrees (per
-  compositor).
 
 ## For later
 
+- Our own GNOME Shell extension for the focused app, so GNOME users don't
+  need Window Calls.
+- How an unknown focus (for example GNOME without the extension) counts in
+  a heartbeat slot.
 - Pasted error logs and stack traces are real struggle. They may need an
   exemption from the paste penalty.
 - Which embedding model (small, multilingual). The architecture comes first.

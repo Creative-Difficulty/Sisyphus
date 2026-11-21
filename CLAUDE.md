@@ -42,6 +42,7 @@ cargo fmt -p sisyphus-client                 # crates/common is not rustfmt-clea
 cargo run -p sisyphus-client                                  # open the window
 cargo run -p sisyphus-client -- sessions                      # list sessions of all agents, with running state
 cargo run -p sisyphus-client -- watch [SESSION_ID] [--replay] # print a session's events live; never exits on its own
+cargo run -p sisyphus-client -- activity                      # print idle time, focused app and per-session agent focus each second; never exits
 
 cargo run -p sisyphus-server                 # needs DATABASE_URL (from the environment or .env, see .env.example)
 ```
@@ -58,10 +59,11 @@ Three crates in `crates/`:
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
   - `heartbeat.rs` is still the v1 shape (WakaTime-style gaps, free-form `app` string). The final v2 scheme is in `REQUIREMENTS.md` ("Heartbeat scheme"); only switch to it when the user asks.
-- **`sisyphus-client`**: a library (`lib.rs`: `agents`, `config`, `device`, `gui`, `login`) plus a binary (`main.rs`).
-  - Run without arguments, the binary opens the iced window; `sessions` and `watch` are CLI commands over the same integrations.
+- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`) plus a binary (`main.rs`).
+  - Run without arguments, the binary opens the iced window; `sessions`, `watch` and `activity` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
   - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
+  - `activity/`: time since the last input and the focused app, per OS (see "Activity" below).
   - It does not yet build heartbeats, use the chain or upload anything.
 - **`sisyphus-server`**: axum + Postgres (sqlx).
   - Configured from the environment or `.env` (`.env` is git-ignored; `.env.example` lists every key): `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), `PUBLIC_URL` (login redirect and whether cookies are `Secure`), `HACKCLUB_CLIENT_ID` / `HACKCLUB_CLIENT_SECRET` (login is disabled without them), optional `HACKCLUB_AUTH_URL`.
@@ -158,6 +160,21 @@ To add an agent:
 2. Add an `Integration` variant and its arms in every `Integration` helper, including a new `id()`.
 3. Add its logo SVG to `crates/client/assets/` and an arm in `gui::style::logo`.
 
+### Activity (`crates/client/src/activity/`)
+
+Reads, without a keylogger and without root, the time since the last input (any key or mouse event; never which key) and the focused app. Not wired into heartbeats yet; the `activity` CLI command prints it.
+
+- `Monitor::new(allow_focus)`: `since_last_input()`, `focused()` → `FocusReading` (`Unknown` / `Nothing` / `App(FocusedApp { app_id, pid })`), `describe()` (which backends are in use).
+- `FocusReading::focus(session, &processes)` → the heartbeat's `Focus` class (`agent`/`terminal`/`editor`/`browser`/`other`/`none`; `None` = unknown). `classify.rs` maps app ids (Wayland app ids, X11 classes, macOS bundle ids, Windows exe names) to classes; unknown apps are `other`.
+- `agent` matching (`process.rs`): the focused window runs the session's agent if an agent process (`claude`, `opencode`, or node/bun/deno running Claude Code or opencode) whose working directory is the session's project descends from the window's process. Without a window pid (wlr-foreign-toplevel) an ancestor's executable must match the app id, which can't tell two windows of the same terminal apart. Windows can't read other processes' working directories, so there any process of that agent counts. Command lines are only read for node/bun/deno.
+- `app_id` and `pid` never leave the machine; only the `Focus` class may go into heartbeats. Window titles are never stored (sources that send them, like Hyprland or wlr, have them dropped on parse).
+- Backends:
+  - Windows (`windows.rs`): `GetLastInputInfo`; `GetForegroundWindow` → process → exe name; Toolhelp process table.
+  - macOS (`macos.rs`): `CGEventSourceSecondsSinceLastEventType`; `NSWorkspace.frontmostApplication` (bundle id, pid; kept current by the window's main run loop, so the CLI may see stale values); libproc process table and cwd, `KERN_PROCARGS2` for node command lines. No permission prompt needed.
+  - Linux X11 (`linux/x11.rs`): XScreenSaver; `_NET_ACTIVE_WINDOW`, `WM_CLASS`, `_NET_WM_PID`.
+  - Linux Wayland: idle from `ext-idle-notify` v2 input notifications (ignores idle inhibitors; 1 s resolution), or Mutter's IdleMonitor over D-Bus on GNOME. Focus, first that applies: Hyprland IPC (`j/activewindow`), Sway IPC (`get_tree`), GNOME via the third-party "Window Calls" Shell extension (`org.gnome.Shell.Extensions.Windows.List`; unknown without it), KDE via a KWin script loaded over D-Bus that calls our bus name `dev.aelx.Sisyphus` with the active window's class and pid, then `wlr-foreign-toplevel-management` (niri, river, labwc, Wayfire, …). The Wayland connection runs on its own thread, stopped when the `Monitor` is dropped.
+- On Wayland, focus is read only after the user's consent (`activity::focus_needs_consent()`, `Config::focus_allowed`).
+
 ### Local config (`config.rs`)
 
 JSON in the OS config directory:
@@ -168,6 +185,7 @@ JSON in the OS config directory:
 Fields:
 - `connected_agents`: a list of `Integration::id()`s.
 - `dark_mode`: the window's light/dark choice; absent means follow the OS.
+- `focus_allowed`: whether the user allowed reading the focused app on Wayland; absent until asked.
 - `server_url`: the Sisyphus server; absent means production, `https://sisyphus.aelx.dev` (`DEFAULT_SERVER_URL`). Changeable in Settings.
 - `account`: `{ "name": …, "server": … }` once logged in, absent when logged out. A device is linked per server, so `Config::account()` only returns the account when its `server` matches the current one; switching servers (or an older account without `server`) means logging in again. Always use `account()`, not the field.
 
@@ -184,7 +202,9 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)
+  - on Wayland only, a "Privacy" row: "See the app in front", Allow / Stop
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
+- Consent popup (`consent.rs`): on Wayland, on the dashboard, until the user answers (`focus_allowed` absent). It says what is read (only the kind of app in front, every few seconds), what isn't (titles, screen, typing; the app name stays local) and that no admin rights are needed. "Allow" / "Not now"; changeable in settings.
 - Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
@@ -221,7 +241,16 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Agents can't click in the window on Wayland. Verify by launching it and taking a screenshot (on Hyprland: `hyprctl clients -j` for the window geometry, then `grim -g`), and ask the user to click-test.
 - Launch it with `XDG_CONFIG_HOME` pointing at a temporary directory, so the user's real config isn't touched. Write a config there to reach a given state (connected agents, `dark_mode`).
 - Stop it with `pkill -x sisyphus-client`. `pkill -f` also matches the shell running the command.
-- `watch` never exits; wrap it in `timeout` when scripting.
+- `watch` and `activity` never exit; wrap them in `timeout` when scripting.
+
+### Testing activity
+
+- Run `activity` with a temporary `XDG_CONFIG_HOME` whose config has `"focus_allowed": true`.
+- Hyprland: as is. wlr-foreign-toplevel: unset `HYPRLAND_INSTANCE_SIGNATURE` (Hyprland supports the protocol too).
+- X11: `Xvfb :77`, `openbox` and `xterm` on `DISPLAY=:77`, with `WAYLAND_DISPLAY` unset and `XDG_SESSION_TYPE=x11`; `xdotool mousemove` resets the idle time.
+- Windows: `cargo build --target x86_64-pc-windows-gnu`, then run the `.exe` under `wine` with its own `WINEPREFIX` in the scratchpad, on the Xvfb display (`wine notepad` gives a focused window without touching the user's screen).
+- macOS: the workspace can't be checked for `aarch64-apple-darwin` here (ring and sqlite need Apple's SDK). Type-check and clippy `macos.rs` in a scratch crate that includes it with `#[path]` and stubs `FocusReading`, `FocusedApp`, `Process` and `agent_of`, using the workspace `Cargo.lock` and `--offline`.
+- Not testable here: Sway, GNOME, KDE. Ask the user to test those.
 
 ### Heartbeat design (decided 2026-11-20, not implemented yet)
 
@@ -250,11 +279,11 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
   - Windows: `GetLastInputInfo`
   - macOS: `CGEventSourceSecondsSinceLastEventType`
   - Linux X11: XScreenSaver extension
-  - Linux Wayland: `ext-idle-notify`. Reading the focused app needs the user's permission: a popup asks for it and explains how the data is used. How it is read per compositor is still open.
+  - Linux Wayland: `ext-idle-notify` (Mutter's IdleMonitor on GNOME). Reading the focused app needs the user's permission: a popup asks for it and explains how the data is used. Per compositor: see "Activity" above.
 - **Edits must match.** While an agent runs, the client watches its working directory. The agent's edit calls and the actual file changes must match up, file by file; the server flags it when the agent claims more than actually changed.
 - **Prompt classification.** A really small local embedding model classifies each prompt on the device. The model is deliberately not chosen yet: the architecture comes first. Only the label leaves the machine.
   - Correction prompts ("no, you did this wrong, redo it") add to struggle; they don't reduce time, for now.
   - Pasted prompts earn less than typed ones.
   - Detecting AI-generated prompts is a low-priority idea.
 - Not possible with this design: detecting deleting or rewriting inside a prompt draft.
-- Open and for-later items (unmatched file changes, Wayland focus, error-log pastes, struggle's effect on credit, the embedding model, attention decay speeds, credit for reviewing after a turn) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.
+- Open and for-later items (unmatched file changes, error-log pastes, struggle's effect on credit, the embedding model, attention decay speeds, credit for reviewing after a turn) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.
