@@ -7,7 +7,7 @@
 //! directory and where it came from.
 
 use std::fs::{self, File};
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 use std::time::UNIX_EPOCH;
 
@@ -15,7 +15,7 @@ use serde_json::Value;
 
 use crate::agents::{
     AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
-    Attachment, shorten,
+    Attachment, is_running, shorten,
 };
 
 pub mod rollout;
@@ -110,8 +110,8 @@ impl AgentInstanceCodex {
             named,
             project_path: meta.cwd,
             rollout_path: rollout_path.to_path_buf(),
+            running: is_running(turn_open(rollout_path), modified_ms(rollout_path)),
             last_activity_ms: modified_ms(rollout_path),
-            running: false,
         })
     }
 
@@ -310,6 +310,58 @@ fn first_prompt(rollout_path: &Path) -> Option<String> {
         })
 }
 
+/// Whether the newest turn marker in the rollout is a turn start, so the
+/// agent is still working (or crashed mid-turn; see [`is_running`]).
+/// Reads only the end of the file, widening the window when its lines are
+/// long (a compaction can be one huge line).
+fn turn_open(rollout_path: &Path) -> bool {
+    let Ok(mut file) = File::open(rollout_path) else {
+        return false;
+    };
+    let Ok(len) = file.metadata().map(|m| m.len()) else {
+        return false;
+    };
+    let mut window: u64 = 64 * 1024;
+    loop {
+        let start = len.saturating_sub(window);
+        let mut bytes = Vec::new();
+        if file.seek(SeekFrom::Start(start)).is_err()
+            || (&mut file).take(window).read_to_end(&mut bytes).is_err()
+        {
+            return false;
+        }
+        let mut lines: Vec<&[u8]> = bytes.split(|b| *b == b'\n').collect();
+        if start > 0 {
+            lines.remove(0); // starts mid-line
+        }
+        if let Some(open) = lines.iter().rev().find_map(|line| turn_marker(line)) {
+            return open;
+        }
+        if start == 0 || window >= TURN_SCAN_MAX {
+            return false;
+        }
+        window *= 4;
+    }
+}
+
+/// Bytes read from the end of a rollout at most, looking for a turn marker.
+const TURN_SCAN_MAX: u64 = 16 * 1024 * 1024;
+
+/// `Some(true)` for a turn start, `Some(false)` for a turn end or abort.
+fn turn_marker(line: &[u8]) -> Option<bool> {
+    // Cheap check first; most lines aren't markers.
+    let text = std::str::from_utf8(line).ok()?;
+    if !text.contains("\"event_msg\"") {
+        return None;
+    }
+    let entry: Value = serde_json::from_str(text).ok()?;
+    match entry.pointer("/payload/type").and_then(Value::as_str)? {
+        "task_started" | "turn_started" => Some(true),
+        "task_complete" | "turn_complete" | "turn_aborted" => Some(false),
+        _ => None,
+    }
+}
+
 fn modified_ms(path: &Path) -> Option<u64> {
     fs::metadata(path)
         .and_then(|m| m.modified())
@@ -483,6 +535,63 @@ pub(crate) mod tests {
                 title: "Login fixes".into()
             }
         );
+    }
+
+    #[test]
+    fn running_follows_the_newest_turn_marker() {
+        let home = temp_home("running");
+        let meta = |id| meta_line(id, "/p", r#""cli""#, Some("user"));
+        let marker = |kind: &str| {
+            format!(
+                r#"{{"timestamp":"2026-11-21T01:00:02Z","type":"event_msg","payload":{{"type":"{kind}","turn_id":"t"}}}}"#
+            )
+        };
+        let token =
+            r#"{"type":"event_msg","payload":{"type":"token_count","info":null}}"#.to_string();
+        write_rollout(
+            &home,
+            "01-00-00",
+            "open",
+            &[meta("open"), marker("task_started"), token.clone()],
+        );
+        write_rollout(
+            &home,
+            "01-00-01",
+            "done",
+            &[
+                meta("done"),
+                marker("task_started"),
+                marker("task_complete"),
+            ],
+        );
+        write_rollout(
+            &home,
+            "01-00-02",
+            "aborted",
+            &[
+                meta("aborted"),
+                marker("task_started"),
+                marker("turn_aborted"),
+            ],
+        );
+        write_rollout(&home, "01-00-03", "idle", &[meta("idle")]);
+        // A turn start followed by a line longer than the first scan window.
+        let huge = format!(
+            r#"{{"type":"compacted","payload":{{"message":"{}"}}}}"#,
+            "x".repeat(300 * 1024)
+        );
+        write_rollout(
+            &home,
+            "01-00-04",
+            "long",
+            &[meta("long"), marker("task_started"), huge],
+        );
+        let running = |id| find_session(&home, id).unwrap().is_running();
+        assert!(running("open"));
+        assert!(!running("done"));
+        assert!(!running("aborted"));
+        assert!(!running("idle"));
+        assert!(running("long"));
     }
 
     #[test]
