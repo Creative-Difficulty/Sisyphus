@@ -1,10 +1,12 @@
-# Production stack: Postgres + the Sisyphus server on port 80.
+# Production stack: Postgres, the Sisyphus server, and Caddy serving it over
+# HTTPS on ports 80 and 443.
 #
 # Run from the repo root on the server (deploy.sh does this):
 #   docker compose -f deploy/compose.yaml --env-file /opt/sisyphus/sisyphus.env up -d --build
 #
 # The env file (root-only, never in the repo) must set POSTGRES_PASSWORD,
-# PUBLIC_URL, HACKCLUB_CLIENT_ID and HACKCLUB_CLIENT_SECRET.
+# PUBLIC_URL (https://$DOMAIN), DOMAIN, HACKCLUB_CLIENT_ID and
+# HACKCLUB_CLIENT_SECRET.
 
 name: sisyphus
 
@@ -37,11 +39,29 @@ services:
       PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL in the env file}
       HACKCLUB_CLIENT_ID: ${HACKCLUB_CLIENT_ID:-}
       HACKCLUB_CLIENT_SECRET: ${HACKCLUB_CLIENT_SECRET:-}
-    ports:
-      - "80:8080"
+    # Not published: only Caddy reaches it.
     depends_on:
       db:
         condition: service_healthy
 
+  caddy:
+    image: caddy:2.10
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in the env file}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - server
+
 volumes:
   db:
+  # Certificates and the ACME account; keep them, or Let's Encrypt rate limits may hit.
+  caddy_data:
+  caddy_config:

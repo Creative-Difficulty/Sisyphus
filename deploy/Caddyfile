@@ -1,0 +1,9 @@
+# HTTPS in front of the Sisyphus server.
+#
+# Caddy gets and renews a Let's Encrypt certificate for $DOMAIN (set in the
+# env file), redirects http to https, and forwards everything to the server.
+# The DNS record must point straight at this machine (Cloudflare: DNS only).
+
+{$DOMAIN} {
+	reverse_proxy server:8080
+}
