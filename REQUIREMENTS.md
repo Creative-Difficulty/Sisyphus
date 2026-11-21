@@ -87,6 +87,8 @@ product must:
   - a web dashboard in the client's style with a sidebar: Overview (tracked
     time and counts) and Projects (each project with its tracked time);
     tracked time and projects are placeholders until crediting exists
+  - a debug view, Heartbeats, listing every heartbeat the user's devices
+    uploaded; clicking one shows the stored record in a popup
   - a Dockerfile for deployment
   - accounts via Hack Club Auth (OpenID Connect) for the website and the
     app: the server is the only OAuth client; the app logs in through it and

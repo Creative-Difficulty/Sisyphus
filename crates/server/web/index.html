@@ -43,6 +43,8 @@
     <nav class="sidebar" aria-label="Views">
       <a class="nav" href="#overview" data-view="overview">Overview</a>
       <a class="nav" href="#projects" data-view="projects">Projects</a>
+      <!-- Debug: everything the devices uploaded, as stored. -->
+      <a class="nav debug" href="#heartbeats" data-view="heartbeats">Heartbeats</a>
     </nav>
 
     <main>
@@ -65,8 +67,31 @@
         <h2>Projects</h2>
         <ul id="projects" class="bubbles"></ul>
       </section>
+
+      <section id="view-heartbeats" hidden>
+        <h2>Heartbeats</h2>
+        <p class="muted count" id="heartbeat-count"></p>
+        <ul id="heartbeats" class="bubbles"></ul>
+        <button id="more" class="link more" type="button" hidden>Show more</button>
+      </section>
     </main>
   </div>
+
+  <dialog id="heartbeat-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="dialog-title"></h2>
+        <p class="muted" id="dialog-sub"></p>
+      </div>
+      <button id="dialog-close" class="icon" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <pre id="dialog-body"></pre>
+  </dialog>
 
   <script src="/app.js"></script>
 </body>

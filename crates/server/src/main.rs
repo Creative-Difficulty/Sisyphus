@@ -132,6 +132,7 @@ async fn main() {
         .route("/api/upload", post(upload::upload))
         .route("/api/dashboard", get(dashboard::dashboard))
         .route("/api/projects", get(dashboard::projects))
+        .route("/api/heartbeats", get(dashboard::heartbeats))
         .merge(auth::routes())
         .merge(web::routes())
         .layer(middleware::from_fn_with_state(
