@@ -1,4 +1,5 @@
-//! The attention formula (decided 2026-11-21). The server credits time with
+//! The attention formula (decided 2026-11-21; leaving half-life 30 s since
+//! formula 2). The server credits time with
 //! it; the client runs the same code only to show it and compare.
 //!
 //! Per session and minute:
@@ -6,7 +7,7 @@
 //!   input while the session's agent window is in front sets it to 1.0;
 //!   while that window stays in front (from the second slot in a row) it
 //!   halves every 2 minutes, otherwise (another app, the first slot back
-//!   without input, an unknown slot) every 20 seconds. It carries over to
+//!   without input, an unknown slot) every 30 seconds. It carries over to
 //!   the session's next minute and starts at 0.0 after a gap. The minute's
 //!   multiplier is the average over its slots.
 //! - Without activity (or when no slot's focus is known) only agent events
@@ -22,7 +23,7 @@ pub const SLOT_SECS: f64 = 10.0;
 /// Attention's half-life while the agent's window stays in front.
 pub const STAY_HALF_LIFE_SECS: f64 = 120.0;
 /// Attention's half-life otherwise.
-pub const LEAVE_HALF_LIFE_SECS: f64 = 20.0;
+pub const LEAVE_HALF_LIFE_SECS: f64 = 30.0;
 /// Without activity: what agent events are worth.
 pub const PROMPT: f64 = 1.0;
 pub const INTERRUPT: f64 = 0.5;
@@ -137,7 +138,7 @@ mod tests {
         let mut list = vec![(true, A)];
         list.extend([(false, B); 5]);
         let leave = run(true, true, &list, None).carry.attention;
-        assert!((leave - 0.5f64.powf(50.0 / 20.0)).abs() < 1e-9);
+        assert!((leave - 0.5f64.powf(50.0 / 30.0)).abs() < 1e-9);
     }
 
     #[test]

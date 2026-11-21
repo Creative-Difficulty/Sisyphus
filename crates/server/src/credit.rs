@@ -22,7 +22,8 @@ use sisyphus_common::heartbeat;
 use sqlx::{PgConnection, PgPool, Row};
 
 /// The version of the calculation below.
-pub const FORMULA: i32 = 1;
+/// 1: leaving half-life 20 s. 2: 30 s.
+pub const FORMULA: i32 = 2;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so

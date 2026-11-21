@@ -258,7 +258,8 @@ product must:
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
 - Decay speeds (decided 2026-11-21): half-life 2 minutes while the agent's
-  window stays in front, 20 seconds after leaving it. The minute's
+  window stays in front, 30 seconds after leaving it (changed from 20 s
+  on 2026-11-21). The minute's
   multiplier is the average attention over its six slots.
 - With activity off (decided 2026-11-21), only agent events give attention:
   a prompt is worth 1.0 and an interrupt 0.5, falling to 0.0 at the next
