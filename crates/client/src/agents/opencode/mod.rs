@@ -5,9 +5,11 @@
 //! default). Sessions are rows of `session_v2`, their messages rows of
 //! `session_message`; see [`session`] for the message format. The database
 //! is opened read-only, and since it is in WAL mode, reading it while
-//! opencode writes is safe. The older `session`/`message`/`part` tables are
-//! from opencode v1 and were migrated into the v2 tables, so they are not
-//! read.
+//! opencode writes is safe.
+//!
+//! Older opencode versions only have the v1 `session`/`message`/`part`
+//! tables; see [`v1`]. Versions with the v2 tables migrated the v1 ones and
+//! keep them around, so v1 is only read when `session_v2` doesn't exist.
 
 use std::path::{Path, PathBuf};
 use std::sync::atomic::Ordering;
@@ -22,6 +24,7 @@ use crate::agents::{
 
 pub mod history;
 pub mod session;
+mod v1;
 
 use history::PromptHistory;
 use session::SessionParser;
@@ -51,24 +54,27 @@ impl AgentIntegrationOpenCode {
     /// Look up one session by its id.
     pub fn get_instance(&self, session_id: &str) -> Result<AgentInstanceOpenCode, AgentError> {
         let conn = Self::open()?;
+        let schema = Schema::detect(&conn)?;
         let row = conn
             .query_row(
-                &format!("{SESSION_QUERY} WHERE id = ?1"),
+                &format!("{} WHERE id = ?1", schema.session_query()),
                 params![session_id],
                 SessionRow::from_row,
             )
             .optional()
             .map_err(db_error)?
             .ok_or_else(|| AgentError::SessionNotFound(session_id.to_string()))?;
-        Ok(AgentInstanceOpenCode::from_session(&conn, row))
+        Ok(AgentInstanceOpenCode::from_session(&conn, schema, row))
     }
 
     fn list(&self) -> Result<Vec<AgentInstanceOpenCode>, AgentError> {
         let conn = Self::open()?;
+        let schema = Schema::detect(&conn)?;
         // Subagent sessions have a parent; they belong to the parent's turn.
         let mut stmt = conn
             .prepare(&format!(
-                "{SESSION_QUERY} WHERE parent_id IS NULL AND time_archived IS NULL ORDER BY time_updated DESC"
+                "{} WHERE parent_id IS NULL AND time_archived IS NULL ORDER BY time_updated DESC",
+                schema.session_query()
             ))
             .map_err(db_error)?;
         let rows = stmt
@@ -78,7 +84,7 @@ impl AgentIntegrationOpenCode {
             .map_err(db_error)?;
         Ok(rows
             .into_iter()
-            .map(|row| AgentInstanceOpenCode::from_session(&conn, row))
+            .map(|row| AgentInstanceOpenCode::from_session(&conn, schema, row))
             .collect())
     }
 }
@@ -114,7 +120,62 @@ impl AgentIntegration for AgentIntegrationOpenCode {
     }
 }
 
-const SESSION_QUERY: &str = "SELECT id, title, directory, time_updated FROM session_v2";
+/// Which tables hold the sessions.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Schema {
+    /// `session_v2` and `session_message`.
+    V2,
+    /// `session`, `message` and `part`, from versions before v2.
+    V1,
+}
+
+impl Schema {
+    fn detect(conn: &Connection) -> Result<Self, AgentError> {
+        let has_table = |name: &str| {
+            conn.query_row(
+                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?1",
+                params![name],
+                |_| Ok(()),
+            )
+            .optional()
+            .map(|found| found.is_some())
+            .map_err(db_error)
+        };
+        if has_table("session_v2")? {
+            Ok(Schema::V2)
+        } else if has_table("session")? && has_table("message")? && has_table("part")? {
+            Ok(Schema::V1)
+        } else {
+            Err(AgentError::Io(std::io::Error::other(
+                "unknown opencode database layout",
+            )))
+        }
+    }
+
+    fn session_table(self) -> &'static str {
+        match self {
+            Schema::V2 => "session_v2",
+            Schema::V1 => "session",
+        }
+    }
+
+    /// Selects the columns of a [`SessionRow`]. Append a `WHERE` or
+    /// `ORDER BY time_updated` clause.
+    fn session_query(self) -> &'static str {
+        match self {
+            Schema::V2 => "SELECT id, title, directory, time_updated FROM session_v2",
+            // A v1 session row isn't touched while the agent works, so its
+            // last activity is its newest message or part.
+            Schema::V1 => {
+                "SELECT id, title, directory, max(time_updated,
+                     coalesce((SELECT max(time_updated) FROM message WHERE session_id = s.id), 0),
+                     coalesce((SELECT max(time_updated) FROM part WHERE session_id = s.id), 0)
+                 ) AS time_updated
+                 FROM session s"
+            }
+        }
+    }
+}
 
 struct SessionRow {
     id: String,
@@ -146,16 +207,16 @@ pub struct AgentInstanceOpenCode {
 }
 
 impl AgentInstanceOpenCode {
-    fn from_session(conn: &Connection, row: SessionRow) -> Self {
+    fn from_session(conn: &Connection, schema: Schema, row: SessionRow) -> Self {
         let title = row
             .title
             .filter(|t| !is_placeholder_title(t))
-            .or_else(|| first_prompt(conn, &row.id).map(|p| shorten(&p, 60)))
+            .or_else(|| first_prompt(conn, schema, &row.id).map(|p| shorten(&p, 60)))
             .unwrap_or_else(|| "Untitled session".to_string());
         let last_activity_ms = u64::try_from(row.time_updated).ok();
         // Only sessions active recently can be running; skip the query for
         // the rest.
-        let running = is_running(true, last_activity_ms) && turn_open(conn, &row.id);
+        let running = is_running(true, last_activity_ms) && turn_open(conn, schema, &row.id);
         Self {
             session_id: row.id,
             title,
@@ -191,13 +252,13 @@ impl AgentInstance for AgentInstanceOpenCode {
 
     fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError> {
         let conn = open_read_only(&self.database_path)?;
-        let mut poller = Poller::new(&self.session_id);
+        let mut poller = Poller::new(&self.session_id, Schema::detect(&conn)?);
         poller.poll(&conn)
     }
 
     fn attach(&self, mode: AttachMode) -> Result<Attachment, AgentError> {
         let conn = open_read_only(&self.database_path)?;
-        let mut poller = Poller::new(&self.session_id);
+        let mut poller = Poller::new(&self.session_id, Schema::detect(&conn)?);
         // Read the history now so a missing session fails here, not later.
         let history = poller.poll(&conn)?;
         Ok(Attachment::spawn(move |tx, stop| {
@@ -225,6 +286,7 @@ impl AgentInstance for AgentInstanceOpenCode {
 /// Reads a session's new and changed rows on each call.
 struct Poller {
     session_id: String,
+    schema: Schema,
     parser: SessionParser,
     prompts: PromptHistory,
     /// Highest `time_updated` seen. Rows at exactly this time are read again
@@ -234,9 +296,10 @@ struct Poller {
 }
 
 impl Poller {
-    fn new(session_id: &str) -> Self {
+    fn new(session_id: &str, schema: Schema) -> Self {
         Self {
             session_id: session_id.to_string(),
+            schema,
             parser: SessionParser::new(),
             prompts: PromptHistory::default_path()
                 .map(|p| PromptHistory::load(&p))
@@ -250,7 +313,10 @@ impl Poller {
 
         let session: Option<(Option<String>, i64)> = conn
             .query_row(
-                "SELECT title, time_updated FROM session_v2 WHERE id = ?1",
+                &format!(
+                    "SELECT title, time_updated FROM {} WHERE id = ?1",
+                    self.schema.session_table()
+                ),
                 params![self.session_id],
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )
@@ -260,28 +326,20 @@ impl Poller {
             return Err(AgentError::SessionNotFound(self.session_id.clone()));
         };
 
-        let mut stmt = conn
-            .prepare_cached(
-                "SELECT id, type, time_updated, data FROM session_message
-                 WHERE session_id = ?1 AND time_updated >= ?2 ORDER BY seq",
-            )
-            .map_err(db_error)?;
-        let mut rows = stmt
-            .query(params![self.session_id, self.watermark])
-            .map_err(db_error)?;
-        let mut watermark = self.watermark;
-        while let Some(row) = rows.next().map_err(db_error)? {
-            let id: String = row.get(0).map_err(db_error)?;
-            let kind: String = row.get(1).map_err(db_error)?;
-            let updated: i64 = row.get(2).map_err(db_error)?;
-            let data: String = row.get(3).map_err(db_error)?;
-            watermark = watermark.max(updated);
-            events.extend(
-                self.parser
-                    .process(&id, &kind, updated.max(0) as u64, &data),
-            );
+        let rows = match self.schema {
+            Schema::V2 => v2_rows(conn, &self.session_id, self.watermark),
+            Schema::V1 => v1::rows(conn, &self.session_id, self.watermark),
         }
-        self.watermark = watermark;
+        .map_err(db_error)?;
+        for row in rows {
+            self.watermark = self.watermark.max(row.time_updated);
+            events.extend(self.parser.process(
+                &row.id,
+                &row.kind,
+                row.time_updated.max(0) as u64,
+                &row.data,
+            ));
+        }
 
         let title = title.filter(|t| !is_placeholder_title(t));
         events.extend(
@@ -291,6 +349,37 @@ impl Poller {
         self.prompts.fill(&mut events);
         Ok(events)
     }
+}
+
+/// One message in the shape of a v2 `session_message` row.
+struct MessageRow {
+    id: String,
+    /// `user`, `assistant`, `compaction`, ...
+    kind: String,
+    time_updated: i64,
+    /// JSON, see [`session`].
+    data: String,
+}
+
+/// The session's `session_message` rows changed at or after `watermark`.
+fn v2_rows(
+    conn: &Connection,
+    session_id: &str,
+    watermark: i64,
+) -> rusqlite::Result<Vec<MessageRow>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT id, type, time_updated, data FROM session_message
+         WHERE session_id = ?1 AND time_updated >= ?2 ORDER BY seq",
+    )?;
+    stmt.query_map(params![session_id, watermark], |r| {
+        Ok(MessageRow {
+            id: r.get(0)?,
+            kind: r.get(1)?,
+            time_updated: r.get(2)?,
+            data: r.get(3)?,
+        })
+    })?
+    .collect()
 }
 
 fn open_read_only(path: &Path) -> Result<Connection, AgentError> {
@@ -318,18 +407,24 @@ fn is_placeholder_title(title: &str) -> bool {
 /// Whether the session's newest prompt or reply step leaves the turn open:
 /// a prompt waiting for a reply, or a step that hasn't finished or will be
 /// followed by more tool calls. `idle` rows mark a finished turn.
-fn turn_open(conn: &Connection, session_id: &str) -> bool {
-    let last: Option<(String, String)> = conn
-        .query_row(
-            "SELECT type, data FROM session_message
-             WHERE session_id = ?1 AND type IN ('user', 'assistant', 'idle')
-             ORDER BY seq DESC LIMIT 1",
-            params![session_id],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        )
-        .optional()
-        .ok()
-        .flatten();
+fn turn_open(conn: &Connection, schema: Schema, session_id: &str) -> bool {
+    let last: Option<(String, String)> = match schema {
+        Schema::V2 => conn
+            .query_row(
+                "SELECT type, data FROM session_message
+                 WHERE session_id = ?1 AND type IN ('user', 'assistant', 'idle')
+                 ORDER BY seq DESC LIMIT 1",
+                params![session_id],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )
+            .optional(),
+        // v1 assistant messages have the same `time`, `error` and `finish`
+        // fields as v2 assistant rows.
+        Schema::V1 => v1::last_message(conn, session_id)
+            .map(|m| m.map(|(kind, data)| (kind.to_string(), data))),
+    }
+    .ok()
+    .flatten();
     let Some((kind, data)) = last else {
         return false;
     };
@@ -348,7 +443,10 @@ fn turn_open(conn: &Connection, session_id: &str) -> bool {
     }
 }
 
-fn first_prompt(conn: &Connection, session_id: &str) -> Option<String> {
+fn first_prompt(conn: &Connection, schema: Schema, session_id: &str) -> Option<String> {
+    if schema == Schema::V1 {
+        return v1::first_prompt(conn, session_id);
+    }
     let data: String = conn
         .query_row(
             "SELECT data FROM session_message WHERE session_id = ?1 AND type = 'user' ORDER BY seq LIMIT 1",
@@ -358,4 +456,63 @@ fn first_prompt(conn: &Connection, session_id: &str) -> Option<String> {
         .ok()?;
     let value: serde_json::Value = serde_json::from_str(&data).ok()?;
     Some(value.get("text")?.as_str()?.to_string()).filter(|t| !t.trim().is_empty())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const V1_TABLES: &str = "
+        CREATE TABLE session (id TEXT PRIMARY KEY, parent_id TEXT, directory TEXT, title TEXT,
+                              time_updated INTEGER, time_archived INTEGER);
+        CREATE TABLE message (id TEXT PRIMARY KEY, session_id TEXT, time_created INTEGER,
+                              time_updated INTEGER, data TEXT);
+        CREATE TABLE part (id TEXT PRIMARY KEY, message_id TEXT, session_id TEXT,
+                           time_created INTEGER, time_updated INTEGER, data TEXT);";
+    const V2_TABLES: &str = "
+        CREATE TABLE session_v2 (id TEXT PRIMARY KEY, parent_id TEXT, directory TEXT, title TEXT,
+                                 time_updated INTEGER, time_archived INTEGER);
+        CREATE TABLE session_message (id TEXT PRIMARY KEY, session_id TEXT, seq INTEGER,
+                                      type TEXT, time_updated INTEGER, data TEXT);";
+
+    fn db(sql: &str) -> Connection {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(sql).unwrap();
+        conn
+    }
+
+    #[test]
+    fn detects_the_schema() {
+        assert_eq!(Schema::detect(&db(V1_TABLES)).unwrap(), Schema::V1);
+        assert_eq!(Schema::detect(&db(V2_TABLES)).unwrap(), Schema::V2);
+        // Versions with v2 keep the migrated v1 tables.
+        let both = format!("{V1_TABLES}{V2_TABLES}");
+        assert_eq!(Schema::detect(&db(&both)).unwrap(), Schema::V2);
+        assert!(Schema::detect(&db("")).is_err());
+        assert!(Schema::detect(&db("CREATE TABLE session (id TEXT);")).is_err());
+    }
+
+    #[test]
+    fn v1_activity_includes_messages_and_parts() {
+        let conn = db(V1_TABLES);
+        conn.execute_batch(
+            "INSERT INTO session VALUES ('a', NULL, '/p', 't', 10, NULL), ('b', NULL, '/p', 't', 20, NULL);
+             INSERT INTO message VALUES ('m', 'a', 11, 12, '{}');
+             INSERT INTO part VALUES ('p', 'm', 'a', 11, 30, '{}');",
+        )
+        .unwrap();
+        let query = format!(
+            "{} WHERE parent_id IS NULL ORDER BY time_updated DESC",
+            Schema::V1.session_query()
+        );
+        let rows: Vec<(String, i64)> = conn
+            .prepare(&query)
+            .unwrap()
+            .query_map([], |r| Ok((r.get(0)?, r.get(3)?)))
+            .unwrap()
+            .collect::<Result<_, _>>()
+            .unwrap();
+        // `a`'s row says 10, but its newest part was written at 30.
+        assert_eq!(rows, vec![("a".to_string(), 30), ("b".to_string(), 20)]);
+    }
 }
