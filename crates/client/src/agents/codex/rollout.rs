@@ -12,20 +12,34 @@
 //!
 //! Their record types don't overlap, so both are parsed without knowing
 //! which one a file uses. Both have `event_msg` `task_complete` (a turn
-//! ended) and a top-level `compacted` line. Injected context (environment,
-//! instructions) arrives as `response_item` messages, which are not
-//! prompts. The format is undocumented, so unknown lines and fields are
-//! skipped rather than treated as errors.
+//! ended) and a top-level `compacted` line.
+//!
+//! Tool calls are `response_item` lines in both formats: `function_call`,
+//! `custom_tool_call`, `local_shell_call` and `web_search_call`, written
+//! when the model issues the call, and `function_call_output` /
+//! `custom_tool_call_output` when it finishes. The paginated format also
+//! writes an `item_completed` (`CommandExecution`, `FileChange`,
+//! `McpToolCall`) with the call's id and a status just before the output;
+//! without one, the outcome is read from the output text.
+//!
+//! Injected context (environment, instructions) arrives as `response_item`
+//! messages, which are not prompts. The format is undocumented, so unknown
+//! lines and fields are skipped rather than treated as errors.
+
+use std::collections::HashMap;
 
 use serde_json::Value;
 
 use crate::agents::time::parse_timestamp_ms;
-use crate::agents::{AgentEvent, AgentEventKind};
+use crate::agents::{AgentEvent, AgentEventKind, ToolOutcome};
 
 /// Parses one session's lines in order.
 #[derive(Debug, Default)]
 pub struct RolloutParser {
     last_time_ms: u64,
+    /// Outcomes from `item_completed` statuses, waiting for their call's
+    /// output line.
+    outcomes: HashMap<String, ToolOutcome>,
 }
 
 impl RolloutParser {
@@ -48,7 +62,8 @@ impl RolloutParser {
         let time_ms = self.last_time_ms;
         let payload = entry.get("payload").unwrap_or(&Value::Null);
         let kinds = match entry.get("type").and_then(Value::as_str) {
-            Some("event_msg") => event_msg(payload),
+            Some("event_msg") => self.event_msg(payload),
+            Some("response_item") => self.response_item(payload),
             // The paginated `ContextCompaction` item and the legacy
             // `context_compacted` event repeat this; only this line counts.
             Some("compacted") => vec![AgentEventKind::Compacted],
@@ -61,38 +76,173 @@ impl RolloutParser {
     }
 }
 
-fn event_msg(payload: &Value) -> Vec<AgentEventKind> {
-    let text = |name| payload.get(name).and_then(Value::as_str).unwrap_or("");
-    match payload.get("type").and_then(Value::as_str) {
-        Some("task_complete" | "turn_complete") => vec![AgentEventKind::TurnEnd {
-            duration_ms: payload.get("duration_ms").and_then(Value::as_u64),
-        }],
-        Some("user_message") => prompt(text("message")),
-        Some("agent_message") => response(text("message")),
-        Some("agent_reasoning") => vec![AgentEventKind::Thinking {
-            text: text("text").to_string(),
-        }],
-        Some("item_completed") => item(payload.get("item").unwrap_or(&Value::Null)),
-        _ => Vec::new(),
+impl RolloutParser {
+    fn event_msg(&mut self, payload: &Value) -> Vec<AgentEventKind> {
+        let text = |name| payload.get(name).and_then(Value::as_str).unwrap_or("");
+        match payload.get("type").and_then(Value::as_str) {
+            Some("task_complete" | "turn_complete") => vec![AgentEventKind::TurnEnd {
+                duration_ms: payload.get("duration_ms").and_then(Value::as_u64),
+            }],
+            Some("user_message") => prompt(text("message")),
+            Some("agent_message") => response(text("message")),
+            Some("agent_reasoning") => vec![AgentEventKind::Thinking {
+                text: text("text").to_string(),
+            }],
+            Some("item_completed") => self.item(payload.get("item").unwrap_or(&Value::Null)),
+            _ => Vec::new(),
+        }
+    }
+
+    /// A completed item of the paginated format.
+    fn item(&mut self, item: &Value) -> Vec<AgentEventKind> {
+        match item.get("type").and_then(Value::as_str) {
+            Some("UserMessage") => prompt(&joined(item.get("content"), "text")),
+            Some("AgentMessage") => response(&joined(item.get("content"), "text")),
+            Some("Reasoning") => {
+                let summary = strings(item.get("summary_text"));
+                let text = if summary.is_empty() {
+                    strings(item.get("raw_content"))
+                } else {
+                    summary
+                };
+                vec![AgentEventKind::Thinking { text }]
+            }
+            // A command the user ran with `!` in the prompt. It has no tool
+            // call or output line.
+            Some("CommandExecution")
+                if item.get("source").and_then(Value::as_str) == Some("user_shell") =>
+            {
+                vec![AgentEventKind::Command {
+                    name: "!".to_string(),
+                    args: shell_command(item.get("command")),
+                }]
+            }
+            // The call's output line follows and becomes the result.
+            Some("CommandExecution" | "FileChange" | "McpToolCall") => {
+                let id = item.get("id").and_then(Value::as_str).unwrap_or("");
+                let outcome = match item.get("status").and_then(Value::as_str) {
+                    Some("completed") => Some(ToolOutcome::Success),
+                    Some("failed") => Some(ToolOutcome::Error),
+                    Some("declined") => Some(ToolOutcome::Rejected),
+                    _ => None,
+                };
+                if let (false, Some(outcome)) = (id.is_empty(), outcome) {
+                    self.outcomes.insert(id.to_string(), outcome);
+                }
+                Vec::new()
+            }
+            _ => Vec::new(),
+        }
+    }
+
+    fn response_item(&mut self, payload: &Value) -> Vec<AgentEventKind> {
+        let str_field = |name| payload.get(name).and_then(Value::as_str).unwrap_or("");
+        let call = |name: &str, input: Value| {
+            vec![AgentEventKind::ToolCall {
+                id: str_field("call_id").to_string(),
+                name: name.to_string(),
+                input,
+            }]
+        };
+        match payload.get("type").and_then(Value::as_str) {
+            Some("function_call") => {
+                // The arguments are a JSON document inside a string.
+                let args = str_field("arguments");
+                let input =
+                    serde_json::from_str(args).unwrap_or_else(|_| Value::String(args.to_string()));
+                call(str_field("name"), input)
+            }
+            Some("custom_tool_call") => call(
+                str_field("name"),
+                payload.get("input").cloned().unwrap_or(Value::Null),
+            ),
+            Some("local_shell_call") => call(
+                "local_shell",
+                payload.get("action").cloned().unwrap_or(Value::Null),
+            ),
+            // Runs on the provider's side: no output line follows.
+            Some("web_search_call") => call(
+                "web_search",
+                payload.get("action").cloned().unwrap_or(Value::Null),
+            ),
+            Some("function_call_output" | "custom_tool_call_output") => {
+                let id = str_field("call_id").to_string();
+                let outcome = self
+                    .outcomes
+                    .remove(&id)
+                    .unwrap_or_else(|| outcome_of(&output_text(payload.get("output"))));
+                vec![AgentEventKind::ToolResult { id, outcome }]
+            }
+            _ => Vec::new(),
+        }
     }
 }
 
-/// A completed item of the paginated format.
-fn item(item: &Value) -> Vec<AgentEventKind> {
-    match item.get("type").and_then(Value::as_str) {
-        Some("UserMessage") => prompt(&joined(item.get("content"), "text")),
-        Some("AgentMessage") => response(&joined(item.get("content"), "text")),
-        Some("Reasoning") => {
-            let summary = strings(item.get("summary_text"));
-            let text = if summary.is_empty() {
-                strings(item.get("raw_content"))
-            } else {
-                summary
-            };
-            vec![AgentEventKind::Thinking { text }]
-        }
-        _ => Vec::new(),
+/// A command's text: the last element of an argv such as
+/// `["/bin/zsh", "-lc", "git log"]`, or the string itself.
+fn shell_command(command: Option<&Value>) -> String {
+    match command {
+        Some(Value::String(s)) => s.clone(),
+        Some(Value::Array(argv)) => argv
+            .last()
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
+        _ => String::new(),
     }
+}
+
+/// A tool output as text. It is a string, a list of content items, or
+/// (older versions) an object with `content` or `output`.
+fn output_text(output: Option<&Value>) -> String {
+    match output {
+        Some(Value::String(s)) => s.clone(),
+        Some(Value::Array(_)) => joined(output, "text"),
+        Some(Value::Object(o)) => o
+            .get("content")
+            .or_else(|| o.get("output"))
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
+        _ => String::new(),
+    }
+}
+
+/// A tool call's outcome from its output text, for outputs without a
+/// status: the legacy format, and tools other than commands and edits.
+fn outcome_of(output: &str) -> ToolOutcome {
+    if output.contains("rejected by user") {
+        return ToolOutcome::Rejected;
+    }
+    let failed = output.starts_with("aborted by user")
+        || output.contains("\naborted by user")
+        || output.starts_with("apply_patch verification failed")
+        || output.starts_with("exec_command failed")
+        || exit_code(output).is_some_and(|code| code != 0);
+    if failed {
+        ToolOutcome::Error
+    } else {
+        ToolOutcome::Success
+    }
+}
+
+/// The exit code a shell tool reported, if any: `Exit code: N` (shell
+/// tool), `Process exited with code N` (unified exec), or a JSON document
+/// with `metadata.exit_code` (older versions).
+fn exit_code(output: &str) -> Option<i64> {
+    if output.starts_with('{')
+        && let Ok(doc) = serde_json::from_str::<Value>(output)
+    {
+        return doc.pointer("/metadata/exit_code").and_then(Value::as_i64);
+    }
+    // The code is in the header lines before the command's own output.
+    output.lines().take(6).find_map(|line| {
+        line.strip_prefix("Exit code: ")
+            .or_else(|| line.strip_prefix("Process exited with code "))?
+            .trim()
+            .parse()
+            .ok()
+    })
 }
 
 fn prompt(text: &str) -> Vec<AgentEventKind> {
@@ -246,6 +396,154 @@ mod tests {
         ] {
             assert_eq!(kinds(&mut p, line), vec![], "{line}");
         }
+    }
+
+    fn result(id: &str, outcome: ToolOutcome) -> Vec<AgentEventKind> {
+        vec![AgentEventKind::ToolResult {
+            id: id.into(),
+            outcome,
+        }]
+    }
+
+    #[test]
+    fn tool_calls() {
+        let mut p = RolloutParser::new();
+        let function = r#"{"type":"response_item","payload":{"type":"function_call","name":"exec_command","arguments":"{\"cmd\":\"ls\"}","call_id":"c1"}}"#;
+        let bad_args = r#"{"type":"response_item","payload":{"type":"function_call","name":"shell","arguments":"not json","call_id":"c2"}}"#;
+        let custom = r#"{"type":"response_item","payload":{"type":"custom_tool_call","status":"completed","call_id":"c3","name":"apply_patch","input":"*** Begin Patch"}}"#;
+        let local = r#"{"type":"response_item","payload":{"type":"local_shell_call","call_id":"c4","status":"completed","action":{"type":"exec","command":["ls"]}}}"#;
+        let search = r#"{"type":"response_item","payload":{"type":"web_search_call","status":"completed","action":{"type":"search","query":"rust"}}}"#;
+        let call = |id: &str, name: &str, input: Value| {
+            vec![AgentEventKind::ToolCall {
+                id: id.into(),
+                name: name.into(),
+                input,
+            }]
+        };
+        assert_eq!(
+            kinds(&mut p, function),
+            call("c1", "exec_command", serde_json::json!({"cmd": "ls"}))
+        );
+        assert_eq!(
+            kinds(&mut p, bad_args),
+            call("c2", "shell", "not json".into())
+        );
+        assert_eq!(
+            kinds(&mut p, custom),
+            call("c3", "apply_patch", "*** Begin Patch".into())
+        );
+        assert_eq!(
+            kinds(&mut p, local),
+            call(
+                "c4",
+                "local_shell",
+                serde_json::json!({"type": "exec", "command": ["ls"]})
+            )
+        );
+        assert_eq!(
+            kinds(&mut p, search),
+            call(
+                "",
+                "web_search",
+                serde_json::json!({"type": "search", "query": "rust"})
+            )
+        );
+    }
+
+    #[test]
+    fn outcome_from_item_status() {
+        let mut p = RolloutParser::new();
+        let output = |id: &str| {
+            format!(
+                r#"{{"type":"response_item","payload":{{"type":"function_call_output","call_id":"{id}","output":"Process exited with code 0"}}}}"#
+            )
+        };
+        for (id, kind, status, expected) in [
+            ("a", "CommandExecution", "failed", ToolOutcome::Error),
+            ("b", "CommandExecution", "declined", ToolOutcome::Rejected),
+            ("c", "FileChange", "completed", ToolOutcome::Success),
+            ("d", "McpToolCall", "failed", ToolOutcome::Error),
+        ] {
+            let item = format!(
+                r#"{{"type":"event_msg","payload":{{"type":"item_completed","item":{{"type":"{kind}","id":"{id}","status":"{status}"}}}}}}"#
+            );
+            assert_eq!(kinds(&mut p, &item), vec![]);
+            assert_eq!(
+                kinds(&mut p, &output(id)),
+                result(id, expected),
+                "{kind} {status}"
+            );
+        }
+        // A status is used once; a later output with the same id reads its text.
+        assert_eq!(
+            kinds(&mut p, &output("a")),
+            result("a", ToolOutcome::Success)
+        );
+    }
+
+    #[test]
+    fn outcome_from_output_text() {
+        let cases = [
+            (
+                "Exit code: 0\nWall time: 0.1 seconds\nOutput:\nok",
+                ToolOutcome::Success,
+            ),
+            (
+                "Exit code: 2\nWall time: 0.1 seconds\nOutput:\n",
+                ToolOutcome::Error,
+            ),
+            (
+                "Chunk ID: ab\nWall time: 0.0003 seconds\nProcess exited with code 1\nOutput:\n",
+                ToolOutcome::Error,
+            ),
+            (
+                r#"{"output":"Success.","metadata":{"exit_code":0,"duration_seconds":0.1}}"#,
+                ToolOutcome::Success,
+            ),
+            (
+                r#"{"output":"boom","metadata":{"exit_code":1,"duration_seconds":0.1}}"#,
+                ToolOutcome::Error,
+            ),
+            ("exec command rejected by user", ToolOutcome::Rejected),
+            ("patch rejected by user", ToolOutcome::Rejected),
+            (
+                "apply_patch verification failed: no match",
+                ToolOutcome::Error,
+            ),
+            (
+                "exec_command failed: CreateProcess { message: \"denied\" }",
+                ToolOutcome::Error,
+            ),
+            ("aborted by user after 11.4s", ToolOutcome::Error),
+            (
+                "Wall time: 3.0 seconds\naborted by user",
+                ToolOutcome::Error,
+            ),
+            ("Plan updated", ToolOutcome::Success),
+            ("", ToolOutcome::Success),
+        ];
+        for (output, expected) in cases {
+            assert_eq!(outcome_of(output), expected, "{output}");
+        }
+        // Output that is a list of content items or an object.
+        let list =
+            serde_json::json!([{"type": "input_text", "text": "exec command rejected by user"}]);
+        assert_eq!(outcome_of(&output_text(Some(&list))), ToolOutcome::Rejected);
+        let object = serde_json::json!({"content": "Exit code: 1", "success": false});
+        assert_eq!(outcome_of(&output_text(Some(&object))), ToolOutcome::Error);
+    }
+
+    #[test]
+    fn user_shell_command() {
+        let mut p = RolloutParser::new();
+        let line = r#"{"type":"event_msg","payload":{"type":"item_completed","item":{"type":"CommandExecution","id":"x","command":["/bin/zsh","-lc","git log --oneline"],"source":"user_shell","status":"failed","exit_code":128}}}"#;
+        assert_eq!(
+            kinds(&mut p, line),
+            vec![AgentEventKind::Command {
+                name: "!".into(),
+                args: "git log --oneline".into()
+            }]
+        );
     }
 
     #[test]
