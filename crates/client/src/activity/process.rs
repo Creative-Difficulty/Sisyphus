@@ -328,13 +328,89 @@ const NOT_A_SESSION: &[&str] = &[
     "web",
 ];
 
+/// Codex subcommands that don't run an interactive session, from the
+/// `Subcommand` enum in `codex-rs/cli/src/main.rs` (0.171, kebab-case, with
+/// aliases), plus ones older versions had. `resume`, `fork` and no
+/// subcommand (optionally with a prompt) are sessions.
+const CODEX_NOT_A_SESSION: &[&str] = &[
+    "a",
+    "agents",
+    "app",
+    "app-server",
+    "apply",
+    "archive",
+    "cloud",
+    "cloud-tasks",
+    "completion",
+    "debug",
+    "delete",
+    "doctor",
+    "e",
+    "exec",
+    "exec-server",
+    "execpolicy",
+    "features",
+    "generate-ts",
+    "git-credential",
+    "help",
+    "login",
+    "logout",
+    "mcp",
+    "mcp-server",
+    "migrate-nfs-db",
+    "migrate-rollouts",
+    "plugin",
+    "proto",
+    "queue",
+    "remote-control",
+    "responses-api-proxy",
+    "review",
+    "sandbox",
+    "stdio-to-uds",
+    "tcp-tunnel",
+    "unarchive",
+    "update",
+];
+
+/// Codex's global options that take a separate value (`codex --help`,
+/// 0.171), skipped when looking for its subcommand.
+const CODEX_VALUE_OPTIONS: &[&str] = &[
+    "-c",
+    "--config",
+    "--enable",
+    "--disable",
+    "--remote",
+    "--remote-auth-token-env",
+    "-i",
+    "--image",
+    "-m",
+    "--model",
+    "--local-provider",
+    "-p",
+    "--profile",
+    "-s",
+    "--sandbox",
+    "-C",
+    "--cd",
+    "--add-dir",
+    "-a",
+    "--ask-for-approval",
+];
+
 /// The agent session a process runs, from its executable name and command
 /// line. Claude Code runs as `claude` (native, or node with its process
 /// title set) or as node/bun running `@anthropic-ai/claude-code`; opencode
-/// as `opencode`. Their other subcommands (`claude agents`, `claude daemon`,
-/// `opencode serve`, …) don't count.
+/// as `opencode`; Codex as its native `codex` binary or node running the
+/// `@openai/codex` launcher. Their other subcommands (`claude agents`,
+/// `claude daemon`, `opencode serve`, `codex app-server`, …) don't count.
 pub fn agent_of(name: &str, args: &[String]) -> Option<&'static str> {
     let agent = runtime_agent(name, args)?;
+    if agent == "codex" {
+        return match codex_subcommand(name, args) {
+            Some(sub) if CODEX_NOT_A_SESSION.contains(&sub) => None,
+            _ => Some(agent),
+        };
+    }
     match subcommand(name, args) {
         Some(sub) if NOT_A_SESSION.contains(&sub.as_str()) => None,
         _ => Some(agent),
@@ -380,6 +456,30 @@ fn subcommand<'a>(name: &str, args: &'a [String]) -> Option<&'a String> {
     }
 }
 
+/// Codex's subcommand: the first argument after the program (or script)
+/// that isn't an option or an option's value. Arguments after `--` are a
+/// prompt.
+fn codex_subcommand<'a>(name: &str, args: &'a [String]) -> Option<&'a str> {
+    let runs_script = matches!(base_name(name).as_str(), "node" | "bun" | "deno");
+    let mut i = if runs_script {
+        args.iter().skip(1).position(|a| !a.starts_with('-'))? + 2
+    } else {
+        1
+    };
+    while let Some(arg) = args.get(i) {
+        if arg == "--" {
+            return None;
+        }
+        if arg.starts_with('-') {
+            let takes_value = !arg.contains('=') && CODEX_VALUE_OPTIONS.contains(&arg.as_str());
+            i += if takes_value { 2 } else { 1 };
+            continue;
+        }
+        return Some(arg);
+    }
+    None
+}
+
 fn base_name(s: &str) -> String {
     let file = s.rsplit(['/', '\\']).next().unwrap_or(s).to_lowercase();
     file.strip_suffix(".exe")
@@ -393,6 +493,7 @@ fn runtime_agent(name: &str, args: &[String]) -> Option<&'static str> {
     if let Some(agent) = names.find_map(|n| match n.as_str() {
         "claude" => Some("claude-code"),
         "opencode" => Some("opencode"),
+        "codex" => Some("codex"),
         _ => None,
     }) {
         return Some(agent);
@@ -405,6 +506,10 @@ fn runtime_agent(name: &str, args: &[String]) -> Option<&'static str> {
         }
         if script.contains("opencode") {
             return Some("opencode");
+        }
+        if script.contains("@openai/codex") || matches!(base(script).as_str(), "codex" | "codex.js")
+        {
+            return Some("codex");
         }
     }
     None
@@ -441,23 +546,24 @@ fn list() -> Vec<Process> {
         }
         // Command lines are only needed to recognise agents and scripts run
         // by a JavaScript runtime; skip everyone else's.
-        let args: Vec<String> =
-            if matches!(
-                name.as_str(),
-                "node" | "bun" | "deno" | "claude" | "opencode"
-            ) || matches!(comm, "node" | "bun" | "deno" | "claude" | "opencode")
-            {
-                std::fs::read(entry.path().join("cmdline"))
-                    .map(|raw| {
-                        raw.split(|b| *b == 0)
-                            .filter(|a| !a.is_empty())
-                            .map(|a| String::from_utf8_lossy(a).into_owned())
-                            .collect()
-                    })
-                    .unwrap_or_default()
-            } else {
-                Vec::new()
-            };
+        let args: Vec<String> = if matches!(
+            name.as_str(),
+            "node" | "bun" | "deno" | "claude" | "opencode" | "codex"
+        ) || matches!(
+            comm,
+            "node" | "bun" | "deno" | "claude" | "opencode" | "codex"
+        ) {
+            std::fs::read(entry.path().join("cmdline"))
+                .map(|raw| {
+                    raw.split(|b| *b == 0)
+                        .filter(|a| !a.is_empty())
+                        .map(|a| String::from_utf8_lossy(a).into_owned())
+                        .collect()
+                })
+                .unwrap_or_default()
+        } else {
+            Vec::new()
+        };
         let agent = agent_of(comm, &args).or_else(|| agent_of(&name, &args));
         let manager = manager_of(comm, &args).or_else(|| manager_of(&name, &args));
         let cwd = agent.and_then(|_| std::fs::read_link(entry.path().join("cwd")).ok());
@@ -601,6 +707,84 @@ mod tests {
                 &s(&["node", "/x/claude-code/cli.js", "mcp", "serve"])
             ),
             None
+        );
+    }
+
+    #[test]
+    fn recognises_codex() {
+        let s = |v: &[&str]| v.iter().map(|a| a.to_string()).collect::<Vec<_>>();
+        let native =
+            "/x/node_modules/@openai/codex-darwin-arm64/vendor/aarch64-apple-darwin/bin/codex";
+        // The terminal UI, with options and their values before anything else.
+        assert_eq!(
+            agent_of(
+                "codex",
+                &s(&[native, "-a", "on-request", "-s", "workspace-write"])
+            ),
+            Some("codex")
+        );
+        assert_eq!(
+            agent_of("codex", &s(&["codex", "-c", "model=x", "fix the tests"])),
+            Some("codex")
+        );
+        assert_eq!(
+            agent_of("codex", &s(&["codex", "--config=a=b", "resume", "--last"])),
+            Some("codex")
+        );
+        assert_eq!(
+            agent_of("codex", &s(&["codex", "fork", "--last"])),
+            Some("codex")
+        );
+        assert_eq!(
+            agent_of("codex", &s(&["codex", "--", "exec"])),
+            Some("codex")
+        );
+        assert_eq!(agent_of("codex.exe", &s(&["codex.exe"])), Some("codex"));
+        // The npm launcher run by node.
+        assert_eq!(
+            agent_of(
+                "node",
+                &s(&[
+                    "node",
+                    "/x/lib/node_modules/@openai/codex/bin/codex.js",
+                    "-m",
+                    "o3"
+                ])
+            ),
+            Some("codex")
+        );
+        // The background server, non-interactive runs and tools aren't sessions,
+        // even after options.
+        for sub in [
+            "app-server",
+            "exec",
+            "e",
+            "review",
+            "login",
+            "mcp",
+            "apply",
+            "cloud",
+            "agents",
+            "delete",
+        ] {
+            assert_eq!(agent_of("codex", &s(&["codex", sub])), None, "{sub}");
+            assert_eq!(
+                agent_of("codex", &s(&["codex", "-c", "x=y", sub])),
+                None,
+                "{sub} after -c"
+            );
+        }
+        assert_eq!(
+            agent_of(
+                "node",
+                &s(&["node", "/x/@openai/codex/bin/codex.js", "exec", "hi"])
+            ),
+            None
+        );
+        // Other agents' recognition is unaffected.
+        assert_eq!(
+            agent_of("opencode", &s(&["opencode", "review"])),
+            Some("opencode")
         );
     }
 

@@ -119,7 +119,7 @@ pub fn processes() -> Vec<Process> {
             }
             let args = if matches!(
                 name.as_str(),
-                "node" | "bun" | "deno" | "claude" | "opencode"
+                "node" | "bun" | "deno" | "claude" | "opencode" | "codex"
             ) {
                 args(pid)
             } else {
