@@ -23,7 +23,7 @@ pub fn login<'a>(config: &'a Config, login: LoginState<'a>) -> Element<'a, Messa
     .spacing(10)
     .align_x(Center);
 
-    let action: Element<'_, Message> = match &config.account {
+    let action: Element<'_, Message> = match config.account() {
         Some(account) => column![
             text(account.name.as_deref().unwrap_or("Logged in")).size(20),
             continue_button(true),

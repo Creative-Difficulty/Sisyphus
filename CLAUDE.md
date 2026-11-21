@@ -24,7 +24,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 - Never trust the client clock for anything audited. The server timestamps.
 - No new dependencies without a one-line justification and the user's approval. Put new ones in `[workspace.dependencies]`.
 - Keep Windows, macOS and Linux working, and keep the client light (low-spec machines).
-- Never commit unless the user asks. After every commit, push (`git push origin main`). Before pushing, `git fetch` and check nobody else pushed in the meantime. Keep commits separate by topic.
+- Commit and push finished work automatically, without asking (`git push origin main`). Before pushing, `git fetch` and rebase if someone else pushed. Keep commits separate by topic. Pushing `main` deploys the server to production, so only push tested server changes.
 - Before committing: `cargo build`, `cargo test --workspace` and `cargo clippy` clean, `cargo fmt` applied to the crates you touched.
 - Never build, pull or run Docker/Podman images. The `Dockerfile` is for deployment only; the user dislikes Docker locally.
 
@@ -168,8 +168,8 @@ JSON in the OS config directory:
 Fields:
 - `connected_agents`: a list of `Integration::id()`s.
 - `dark_mode`: the window's light/dark choice; absent means follow the OS.
-- `server_url`: the Sisyphus server; absent means `http://localhost:8080`.
-- `account`: `{ "name": … }` once logged in, absent when logged out.
+- `server_url`: the Sisyphus server; absent means production, `https://sisyphus.aelx.dev` (`DEFAULT_SERVER_URL`). Changeable in Settings.
+- `account`: `{ "name": …, "server": … }` once logged in, absent when logged out. A device is linked per server, so `Config::account()` only returns the account when its `server` matches the current one; switching servers (or an older account without `server`) means logging in again. Always use `account()`, not the field.
 
 `device.key` (the device's private key) lives next to it.
 
@@ -184,6 +184,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)
+  - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
 - Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
@@ -209,6 +210,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Login can be tested end to end without real Hack Club credentials:
   - Run a small fake OIDC provider on `127.0.0.1` (discovery, authorize, token with PKCE check, JWKS; RS256-signed ID tokens, e.g. Python with the `cryptography` library), and point `HACKCLUB_AUTH_URL` at it. Give it a fresh key id per run, or the server keeps its cached key.
   - Drive the website flow with `curl -c/-b` cookie jars.
+  - Also test with an `https://` `PUBLIC_URL` (the server can still listen on plain http). Cookie names differ there (`__Host-` / `__Secure-` prefixes), and curl won't send `Secure` cookies over http, so pass them back with `-H "Cookie: …"`.
   - Drive the app flow by putting a stand-in `xdg-open` on `PATH` that follows the redirects with curl.
   - Keep these helpers in the scratchpad, not the repo.
 - Start helper processes with a PID file and stop them by PID. `pkill -f <pattern>` also kills the shell whose command line contains the pattern.

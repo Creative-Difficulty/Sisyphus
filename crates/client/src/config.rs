@@ -11,7 +11,7 @@ use std::path::PathBuf;
 use serde_json::{Value, json};
 
 /// Where the Sisyphus server is, unless the config says otherwise.
-pub const DEFAULT_SERVER_URL: &str = "http://localhost:8080";
+pub const DEFAULT_SERVER_URL: &str = "https://sisyphus.aelx.dev";
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Config {
@@ -22,7 +22,8 @@ pub struct Config {
     pub dark_mode: Option<bool>,
     /// The Sisyphus server; `None` uses [`DEFAULT_SERVER_URL`].
     pub server_url: Option<String>,
-    /// The account this device was linked to, once logged in.
+    /// The account this device was linked to, once logged in. Use
+    /// [`Config::account`], which only returns it for the current server.
     pub account: Option<Account>,
 }
 
@@ -30,6 +31,9 @@ pub struct Config {
 pub struct Account {
     /// Display name from Hack Club, if it has one.
     pub name: Option<String>,
+    /// The server the device was linked on. A device is linked per server,
+    /// so the account only counts while this is the current server.
+    pub server: Option<String>,
 }
 
 impl Config {
@@ -79,6 +83,14 @@ impl Config {
             .to_string()
     }
 
+    /// The logged-in account, if it belongs to the current server.
+    pub fn account(&self) -> Option<&Account> {
+        let server = self.server_url();
+        self.account.as_ref().filter(|a| {
+            a.server.as_deref().map(|s| s.trim_end_matches('/')) == Some(server.as_str())
+        })
+    }
+
     pub fn is_connected(&self, agent_id: &str) -> bool {
         self.connected_agents.iter().any(|a| a == agent_id)
     }
@@ -108,6 +120,7 @@ impl Config {
             .map(str::to_string);
         let account = v.get("account").filter(|a| a.is_object()).map(|a| Account {
             name: a.get("name").and_then(Value::as_str).map(str::to_string),
+            server: a.get("server").and_then(Value::as_str).map(str::to_string),
         });
         Self {
             connected_agents,
@@ -122,7 +135,10 @@ impl Config {
             "connected_agents": self.connected_agents,
             "dark_mode": self.dark_mode,
             "server_url": self.server_url,
-            "account": self.account.as_ref().map(|a| json!({ "name": a.name })),
+            "account": self
+                .account
+                .as_ref()
+                .map(|a| json!({ "name": a.name, "server": a.server })),
         })
     }
 }
@@ -150,11 +166,29 @@ mod tests {
         c.server_url = Some("https://sisyphus.example/".to_string());
         c.account = Some(Account {
             name: Some("Ada".to_string()),
+            server: Some("https://sisyphus.example".to_string()),
         });
         assert_eq!(Config::from_json(&c.to_json()), c);
         assert_eq!(c.server_url(), "https://sisyphus.example");
         assert_eq!(Config::default().server_url(), DEFAULT_SERVER_URL);
         let v = json!({ "connected_agents": ["a", 3], "other": true });
         assert_eq!(Config::from_json(&v).connected_agents, vec!["a"]);
+    }
+
+    #[test]
+    fn account_only_counts_on_its_server() {
+        let mut c = Config {
+            account: Some(Account {
+                name: Some("Ada".to_string()),
+                server: Some(DEFAULT_SERVER_URL.to_string()),
+            }),
+            ..Config::default()
+        };
+        assert!(c.account().is_some());
+        c.server_url = Some("http://localhost:8080".to_string());
+        assert!(c.account().is_none());
+        // Accounts saved before the server was recorded don't count.
+        c.account = Some(Account::default());
+        assert!(c.account().is_none());
     }
 }

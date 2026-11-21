@@ -1,12 +1,12 @@
 //! Settings (gear icon): a compact list of the account and the agents, in
 //! the dashboard's bubble style.
 
-use iced::widget::{button, column, container, row, scrollable, text};
+use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Center, Element, Fill};
 
 use super::{Message, style};
 use crate::agents::Integration;
-use crate::config::Config;
+use crate::config::{Config, DEFAULT_SERVER_URL};
 
 /// Connect or disconnect `Integration::ALL[index]`. Returns an error to
 /// show with it.
@@ -27,10 +27,19 @@ pub fn toggle(config: &mut Config, index: usize) -> Result<(), String> {
     Ok(())
 }
 
-pub fn view<'a>(config: &'a Config, errors: &'a [Option<String>]) -> Element<'a, Message> {
+/// The server address being edited.
+pub struct ServerState<'a> {
+    pub input: &'a str,
+    pub error: Option<&'a str>,
+}
+
+pub fn view<'a>(
+    config: &'a Config,
+    errors: &'a [Option<String>],
+    server: ServerState<'a>,
+) -> Element<'a, Message> {
     let account_name = config
-        .account
-        .as_ref()
+        .account()
         .and_then(|a| a.name.as_deref())
         .unwrap_or("Logged in");
     let account = bubble(
@@ -73,10 +82,39 @@ pub fn view<'a>(config: &'a Config, errors: &'a [Option<String>]) -> Element<'a,
         }
     }
 
+    let current = config.server_url();
+    let changed = server.input.trim().trim_end_matches('/') != current;
+    let mut server_row = row![
+        text_input(DEFAULT_SERVER_URL, server.input)
+            .on_input(Message::ServerInput)
+            .on_submit(Message::SaveServer)
+            .padding([6, 0])
+            .size(15)
+            .style(style::input)
+            .width(Fill),
+    ]
+    .spacing(14)
+    .align_y(Center);
+    if current != DEFAULT_SERVER_URL {
+        server_row = server_row.push(quiet_button("Reset", Message::ResetServer));
+    }
+    server_row = server_row.push(
+        button(text("Save").size(14))
+            .padding([6, 18])
+            .style(style::rounded(style::pink))
+            .on_press_maybe(changed.then_some(Message::SaveServer)),
+    );
+    let mut server_section = column![bubble(server_row)].spacing(8);
+    if let Some(error) = server.error {
+        server_section = server_section
+            .push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
+    }
+
     let content = column![
         text("Settings").size(26).font(style::BOLD),
         section("Account", account.into()),
         section("Agents", agents.into()),
+        section("Server", server_section.into()),
     ]
     .spacing(24);
 

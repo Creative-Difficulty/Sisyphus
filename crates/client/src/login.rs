@@ -83,7 +83,7 @@ pub fn login(server_url: &str) -> Result<Option<String>, String> {
 }
 
 /// Only send login traffic over https, except to a server on this machine.
-fn is_safe_server(url: &str) -> bool {
+pub fn is_safe_server(url: &str) -> bool {
     let local = ["http://localhost", "http://127.0.0.1", "http://[::1]"];
     url.starts_with("https://")
         || local.iter().any(|prefix| {

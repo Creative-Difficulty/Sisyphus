@@ -3,7 +3,7 @@
 
 use iced::font::Weight;
 use iced::theme::Palette;
-use iced::widget::{button, container, scrollable, svg, text};
+use iced::widget::{button, container, scrollable, svg, text, text_input};
 use iced::{Border, Color, Font, Theme};
 
 use crate::agents::Integration;
@@ -112,6 +112,19 @@ pub fn scrollbar(theme: &Theme, status: scrollable::Status) -> scrollable::Style
         vertical_rail: rail,
         horizontal_rail: rail,
         ..scrollable::default(theme, status)
+    }
+}
+
+/// A plain text field inside a bubble: no box of its own, pink selection.
+pub fn input(theme: &Theme, _status: text_input::Status) -> text_input::Style {
+    let palette = theme.palette();
+    text_input::Style {
+        background: Color::TRANSPARENT.into(),
+        border: Border::default(),
+        icon: palette.text.scale_alpha(0.55),
+        placeholder: palette.text.scale_alpha(0.4),
+        value: palette.text,
+        selection: palette.primary.scale_alpha(0.35),
     }
 }
 

@@ -47,6 +47,9 @@ struct App {
     /// A login in the browser is under way.
     login_pending: bool,
     login_error: Option<String>,
+    /// The server address as typed in settings, not yet saved.
+    server_input: String,
+    server_error: Option<String>,
 }
 
 enum Screen {
@@ -81,6 +84,12 @@ pub enum Message {
     Logout,
     /// Next first-start step.
     Continue,
+    /// The server address field in settings changed.
+    ServerInput(String),
+    /// Save the typed server address.
+    SaveServer,
+    /// Go back to the default server.
+    ResetServer,
 }
 
 impl App {
@@ -92,7 +101,10 @@ impl App {
             errors: vec![None; Integration::ALL.len()],
             login_pending: false,
             login_error: None,
+            server_input: String::new(),
+            server_error: None,
         };
+        app.server_input = app.config.server_url();
         let task = app.resume();
         let theme = iced::system::theme().map(Message::SystemTheme);
         (app, Task::batch([task, theme]))
@@ -148,7 +160,10 @@ impl App {
                 match result {
                     Ok(name) => {
                         let mut config = self.config.clone();
-                        config.account = Some(crate::config::Account { name });
+                        config.account = Some(crate::config::Account {
+                            name,
+                            server: Some(config.server_url()),
+                        });
                         if let Err(e) = config.save() {
                             self.login_error = Some(format!("Could not save: {e}"));
                         }
@@ -169,6 +184,23 @@ impl App {
                 Task::none()
             }
             Message::Continue => self.resume(),
+            Message::ServerInput(value) => {
+                self.server_input = value;
+                self.server_error = None;
+                Task::none()
+            }
+            Message::SaveServer => {
+                let url = self.server_input.trim().trim_end_matches('/').to_string();
+                if !crate::login::is_safe_server(&url) {
+                    self.server_error = Some(
+                        "Use an https:// address (http only works for localhost).".to_string(),
+                    );
+                    return Task::none();
+                }
+                let server_url = (url != crate::config::DEFAULT_SERVER_URL).then_some(url);
+                self.set_server(server_url)
+            }
+            Message::ResetServer => self.set_server(None),
         }
     }
 
@@ -182,7 +214,14 @@ impl App {
                 },
             ),
             Screen::ConnectAgents => onboarding::agents(&self.config, &self.errors),
-            Screen::Settings => settings::view(&self.config, &self.errors),
+            Screen::Settings => settings::view(
+                &self.config,
+                &self.errors,
+                settings::ServerState {
+                    input: &self.server_input,
+                    error: self.server_error.as_deref(),
+                },
+            ),
             Screen::Sessions(list) => sessions::view(list.as_deref()),
         };
         // Top left: settings from the dashboard, back from settings.
@@ -226,9 +265,28 @@ impl App {
         self.config.dark_mode.unwrap_or(self.system_dark)
     }
 
+    /// Switch servers (`None` = the default). The login belongs to the old
+    /// server, so without an account on the new one this goes back to the
+    /// login step.
+    fn set_server(&mut self, server_url: Option<String>) -> Task<Message> {
+        let mut config = self.config.clone();
+        config.server_url = server_url;
+        if let Err(e) = config.save() {
+            self.server_error = Some(format!("Could not save: {e}"));
+            return Task::none();
+        }
+        self.config = config;
+        self.server_input = self.config.server_url();
+        self.server_error = None;
+        if self.config.account().is_none() {
+            self.screen = Screen::Login;
+        }
+        Task::none()
+    }
+
     /// Go to the first unfinished first-start step, or the dashboard.
     fn resume(&mut self) -> Task<Message> {
-        if self.config.account.is_none() {
+        if self.config.account().is_none() {
             self.screen = Screen::Login;
             Task::none()
         } else if self.config.connected_agents.is_empty() {
