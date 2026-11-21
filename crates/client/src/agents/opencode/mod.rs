@@ -201,7 +201,10 @@ impl AgentInstance for AgentInstanceOpenCode {
         // Read the history now so a missing session fails here, not later.
         let history = poller.poll(&conn)?;
         Ok(Attachment::spawn(move |tx, stop| {
-            if mode == AttachMode::ReplayHistory && !history.into_iter().all(|e| tx.send(e).is_ok())
+            if !history
+                .into_iter()
+                .filter(|e| mode.sends_history(e))
+                .all(|e| tx.send(e).is_ok())
             {
                 return;
             }

@@ -152,6 +152,21 @@ pub enum AttachMode {
     ReplayHistory,
     /// Only send events that happen after attaching.
     NewOnly,
+    /// Send the session's events from this time on (unix ms, as the agent
+    /// recorded it), then new ones. For attaching a moment after something
+    /// may already have happened.
+    Since(u64),
+}
+
+impl AttachMode {
+    /// Whether an event already in the session when attaching is sent.
+    pub fn sends_history(self, event: &AgentEvent) -> bool {
+        match self {
+            AttachMode::ReplayHistory => true,
+            AttachMode::NewOnly => false,
+            AttachMode::Since(ms) => event.time_ms >= ms,
+        }
+    }
 }
 
 /// Something that happened in an agent session.

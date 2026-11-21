@@ -192,8 +192,11 @@ impl AgentInstance for AgentInstanceClaudeCode {
             let mut prompts = AgentIntegrationClaudeCode::history();
             let result = tail::follow_lines(&path, &stop, |line, is_history| {
                 let mut events = parser.parse_line(line);
-                if is_history && mode == AttachMode::NewOnly {
-                    return true;
+                if is_history {
+                    events.retain(|e| mode.sends_history(e));
+                    if events.is_empty() {
+                        return true;
+                    }
                 }
                 prompts.fill(&session_id, &mut events);
                 events.into_iter().all(|e| tx.send(e).is_ok())
