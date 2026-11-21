@@ -174,8 +174,8 @@ Neither integration installs hooks. Both read the agent's own on-disk storage, w
   - `transcript.rs` maps lines to events. It filters `isMeta`, `isSidechain` and compaction-summary lines, and lines whose `origin.kind` is not human. Interrupts are `[Request interrupted by user…]` text. Rejected tool calls are recognised by `toolUseResult`.
   - Sessions are listed by scanning only the head and tail of each file, because transcripts reach hundreds of MB and title lines are re-appended.
   - Live following uses `tail.rs`, a polling tail. Claude Code flushes its transcript about a second late.
-- **`opencode/`** reads opencode v2's SQLite database (`$XDG_DATA_HOME/opencode/opencode.db`), read-only, using the `session_v2` and `session_message` tables.
-  - The v1 `session`/`message`/`part` tables are legacy (already migrated) and are not read.
+- **`opencode/`** reads opencode's SQLite database (`$XDG_DATA_HOME/opencode/opencode.db`), read-only, using the `session_v2` and `session_message` tables.
+  - Older opencode versions (such as 1.4) only have the v1 `session`/`message`/`part` tables. `Schema::detect` picks v1 only when `session_v2` is missing (newer versions keep the migrated v1 tables around), and `v1.rs` rebuilds each v1 message and its parts into the v2 row shape, so `session.rs` parses both.
   - Assistant rows are rewritten in place while streaming. Attachments therefore poll by `time_updated` (`>=` watermark), and `session.rs` deduplicates by remembering which events it already emitted.
   - The database and prompt-history paths only use `XDG_*` / `HOME`, so opencode isn't found on Windows yet.
 - `Prompt.pasted_chars` comes from each agent's prompt history, not the session itself:

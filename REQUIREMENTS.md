@@ -49,7 +49,8 @@ product must:
 
 - The client reads each agent's own files and installs nothing into the agent:
   - Claude Code: session transcripts and `history.jsonl`.
-  - opencode: its SQLite database (v2 tables) and `prompt-history.jsonl`.
+  - opencode: its SQLite database (v2 tables, or the v1 tables of older
+    versions) and `prompt-history.jsonl`.
 - One plugin per agent, behind the same interface.
 - Events: prompt (with pasted characters), response, thinking, tool call and
   result (done / failed / rejected), interrupt, turn end, compaction, slash
