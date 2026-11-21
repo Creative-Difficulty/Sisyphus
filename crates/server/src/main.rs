@@ -45,22 +45,15 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn cookie_name(&self, base: &str) -> String {
-        if self.secure {
-            format!("__Host-sisyphus_{base}")
-        } else {
-            format!("sisyphus_{base}")
-        }
+    /// The name of a cookie set with `path`. Setting and reading a cookie
+    /// must both go through this, so the names always agree.
+    pub fn cookie_name(&self, base: &str, path: &str) -> String {
+        cookie_name(self.secure, base, path)
     }
 
-    /// A `Set-Cookie` value. `__Host-` cookies must use `Path=/`, so cookies
-    /// with a narrower path drop to the `__Secure-` prefix.
+    /// A `Set-Cookie` value.
     pub fn cookie(&self, base: &str, value: &str, path: &str, max_age_s: i64) -> HeaderValue {
-        let name = if self.secure && path != "/" {
-            format!("__Secure-sisyphus_{base}")
-        } else {
-            self.cookie_name(base)
-        };
+        let name = self.cookie_name(base, path);
         let secure = if self.secure { "; Secure" } else { "" };
         HeaderValue::from_str(&format!(
             "{name}={value}; Path={path}; Max-Age={max_age_s}; HttpOnly; SameSite=Lax{secure}"
@@ -191,10 +184,39 @@ async fn security_headers(
     response
 }
 
+/// Cookie names: on https `__Host-` for site-wide cookies; browsers only
+/// accept `__Host-` with `Path=/`, so narrower cookies use `__Secure-`.
+/// Plain http (local testing) gets no prefix.
+fn cookie_name(secure: bool, base: &str, path: &str) -> String {
+    match (secure, path == "/") {
+        (true, true) => format!("__Host-sisyphus_{base}"),
+        (true, false) => format!("__Secure-sisyphus_{base}"),
+        (false, _) => format!("sisyphus_{base}"),
+    }
+}
+
 /// The server's clock (unix ms). This is the trusted time.
 pub fn now_ms() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis() as i64)
         .unwrap_or(0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::cookie_name;
+
+    #[test]
+    fn cookie_names_match_their_path() {
+        assert_eq!(cookie_name(true, "session", "/"), "__Host-sisyphus_session");
+        assert_eq!(
+            cookie_name(true, "login", "/auth/callback"),
+            "__Secure-sisyphus_login"
+        );
+        assert_eq!(
+            cookie_name(false, "login", "/auth/callback"),
+            "sisyphus_login"
+        );
+    }
 }

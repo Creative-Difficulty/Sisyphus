@@ -57,7 +57,7 @@ pub struct User {
 }
 
 pub async fn current_user(state: &AppState, headers: &HeaderMap) -> Option<User> {
-    let token = cookie(headers, &state.cookie_name("session"))?;
+    let token = cookie(headers, &state.cookie_name("session", "/"))?;
     let row = sqlx::query(
         "SELECT u.id, u.name FROM sessions s JOIN users u ON u.id = s.user_id
          WHERE s.token_hash = $1 AND s.expires_ms > $2",
@@ -207,7 +207,8 @@ async fn callback(
     else {
         return message_page(StatusCode::BAD_REQUEST, "This login link is invalid.");
     };
-    let browser_state = cookie(&headers, &state.cookie_name("login")).unwrap_or_default();
+    let browser_state =
+        cookie(&headers, &state.cookie_name("login", "/auth/callback")).unwrap_or_default();
     if !constant_time_eq(&browser_state, &login_state) {
         return with_cookies(
             message_page(
@@ -456,7 +457,7 @@ async fn logout(State(state): State<AppState>, headers: HeaderMap) -> Response {
     if !same_origin {
         return message_page(StatusCode::FORBIDDEN, "Logout must come from this site.");
     }
-    if let Some(token) = cookie(&headers, &state.cookie_name("session"))
+    if let Some(token) = cookie(&headers, &state.cookie_name("session", "/"))
         && let Err(e) = sqlx::query("DELETE FROM sessions WHERE token_hash = $1")
             .bind(sha256_hex(&token))
             .execute(&state.db)
