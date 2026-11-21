@@ -77,6 +77,33 @@ pub fn bubble(theme: &Theme, running: bool) -> container::Style {
     }
 }
 
+/// Behind a popup: the window, faded out.
+pub fn backdrop(theme: &Theme) -> container::Style {
+    container::Style {
+        background: Some(theme.palette().background.scale_alpha(0.8).into()),
+        ..container::Style::default()
+    }
+}
+
+/// A popup: a solid round bubble, a deeper pink than the background.
+pub fn popup(theme: &Theme) -> container::Style {
+    let palette = theme.palette();
+    container::Style {
+        background: Some(mix(palette.background, palette.primary, 0.16).into()),
+        border: Border {
+            radius: 32.0.into(),
+            ..Border::default()
+        },
+        ..container::Style::default()
+    }
+}
+
+/// `a` with `amount` of `b` mixed in, opaque.
+fn mix(a: Color, b: Color, amount: f32) -> Color {
+    let channel = |x: f32, y: f32| x + (y - x) * amount;
+    Color::from_rgb(channel(a.r, b.r), channel(a.g, b.g), channel(a.b, b.b))
+}
+
 /// How much white lies over the background on raised surfaces.
 fn veil(theme: &Theme) -> f32 {
     if theme.extended_palette().is_dark {

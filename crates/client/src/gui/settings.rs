@@ -1,5 +1,6 @@
-//! Settings (gear icon): a compact list of the account and the agents, in
-//! the dashboard's bubble style.
+//! Settings (gear icon): a compact list of the account, the agents, the
+//! focused-app permission (Wayland only) and the server, in the dashboard's
+//! bubble style.
 
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Center, Element, Fill};
@@ -110,13 +111,41 @@ pub fn view<'a>(
             .push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
     }
 
-    let content = column![
+    let mut content = column![
         text("Settings").size(26).font(style::BOLD),
         section("Account", account.into()),
         section("Agents", agents.into()),
-        section("Server", server_section.into()),
     ]
     .spacing(24);
+    // Only where the OS needs the user's OK to see the focused app.
+    if crate::activity::focus_needs_consent() {
+        let allowed = config.focus_allowed == Some(true);
+        let action = if allowed {
+            quiet_button("Stop", Message::AllowFocus(false))
+        } else {
+            button(text("Allow").size(14))
+                .padding([6, 18])
+                .style(style::rounded(style::pink))
+                .on_press(Message::AllowFocus(true))
+                .into()
+        };
+        let focus = bubble(
+            row![
+                column![
+                    text("See the app in front").size(16),
+                    text("Only its kind, never titles")
+                        .size(13)
+                        .style(style::muted),
+                ]
+                .spacing(2)
+                .width(Fill),
+                action,
+            ]
+            .align_y(Center),
+        );
+        content = content.push(section("Privacy", focus.into()));
+    }
+    content = content.push(section("Server", server_section.into()));
 
     scrollable(
         container(container(content).max_width(560))

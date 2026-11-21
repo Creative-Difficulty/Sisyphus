@@ -5,17 +5,21 @@
 //!   agents. The window resumes at whichever step isn't done yet.
 //! - the dashboard ([`sessions`]), refreshed every few seconds
 //! - settings ([`settings`], gear icon): account and agents as a compact list
+//! - on Wayland, a one-time popup ([`consent`]) asking to read which app is
+//!   in front
 
 use std::time::Duration;
 
 use iced::futures::{SinkExt, Stream, StreamExt};
 use iced::theme::Mode;
-use iced::widget::{button, column, row, space};
+use iced::widget::{button, column, opaque, row, space, stack};
 use iced::{Element, Fill, Subscription, Task, Theme};
 
+use crate::activity;
 use crate::agents::Integration;
 use crate::config::Config;
 
+mod consent;
 mod onboarding;
 mod sessions;
 mod settings;
@@ -90,6 +94,8 @@ pub enum Message {
     SaveServer,
     /// Go back to the default server.
     ResetServer,
+    /// The user answered whether Sisyphus may read the focused app.
+    AllowFocus(bool),
 }
 
 impl App {
@@ -201,6 +207,14 @@ impl App {
                 self.set_server(server_url)
             }
             Message::ResetServer => self.set_server(None),
+            Message::AllowFocus(allowed) => {
+                let mut config = self.config.clone();
+                config.focus_allowed = Some(allowed);
+                // If saving fails the answer still applies until restart.
+                let _ = config.save();
+                self.config = config;
+                Task::none()
+            }
         }
     }
 
@@ -236,7 +250,7 @@ impl App {
         } else {
             style::Icon::Moon
         };
-        column![
+        let window = column![
             row![
                 nav,
                 space().width(Fill),
@@ -244,8 +258,20 @@ impl App {
             ]
             .padding([14, 20]),
             screen,
-        ]
-        .into()
+        ];
+        if self.asks_focus_consent() {
+            stack![window, opaque(consent::view())].into()
+        } else {
+            window.into()
+        }
+    }
+
+    /// Ask once, on the dashboard, where the OS needs the user's OK to see
+    /// the focused app.
+    fn asks_focus_consent(&self) -> bool {
+        matches!(self.screen, Screen::Sessions(_))
+            && self.config.focus_allowed.is_none()
+            && activity::focus_needs_consent()
     }
 
     fn subscription(&self) -> Subscription<Message> {
