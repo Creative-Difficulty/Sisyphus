@@ -77,7 +77,8 @@ product must:
     user was active) and what never is (typing, keys, mouse movements, app
     names, titles, screen); changeable in settings
   - settings to connect and disconnect agents
-  - a dashboard of recent sessions with placeholder "Recorded today" figures
+  - a dashboard of recent sessions with today's credited time from the
+    server (the three smaller figures are still placeholders)
   - a pink light and dark theme that follows the OS
 - `sisyphus-common`: an ed25519-signed hash chain of heartbeats with
   tamper-detection tests.
@@ -85,8 +86,8 @@ product must:
   - accepts signed heartbeat batches, checks the chain and signatures, and
     stores them with its own receive time
   - a web dashboard in the client's style with a sidebar: Overview (tracked
-    time and counts) and Projects (each project with its tracked time);
-    tracked time and projects are placeholders until crediting exists
+    time and counts), Projects (each project with its tracked time) and
+    Settings (the time zone)
   - a debug view, Heartbeats, listing every heartbeat the user's devices
     uploaded; clicking one shows the stored record in a popup
   - a Dockerfile for deployment
@@ -95,9 +96,14 @@ product must:
     links its device key to the account
   - uploads accepted only from devices linked to an account; each user sees
     only their own devices and heartbeats
-  - signed app requests: today's total (a placeholder until crediting
-    exists) and logging the device out on the server
-  - No sessions, projects or credit yet.
+  - signed app requests: today's total and logging the device out on the
+    server
+  - crediting: server-side sessions (UUID from device, agent and agent
+    session id), attention per slot, the multiplier per minute, sharing
+    concurrent sessions' minutes, AI time kept apart, offline flags; rebuilt
+    from the stored heartbeats when the formula changes
+  - Not built: the struggle value, the edit-claim check, the mouse-jiggle
+    rule.
 
 ## Decided, not built
 
@@ -127,7 +133,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 2,
+    "version": 3,
     "minute_ms": 1795201380000,
 
     "agent": "claude-code",
@@ -152,6 +158,8 @@ product must:
       "pasted_chars": 0,
       "corrections": 1
     },
+
+    "interrupts": 0,
 
     "responses": {
       "finished": 1,
@@ -188,6 +196,8 @@ product must:
     slot, so a short flash into another window doesn't change it. `unknown`
     when activity isn't allowed, or the system can't tell (for example GNOME
     without the Window Calls extension).
+- `interrupts` (added 2026-11-21, scheme version 3): times the user
+  stopped the agent mid-turn this minute.
 - `prompts`: counts only, never text.
   - `corrections` counts prompts the local model labelled as corrections.
 - `responses` (added 2026-11-21): counts only, never text.
@@ -244,6 +254,27 @@ product must:
 - Attention returns to 1.0 on input. It drops slowly while the agent's window
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
+- Decay speeds (decided 2026-11-21): half-life 2 minutes while the agent's
+  window stays in front, 20 seconds after leaving it. The minute's
+  multiplier is the average attention over its six slots.
+- With activity off (decided 2026-11-21), only agent events give attention:
+  a prompt is worth 1.0 and an interrupt 0.5, falling to 0.0 at the next
+  heartbeat. Other user actions may get some low values later (which ones
+  and how much isn't decided).
+- Implementation choices to confirm: a minute where no slot's focus is
+  known counts like activity off; a single `unknown` slot counts like
+  being in another app.
+- No time after a turn ends for now (decided 2026-11-21): only minutes in
+  which the agent ran earn credit. Attention is still followed through the
+  others.
+- Offline heartbeats count (decided 2026-11-21); the server flags them on
+  the stored heartbeat for reviewers.
+- No mouse-jiggle rule for now (decided 2026-11-21); it comes later and has
+  to exist before credit can be trusted.
+- The user sets their time zone in the website's settings; "today" and
+  "this week" (from Monday) follow it, UTC until set (decided 2026-11-21).
+  The app's total uses it too, or the app's own midnight while none is
+  set.
 - Quick switches don't farm attention. Switching to the agent's window for a
   few seconds (around 5) without real interaction gives little or no
   attention, because it could just be flicking between windows:
@@ -286,16 +317,16 @@ product must:
 
 - Our own GNOME Shell extension for the focused app, so GNOME users don't
   need Window Calls.
-- How `unknown` slots and heartbeats with `activity: false` count toward
-  credit.
 - Pasted error logs and stack traces are real struggle. They may need an
   exemption from the paste penalty.
 - Which embedding model (small, multilingual). The architecture comes first.
-- Attention decay speeds. Proposal: input sets attention to 1.0 for its slot,
-  half-life 5 minutes while the agent's window is focused, 30 seconds in other
-  apps, multiplier = the minute's average over its slots. Tune with real data.
-- Reviewing after a turn ends (testing, reading the diff) earns nothing yet,
-  because heartbeats stop when the agent stops.
+- Tuning the decay speeds with real data.
+- The mouse-jiggle rule. Proposal: minutes where the agent's window is in
+  front but the agent doesn't run only count up to a budget before the next
+  prompt (reading time from the previous response's length, typing time from
+  the prompt's length, a capped thinking allowance).
+- Reviewing after a turn ends (testing, reading the diff) earns nothing
+  (decided 2026-11-21: no time after a turn ends for now).
 - How struggle affects credit.
 - Whether correction prompts should also reduce time.
 

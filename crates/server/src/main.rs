@@ -27,9 +27,11 @@ use sqlx::postgres::PgPoolOptions;
 
 mod app;
 mod auth;
+mod credit;
 mod crypto;
 mod dashboard;
 mod oidc;
+mod settings;
 mod upload;
 mod web;
 
@@ -123,6 +125,13 @@ async fn main() {
         eprintln!("could not run database migrations: {e}");
         std::process::exit(1);
     }
+    // Credit heartbeats stored before crediting existed, or under an older
+    // formula.
+    match credit::backfill(&db).await {
+        Ok(0) => {}
+        Ok(n) => println!("credited {n} minutes"),
+        Err(e) => eprintln!("crediting stored heartbeats failed: {e}"),
+    }
 
     let state = AppState {
         db,
@@ -137,6 +146,7 @@ async fn main() {
         .route("/api/dashboard", get(dashboard::dashboard))
         .route("/api/projects", get(dashboard::projects))
         .route("/api/heartbeats", get(dashboard::heartbeats))
+        .route("/api/settings", get(settings::get).post(settings::save))
         .route("/api/app/today", get(app::today))
         .route("/api/app/logout", post(app::logout))
         .merge(auth::routes())

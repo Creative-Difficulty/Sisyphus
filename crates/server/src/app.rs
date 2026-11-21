@@ -2,8 +2,9 @@
 //! `sisyphus_common::api::request_message`). Only devices linked to an
 //! account get an answer:
 //!
-//! - `GET /api/app/today?start_ms=…`: credited time since the start of the
-//!   user's local day. A placeholder (0) until the server credits time.
+//! - `GET /api/app/today?start_ms=…`: credited time today, in the time zone
+//!   set on the website, or since `start_ms` (the app's local midnight)
+//!   while none is set.
 //! - `POST /api/app/logout`: unlink this device from its account. It can't
 //!   upload or read anything until it logs in again.
 //!
@@ -125,10 +126,33 @@ pub async fn today(
     headers: HeaderMap,
     Query(params): Query<TodayParams>,
 ) -> Result<Json<Today>, StatusCode> {
-    let _device = verify(&state, &method, &uri, &headers, &[]).await?;
-    let _ = params.start_ms;
-    // Placeholder until the server credits time.
-    Ok(Json(Today { tracked_ms: 0 }))
+    let device = verify(&state, &method, &uri, &headers, &[]).await?;
+    let failed = |e: sqlx::Error| {
+        eprintln!("today failed: {e}");
+        StatusCode::INTERNAL_SERVER_ERROR
+    };
+    // The time zone set on the website wins; otherwise the app's own day.
+    let has_timezone: bool =
+        sqlx::query("SELECT timezone IS NOT NULL AS set FROM users WHERE id = $1")
+            .bind(device.user_id)
+            .fetch_one(&state.db)
+            .await
+            .map_err(failed)?
+            .get("set");
+    let start = if has_timezone {
+        crate::dashboard::day_and_week_start(&state.db, device.user_id)
+            .await
+            .map_err(failed)?
+            .0
+    } else {
+        params.start_ms.min(i64::MAX as u64) as i64
+    };
+    let tracked = crate::dashboard::credited_since(&state.db, device.user_id, start)
+        .await
+        .map_err(failed)?;
+    Ok(Json(Today {
+        tracked_ms: tracked.max(0) as u64,
+    }))
 }
 
 pub async fn logout(

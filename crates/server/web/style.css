@@ -199,6 +199,31 @@ body:has(#app:not([hidden])) header { max-width: none; padding: 20px 32px 0; }
   font-weight: 600;
 }
 
+/* Settings: one bubble per setting. */
+.setting {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bubble);
+  border-radius: 999px;
+  padding: 10px 12px 10px 22px;
+}
+.setting .about { flex: 1; min-width: 0; }
+.setting .title { display: block; font-size: 16px; }
+.setting .sub { font-size: 13px; color: var(--muted); }
+.setting select {
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  max-width: 45%;
+}
+.pill.small { padding: 8px 20px; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+.status { margin-top: 10px; font-size: 14px; min-height: 1.35em; }
+
 /* The debug view sits a little apart from the real ones. */
 .nav.debug { margin-top: 16px; }
 
@@ -262,4 +287,7 @@ dialog::backdrop { background: rgba(42, 16, 34, 0.45); }
   .sidebar { flex-direction: row; width: auto; flex-wrap: wrap; }
   .nav.debug { margin-top: 0; }
   dialog { padding: 20px; }
+  .setting { flex-wrap: wrap; border-radius: 26px; }
+  .setting .about { flex-basis: 100%; }
+  .setting select { max-width: none; flex: 1; min-width: 0; }
 }

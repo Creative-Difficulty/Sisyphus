@@ -6,9 +6,9 @@
 //!   uploaded, newest first, 100 at a time, exactly as stored (Heartbeats,
 //!   a debug view).
 //!
-//! Tracked time and projects are placeholders (zero / empty) until the v2
-//! heartbeat and server-side crediting exist; the response shapes are final,
-//! so the page won't need to change. Only the device count is real.
+//! Tracked time is the credited time from `session_minutes` (see
+//! `credit.rs`); "today" and "this week" follow the user's time zone (UTC
+//! until set in the website's settings).
 
 use axum::Json;
 use axum::extract::{Query, State};
@@ -51,23 +51,37 @@ pub async fn dashboard(
     let user = auth::current_user(&state, &headers)
         .await
         .ok_or(StatusCode::UNAUTHORIZED)?;
-    let devices: i64 = sqlx::query("SELECT count(*) AS n FROM devices WHERE user_id = $1")
-        .bind(user.id)
-        .fetch_one(&state.db)
+    let (day, week) = day_and_week_start(&state.db, user.id)
         .await
-        .map_err(|e| {
-            eprintln!("dashboard failed: {e}");
-            StatusCode::INTERNAL_SERVER_ERROR
-        })?
-        .get("n");
+        .map_err(failed)?;
+    let row = sqlx::query(
+        "SELECT coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $2), 0)::bigint AS today,
+                coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $3), 0)::bigint AS week,
+                coalesce(sum(credit_ms), 0)::bigint AS total
+         FROM session_minutes WHERE user_id = $1",
+    )
+    .bind(user.id)
+    .bind(day)
+    .bind(week)
+    .fetch_one(&state.db)
+    .await
+    .map_err(failed)?;
+    let counts = sqlx::query(
+        "SELECT (SELECT count(DISTINCT project) FROM agent_sessions WHERE user_id = $1) AS projects,
+                (SELECT count(*) FROM agent_sessions WHERE user_id = $1) AS sessions,
+                (SELECT count(*) FROM devices WHERE user_id = $1) AS devices",
+    )
+    .bind(user.id)
+    .fetch_one(&state.db)
+    .await
+    .map_err(failed)?;
     Ok(Json(Dashboard {
-        // Placeholders until the server credits time.
-        tracked_today_ms: 0,
-        tracked_week_ms: 0,
-        tracked_total_ms: 0,
-        projects: 0,
-        sessions: 0,
-        devices,
+        tracked_today_ms: row.get("today"),
+        tracked_week_ms: row.get("week"),
+        tracked_total_ms: row.get("total"),
+        projects: counts.get("projects"),
+        sessions: counts.get("sessions"),
+        devices: counts.get("devices"),
     }))
 }
 
@@ -75,13 +89,68 @@ pub async fn projects(
     State(state): State<AppState>,
     headers: HeaderMap,
 ) -> Result<Json<Projects>, StatusCode> {
-    auth::current_user(&state, &headers)
+    let user = auth::current_user(&state, &headers)
         .await
         .ok_or(StatusCode::UNAUTHORIZED)?;
-    // Placeholder until heartbeats carry sessions and the server credits time.
+    let rows = sqlx::query(
+        "SELECT s.project AS name,
+                coalesce(sum(m.credit_ms), 0)::bigint AS tracked_ms,
+                count(DISTINCT s.id) AS sessions,
+                max(s.last_minute_ms) AS last_active_ms
+         FROM agent_sessions s LEFT JOIN session_minutes m ON m.session_id = s.id
+         WHERE s.user_id = $1
+         GROUP BY s.project
+         ORDER BY last_active_ms DESC",
+    )
+    .bind(user.id)
+    .fetch_all(&state.db)
+    .await
+    .map_err(failed)?;
     Ok(Json(Projects {
-        projects: Vec::new(),
+        projects: rows
+            .into_iter()
+            .map(|row| ProjectStat {
+                name: row.get("name"),
+                tracked_ms: row.get("tracked_ms"),
+                sessions: row.get("sessions"),
+                last_active_ms: row.get("last_active_ms"),
+            })
+            .collect(),
     }))
+}
+
+fn failed(e: sqlx::Error) -> StatusCode {
+    eprintln!("dashboard query failed: {e}");
+    StatusCode::INTERNAL_SERVER_ERROR
+}
+
+/// Start of today and of this week (Monday) in the user's time zone
+/// (unix ms). UTC until the user sets one.
+pub async fn day_and_week_start(db: &sqlx::PgPool, user_id: i64) -> sqlx::Result<(i64, i64)> {
+    let row = sqlx::query(
+        "SELECT (extract(epoch FROM date_trunc('day', now() AT TIME ZONE tz) AT TIME ZONE tz)
+                 * 1000)::bigint AS day,
+                (extract(epoch FROM date_trunc('week', now() AT TIME ZONE tz) AT TIME ZONE tz)
+                 * 1000)::bigint AS week
+         FROM (SELECT coalesce(timezone, 'UTC') AS tz FROM users WHERE id = $1) u",
+    )
+    .bind(user_id)
+    .fetch_one(db)
+    .await?;
+    Ok((row.get("day"), row.get("week")))
+}
+
+/// Credited time of `user_id` since `since_ms`.
+pub async fn credited_since(db: &sqlx::PgPool, user_id: i64, since_ms: i64) -> sqlx::Result<i64> {
+    Ok(sqlx::query(
+        "SELECT coalesce(sum(credit_ms), 0)::bigint AS n FROM session_minutes
+         WHERE user_id = $1 AND minute_ms >= $2",
+    )
+    .bind(user_id)
+    .bind(since_ms)
+    .fetch_one(db)
+    .await?
+    .get("n"))
 }
 
 /// Heartbeats per page of the debug view.
@@ -112,8 +181,22 @@ struct StoredHeartbeat {
     claimed_ms: i64,
     /// When the server received it.
     received_ms: i64,
+    /// Received more than 5 minutes after its minute.
+    offline: bool,
+    /// What it was credited, once crediting ran.
+    credit: Option<Credit>,
     /// The signed heartbeat body.
     body: serde_json::Value,
+}
+
+#[derive(Serialize)]
+struct Credit {
+    session_id: String,
+    multiplier: f64,
+    attention_end: f64,
+    credit_ms: i64,
+    ai_ms: i64,
+    formula: i32,
 }
 
 pub async fn heartbeats(
@@ -139,8 +222,10 @@ pub async fn heartbeats(
     .get("n");
     let rows = sqlx::query(
         "SELECT h.device_id, h.seq, h.hash, h.prev, h.sig, h.claimed_ms, h.received_ms,
-                h.body::text AS body
+                h.offline, h.body::text AS body, m.session_id, m.multiplier,
+                m.attention_end, m.credit_ms, m.ai_ms, m.formula
          FROM heartbeats h JOIN devices d ON d.device_id = h.device_id
+         LEFT JOIN session_minutes m ON m.device_id = h.device_id AND m.seq = h.seq
          WHERE d.user_id = $1
          ORDER BY h.received_ms DESC, h.claimed_ms DESC, h.seq DESC
          LIMIT $2 OFFSET $3",
@@ -161,6 +246,17 @@ pub async fn heartbeats(
             sig: row.get("sig"),
             claimed_ms: row.get("claimed_ms"),
             received_ms: row.get("received_ms"),
+            offline: row.get("offline"),
+            credit: row
+                .get::<Option<String>, _>("session_id")
+                .map(|session_id| Credit {
+                    session_id,
+                    multiplier: row.get("multiplier"),
+                    attention_end: row.get("attention_end"),
+                    credit_ms: row.get("credit_ms"),
+                    ai_ms: row.get("ai_ms"),
+                    formula: row.get("formula"),
+                }),
             body: serde_json::from_str(&row.get::<String, _>("body"))
                 .unwrap_or(serde_json::Value::Null),
         })

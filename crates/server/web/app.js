@@ -5,7 +5,7 @@
 // ever inserted as text, never as HTML.
 
 const REFRESH_MS = 10_000;
-const VIEWS = ["overview", "projects", "heartbeats"];
+const VIEWS = ["overview", "projects", "settings", "heartbeats"];
 
 // "2h 05m"
 function duration(ms) {
@@ -125,6 +125,59 @@ dialog.addEventListener("click", (event) => {
 });
 document.getElementById("more").addEventListener("click", () => loadHeartbeats(true).catch(() => {}));
 
+// Settings: the time zone. Until one is saved the server uses UTC; the
+// browser's own zone is suggested.
+function browserZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch (_) {
+    return "UTC";
+  }
+}
+
+function zones() {
+  try {
+    const list = Intl.supportedValuesOf("timeZone");
+    return list.includes("UTC") ? list : ["UTC", ...list];
+  } catch (_) {
+    return [...new Set(["UTC", browserZone()])];
+  }
+}
+
+async function loadSettings() {
+  const settings = await getJson("/api/settings");
+  const current = settings.timezone || browserZone();
+  const list = zones();
+  if (!list.includes(current)) list.unshift(current);
+  const select = document.getElementById("timezone");
+  select.replaceChildren(
+    ...list.map((zone) => {
+      const option = el("option", "", zone.replaceAll("_", " "));
+      option.value = zone;
+      option.selected = zone === current;
+      return option;
+    }),
+  );
+  setText("settings-status", settings.timezone ? "" : "Not saved yet, so UTC is used for now");
+}
+
+document.getElementById("settings").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const timezone = document.getElementById("timezone").value;
+  try {
+    const response = await fetch("/api/settings", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ timezone }),
+    });
+    setText("settings-status", response.ok ? "Saved" : "Could not save");
+    if (response.ok) refresh();
+  } catch (_) {
+    setText("settings-status", "Could not save");
+  }
+});
+
 // The view comes from the URL (#overview / #projects), so reloads keep it.
 function currentView() {
   const view = location.hash.slice(1);
@@ -143,6 +196,7 @@ function showView() {
     else link.removeAttribute("aria-current");
   }
   if (view === "heartbeats") loadHeartbeats(false).catch(() => {});
+  if (view === "settings") loadSettings().catch(() => {});
 }
 
 function showLoggedIn(loggedIn, name) {

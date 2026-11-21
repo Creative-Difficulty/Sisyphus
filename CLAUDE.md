@@ -59,7 +59,7 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is the v2 scheme from `REQUIREMENTS.md` ("Heartbeat scheme"): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v2`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`).
+  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 3 (v2 plus `interrupts`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v3`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
 - **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
@@ -72,26 +72,41 @@ Three crates in `crates/`:
   - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start.
     - `devices`: device key, chain tip, first/last seen, owning user.
     - `heartbeats`: device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB` (so the v2 format won't need a table rewrite).
-    - `users`, `sessions`, `login_attempts`, `app_codes`: see "Accounts" below.
+    - `users` (with `timezone`), `sessions`, `login_attempts`, `app_codes`: see "Accounts" below.
+    - `heartbeats.offline`: received more than 5 min after its minute (set on upload).
+    - `agent_sessions` and `session_minutes`: crediting, see "Crediting" below.
   - Queries are runtime-checked (`sqlx::query`, not the `query!` macros), so building needs no database.
   - `POST /api/upload` (`upload.rs`): an `UploadBatch` from `sisyphus-common::api`.
     - Only devices linked to an account may upload (403 otherwise).
     - The device's row is locked and its chain tip checked with `verify_batch`.
-    - On success the heartbeats are stored with the server's receive time and an `UploadAck` with the new tip comes back.
-    - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`.
+    - On success the heartbeats are stored with the server's receive time and offline flag, credited in the same transaction, and an `UploadAck` with the new tip comes back.
+    - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`/`UnsupportedVersion`.
   - `GET /api/dashboard` and `GET /api/projects` (`dashboard.rs`): the logged-in user's tracked time (today, this week, all time), project/session/device counts, and each project with its tracked time and session count. 401 without a session.
-    - Only the device count is real. Tracked time, projects and sessions are placeholders (zero / empty) until the v2 heartbeat and server-side crediting exist; the response shapes are meant to stay, so the page won't need to change.
+    - Tracked time is the sum of `session_minutes.credit_ms`; today and this week (from Monday) are in the user's time zone (UTC until set), computed in Postgres (`day_and_week_start`). Projects group `agent_sessions` by folder name.
+  - `GET /api/settings` and `POST /api/settings` (`settings.rs`): `{ "timezone": IANA name | null }`. Saving needs the `Origin` to match `PUBLIC_URL` and a zone Postgres knows (`pg_timezone_names`).
   - `GET /api/app/today?start_ms=…` and `POST /api/app/logout` (`app.rs`): signed app requests, see "Signed app requests" below.
-  - `GET /api/heartbeats?offset=N` (`dashboard.rs`, debug): the heartbeats the user's devices uploaded, newest first, 100 per page, with `total`, exactly as stored (device, seq, hash, prev, sig, claimed and received time, body).
+  - `GET /api/heartbeats?offset=N` (`dashboard.rs`, debug): the heartbeats the user's devices uploaded, newest first, 100 per page, with `total`, exactly as stored (device, seq, hash, prev, sig, claimed and received time, offline flag, body), with what it was credited (`credit`: session id, multiplier, attention at its end, credit and AI time, formula).
   - `GET /health` returns `ok`.
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
     - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles.
     - Logged out it shows a "Log in with Hack Club" button; logged in, the name and "Log out" in the header and the dashboard.
-    - The dashboard spans the full window width: a sidebar at the left edge (a row of pills on phones), the content centred in the space to its right. The sidebar switches between Overview (tracked today big, this week and all time, then project/session/device counts), Projects (one bubble per project with its tracked time) and, set a little apart, the debug view Heartbeats: every uploaded heartbeat as a bubble (session title, project, minute), "Show more" for older pages; clicking one opens a `<dialog>` popup with the stored record as JSON, keys in the scheme's order. The view is kept in the URL hash (`#overview` / `#projects` / `#heartbeats`).
+    - The dashboard spans the full window width: a sidebar at the left edge (a row of pills on phones), the content centred in the space to its right. The sidebar switches between Overview (tracked today big, this week and all time, then project/session/device counts), Projects (one bubble per project with its tracked time), Settings (a time-zone picker listing the browser's zones, preselecting the saved one or the browser's own; says UTC is used until saved) and, set a little apart, the debug view Heartbeats: every uploaded heartbeat as a bubble (session title, project, minute), "Show more" for older pages; clicking one opens a `<dialog>` popup with the stored record as JSON, keys in the scheme's order. The view is kept in the URL hash (`#overview` / `#projects` / `#settings` / `#heartbeats`).
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.
-  - It stores v2 heartbeats but does not yet build session UUIDs or compute attention or credit.
+  - Not built: the struggle value, the edit-claim check, the mouse-jiggle rule.
+
+### Crediting (`crates/server/src/credit.rs`, decided 2026-11-21)
+
+Each heartbeat becomes one `session_minutes` row of its server-side session:
+- `agent_sessions.id`: UUID-formatted SHA-256 of device id, agent and agent session id; named by the latest `session_name`, grouped into projects by `project`.
+- With `activity` and at least one known slot, attention is followed per 10 s slot: input in a slot whose focus is `agent` sets it to 1.0; otherwise it decays with a 2 min half-life if the previous slot was also `agent` (staying), else 20 s (leaving, including the first slot back without input and `unknown` slots). It carries into the session's next minute (`attention_end`, `last_slot_agent`) and starts at 0 after a gap. Multiplier = average over the six slots.
+- Without `activity`, or with every slot `unknown`: a prompt gives 1.0, an interrupt 0.5, otherwise 0; nothing carries over.
+- Only minutes with `agent_running` earn credit (no time after a turn ends); `ai_ms` is 60000 for them, kept apart from credit.
+- `share_minute`: if a user's multipliers for one `minute_ms` add up to more than 1.0 (across all devices), each gets its share; `credit_ms = 60000 × multiplier / max(1, sum)`.
+- Offline heartbeats count; `offline` is copied to the row.
+- Rows carry `formula` (`FORMULA`). On start, `backfill` deletes rows of other formulas and credits every stored heartbeat of a linked device without a row, so bumping `FORMULA` rebuilds everything from the raw heartbeats. Bump it whenever the calculation changes.
+- A duplicate minute of the same session is ignored (`ON CONFLICT DO NOTHING`).
 
 ### Deployment (`deploy/`)
 
@@ -288,7 +303,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Config: `connected_agents`, `"activity_allowed": true`, `server_url` pointing at the local server and a matching `account`.
 - Run `timeout 400 sisyphus-client track`; the agent session you are working in is itself a running session, so your own edits show up as `agent_edits` and `working_dir`. Check the stored rows in `heartbeats`.
 
-### Heartbeat design (decided 2026-11-20; the client records and uploads it, the server only stores it)
+### Heartbeat design (decided 2026-11-20; the client records and uploads it, the server credits it, see "Crediting")
 
 The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat scheme"). The essentials:
 
@@ -297,14 +312,14 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
   - the minute, agent, agent session id, the agent's session title, and the project folder name
   - whether the agent was running, and `activity`: whether the user allowed activity reading
   - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
-  - prompt counts: submitted, typed chars, pasted chars, corrections
+  - prompt counts: submitted, typed chars, pasted chars, corrections; interrupts
   - response counts: responses finished this minute and their visible characters (never text)
   - per edited file, its path relative to the project folder, with non-whitespace characters added/removed in the working directory and what the agent's edit calls claim
 - **Never from the client:** a 0–1 value, attention, the struggle value, or a session UUID.
 - **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session is named by the agent's session title.
 - **Server computes** attention and the 0.0–1.0 multiplier per session. The client runs the same formulas only for display and to compare against the server.
 - **Overlap.** If the multipliers of concurrent sessions for the same real minute add up to more than 1.0, each session gets its share of one minute (two sessions at 1.0 each get 30 s each).
-- **Attention** resets to 1.0 on input. It drops slowly while the agent's window stays focused and quickly in other apps. An agent working alone earns no credit; that time still counts as AI time.
+- **Attention** resets to 1.0 on input. It drops with a 2 min half-life while the agent's window stays focused and 20 s in other apps. Without activity, a prompt is worth 1.0 and an interrupt 0.5, back to 0 the next minute. Only minutes where the agent ran earn credit. An agent working alone earns no credit; that time still counts as AI time. No mouse-jiggle rule yet (later).
 - **Focused session.** A prompt submitted to a session means the user is focused on that session (decided 2026-11-21). The window match narrows candidates; the latest prompt picks among them.
 - **No quick-switch farming.** Switching to the agent's window for ~5 s without real interaction gives little or no attention.
   - A slot's `focus` is the app that held focus for most of the slot.
@@ -325,4 +340,4 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
   - Pasted prompts earn less than typed ones.
   - Detecting AI-generated prompts is a low-priority idea.
 - Not possible with this design: detecting deleting or rewriting inside a prompt draft.
-- Open and for-later items (unmatched file changes, error-log pastes, struggle's effect on credit, the embedding model, attention decay speeds, credit for reviewing after a turn) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.
+- Open and for-later items (unmatched file changes, error-log pastes, struggle's effect on credit, the embedding model, tuning decay speeds, the mouse-jiggle rule, low values for other user actions without activity) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.

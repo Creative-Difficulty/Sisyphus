@@ -43,6 +43,7 @@
     <nav class="sidebar" aria-label="Views">
       <a class="nav" href="#overview" data-view="overview">Overview</a>
       <a class="nav" href="#projects" data-view="projects">Projects</a>
+      <a class="nav" href="#settings" data-view="settings">Settings</a>
       <!-- Debug: everything the devices uploaded, as stored. -->
       <a class="nav debug" href="#heartbeats" data-view="heartbeats">Heartbeats</a>
     </nav>
@@ -66,6 +67,19 @@
       <section id="view-projects" hidden>
         <h2>Projects</h2>
         <ul id="projects" class="bubbles"></ul>
+      </section>
+
+      <section id="view-settings" hidden>
+        <h2>Settings</h2>
+        <form id="settings" class="setting">
+          <div class="about">
+            <label class="title" for="timezone">Time zone</label>
+            <div class="sub">Decides when your day and week start</div>
+          </div>
+          <select id="timezone"></select>
+          <button class="pill small" type="submit">Save</button>
+        </form>
+        <p id="settings-status" class="muted status"></p>
       </section>
 
       <section id="view-heartbeats" hidden>
