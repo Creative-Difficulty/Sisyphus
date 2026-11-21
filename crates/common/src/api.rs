@@ -7,6 +7,7 @@
 //! server stored.
 
 use crate::chain::{self, ChainError, ChainTip, DeviceId, SignedHeartbeat};
+use crate::heartbeat::VERSION;
 use serde::{Deserialize, Serialize};
 
 /// A heartbeat that reaches the server more than this long after the time it
@@ -39,6 +40,8 @@ pub enum UploadError {
     OutOfSync { expected: ChainTip },
     /// The batch was tampered with or signed by the wrong device.
     Invalid(ChainError),
+    /// Heartbeat `at` has a scheme version this server doesn't accept.
+    UnsupportedVersion { at: usize },
 }
 
 /// A heartbeat as the server stores it.
@@ -52,7 +55,7 @@ pub struct StoredHeartbeat {
 impl StoredHeartbeat {
     /// How long after its claimed time the server received it.
     pub fn delay_ms(&self) -> u64 {
-        self.received_at_ms.saturating_sub(self.signed.heartbeat.time_ms)
+        self.received_at_ms.saturating_sub(self.signed.heartbeat.minute_ms)
     }
 
     /// True if it was likely recorded offline. Its claimed time then rests on
@@ -66,6 +69,9 @@ impl StoredHeartbeat {
 /// Returns the new tip to store.
 pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, UploadError> {
     let first = batch.heartbeats.first().ok_or(UploadError::Empty)?;
+    if let Some(at) = batch.heartbeats.iter().position(|h| h.heartbeat.version != VERSION) {
+        return Err(UploadError::UnsupportedVersion { at });
+    }
     if first.seq != tip.next_seq {
         return Err(UploadError::OutOfSync { expected: *tip });
     }

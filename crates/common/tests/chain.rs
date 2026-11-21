@@ -1,22 +1,35 @@
 use ed25519_dalek::SigningKey;
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat, verify};
-use sisyphus_common::heartbeat::{Category, Heartbeat, Source};
+use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, Prompts, Responses, Slot, VERSION};
 
 fn writer() -> ChainWriter {
     ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]))
 }
 
-fn coding(i: u64) -> Heartbeat {
-    let mut hb = Heartbeat::new(1_000 + i * 60_000, Source::Editor, Category::Coding, "nvim");
-    hb.project = Some("demo".into());
-    hb.language = Some("rust".into());
-    hb.edits.typed_chars = 100 + i as u32;
-    hb
+fn minute(i: u64) -> Heartbeat {
+    Heartbeat {
+        version: VERSION,
+        minute_ms: 1_795_201_380_000 + i * 60_000,
+        agent: "claude-code".into(),
+        agent_session_id: "77ae4435-adc7-40d4-934f-f70f97ced5e4".into(),
+        session_name: "Demo".into(),
+        project: "demo".into(),
+        agent_running: true,
+        activity: true,
+        slots: [Slot { input: true, focus: Focus::Agent }; 6],
+        prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
+        responses: Responses::default(),
+        files: vec![FileChange {
+            path: "src/main.rs".into(),
+            working_dir: Changes { added: 20, removed: 3 },
+            agent_edits: Changes { added: 20, removed: 3 },
+        }],
+    }
 }
 
 fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
     let mut w = writer();
-    let hbs = (0..n).map(|i| w.sign(coding(i))).collect();
+    let hbs = (0..n).map(|i| w.sign(minute(i))).collect();
     (w, hbs)
 }
 
@@ -29,7 +42,7 @@ fn valid_chain_verifies() {
 #[test]
 fn edited_heartbeat_is_detected() {
     let (w, mut hbs) = signed(10);
-    hbs[4].heartbeat.edits.typed_chars = 99_999;
+    hbs[4].heartbeat.prompts.typed_chars = 99_999;
     assert_eq!(
         verify(&hbs, &w.device_id(), &ChainTip::GENESIS),
         Err(ChainError::BadHash { at: 4 })
@@ -37,9 +50,9 @@ fn edited_heartbeat_is_detected() {
 }
 
 #[test]
-fn changed_source_is_detected() {
+fn changed_slot_is_detected() {
     let (w, mut hbs) = signed(5);
-    hbs[2].heartbeat.source = Source::OsDaemon;
+    hbs[2].heartbeat.slots[3].focus = Focus::Browser;
     assert_eq!(
         verify(&hbs, &w.device_id(), &ChainTip::GENESIS),
         Err(ChainError::BadHash { at: 2 })
@@ -69,7 +82,7 @@ fn reordered_heartbeats_are_detected() {
 #[test]
 fn rehashed_forgery_fails_signature() {
     let (w, mut hbs) = signed(3);
-    hbs[1].heartbeat.edits.typed_chars = 5_000;
+    hbs[1].heartbeat.prompts.typed_chars = 5_000;
     hbs[1].hash = hbs[1].expected_hash();
     hbs[2].prev = hbs[1].hash;
     assert_eq!(
@@ -92,7 +105,7 @@ fn other_device_cannot_claim_heartbeats() {
 fn resumed_writer_continues_chain() {
     let (w, mut hbs) = signed(3);
     let mut w2 = ChainWriter::resume(SigningKey::from_bytes(&[7u8; 32]), w.tip());
-    hbs.push(w2.sign(coding(3)));
+    hbs.push(w2.sign(minute(3)));
     assert_eq!(verify(&hbs, &w.device_id(), &ChainTip::GENESIS), Ok(w2.tip()));
 }
 

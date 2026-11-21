@@ -1,89 +1,127 @@
-//! A heartbeat means "the user was active at this moment".
+//! A heartbeat is one minute of one agent session (heartbeat scheme v2).
 //!
-//! The server adds up the gaps between consecutive heartbeats, ignoring gaps
-//! longer than a timeout, to get time spent (the WakaTime/Hackatime model).
-//! Each heartbeat also says whether a human or an AI agent was doing the work,
-//! and counts how much was typed by the user vs pasted vs inserted by AI.
+//! The client sends one per session for every minute its agent ran or the
+//! user had the agent's window in front. The server computes attention, the
+//! 0.0–1.0 multiplier and the struggle value from these; the client never
+//! sends any of those.
 //!
 //! Rules, because heartbeats are hashed and signed:
 //! - No floats and no maps, so serialization is deterministic.
-//! - Names and counts only. Never file contents, file paths, window titles
-//!   or keystrokes.
+//! - Counts, timings, coarse app classes, paths relative to the project
+//!   folder and the agent's session title only. Never prompt or response
+//!   text, file contents, absolute paths, window titles or keystrokes.
 
 use serde::{Deserialize, Serialize};
 
+/// The version this crate writes.
+pub const VERSION: u32 = 2;
+
+/// Seconds in one slot, and slots in one heartbeat.
+pub const SLOT_SECS: u64 = 10;
+pub const SLOTS: usize = 6;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Heartbeat {
-    /// When the activity happened (unix ms, device clock). The device clock is
-    /// not trusted; the server records its own receive time separately.
-    pub time_ms: u64,
-    /// Which collector sent this heartbeat.
-    pub source: Source,
-    /// Whether a human or an AI agent was doing the work.
-    pub category: Category,
-    /// Application the activity happened in, e.g. "vscode", "nvim",
-    /// "claude-code", "firefox".
-    pub app: String,
-    pub project: Option<String>,
-    pub language: Option<String>,
-    /// True if a file was saved.
-    pub is_write: bool,
-    /// What changed since this collector's previous heartbeat.
-    pub edits: Edits,
+    /// Always [`VERSION`].
+    pub version: u32,
+    /// Start of the minute (unix ms, device clock). The device clock is not
+    /// trusted; the server records its own receive time separately.
+    pub minute_ms: u64,
+
+    /// The agent integration's id, e.g. `claude-code`.
+    pub agent: String,
+    /// The agent's own session id. The server builds its session UUID from
+    /// the device, `agent` and this.
+    pub agent_session_id: String,
+    /// The agent's session title. Visible only to the user and reviewers.
+    pub session_name: String,
+    /// The project folder's name only, never its path.
+    pub project: String,
+
+    /// The agent worked on a turn at some point in this minute.
+    pub agent_running: bool,
+    /// The user allowed reading activity. Without it every slot is
+    /// `{ input: false, focus: unknown }`.
+    pub activity: bool,
+    /// The minute's six 10-second slots, in order.
+    pub slots: [Slot; SLOTS],
+
+    pub prompts: Prompts,
+    pub responses: Responses,
+    /// Files edited this minute, sorted by path.
+    pub files: Vec<FileChange>,
 }
 
-impl Heartbeat {
-    /// A heartbeat with no edits. Set the other fields directly.
-    pub fn new(time_ms: u64, source: Source, category: Category, app: impl Into<String>) -> Self {
-        Self {
-            time_ms,
-            source,
-            category,
-            app: app.into(),
-            project: None,
-            language: None,
-            is_write: false,
-            edits: Edits::default(),
-        }
-    }
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Slot {
+    /// Any keyboard or mouse input, from the OS idle time. Which key is
+    /// never known.
+    pub input: bool,
+    /// The app that held focus for most of the slot.
+    pub focus: Focus,
 }
 
-/// Which collector sent a heartbeat. The server can require two independent
-/// sources to agree, e.g. the editor plugin says the user is typing and the
-/// OS daemon says the editor is focused, and discount time only one vouches for.
+impl Slot {
+    pub const UNKNOWN: Self = Self { input: false, focus: Focus::Unknown };
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum Source {
-    /// An editor/IDE plugin.
+pub enum Focus {
+    /// The window this session's agent runs in.
+    Agent,
+    Terminal,
     Editor,
-    /// A hook inside an AI tool (Claude Code, Cursor, ...).
-    AiTool,
-    /// The client daemon reading focus and input presence from the OS. It only
-    /// sends heartbeats while an editor or terminal is focused, to corroborate
-    /// the other sources.
-    OsDaemon,
+    Browser,
+    Other,
+    /// Nothing has focus.
+    None,
+    /// Activity isn't allowed, or the system can't tell.
+    Unknown,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Category {
-    /// A human working on code.
-    Coding,
-    /// A human writing a prompt to an AI tool. `edits.typed_chars` is its length.
-    AiPrompt,
-    /// An AI agent working on its own, sent periodically while it runs.
-    /// Counts as AI time, not human effort.
-    AiAgent,
-}
-
-/// Edit counts since the collector's previous heartbeat. Separating typed,
-/// pasted and AI-inserted text is what distinguishes human work from
-/// accepted output.
+/// Prompts submitted this minute. Counts only, never text.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Edits {
+pub struct Prompts {
+    pub submitted: u32,
     pub typed_chars: u32,
     pub pasted_chars: u32,
-    pub ai_chars: u32,
-    pub lines_added: u32,
-    pub lines_removed: u32,
+    /// Prompts the local model labelled as corrections.
+    pub corrections: u32,
+}
+
+/// Agent responses that finished this minute. Counts only, never text.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Responses {
+    pub finished: u32,
+    /// Characters of their visible text (not thinking, not tool calls).
+    pub chars: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FileChange {
+    /// Relative to the project folder, with `/` separators.
+    pub path: String,
+    /// Non-whitespace characters changed, as seen in the file itself.
+    pub working_dir: Changes,
+    /// What the agent's edit calls claim for this file.
+    pub agent_edits: Changes,
+}
+
+/// Non-whitespace characters added and removed.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Changes {
+    pub added: u32,
+    pub removed: u32,
+}
+
+impl Changes {
+    pub fn is_empty(&self) -> bool {
+        self.added == 0 && self.removed == 0
+    }
+
+    pub fn add(&mut self, other: Changes) {
+        self.added = self.added.saturating_add(other.added);
+        self.removed = self.removed.saturating_add(other.removed);
+    }
 }

@@ -24,7 +24,9 @@ pub async fn upload(State(state): State<AppState>, Json(batch): Json<UploadBatch
         Err(Rejected::Upload(e)) => {
             let status = match e {
                 UploadError::OutOfSync { .. } => StatusCode::CONFLICT,
-                UploadError::Empty | UploadError::Invalid(_) => StatusCode::BAD_REQUEST,
+                UploadError::Empty
+                | UploadError::Invalid(_)
+                | UploadError::UnsupportedVersion { .. } => StatusCode::BAD_REQUEST,
             };
             (status, Json(e)).into_response()
         }
@@ -99,7 +101,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
         .bind(signed.hash.to_string())
         .bind(signed.prev.to_string())
         .bind(signed.sig.to_string())
-        .bind(signed.heartbeat.time_ms as i64)
+        .bind(signed.heartbeat.minute_ms as i64)
         .bind(now)
         .bind(body)
         .execute(&mut *tx)
