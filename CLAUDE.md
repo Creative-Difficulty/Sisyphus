@@ -98,7 +98,7 @@ Three crates in `crates/`:
 
 ### Crediting (`crates/server/src/credit.rs`, decided 2026-11-21)
 
-Each heartbeat becomes one `session_minutes` row of its server-side session:
+The attention formula is `sisyphus_common::attention` (`minute()`), shared by the server (credit) and the client (debug screen), so both always compute the same. Each heartbeat becomes one `session_minutes` row of its server-side session:
 - `agent_sessions.id`: UUID-formatted SHA-256 of device id, agent and agent session id; named by the latest `session_name`, grouped into projects by `project`.
 - With `activity` and at least one known slot, attention is followed per 10 s slot: input in a slot whose focus is `agent` sets it to 1.0; otherwise it decays with a 2 min half-life if the previous slot was also `agent` (staying), else 20 s (leaving, including the first slot back without input and `unknown` slots). It carries into the session's next minute (`attention_end`, `last_slot_agent`) and starts at 0 after a gap. Multiplier = average over the six slots.
 - Without `activity`, or with every slot `unknown`: a prompt gives 1.0, an interrupt 0.5, otherwise 0; nothing carries over.
@@ -250,7 +250,8 @@ Unknown fields are ignored. Saving replaces the file atomically.
   - one row per agent (small logo, name, Connect/Disconnect)
   - a "Privacy" row for activity: Allow / Stop; while off it says Sisyphus may lose time
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
-- Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
+- Top bar: gear on the dashboard, back arrow in settings and the debug screen, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
+- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the live attention, the average so far this minute and the credit multiplier so far (computed with `sisyphus_common::attention` from the carried attention of the last sent minute and the open minutes' samples), running and in-front state; the last input, the app class in front, consent, backends, watched folders, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
   - Bottom half: "Recorded today" and three figures. "Recorded today" and the "agent time" figure come from the server (`GET /api/app/today`: `tracked_ms`, `agent_ms`, for the local day; decided 2026-11-21), fetched with each 10 s refresh. "prompts" and "sessions" are placeholders (zero).

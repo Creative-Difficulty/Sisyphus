@@ -77,6 +77,9 @@ product must:
     user was active) and what never is (typing, keys, mouse movements, app
     names, titles, screen); changeable in settings
   - settings to connect and disconnect agents
+  - a debug screen (Ctrl+D twice): live attention per session computed
+    with the server's formula, what the tracker reads, uploads and the last
+    heartbeat
   - a dashboard of recent sessions with today's credited time and agent
     time from the server (prompts and sessions are still placeholders)
   - a pink light and dark theme that follows the OS

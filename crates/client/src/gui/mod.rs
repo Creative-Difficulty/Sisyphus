@@ -18,6 +18,7 @@ use crate::agents::Integration;
 use crate::config::Config;
 
 mod consent;
+mod debug;
 mod onboarding;
 mod sessions;
 mod settings;
@@ -60,8 +61,12 @@ struct App {
     /// Logging out on the server failed.
     logout_error: Option<String>,
     /// Records and uploads heartbeats while the window is open. `None` if
-    /// another Sisyphus already does.
-    _tracker: Option<crate::tracker::Tracker>,
+    /// another Sisyphus already does (`tracker_error` says why).
+    tracker: Option<crate::tracker::Tracker>,
+    tracker_error: Option<String>,
+    /// When Ctrl+D was last pressed; a second press soon after toggles the
+    /// debug screen.
+    debug_key_at: Option<std::time::Instant>,
 }
 
 enum Screen {
@@ -73,6 +78,8 @@ enum Screen {
     Activity,
     /// Account and agents, from the gear icon.
     Settings,
+    /// Live attention and tracker state, from Ctrl+D pressed twice.
+    Debug,
     /// `None` while loading.
     Sessions(Option<Vec<SessionSummary>>),
 }
@@ -110,6 +117,10 @@ pub enum Message {
     ResetServer,
     /// The user answered whether Sisyphus may read their activity.
     AllowActivity(bool),
+    /// Ctrl+D was pressed.
+    DebugKey,
+    /// Redraw the debug screen.
+    DebugTick,
 }
 
 impl App {
@@ -126,10 +137,17 @@ impl App {
             today: None,
             logout_pending: false,
             logout_error: None,
-            _tracker: crate::tracker::Tracker::start(false)
-                .inspect_err(|e| eprintln!("not tracking: {e}"))
-                .ok(),
+            tracker: None,
+            tracker_error: None,
+            debug_key_at: None,
         };
+        match crate::tracker::Tracker::start(false) {
+            Ok(tracker) => app.tracker = Some(tracker),
+            Err(e) => {
+                eprintln!("not tracking: {e}");
+                app.tracker_error = Some(e);
+            }
+        }
         app.server_input = app.config.server_url();
         let task = app.resume();
         let theme = iced::system::theme().map(Message::SystemTheme);
@@ -147,6 +165,24 @@ impl App {
                 Task::none()
             }
             Message::ShowSessions => self.show_sessions(),
+            Message::DebugKey => {
+                let now = std::time::Instant::now();
+                let second = self
+                    .debug_key_at
+                    .is_some_and(|t| now.duration_since(t) < DEBUG_KEY_WINDOW);
+                if !second {
+                    self.debug_key_at = Some(now);
+                    return Task::none();
+                }
+                self.debug_key_at = None;
+                if matches!(self.screen, Screen::Debug) {
+                    self.resume()
+                } else {
+                    self.screen = Screen::Debug;
+                    Task::none()
+                }
+            }
+            Message::DebugTick => Task::none(),
             Message::SessionsLoaded(list) => {
                 if let Screen::Sessions(sessions) = &mut self.screen {
                     *sessions = Some(list);
@@ -289,12 +325,20 @@ impl App {
                 },
             ),
             Screen::Sessions(list) => sessions::view(list.as_deref(), self.today),
+            Screen::Debug => debug::view(
+                self.tracker.as_ref().map(crate::tracker::Tracker::debug),
+                self.tracker_error.as_deref(),
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map_or(0, |d| d.as_millis() as u64),
+            ),
         };
         // Top left: settings from the dashboard, back from settings.
         // Nothing during first start. Top right: light/dark.
         let nav: Element<'_, Message> = match self.screen {
             Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
             Screen::Settings => icon_button(style::Icon::Back, Message::ShowSessions),
+            Screen::Debug => icon_button(style::Icon::Back, Message::Continue),
             Screen::Login | Screen::ConnectAgents | Screen::Activity => space().into(),
         };
         let theme_icon = if self.is_dark() {
@@ -316,9 +360,13 @@ impl App {
 
     fn subscription(&self) -> Subscription<Message> {
         let system = iced::system::theme_changes().map(Message::SystemTheme);
+        let keys = iced::keyboard::listen().filter_map(debug_key);
         match self.screen {
-            Screen::Sessions(_) => Subscription::batch([system, Subscription::run(refresh_ticks)]),
-            _ => system,
+            Screen::Sessions(_) => {
+                Subscription::batch([system, keys, Subscription::run(refresh_ticks)])
+            }
+            Screen::Debug => Subscription::batch([system, keys, Subscription::run(debug_ticks)]),
+            _ => Subscription::batch([system, keys]),
         }
     }
 
@@ -432,6 +480,43 @@ fn refresh_ticks() -> impl Stream<Item = Message> {
     })
 }
 
+/// The second Ctrl+D must come this soon after the first.
+const DEBUG_KEY_WINDOW: Duration = Duration::from_millis(800);
+
+/// Ctrl+D (not a held-down repeat).
+fn debug_key(event: iced::keyboard::Event) -> Option<Message> {
+    use iced::keyboard::{Event, Key};
+    match event {
+        Event::KeyPressed {
+            key: Key::Character(c),
+            modifiers,
+            repeat: false,
+            ..
+        } if modifiers.control() && c.eq_ignore_ascii_case("d") => Some(Message::DebugKey),
+        _ => None,
+    }
+}
+
+/// A `DebugTick` every second while the debug screen is open.
+fn debug_ticks() -> impl Stream<Item = Message> {
+    iced::stream::channel(1, async move |mut output| {
+        let (tx, mut rx) = iced::futures::channel::mpsc::unbounded();
+        std::thread::spawn(move || {
+            while !tx.is_closed() {
+                std::thread::sleep(Duration::from_secs(1));
+                if tx.unbounded_send(()).is_err() {
+                    break;
+                }
+            }
+        });
+        while rx.next().await.is_some() {
+            if output.send(Message::DebugTick).await.is_err() {
+                break;
+            }
+        }
+    })
+}
+
 /// Run blocking work on its own thread, so the window stays responsive.
 fn on_thread<T: Send + 'static>(
     work: impl FnOnce() -> T + Send + 'static,
@@ -441,4 +526,33 @@ fn on_thread<T: Send + 'static>(
         let _ = tx.send(work());
     });
     async move { rx.await.expect("worker thread panicked") }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use iced::keyboard::{Event, Key, Location, Modifiers, key};
+
+    fn press(c: &str, modifiers: Modifiers, repeat: bool) -> Event {
+        Event::KeyPressed {
+            key: Key::Character(c.into()),
+            modified_key: Key::Character(c.into()),
+            physical_key: key::Physical::Code(key::Code::KeyD),
+            location: Location::Standard,
+            modifiers,
+            text: None,
+            repeat,
+        }
+    }
+
+    #[test]
+    fn ctrl_d_is_the_debug_key() {
+        assert!(matches!(
+            debug_key(press("d", Modifiers::CTRL, false)),
+            Some(Message::DebugKey)
+        ));
+        assert!(debug_key(press("d", Modifiers::empty(), false)).is_none());
+        assert!(debug_key(press("d", Modifiers::CTRL, true)).is_none());
+        assert!(debug_key(press("x", Modifiers::CTRL, false)).is_none());
+    }
 }

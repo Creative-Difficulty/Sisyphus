@@ -26,6 +26,7 @@ use std::sync::{Arc, Mutex, MutexGuard};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
+use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{Focus, Heartbeat, SLOT_SECS, SLOTS};
 
 use crate::activity::{self, AgentSession, FocusReading, Monitor, Processes};
@@ -65,6 +66,51 @@ const UPLOAD_EVERY: Duration = Duration::from_secs(30);
 pub struct Tracker {
     stop: Arc<AtomicBool>,
     thread: Option<JoinHandle<()>>,
+    debug: Arc<Mutex<DebugInfo>>,
+}
+
+/// What the tracker is doing right now, for the app's debug screen.
+/// Updated every second. Local only.
+#[derive(Debug, Clone, Default)]
+pub struct DebugInfo {
+    /// Which activity backends are in use.
+    pub backends: String,
+    /// The user allowed reading activity.
+    pub activity: bool,
+    /// Time since the last keyboard or mouse input.
+    pub since_input_ms: Option<u64>,
+    /// The class of the app in front, as any session that doesn't run in
+    /// it would see it.
+    pub focus: Option<Focus>,
+    /// Followed sessions, most recently active first.
+    pub sessions: Vec<SessionDebug>,
+    /// The latest heartbeat queued, and how many since the tracker started.
+    pub last_heartbeat: Option<Heartbeat>,
+    pub heartbeats: u64,
+    /// Heartbeats waiting for upload.
+    pub queued: usize,
+    /// When the latest upload attempt happened (unix ms) and what came of it.
+    pub last_upload: Option<(u64, String)>,
+    /// Project folders watched for file changes.
+    pub watched_folders: usize,
+}
+
+/// One followed session, with attention as the server would compute it.
+#[derive(Debug, Clone)]
+pub struct SessionDebug {
+    pub agent: &'static str,
+    pub title: String,
+    pub project: String,
+    pub running: bool,
+    /// Its agent's window is in front.
+    pub in_front: bool,
+    /// Attention right now: after the latest slot.
+    pub attention: f64,
+    /// Average attention over this minute's slots so far.
+    pub minute_attention: f64,
+    /// The multiplier this minute would get so far (0 without the agent
+    /// running).
+    pub multiplier: f64,
 }
 
 impl Tracker {
@@ -87,23 +133,26 @@ impl Tracker {
         let key = crate::device::load_or_create().map_err(|e| e.to_string())?;
         let queue = Arc::new(Mutex::new(Queue::load(dir, key)));
         let stop = Arc::new(AtomicBool::new(false));
+        let debug = Arc::new(Mutex::new(DebugInfo::default()));
 
         {
             let queue = queue.clone();
             let stop = stop.clone();
+            let debug = debug.clone();
             std::thread::Builder::new()
                 .name("upload".into())
-                .spawn(move || upload_loop(&queue, &stop, log))
+                .spawn(move || upload_loop(&queue, &stop, &debug, log))
                 .map_err(|e| e.to_string())?;
         }
         let thread = {
             let stop = stop.clone();
+            let debug = debug.clone();
             std::thread::Builder::new()
                 .name("tracker".into())
                 .spawn(move || {
                     // Held for as long as the tracker runs.
                     let _lock = lock;
-                    let mut state = State::new(queue, log);
+                    let mut state = State::new(queue, debug, log);
                     while !stop.load(Ordering::Relaxed) {
                         let started = Instant::now();
                         state.tick(now_ms());
@@ -119,7 +168,13 @@ impl Tracker {
         Ok(Self {
             stop,
             thread: Some(thread),
+            debug,
         })
+    }
+
+    /// What the tracker is doing right now.
+    pub fn debug(&self) -> DebugInfo {
+        lock(&self.debug).clone()
     }
 }
 
@@ -152,7 +207,7 @@ fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
 
 /// Uploads the queue every 30 seconds while logged in. Never holds the
 /// queue's lock during a request, so recording isn't held up.
-fn upload_loop(queue: &Mutex<Queue>, stop: &AtomicBool, log: bool) {
+fn upload_loop(queue: &Mutex<Queue>, stop: &AtomicBool, debug: &Mutex<DebugInfo>, log: bool) {
     let mut last: Option<Instant> = None;
     while !stop.load(Ordering::Relaxed) {
         std::thread::sleep(Duration::from_millis(200));
@@ -176,6 +231,13 @@ fn upload_loop(queue: &Mutex<Queue>, stop: &AtomicBool, log: bool) {
             if log {
                 println!("upload: {outcome:?}");
             }
+            let described = match &outcome {
+                Uploaded::Nothing => "nothing to send".to_string(),
+                Uploaded::Sent(n) => format!("sent {n}"),
+                Uploaded::Realigned => "re-aligned the chain with the server".to_string(),
+                Uploaded::Failed(e) => e.clone(),
+            };
+            lock(debug).last_upload = Some((now_ms(), described));
             if !matches!(outcome, Uploaded::Sent(_) | Uploaded::Realigned)
                 || stop.load(Ordering::Relaxed)
             {
@@ -205,6 +267,9 @@ struct Session {
     /// Edit claims of tool calls waiting for their result, by call id.
     calls: HashMap<String, Vec<Claim>>,
     minutes: BTreeMap<u64, SessionMinute>,
+    /// Attention at the end of the latest minute sent, as the server will
+    /// compute it.
+    carry: Option<(u64, Carry)>,
 }
 
 impl Session {
@@ -228,6 +293,13 @@ struct Watch {
 
 struct State {
     queue: Arc<Mutex<Queue>>,
+    debug: Arc<Mutex<DebugInfo>>,
+    heartbeats: u64,
+    last_heartbeat: Option<Heartbeat>,
+    /// The latest readings, for the debug screen.
+    since_input_ms: Option<u64>,
+    focus: Option<Focus>,
+    in_front: Vec<Key>,
     log: bool,
     started_ms: u64,
     config: Config,
@@ -245,11 +317,17 @@ struct State {
 }
 
 impl State {
-    fn new(queue: Arc<Mutex<Queue>>, log: bool) -> Self {
+    fn new(queue: Arc<Mutex<Queue>>, debug: Arc<Mutex<DebugInfo>>, log: bool) -> Self {
         let config = Config::load();
         let allowed = config.activity_allowed == Some(true);
         Self {
             queue,
+            debug,
+            heartbeats: 0,
+            last_heartbeat: None,
+            since_input_ms: None,
+            focus: None,
+            in_front: Vec::new(),
             log,
             started_ms: now_ms(),
             config,
@@ -275,6 +353,7 @@ impl State {
         self.sample(now);
         self.watch_files(now);
         self.close_minutes(now);
+        self.update_debug(now);
     }
 
     /// Re-read the config and the session list.
@@ -316,6 +395,7 @@ impl State {
                     retry_at: None,
                     calls: HashMap::new(),
                     minutes: BTreeMap::new(),
+                    carry: None,
                 });
                 session.title = instance.get_title();
                 session.project = project;
@@ -477,7 +557,9 @@ impl State {
         let minute_ms = minute_of(now);
         let slot = slot_of(now);
 
-        if let Some(idle) = self.monitor.since_last_input() {
+        let idle = self.monitor.since_last_input();
+        self.since_input_ms = idle.map(|d| d.as_millis() as u64);
+        if let Some(idle) = idle {
             let at = now.saturating_sub(idle.as_millis() as u64);
             if at >= self.open_from(now) {
                 self.input.entry(minute_of(at)).or_default()[slot_of(at)] = true;
@@ -495,6 +577,7 @@ impl State {
             }
         }
         let base = to_focus(reading.focus(None, &self.processes));
+        self.focus = Some(base);
 
         // The session whose agent's window is in front. Where the agent
         // names the session its process runs, that's exact; otherwise the
@@ -544,6 +627,7 @@ impl State {
             }
         }
 
+        self.in_front = in_front.clone();
         for (key, session) in &mut self.sessions {
             let front = in_front.contains(key);
             if front {
@@ -643,7 +727,7 @@ impl State {
                 if !minute.worth_sending() {
                     continue;
                 }
-                heartbeats.push(minute.into_heartbeat(Meta {
+                let heartbeat = minute.into_heartbeat(Meta {
                     minute_ms,
                     agent: session.agent,
                     agent_session_id: &session.id,
@@ -651,7 +735,14 @@ impl State {
                     project: &project_name,
                     activity: self.allowed,
                     input: self.input.get(&minute_ms).copied().unwrap_or_default(),
-                }));
+                });
+                let carry = session
+                    .carry
+                    .filter(|(m, _)| m + MINUTE_MS == minute_ms)
+                    .map(|(_, c)| c);
+                let outcome = attention::minute(&heartbeat_minute(&heartbeat), carry);
+                session.carry = Some((minute_ms, outcome.carry));
+                heartbeats.push(heartbeat);
             }
         }
         self.input.retain(|minute, _| *minute >= open_from);
@@ -662,6 +753,8 @@ impl State {
             return;
         }
         heartbeats.sort_by_key(|h| h.minute_ms);
+        self.heartbeats += heartbeats.len() as u64;
+        self.last_heartbeat = heartbeats.last().cloned();
         let mut queue = lock(&self.queue);
         for heartbeat in heartbeats {
             if self.log {
@@ -671,6 +764,87 @@ impl State {
                 eprintln!("could not queue a heartbeat: {e}");
             }
         }
+    }
+}
+
+impl State {
+    /// Publish what the tracker is doing for the debug screen, with each
+    /// followed session's attention computed by the shared formula.
+    fn update_debug(&self, now: u64) {
+        let current = minute_of(now);
+        let mut sessions: Vec<(u64, SessionDebug)> = self
+            .sessions
+            .iter()
+            .filter(|(_, s)| s.attachment.is_some())
+            .map(|(key, session)| {
+                let mut last = session.carry;
+                let mut outcome = None;
+                for (&minute_ms, minute) in &session.minutes {
+                    let carry = last
+                        .filter(|(m, _)| m + MINUTE_MS == minute_ms)
+                        .map(|(_, c)| c);
+                    let upto = if minute_ms == current {
+                        slot_of(now) + 1
+                    } else {
+                        SLOTS
+                    };
+                    let input = self.input.get(&minute_ms).copied().unwrap_or_default();
+                    let slots = minute.slots_so_far(&input, upto, self.allowed);
+                    let o = attention::minute(
+                        &attention::Minute {
+                            activity: self.allowed,
+                            agent_running: minute.running,
+                            slots: &slots,
+                            prompts: minute.prompts.submitted,
+                            interrupts: minute.interrupts,
+                        },
+                        carry,
+                    );
+                    last = Some((minute_ms, o.carry));
+                    outcome = Some(o);
+                }
+                let attention = last.map_or(0.0, |(_, c)| c.attention);
+                let debug = SessionDebug {
+                    agent: session.agent,
+                    title: session.title.clone(),
+                    project: session
+                        .project
+                        .file_name()
+                        .map(|n| n.to_string_lossy().into_owned())
+                        .unwrap_or_default(),
+                    running: session.running,
+                    in_front: self.in_front.contains(key),
+                    attention,
+                    minute_attention: outcome.map_or(0.0, |o| o.attention),
+                    multiplier: outcome.map_or(0.0, |o| o.multiplier),
+                };
+                (session.last_activity_ms, debug)
+            })
+            .collect();
+        sessions.sort_by_key(|(t, _)| std::cmp::Reverse(*t));
+
+        let queued = lock(&self.queue).len();
+        let mut debug = lock(&self.debug);
+        debug.backends = self.monitor.describe();
+        debug.activity = self.allowed;
+        debug.since_input_ms = self.since_input_ms;
+        debug.focus = self.focus;
+        debug.sessions = sessions.into_iter().map(|(_, s)| s).collect();
+        debug.last_heartbeat = self.last_heartbeat.clone();
+        debug.heartbeats = self.heartbeats;
+        debug.queued = queued;
+        debug.watched_folders = self.watches.len();
+    }
+}
+
+/// A heartbeat as input to the attention formula.
+fn heartbeat_minute(hb: &Heartbeat) -> attention::Minute<'_> {
+    attention::Minute {
+        activity: hb.activity,
+        agent_running: hb.agent_running,
+        slots: &hb.slots,
+        prompts: hb.prompts.submitted,
+        interrupts: hb.interrupts,
     }
 }
 

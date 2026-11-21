@@ -77,6 +77,23 @@ pub struct Meta<'a> {
 }
 
 impl SessionMinute {
+    /// The first `upto` slots as a heartbeat would carry them, for the
+    /// attention formula while the minute is still open.
+    pub fn slots_so_far(&self, input: &[bool; SLOTS], upto: usize, activity: bool) -> Vec<Slot> {
+        (0..upto.min(SLOTS))
+            .map(|i| {
+                if activity {
+                    Slot {
+                        input: input[i],
+                        focus: self.slots[i].focus(),
+                    }
+                } else {
+                    Slot::UNKNOWN
+                }
+            })
+            .collect()
+    }
+
     /// Sent when the agent ran, its window was in front, or anything
     /// happened in the session.
     pub fn worth_sending(&self) -> bool {
