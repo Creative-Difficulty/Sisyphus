@@ -33,10 +33,17 @@ pub struct ServerState<'a> {
     pub error: Option<&'a str>,
 }
 
+/// Logging out on the server.
+pub struct LogoutState<'a> {
+    pub pending: bool,
+    pub error: Option<&'a str>,
+}
+
 pub fn view<'a>(
     config: &'a Config,
     errors: &'a [Option<String>],
     server: ServerState<'a>,
+    logout: LogoutState<'a>,
 ) -> Element<'a, Message> {
     let account_name = config
         .account()
@@ -50,10 +57,19 @@ pub fn view<'a>(
             ]
             .spacing(2)
             .width(Fill),
-            quiet_button("Log out", Message::Logout),
+            if logout.pending {
+                text("Logging out").size(14).style(style::muted).into()
+            } else {
+                quiet_button("Log out", Message::Logout)
+            },
         ]
         .align_y(Center),
     );
+    let mut account = column![account].spacing(6);
+    if let Some(error) = logout.error {
+        account =
+            account.push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
+    }
 
     let mut agents = column![].spacing(10);
     for (index, integration) in Integration::ALL.iter().enumerate() {

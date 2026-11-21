@@ -95,6 +95,8 @@ product must:
     links its device key to the account
   - uploads accepted only from devices linked to an account; each user sees
     only their own devices and heartbeats
+  - signed app requests: today's total (a placeholder until crediting
+    exists) and logging the device out on the server
   - No sessions, projects or credit yet.
 
 ## Decided, not built
@@ -234,6 +236,11 @@ product must:
 - The client runs the same formulas only for display and to compare.
 - The app gets the day's total time from a server endpoint; it doesn't
   compute it itself (decided 2026-11-21).
+- Only a valid, logged-in app may send heartbeats or read data (decided
+  2026-11-21). The app signs every request with its device key (signed
+  requests, no token); the server checks the signature, the time, replays
+  and that the device is linked to an account. Logging out in the app
+  unlinks the device on the server.
 - Attention returns to 1.0 on input. It drops slowly while the agent's window
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.

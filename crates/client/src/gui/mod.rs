@@ -52,6 +52,12 @@ struct App {
     /// The server address as typed in settings, not yet saved.
     server_input: String,
     server_error: Option<String>,
+    /// Today's credited time from the server; `None` until it answered.
+    today_ms: Option<u64>,
+    /// Logging out on the server is under way.
+    logout_pending: bool,
+    /// Logging out on the server failed.
+    logout_error: Option<String>,
     /// Records and uploads heartbeats while the window is open. `None` if
     /// another Sisyphus already does.
     _tracker: Option<crate::tracker::Tracker>,
@@ -87,8 +93,12 @@ pub enum Message {
     Login,
     /// The browser login ended: the account name, or what went wrong.
     LoginFinished(Result<Option<String>, String>),
-    /// Forget the account on this device.
+    /// Log this device out on the server, then forget the account.
     Logout,
+    /// The server answered the logout.
+    LogoutFinished(Result<(), String>),
+    /// Today's credited time from the server.
+    TodayLoaded(Result<u64, String>),
     /// Next first-start step.
     Continue,
     /// The server address field in settings changed.
@@ -112,6 +122,9 @@ impl App {
             login_error: None,
             server_input: String::new(),
             server_error: None,
+            today_ms: None,
+            logout_pending: false,
+            logout_error: None,
             _tracker: crate::tracker::Tracker::start(false)
                 .inspect_err(|e| eprintln!("not tracking: {e}"))
                 .ok(),
@@ -140,9 +153,16 @@ impl App {
                 Task::none()
             }
             Message::Refresh => match self.screen {
-                Screen::Sessions(_) => self.load_sessions(),
+                Screen::Sessions(_) => Task::batch([self.load_sessions(), self.load_today()]),
                 _ => Task::none(),
             },
+            Message::TodayLoaded(result) => {
+                // On failure keep the last value; the next refresh retries.
+                if let Ok(ms) = result {
+                    self.today_ms = Some(ms);
+                }
+                Task::none()
+            }
             Message::SystemTheme(mode) => {
                 // `None` means no preference; keep what we have.
                 if mode != Mode::None {
@@ -186,12 +206,29 @@ impl App {
                 Task::none()
             }
             Message::Logout => {
+                // The device stays able to upload until the server unlinks
+                // it, so only forget the account once the server agreed.
+                self.logout_pending = true;
+                self.logout_error = None;
+                let server_url = self.config.server_url();
+                Task::perform(
+                    on_thread(move || crate::server::logout(&server_url)),
+                    Message::LogoutFinished,
+                )
+            }
+            Message::LogoutFinished(result) => {
+                self.logout_pending = false;
+                if let Err(e) = result {
+                    self.logout_error = Some(e);
+                    return Task::none();
+                }
                 let mut config = self.config.clone();
                 config.account = None;
                 if let Err(e) = config.save() {
                     self.login_error = Some(format!("Could not save: {e}"));
                 }
                 self.config = config;
+                self.today_ms = None;
                 self.screen = Screen::Login;
                 Task::none()
             }
@@ -245,8 +282,12 @@ impl App {
                     input: &self.server_input,
                     error: self.server_error.as_deref(),
                 },
+                settings::LogoutState {
+                    pending: self.logout_pending,
+                    error: self.logout_error.as_deref(),
+                },
             ),
-            Screen::Sessions(list) => sessions::view(list.as_deref()),
+            Screen::Sessions(list) => sessions::view(list.as_deref(), self.today_ms),
         };
         // Top left: settings from the dashboard, back from settings.
         // Nothing during first start. Top right: light/dark.
@@ -327,7 +368,19 @@ impl App {
     /// Switch to the session list and load it in the background.
     fn show_sessions(&mut self) -> Task<Message> {
         self.screen = Screen::Sessions(None);
-        self.load_sessions()
+        Task::batch([self.load_sessions(), self.load_today()])
+    }
+
+    /// Ask the server for today's credited time, when logged in.
+    fn load_today(&self) -> Task<Message> {
+        if self.config.account().is_none() {
+            return Task::none();
+        }
+        let server_url = self.config.server_url();
+        Task::perform(
+            on_thread(move || crate::server::today(&server_url)),
+            Message::TodayLoaded,
+        )
     }
 
     /// Load the session list in the background. The shown list stays until

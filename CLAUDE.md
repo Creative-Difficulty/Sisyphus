@@ -64,6 +64,7 @@ Three crates in `crates/`:
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
   - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
+  - `server.rs`: signed requests to the server (see "Signed app requests" below): `today()` and `logout()`, plus the local day's start (`libc::localtime_r` on Unix, `GetTimeZoneInformation` on Windows).
   - `activity/`: time since the last input and the focused app, per OS (see "Activity" below).
   - `tracker/`: builds, signs, queues and uploads heartbeats (see "Tracker" below).
 - **`sisyphus-server`**: axum + Postgres (sqlx).
@@ -80,6 +81,7 @@ Three crates in `crates/`:
     - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`.
   - `GET /api/dashboard` and `GET /api/projects` (`dashboard.rs`): the logged-in user's tracked time (today, this week, all time), project/session/device counts, and each project with its tracked time and session count. 401 without a session.
     - Only the device count is real. Tracked time, projects and sessions are placeholders (zero / empty) until the v2 heartbeat and server-side crediting exist; the response shapes are meant to stay, so the page won't need to change.
+  - `GET /api/app/today?start_ms=…` and `POST /api/app/logout` (`app.rs`): signed app requests, see "Signed app requests" below.
   - `GET /api/heartbeats?offset=N` (`dashboard.rs`, debug): the heartbeats the user's devices uploaded, newest first, 100 per page, with `total`, exactly as stored (device, seq, hash, prev, sig, claimed and received time, body).
   - `GET /health` returns `ok`.
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
@@ -123,9 +125,18 @@ Hack Club Auth (OpenID Connect) requires the client secret on every token reques
   2. After the same Hack Club login, the callback redirects the browser to `http://127.0.0.1:<port>/done?code=…`. The code is one-time, 2 minutes, stored hashed.
   3. The app posts `AppTokenRequest` to `/auth/app/token`: the code, the verifier, and a device signature over `device_link_message(code)` (`sisyphus-common::api`).
   4. The server checks all three and links the device to the user. A device linked to another account can't be taken over (409).
-  - The app gets no bearer token: uploads are already signed by the device key, and the server accepts uploads only from linked devices.
+  - The app gets no bearer token. Uploads are already signed by the device key (and a replayed batch doesn't continue the chain), and the server accepts them only from linked devices. Everything else the app asks for is a signed request (below).
 - Discovery endpoints must be https; plain http is only accepted when `HACKCLUB_AUTH_URL` is itself `http://localhost` / `http://127.0.0.1` (local testing).
-- Not built yet: unlinking a device from the website, and rate limiting. "Log out" in the app only forgets the account locally; the device stays linked on the server.
+- "Log out" in the app first unlinks the device on the server (`POST /api/app/logout`) and only forgets the account once the server agreed (or says the device isn't linked); if the server can't be reached it stays logged in and shows the error. Logging in again links it again.
+- Not built yet: unlinking a device from the website, and rate limiting. Switching servers in settings leaves the device linked on the old server.
+
+### Signed app requests (decided 2026-11-21)
+
+Only a logged-in app (a device linked to an account) may upload or read data. The app has no token; it signs each request with its device key (`sisyphus-common::api`):
+- Headers `sisyphus-device` (public key, hex), `sisyphus-time` (unix ms) and `sisyphus-signature` (hex ed25519 signature over `request_message`: domain tag `sisyphus/request/v1`, method, path with query, time, SHA-256 of the body).
+- The server (`app::verify`) refuses with 401 a missing or invalid signature, a time more than 5 min from its clock, or a signature it has already seen (an in-memory cache, `SeenRequests`, kept for twice the allowed skew); 403 if the device isn't linked.
+- The app's clock must therefore be roughly right; it says so when the server answers 401.
+- This proves the request came from that device, not that the client is unmodified: the key lives on the user's machine. Truthfulness is checked server-side.
 
 ### Agent integrations (`crates/client/src/agents/`)
 
@@ -220,14 +231,14 @@ Unknown fields are ignored. Saving replaces the file atomically.
   2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
   3. Activity step (`consent.rs`), on every OS, until answered (`activity_allowed` absent): says it's required to count time and Sisyphus can lose time without it; one bubble with the only activity shared (the kind of app in front and whether the user was active, per 10 s), one with what's never recorded (typing, keys, mouse movements, app names, titles, screen). "Allow", or a quiet "Not now".
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
-  - an account row (name, "Hack Club", "Log out"; logging out returns to the login step)
+  - an account row (name, "Hack Club", "Log out"; logging out unlinks the device on the server first, shows "Logging out" meanwhile and an error if that fails, then returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)
   - a "Privacy" row for activity: Allow / Stop; while off it says Sisyphus may lose time
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
 - Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
-  - Bottom half: "Recorded today" and three figures. These are placeholders (zero) for now. Decided 2026-11-21: the app fetches the day's total time from a server endpoint rather than computing it itself (not built yet).
+  - Bottom half: "Recorded today" and three figures. "Recorded today" comes from the server (`GET /api/app/today`, with the local day's start; decided 2026-11-21), fetched with each 10 s refresh; it stays 0 until the server credits time. The three figures are placeholders (zero).
 - Blocking work never runs on the UI thread:
   - `on_thread` runs it on its own thread and hands the result to a `Task`.
   - The session list reloads every 10 s through a `Subscription` whose stream is fed by a timer thread.

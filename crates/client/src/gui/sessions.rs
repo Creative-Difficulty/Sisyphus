@@ -61,7 +61,8 @@ fn summary(agent: usize, instance: &dyn AgentInstance) -> SessionSummary {
 }
 
 /// `None` while loading.
-pub fn view(sessions: Option<&[SessionSummary]>) -> Element<'_, Message> {
+/// `today_ms`: today's credited time from the server, if it answered.
+pub fn view(sessions: Option<&[SessionSummary]>, today_ms: Option<u64>) -> Element<'_, Message> {
     let quiet =
         |label| -> Element<'_, Message> { center(text(label).size(13).style(style::muted)).into() };
     let body = match sessions {
@@ -84,16 +85,18 @@ pub fn view(sessions: Option<&[SessionSummary]>) -> Element<'_, Message> {
         .spacing(14)
         .height(FillPortion(1));
 
-    container(container(column![list, stats()].spacing(24)).max_width(760))
+    container(container(column![list, stats(today_ms)].spacing(24)).max_width(760))
         .padding(iced::Padding::from([0, 40]).bottom(32))
         .center_x(Fill)
         .into()
 }
 
-/// Today's recorded time and a few figures.
+/// Today's recorded time, from the server, and a few figures.
 ///
-/// Placeholders: nothing is recorded yet, so every value is zero.
-fn stats<'a>() -> Element<'a, Message> {
+/// The three figures are placeholders (zero) for now.
+fn stats<'a>(today_ms: Option<u64>) -> Element<'a, Message> {
+    let minutes = today_ms.unwrap_or(0) / 60_000;
+    let today = format!("{}h {:02}m", minutes / 60, minutes % 60);
     let figure = |value: &'a str, label: &'a str| {
         column![
             text(value).size(30).font(style::BOLD),
@@ -104,10 +107,7 @@ fn stats<'a>() -> Element<'a, Message> {
     center(
         column![
             text("Recorded today").size(16).style(style::muted),
-            text("0h 00m")
-                .size(84)
-                .font(style::BOLD)
-                .style(style::accent),
+            text(today).size(84).font(style::BOLD).style(style::accent),
             row![
                 figure("0", "prompts"),
                 figure("0", "sessions"),

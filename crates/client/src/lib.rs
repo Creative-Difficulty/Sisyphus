@@ -7,4 +7,5 @@ pub mod config;
 pub mod device;
 pub mod gui;
 pub mod login;
+pub mod server;
 pub mod tracker;
