@@ -17,6 +17,10 @@ use crate::agents::{
     AgentError, AgentEvent, AgentInstance, AgentIntegration, AttachMode, Attachment,
 };
 
+pub mod rollout;
+
+use rollout::RolloutParser;
+
 pub struct AgentIntegrationCodex;
 
 impl AgentIntegrationCodex {
@@ -130,7 +134,14 @@ impl AgentInstance for AgentInstanceCodex {
 
     fn read_events(&self) -> Result<Vec<AgentEvent>, AgentError> {
         self.ensure_exists()?;
-        Ok(Vec::new())
+        let mut parser = RolloutParser::new();
+        let mut events = Vec::new();
+        // Split on bytes so one line with invalid UTF-8 doesn't stop the
+        // rest from being read.
+        for line in BufReader::new(File::open(&self.rollout_path)?).split(b'\n') {
+            events.extend(parser.parse_line(&String::from_utf8_lossy(&line?)));
+        }
+        Ok(events)
     }
 
     fn attach(&self, _mode: AttachMode) -> Result<Attachment, AgentError> {
@@ -368,5 +379,39 @@ pub(crate) mod tests {
         assert_eq!(listed[0].rollout_path(), newer);
         assert_eq!(find_session(&home, "t1").unwrap().rollout_path(), newer);
         assert!(find_session(&home, "missing").is_none());
+    }
+
+    #[test]
+    fn reads_events_past_a_broken_line() {
+        let home = temp_home("events");
+        let path = write_rollout(
+            &home,
+            "01-00-00",
+            "t1",
+            &[
+                meta_line("t1", "/p", r#""cli""#, Some("user")),
+                r#"{"timestamp":"2026-11-21T01:00:01Z","type":"event_msg","payload":{"type":"user_message","message":"hi"}}"#.into(),
+            ],
+        );
+        // Append a line with invalid UTF-8, then a reply.
+        let mut bytes = fs::read(&path).unwrap();
+        bytes.extend_from_slice(b"{\"type\":\"event_msg\",\"payload\":{\"type\":\"agent_message\",\"message\":\"\xff\"}}\n");
+        bytes.extend_from_slice(
+            br#"{"type":"event_msg","payload":{"type":"agent_message","message":"ok"}}"#,
+        );
+        bytes.push(b'\n');
+        fs::write(&path, bytes).unwrap();
+        let session = find_session(&home, "t1").unwrap();
+        let kinds: Vec<_> = session
+            .read_events()
+            .unwrap()
+            .into_iter()
+            .map(|e| e.kind)
+            .collect();
+        assert_eq!(kinds.len(), 3, "{kinds:?}");
+        assert_eq!(
+            kinds[2],
+            crate::agents::AgentEventKind::Response { text: "ok".into() }
+        );
     }
 }
