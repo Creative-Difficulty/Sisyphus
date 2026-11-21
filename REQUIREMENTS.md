@@ -233,8 +233,9 @@ product must:
   most recently active session sends a heartbeat every minute even when
   its agent is idle and its window isn't in front. The slots where the
   program is in front are `testing`. It earns no attention or credit for
-  now (decided 2026-11-21). Only the tracking process itself is left out,
-  so a running Sisyphus app counts for the Sisyphus repo.
+  now (decided 2026-11-21). The tracking process itself counts too
+  (decided 2026-11-21), so a Sisyphus built from its repo counts as
+  running for that repo.
 - `interrupts` (added 2026-11-21, scheme version 3): times the user
   stopped the agent mid-turn this minute.
 - `prompts`: counts only, never text.

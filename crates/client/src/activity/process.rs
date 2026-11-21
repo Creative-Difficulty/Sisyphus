@@ -181,14 +181,12 @@ impl Processes {
     }
 
     /// The executables (canonical paths) of all processes no agent started,
-    /// except this one. Paths are read for every process, so call this
-    /// rarely (the tracker: every 10 s).
+    /// this one included (working on Sisyphus counts too). Paths are read
+    /// for every process, so call this rarely (the tracker: every 10 s).
     pub fn programs_running(&self) -> Vec<PathBuf> {
-        let me = std::process::id();
         let mut programs: Vec<PathBuf> = self
             .by_pid
             .values()
-            .filter(|p| p.pid != me)
             .filter(|p| {
                 !self
                     .ancestors(p.pid)
