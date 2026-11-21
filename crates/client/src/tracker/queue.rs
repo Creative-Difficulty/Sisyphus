@@ -243,6 +243,7 @@ mod tests {
             agent_running: true,
             activity: false,
             slots: [Slot::UNKNOWN; SLOTS],
+            tested_programs: Vec::new(),
             prompts: Prompts::default(),
             interrupts: 0,
             responses: Responses::default(),

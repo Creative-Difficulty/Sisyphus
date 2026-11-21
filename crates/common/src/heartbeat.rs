@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v3).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v4).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -8,13 +8,13 @@
 //! Rules, because heartbeats are hashed and signed:
 //! - No floats and no maps, so serialization is deterministic.
 //! - Counts, timings, coarse app classes, paths relative to the project
-//!   folder and the agent's session title only. Never prompt or response
+//!   folder (edited files and the project's own programs) and the agent's session title only. Never prompt or response
 //!   text, file contents, absolute paths, window titles or keystrokes.
 
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 3;
+pub const VERSION: u32 = 4;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -45,6 +45,10 @@ pub struct Heartbeat {
     pub activity: bool,
     /// The minute's six 10-second slots, in order.
     pub slots: [Slot; SLOTS],
+    /// The project's own programs that were in front this minute (focus
+    /// `testing`): their executables' paths relative to the project folder,
+    /// with `/` separators, sorted. Empty without activity.
+    pub tested_programs: Vec<String>,
 
     pub prompts: Prompts,
     /// Times the user stopped the agent mid-turn this minute.
@@ -76,6 +80,10 @@ pub enum Focus {
     Editor,
     Browser,
     Other,
+    /// A program of the session's project (an executable inside the project
+    /// folder, which is a git repository): the user is testing what they
+    /// build.
+    Testing,
     /// Nothing has focus.
     None,
     /// Activity isn't allowed, or the system can't tell.

@@ -17,7 +17,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 - When the user makes or changes a decision, record it in `REQUIREMENTS.md`, and in this file if agents need it to work.
 - Privacy:
   - Never collect or upload file contents, absolute paths, window titles, keystroke content or prompt text.
-  - Only counts, timings, coarse app classes, paths of edited files relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
+  - Only counts, timings, coarse app classes, paths of edited files and of the project's own programs relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
   - AI chat history and prompts stay local. `AgentEvent`s carry full prompt and response text in memory on the client; anything that leaves the machine must be reduced to what the heartbeat scheme allows.
 - Never write to, commit to or modify a user's repository. Everything runs in the background.
 - Never credit more time than was actually tracked. Multipliers from 0.0 to 1.0 are applied server-side.
@@ -59,7 +59,7 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 3 (v2 plus `interrupts`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v3`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
+  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 4 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v4`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
 - **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
@@ -100,7 +100,7 @@ Three crates in `crates/`:
 
 The attention formula is `sisyphus_common::attention` (`minute()`), shared by the server (credit) and the client (debug screen), so both always compute the same. Each heartbeat becomes one `session_minutes` row of its server-side session:
 - `agent_sessions.id`: UUID-formatted SHA-256 of device id, agent and agent session id; named by the latest `session_name`, grouped into projects by `project`.
-- Attention is one value per heartbeat (formula 3). With `activity` and at least one known slot: any slot with input whose focus is `agent` makes the whole heartbeat 1.0 (a sent prompt's slot is `agent`, so writing and sending a prompt guarantees 1.0). Otherwise it decays from the session's previous heartbeat (`attention_end`): with a 2 min half-life if `agent` held most of the six slots (staying), else 30 s (leaving; `unknown` slots count as another app). It starts at 0 after a gap. The multiplier is the heartbeat's attention.
+- Attention is one value per heartbeat (formula 3). With `activity` and at least one known slot: any slot with input whose focus is `agent` makes the whole heartbeat 1.0 (a sent prompt's slot is `agent`, so writing and sending a prompt guarantees 1.0). Otherwise it decays from the session's previous heartbeat (`attention_end`): with a 2 min half-life if `agent` held most of the six slots (staying), else 30 s (leaving; `unknown` and `testing` slots count as another app; what `testing` earns isn't decided). It starts at 0 after a gap. The multiplier is the heartbeat's attention.
 - Without `activity`, or with every slot `unknown`: a prompt gives 1.0, an interrupt 0.5, otherwise 0; nothing carries over.
 - Only minutes with `agent_running` earn credit (no time after a turn ends); `ai_ms` is 60000 for them, kept apart from credit.
 - `share_minute`: if a user's multipliers for one `minute_ms` add up to more than 1.0 (across all devices), each gets its share; `credit_ms = 60000 × multiplier / max(1, sum)`.
@@ -193,7 +193,7 @@ To add an agent:
 Reads, without a keylogger and without root, the time since the last input (any key or mouse event; never which key) and the focused app. Not wired into heartbeats yet; the `activity` CLI command prints it.
 
 - `Monitor::new(allowed)`: nothing is read without the user's consent (`Config::activity_allowed`), on every OS; without it every reading is unknown. `since_last_input()`, `focused()` → `FocusReading` (`Unknown` / `Nothing` / `App(FocusedApp { app_id, pid })`), `describe()` (which backends are in use).
-- `FocusReading::focus(session, &processes)` → the heartbeat's `Focus` class (`agent`/`terminal`/`editor`/`browser`/`other`/`none`; `None` = unknown). `classify.rs` maps app ids (Wayland app ids, X11 classes, macOS bundle ids, Windows exe names) to classes; unknown apps are `other`.
+- `FocusReading::focus(session, &processes)` → the heartbeat's `Focus` class (`agent`/`terminal`/`editor`/`browser`/`other`/`testing`/`none`; `None` = unknown). `testing` (decided 2026-11-21): the window runs an executable inside the session's project folder, which must be a git repository (`process::git_root`: has `.git`). `Processes::programs_in_window` collects the executables of the window's process and its descendants, stopping at agent processes (what an agent runs isn't the user testing); executable paths are read only for those (`process::exe_path`: `/proc/<pid>/exe` without a ` (deleted)` suffix, `proc_pidpath`, `QueryFullProcessImageNameW`). Without a window pid, processes named like the app id stand in for the window. `classify.rs` maps app ids (Wayland app ids, X11 classes, macOS bundle ids, Windows exe names) to classes; unknown apps are `other`.
 - `agent` matching (`process.rs`): the focused window runs the session's agent if an agent process (`claude`, `opencode`, or node/bun/deno running Claude Code or opencode) running that session descends from the window's process. A Claude Code process names its session in `~/.claude/sessions/<pid>.json` (`sessionId`); where that file exists the match is exact, otherwise the process's working directory must be the session's project. Subcommands that aren't sessions (`claude agents`, `claude daemon`, `claude mcp`, `opencode serve`, …) never count, and are never the session's agent. Claude Code's native builds run as `…/claude/versions/<version>` (process title `claude …`) and are recognised by that path. Command lines are read for `claude`/`opencode` and node/bun/deno.
 - Session manager (`claude agents`): it shows background sessions (`kind: "bg"` in the pid file) without telling us which one. When the focused window runs it, the background session that got the latest prompt (falling back to the latest activity) is in front (decided 2026-11-21; `Processes::window_runs_manager`, `background_sessions`, picked in the tracker). Without a window pid (wlr-foreign-toplevel) an ancestor's executable must match the app id, which can't tell two windows of the same terminal apart. Windows can't read other processes' working directories, so there any process of that agent counts.
 - `app_id` and `pid` never leave the machine; only the `Focus` class may go into heartbeats. Window titles are never stored (sources that send them, like Hyprland or wlr, have them dropped on parse).
@@ -205,12 +205,12 @@ Reads, without a keylogger and without root, the time since the last input (any 
 
 ### Tracker (`crates/client/src/tracker/`)
 
-Records heartbeats (v2) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
+Records heartbeats (v4) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
 - One tracker per machine: `tracker.lock` next to the config is locked (`File::try_lock`); a second window or `track` doesn't record.
 - `mod.rs`, once a second:
   - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
   - follows (attaches to) sessions that are running, or were active or in front within 30 min, with `AttachMode::Since(ms)` so events from just before attaching aren't missed
-  - samples input and focus into the open minute. Among sessions of the same agent and project whose agent runs in the focused window, the most recently active one gets `agent`; the others get the window's plain class
+  - samples input and focus into the open minute. Among sessions of the same agent and project whose agent runs in the focused window, the most recently active one gets `agent`; the others get the window's plain class. A session whose project is a git repo gets `testing` when the window runs one of its programs (`Session::git_root`, refreshed with the session list), and the program's relative path goes into the minute's `tested_programs`
   - remembers each second's window reading for the open minutes (plain class plus the agent processes in the window, `Processes::agents_in_window`). When a session is first followed (opencode creates a session only with its first prompt, and sessions are listed every 10 s), its slots without readings are filled from this history (`backfill`), so typing the first prompt counts
   - a prompt submitted to a session marks its slot as `agent` for that session (`SessionMinute::prompt_slots`; a prompt means the user was focused on it). Input still comes only from the OS
   - counts prompts (typed = length − pasted), responses (visible characters), and edit claims (on a successful tool result)
@@ -314,7 +314,8 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 - **What a heartbeat carries:**
   - the minute, agent, agent session id, the agent's session title, and the project folder name
   - whether the agent was running, and `activity`: whether the user allowed activity reading
-  - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
+  - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `testing` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
+  - `tested_programs`: the project's own executables that were in front (focus `testing`), relative to the project folder
   - prompt counts: submitted, typed chars, pasted chars, corrections; interrupts
   - response counts: responses finished this minute and their visible characters (never text)
   - per edited file, its path relative to the project folder, with non-whitespace characters added/removed in the working directory and what the agent's edit calls claim

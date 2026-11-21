@@ -1,6 +1,6 @@
 //! One session's minute while it's being recorded.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
     Changes, FileChange, Focus, Heartbeat, Prompts, Responses, SLOTS, Slot, VERSION,
@@ -9,7 +9,7 @@ use sisyphus_common::heartbeat::{
 /// The once-a-second focus readings of one slot.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SlotSamples {
-    counts: [u8; 7],
+    counts: [u8; 8],
     last: Option<Focus>,
 }
 
@@ -43,18 +43,21 @@ impl SlotSamples {
     }
 }
 
-const ALL: [Focus; 7] = [
+const ALL: [Focus; 8] = [
     Focus::Agent,
     Focus::Terminal,
     Focus::Editor,
     Focus::Browser,
     Focus::Other,
+    Focus::Testing,
     Focus::None,
     Focus::Unknown,
 ];
 
 fn index(focus: Focus) -> usize {
-    ALL.iter().position(|f| *f == focus).unwrap_or(6)
+    ALL.iter()
+        .position(|f| *f == focus)
+        .unwrap_or(ALL.len() - 1)
 }
 
 #[derive(Debug, Default)]
@@ -66,6 +69,9 @@ pub struct SessionMinute {
     /// comes only from the OS.
     pub prompt_slots: [bool; SLOTS],
     pub running: bool,
+    /// The project's programs seen in front (relative paths), for
+    /// `tested_programs`.
+    pub tested_programs: BTreeSet<String>,
     pub prompts: Prompts,
     pub interrupts: u32,
     pub responses: Responses,
@@ -145,6 +151,11 @@ impl SessionMinute {
             agent_running: self.running,
             activity: meta.activity,
             slots,
+            tested_programs: if meta.activity {
+                self.tested_programs.into_iter().collect()
+            } else {
+                Vec::new()
+            },
             prompts: self.prompts,
             interrupts: self.interrupts,
             responses: self.responses,

@@ -66,7 +66,7 @@ impl Monitor {
 }
 
 /// The executable of a process, if we may query it.
-fn exe_path(pid: u32) -> Option<String> {
+pub(super) fn exe_path(pid: u32) -> Option<String> {
     // SAFETY: plain call; a null handle means failure.
     let process = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
     if process.is_null() {

@@ -17,6 +17,7 @@ fn minute(i: u64) -> Heartbeat {
         agent_running: true,
         activity: true,
         slots: [Slot { input: true, focus: Focus::Agent }; 6],
+        tested_programs: vec![],
         prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
         interrupts: 0,
         responses: Responses::default(),

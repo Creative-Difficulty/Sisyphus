@@ -44,6 +44,9 @@ pub enum Focus {
     Editor,
     Browser,
     Other,
+    /// A program of the session's project: an executable inside its folder,
+    /// which is a git repository, and not started by an agent.
+    Testing,
     /// Nothing has focus (for example the desktop or a lock screen).
     None,
 }
@@ -57,6 +60,7 @@ impl Focus {
             Focus::Editor => "editor",
             Focus::Browser => "browser",
             Focus::Other => "other",
+            Focus::Testing => "testing",
             Focus::None => "none",
         }
     }
@@ -95,7 +99,8 @@ pub struct AgentSession<'a> {
 
 impl FocusReading {
     /// The focus class for `session`: [`Focus::Agent`] if the focused window
-    /// runs that session's agent. `None` when the focus is unknown.
+    /// runs that session's agent, [`Focus::Testing`] if it runs a program of
+    /// the session's project. `None` when the focus is unknown.
     pub fn focus(&self, session: Option<AgentSession<'_>>, processes: &Processes) -> Option<Focus> {
         match self {
             FocusReading::Unknown => None,
@@ -105,6 +110,13 @@ impl FocusReading {
                     && processes.window_runs_agent(app, session)
                 {
                     return Some(Focus::Agent);
+                }
+                if let Some(session) = session
+                    && let Some(root) = process::git_root(session.project)
+                    && !process::programs_under(&processes.programs_in_window(app), &root)
+                        .is_empty()
+                {
+                    return Some(Focus::Testing);
                 }
                 Some(match classify(&app.app_id) {
                     AppClass::Terminal => Focus::Terminal,

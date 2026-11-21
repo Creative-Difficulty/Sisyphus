@@ -29,7 +29,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{Focus, Heartbeat, SLOT_SECS, SLOTS};
 
-use crate::activity::process::WindowAgent;
+use crate::activity::process::{self, WindowAgent};
 use crate::activity::{self, AgentSession, FocusReading, Monitor, Processes};
 use crate::agents::{AgentEvent, AgentEventKind, AttachMode, Attachment, Integration, ToolOutcome};
 use crate::config::Config;
@@ -258,6 +258,9 @@ struct Session {
     running: bool,
     /// Last time its agent's window was in front.
     focused_ms: Option<u64>,
+    /// The project folder (canonical) if it is a git repository, so its
+    /// programs count as `testing`. Refreshed with the session list.
+    git_root: Option<PathBuf>,
     /// When the latest prompt seen since tracking started was sent.
     last_prompt_ms: Option<u64>,
     attachment: Option<Attachment>,
@@ -299,11 +302,10 @@ struct State {
     since_input_ms: Option<u64>,
     focus: Option<Focus>,
     in_front: Vec<Key>,
-    /// Each second's reading for the open minutes: the plain class of the
-    /// app in front and the agent processes running in it. Fills in the
-    /// slots of a session found only after it started (opencode creates a
-    /// session with its first prompt; sessions are listed every 10 s).
-    front_history: std::collections::VecDeque<(u64, Focus, Vec<WindowAgent>)>,
+    /// Each second's reading for the open minutes. Fills in the slots of a
+    /// session found only after it started (opencode creates a session
+    /// with its first prompt; sessions are listed every 10 s).
+    front_history: std::collections::VecDeque<WindowReading>,
     log: bool,
     started_ms: u64,
     config: Config,
@@ -395,6 +397,7 @@ impl State {
                     last_activity_ms: 0,
                     running: false,
                     focused_ms: None,
+                    git_root: None,
                     last_prompt_ms: None,
                     attachment: None,
                     retry_at: None,
@@ -403,6 +406,7 @@ impl State {
                     carry: None,
                 });
                 session.title = instance.get_title();
+                session.git_root = process::git_root(&project);
                 session.project = project;
                 session.last_activity_ms = session
                     .last_activity_ms
@@ -590,16 +594,24 @@ impl State {
         }
         let base = to_focus(reading.focus(None, &self.processes));
         self.focus = Some(base);
-        let window_agents = match &reading {
-            FocusReading::App(app) => self.processes.agents_in_window(app),
-            _ => Vec::new(),
+        let (window_agents, programs) = match &reading {
+            FocusReading::App(app) => (
+                self.processes.agents_in_window(app),
+                self.processes.programs_in_window(app),
+            ),
+            _ => (Vec::new(), Vec::new()),
         };
-        self.front_history.push_back((now, base, window_agents));
+        self.front_history.push_back(WindowReading {
+            at: now,
+            base,
+            agents: window_agents,
+            programs: programs.clone(),
+        });
         let open_from = self.open_from(now);
         while self
             .front_history
             .front()
-            .is_some_and(|(at, ..)| minute_of(*at) < open_from)
+            .is_some_and(|r| minute_of(r.at) < open_from)
         {
             self.front_history.pop_front();
         }
@@ -662,8 +674,19 @@ impl State {
                 continue;
             }
             let running = session.running;
+            let tested = match &session.git_root {
+                Some(root) if !front => process::programs_under(&programs, root),
+                _ => Vec::new(),
+            };
             let minute = session.minute(minute_ms);
-            minute.slots[slot].add(if front { Focus::Agent } else { base });
+            minute.slots[slot].add(if front {
+                Focus::Agent
+            } else if !tested.is_empty() {
+                Focus::Testing
+            } else {
+                base
+            });
+            minute.tested_programs.extend(tested);
             if running {
                 minute.running = true;
             }
@@ -860,11 +883,20 @@ impl State {
     }
 }
 
+/// One second's reading of the window in front: its plain class, the agent
+/// processes running in it and the executables of the other programs in it.
+struct WindowReading {
+    at: u64,
+    base: Focus,
+    agents: Vec<WindowAgent>,
+    programs: Vec<PathBuf>,
+}
+
 /// Fill the slots a newly followed session has no readings for from the
 /// recent window readings, so the time before it was found counts.
 fn backfill(
     session: &mut Session,
-    history: &std::collections::VecDeque<(u64, Focus, Vec<WindowAgent>)>,
+    history: &std::collections::VecDeque<WindowReading>,
     open_from: u64,
 ) {
     let agent_session = AgentSession {
@@ -872,18 +904,30 @@ fn backfill(
         project: &session.project,
         id: &session.id,
     };
-    let readings: Vec<(u64, Focus)> = history
+    let readings: Vec<(u64, Focus, Vec<String>)> = history
         .iter()
-        .filter(|(at, ..)| minute_of(*at) >= open_from)
-        .map(|(at, base, agents)| {
-            let front = agents.iter().any(|a| a.runs(agent_session));
-            (*at, if front { Focus::Agent } else { *base })
+        .filter(|r| minute_of(r.at) >= open_from)
+        .map(|r| {
+            if r.agents.iter().any(|a| a.runs(agent_session)) {
+                return (r.at, Focus::Agent, Vec::new());
+            }
+            let tested = session
+                .git_root
+                .as_deref()
+                .map(|root| process::programs_under(&r.programs, root))
+                .unwrap_or_default();
+            let focus = if tested.is_empty() {
+                r.base
+            } else {
+                Focus::Testing
+            };
+            (r.at, focus, tested)
         })
         .collect();
     // Only slots without any reading of their own.
     let empty: HashSet<(u64, usize)> = readings
         .iter()
-        .map(|(at, _)| (minute_of(*at), slot_of(*at)))
+        .map(|(at, ..)| (minute_of(*at), slot_of(*at)))
         .filter(|(m, i)| {
             session
                 .minutes
@@ -891,10 +935,12 @@ fn backfill(
                 .is_none_or(|minute| minute.slots[*i].is_empty())
         })
         .collect();
-    for (at, focus) in readings {
+    for (at, focus, tested) in readings {
         let key = (minute_of(at), slot_of(at));
         if empty.contains(&key) {
-            session.minute(key.0).slots[key.1].add(focus);
+            let minute = session.minute(key.0);
+            minute.slots[key.1].add(focus);
+            minute.tested_programs.extend(tested);
         }
     }
 }
@@ -918,6 +964,7 @@ fn to_focus(focus: Option<activity::Focus>) -> Focus {
         Some(activity::Focus::Editor) => Focus::Editor,
         Some(activity::Focus::Browser) => Focus::Browser,
         Some(activity::Focus::Other) => Focus::Other,
+        Some(activity::Focus::Testing) => Focus::Testing,
         Some(activity::Focus::None) => Focus::None,
     }
 }
@@ -939,6 +986,7 @@ mod tests {
             last_activity_ms: 0,
             running: true,
             focused_ms: None,
+            git_root: None,
             last_prompt_ms: None,
             attachment: None,
             retry_at: None,
@@ -960,7 +1008,12 @@ mod tests {
         for s in 0..25 {
             // Seconds 0-14: the opencode window; 15-24: the browser.
             let agents = if s < 15 { window.clone() } else { Vec::new() };
-            history.push_back((m + s * 1000, Focus::Browser, agents));
+            history.push_back(WindowReading {
+                at: m + s * 1000,
+                base: Focus::Browser,
+                agents,
+                programs: Vec::new(),
+            });
         }
         let mut s = session("/nonexistent/test");
         // Slot 2 already has its own reading.
@@ -977,6 +1030,35 @@ mod tests {
         let mut other = session("/nonexistent/other");
         backfill(&mut other, &history, m);
         assert_eq!(other.minutes[&m].focus(0), Focus::Browser);
+    }
+
+    #[test]
+    fn programs_of_a_git_project_count_as_testing() {
+        let m = 1_795_201_380_000;
+        let mut history = std::collections::VecDeque::new();
+        for s in 0..10 {
+            history.push_back(WindowReading {
+                at: m + s * 1000,
+                base: Focus::Other,
+                agents: Vec::new(),
+                programs: vec![PathBuf::from("/nonexistent/test/target/debug/game")],
+            });
+        }
+        let mut s = session("/nonexistent/test");
+        s.git_root = Some(PathBuf::from("/nonexistent/test"));
+        backfill(&mut s, &history, m);
+        let minute = &s.minutes[&m];
+        assert_eq!(minute.focus(0), Focus::Testing);
+        assert_eq!(
+            minute.tested_programs.iter().collect::<Vec<_>>(),
+            ["target/debug/game"]
+        );
+
+        // Not a git repository: just another app.
+        let mut plain = session("/nonexistent/test");
+        backfill(&mut plain, &history, m);
+        assert_eq!(plain.minutes[&m].focus(0), Focus::Other);
+        assert!(plain.minutes[&m].tested_programs.is_empty());
     }
 
     #[test]

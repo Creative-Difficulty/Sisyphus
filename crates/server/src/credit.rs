@@ -66,6 +66,7 @@ pub enum Focus {
     Editor,
     Browser,
     Other,
+    Testing,
     None,
     #[default]
     #[serde(other)]
@@ -93,6 +94,7 @@ pub fn compute(body: &Body, carry: Option<Carry>) -> Outcome {
                 Focus::Editor => heartbeat::Focus::Editor,
                 Focus::Browser => heartbeat::Focus::Browser,
                 Focus::Other => heartbeat::Focus::Other,
+                Focus::Testing => heartbeat::Focus::Testing,
                 Focus::None => heartbeat::Focus::None,
                 Focus::Unknown => heartbeat::Focus::Unknown,
             },

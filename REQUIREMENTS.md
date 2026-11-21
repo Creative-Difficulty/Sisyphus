@@ -34,8 +34,9 @@ product must:
 ## Hard rules
 
 - Never credit more time than was actually tracked.
-- Only counts, timings, coarse app classes, paths of edited files (relative to
-  the project folder) and the agent's session titles leave the machine. Never
+- Only counts, timings, coarse app classes, paths of edited files and of
+  the project's own programs (relative to the project folder) and the
+  agent's session titles leave the machine. Never
   prompt text, file contents, absolute paths, window titles or keystrokes.
   Paths and session titles are visible only to the user and reviewers, never
   on public profiles.
@@ -137,7 +138,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 3,
+    "version": 4,
     "minute_ms": 1795201380000,
 
     "agent": "claude-code",
@@ -153,8 +154,9 @@ product must:
       { "input": false, "focus": "agent" },
       { "input": false, "focus": "browser" },
       { "input": true, "focus": "editor" },
-      { "input": false, "focus": "editor" }
+      { "input": false, "focus": "testing" }
     ],
+    "tested_programs": ["target/debug/game"],
 
     "prompts": {
       "submitted": 1,
@@ -196,10 +198,20 @@ product must:
   - `input` is any keyboard or mouse input, read from the OS idle time; keys
     are never recorded.
   - `focus` is one of `agent` (the agent's own window), `terminal`, `editor`,
-    `browser`, `other` or `none`: the app that held focus for most of the
+    `browser`, `other`, `testing` or `none`: the app that held focus for most of the
     slot, so a short flash into another window doesn't change it. `unknown`
     when activity isn't allowed, or the system can't tell (for example GNOME
     without the Window Calls extension).
+- `testing` and `tested_programs` (decided 2026-11-21, scheme version 4):
+  the user is testing what they build. A slot's focus is `testing` when the
+  window in front runs an executable that lives inside the session's
+  project folder, and that folder is a git repository (it has `.git`).
+  Programs an agent started (its tests, its tools) don't count, and the
+  agent's own window stays `agent`. `tested_programs` lists those
+  executables' paths relative to the project folder, sorted, never
+  absolute. Scripts run by an interpreter outside the project (`python
+  main.py`, `node server.js`) aren't recognised, because the executable is
+  the interpreter.
 - `interrupts` (added 2026-11-21, scheme version 3): times the user
   stopped the agent mid-turn this minute.
 - `prompts`: counts only, never text.
@@ -274,6 +286,10 @@ product must:
 - Implementation choices to confirm: a minute where no slot's focus is
   known counts like activity off; a single `unknown` slot counts like
   being in another app.
+- Not decided: what `testing` earns. For now it counts like any other app
+  (no input credit, attention decays as when leaving), and a minute with
+  only `testing` (agent not running, its window not in front) sends no
+  heartbeat.
 - No time after a turn ends for now (decided 2026-11-21): only minutes in
   which the agent ran earn credit. Attention is still followed through the
   others.

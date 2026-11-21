@@ -5,7 +5,10 @@
 //! Only process ids, parent ids, executable names, agent command lines (to
 //! recognise the agent), the agents' working directories and Claude Code's
 //! session files (`sessions/<pid>.json`, which name the session a process
-//! runs) are read. None of it leaves the machine.
+//! runs) are read, plus the executable paths of the processes in the
+//! focused window (to see whether the user runs a program of the project).
+//! Only those programs' paths relative to the project folder may leave the
+//! machine.
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -144,6 +147,39 @@ impl Processes {
             .collect()
     }
 
+    /// The executables (canonical paths) of the processes running in the
+    /// focused window that no agent started: the window's own process and
+    /// its descendants, stopping at agent processes and their children
+    /// (an agent running the tests isn't the user testing). Without the
+    /// window's pid: processes whose executable matches the app id, and
+    /// their descendants.
+    pub fn programs_in_window(&self, app: &FocusedApp) -> Vec<PathBuf> {
+        let id = app_name(&app.app_id);
+        let mut programs: Vec<PathBuf> = self
+            .by_pid
+            .values()
+            .filter(|p| {
+                for a in self.ancestors(p.pid) {
+                    if a.agent.is_some() || a.manager.is_some() {
+                        return false;
+                    }
+                    let window = match app.pid {
+                        Some(window) => a.pid == window,
+                        None => !id.is_empty() && a.name == id,
+                    };
+                    if window {
+                        return true;
+                    }
+                }
+                false
+            })
+            .filter_map(|p| exe_path(p.pid))
+            .collect();
+        programs.sort();
+        programs.dedup();
+        programs
+    }
+
     /// Whether process `pid` descends from the focused window's process.
     /// Without the window's pid (wlr-foreign-toplevel gives only the app
     /// id): an ancestor's executable matches the app id, which can't tell
@@ -187,6 +223,56 @@ impl WindowAgent {
                     .is_none_or(|cwd| cwd == canonical(session.project)),
             }
     }
+}
+
+/// The project folder (canonical) if it is a git repository: only then do
+/// its programs count as `testing`.
+pub fn git_root(project: &Path) -> Option<PathBuf> {
+    project.join(".git").exists().then(|| canonical(project))
+}
+
+/// The `programs` inside `root` (from [`git_root`]), as paths relative to
+/// it with `/` separators.
+pub fn programs_under(programs: &[PathBuf], root: &Path) -> Vec<String> {
+    programs
+        .iter()
+        .filter_map(|p| p.strip_prefix(root).ok())
+        .filter(|rel| !rel.as_os_str().is_empty())
+        .map(|rel| {
+            rel.components()
+                .map(|c| c.as_os_str().to_string_lossy())
+                .collect::<Vec<_>>()
+                .join("/")
+        })
+        .collect()
+}
+
+/// A process's executable, canonical where the OS gives a resolved path.
+/// `None` if we may not read it.
+#[cfg(target_os = "linux")]
+pub fn exe_path(pid: u32) -> Option<PathBuf> {
+    let path = std::fs::read_link(format!("/proc/{pid}/exe")).ok()?;
+    // A binary replaced while running (a rebuild) reads as `… (deleted)`.
+    let text = path.to_string_lossy();
+    Some(match text.strip_suffix(" (deleted)") {
+        Some(rest) => PathBuf::from(rest),
+        None => path,
+    })
+}
+
+#[cfg(target_os = "macos")]
+pub fn exe_path(pid: u32) -> Option<PathBuf> {
+    super::macos::exe_path(i32::try_from(pid).ok()?).map(|p| canonical(&p))
+}
+
+#[cfg(windows)]
+pub fn exe_path(pid: u32) -> Option<PathBuf> {
+    super::windows::exe_path(pid).map(|p| canonical(Path::new(&p)))
+}
+
+#[cfg(not(any(target_os = "linux", target_os = "macos", windows)))]
+pub fn exe_path(_pid: u32) -> Option<PathBuf> {
+    None
 }
 
 /// `path` with symlinks resolved, or as it is if that fails.
@@ -556,6 +642,49 @@ mod tests {
             ..session("claude-code")
         };
         assert!(t.window_runs_agent(&app("kitty", Some(100)), s2));
+    }
+
+    #[test]
+    fn programs_inside_the_project_are_relative() {
+        let root = Path::new("/nonexistent/project");
+        let programs = [
+            PathBuf::from("/nonexistent/project/target/debug/game"),
+            PathBuf::from("/usr/bin/zsh"),
+            PathBuf::from("/nonexistent/project-other/bin/x"),
+        ];
+        assert_eq!(programs_under(&programs, root), ["target/debug/game"]);
+    }
+
+    #[test]
+    fn a_folder_without_git_has_no_programs() {
+        let dir = std::env::temp_dir().join(format!("sisyphus-git-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        assert_eq!(git_root(&dir), None);
+        std::fs::create_dir_all(dir.join(".git")).unwrap();
+        assert_eq!(git_root(&dir), Some(canonical(&dir)));
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn programs_in_the_window_skip_what_agents_started() {
+        // The test process plays the window; its executable is ours.
+        let me = std::process::id();
+        // A made-up pid plays the window; the test process runs in it.
+        let window = 4_000_000_000;
+        let t = Processes::from_list(vec![
+            p(window, 0, "kitty", None),
+            p(me, window, "game", None),
+        ]);
+        let exe = std::env::current_exe().unwrap();
+        assert_eq!(t.programs_in_window(&app("kitty", Some(window))), [exe]);
+        // The same process started by an agent doesn't count.
+        let t = Processes::from_list(vec![
+            p(window, 0, "kitty", None),
+            p(50, window, "claude", Some("claude-code")),
+            p(me, 50, "game", None),
+        ]);
+        assert!(t.programs_in_window(&app("kitty", Some(window))).is_empty());
     }
 
     #[cfg(target_os = "linux")]

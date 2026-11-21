@@ -111,7 +111,7 @@ pub fn processes() -> Vec<Process> {
 }
 
 /// The process's executable path.
-fn exe_path(pid: c_int) -> Option<PathBuf> {
+pub(super) fn exe_path(pid: c_int) -> Option<PathBuf> {
     let mut buf = vec![0u8; libc::PROC_PIDPATHINFO_MAXSIZE as usize];
     // SAFETY: the buffer holds `buf.len()` bytes.
     let n = unsafe { libc::proc_pidpath(pid, buf.as_mut_ptr().cast(), buf.len() as u32) };
