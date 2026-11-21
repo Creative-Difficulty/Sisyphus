@@ -16,7 +16,7 @@ use serde_json::Value;
 
 use crate::agents::{
     AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
-    Attachment, is_running, shorten, tail,
+    Attachment, FileStamp, is_running, shorten, tail,
 };
 
 pub mod rollout;
@@ -84,6 +84,8 @@ pub struct AgentInstanceCodex {
     title: String,
     /// The name from the session index, if the thread has one.
     named: Option<Title>,
+    /// Codex's `session_index.jsonl`, watched for renames while attached.
+    index_path: PathBuf,
     project_path: PathBuf,
     rollout_path: PathBuf,
     last_activity_ms: Option<u64>,
@@ -93,7 +95,7 @@ pub struct AgentInstanceCodex {
 impl AgentInstanceCodex {
     /// Read a session from its rollout file. `None` if it isn't a rollout,
     /// or isn't a thread the user drove (see [`Meta::is_user_thread`]).
-    fn load(rollout_path: &Path, titles: &Titles) -> Option<Self> {
+    fn load(rollout_path: &Path, index_path: &Path, titles: &Titles) -> Option<Self> {
         let meta = Meta::read(rollout_path)?;
         if !meta.is_user_thread() {
             return None;
@@ -110,6 +112,7 @@ impl AgentInstanceCodex {
             title,
             named,
             project_path: meta.cwd,
+            index_path: index_path.to_path_buf(),
             rollout_path: rollout_path.to_path_buf(),
             running: is_running(turn_open(rollout_path), modified_ms(rollout_path)),
             last_activity_ms: modified_ms(rollout_path),
@@ -182,9 +185,12 @@ impl AgentInstance for AgentInstanceCodex {
     fn attach(&self, mode: AttachMode) -> Result<Attachment, AgentError> {
         self.ensure_exists()?;
         let path = self.rollout_path.clone();
+        let index = self.index_path.clone();
+        let thread_id = self.thread_id.clone();
         let title = self.named.clone();
         Ok(Attachment::spawn(move |tx, stop| {
             // The name isn't in the rollout; send it first if asked for.
+            let mut current = title.as_ref().map(|t| t.name.clone());
             if let Some(title) = title {
                 let event = AgentEvent {
                     time_ms: title.updated_ms.unwrap_or(0),
@@ -194,16 +200,41 @@ impl AgentInstance for AgentInstanceCodex {
                     return;
                 }
             }
+            // Renames are appended to the index, not the rollout. Re-read
+            // the title whenever the index file changes.
+            let mut index_stamp = FileStamp::of(&index);
+            let title_tx = tx.clone();
+            let check_title = move || {
+                let stamp = FileStamp::of(&index);
+                if stamp == index_stamp {
+                    return true;
+                }
+                index_stamp = stamp;
+                let Some(title) = Titles::load(&index).get(&thread_id).cloned() else {
+                    return true;
+                };
+                if current.as_deref() == Some(title.name.as_str()) {
+                    return true;
+                }
+                current = Some(title.name.clone());
+                title_tx
+                    .send(AgentEvent {
+                        time_ms: title.updated_ms.unwrap_or_else(now_ms),
+                        kind: AgentEventKind::TitleChanged { title: title.name },
+                    })
+                    .is_ok()
+            };
             // History is always parsed so the parser knows which tool
             // calls are open, but only sent when asked for.
             let mut parser = RolloutParser::new();
-            let result = tail::follow_lines(&path, &stop, |line, is_history| {
+            let on_line = |line: &str, is_history| {
                 let mut events = parser.parse_line(line);
                 if is_history {
                     events.retain(|e| mode.sends_history(e));
                 }
                 events.into_iter().all(|e| tx.send(e).is_ok())
-            });
+            };
+            let result = tail::follow_lines_with_idle(&path, &stop, on_line, check_title);
             if let Err(e) = result {
                 // The receiver only sees the channel close; there is no
                 // error event, so leave a trace for debugging.
@@ -266,7 +297,7 @@ fn list_sessions(home: &Path) -> Vec<AgentInstanceCodex> {
     let titles = Titles::load(&index_path(home));
     let mut instances: Vec<AgentInstanceCodex> = rollout_files(&home.join("sessions"))
         .iter()
-        .filter_map(|path| AgentInstanceCodex::load(path, &titles))
+        .filter_map(|path| AgentInstanceCodex::load(path, &index_path(home), &titles))
         .collect();
     instances.sort_by_key(|i| std::cmp::Reverse(i.last_activity_ms));
     let mut seen = std::collections::HashSet::new();
@@ -283,7 +314,7 @@ fn find_session(home: &Path, thread_id: &str) -> Option<AgentInstanceCodex> {
                 .and_then(|n| n.to_str())
                 .is_some_and(|n| n.contains(thread_id))
         })
-        .filter_map(|p| AgentInstanceCodex::load(p, &titles))
+        .filter_map(|p| AgentInstanceCodex::load(p, &index_path(home), &titles))
         .filter(|i| i.thread_id == thread_id)
         .max_by_key(|i| i.last_activity_ms)
 }
@@ -391,6 +422,13 @@ fn turn_marker(line: &[u8]) -> Option<bool> {
         "task_complete" | "turn_complete" | "turn_aborted" => Some(false),
         _ => None,
     }
+}
+
+fn now_ms() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0)
 }
 
 fn modified_ms(path: &Path) -> Option<u64> {
@@ -668,6 +706,51 @@ pub(crate) mod tests {
 
         let new_only = session.attach(AttachMode::NewOnly).unwrap();
         assert!(new_only.recv_timeout(Duration::from_millis(600)).is_err());
+    }
+
+    #[test]
+    fn renames_arrive_while_attached() {
+        use std::io::Write;
+        use std::time::Duration;
+        let home = temp_home("rename");
+        write_rollout(
+            &home,
+            "01-00-00",
+            "t1",
+            &[meta_line("t1", "/p", r#""cli""#, Some("user"))],
+        );
+        let index = home.join("session_index.jsonl");
+        fs::write(
+            &index,
+            r#"{"id":"t1","thread_name":"Old","updated_at":"2026-11-21T01:00:00Z"}"#.to_string()
+                + "\n",
+        )
+        .unwrap();
+        let attachment = find_session(&home, "t1")
+            .unwrap()
+            .attach(AttachMode::NewOnly)
+            .unwrap();
+        std::thread::sleep(Duration::from_millis(400));
+        let mut file = File::options().append(true).open(&index).unwrap();
+        // Another thread's rename doesn't count; this thread's does.
+        writeln!(
+            file,
+            r#"{{"id":"other","thread_name":"Nope","updated_at":"2026-11-21T02:00:00Z"}}"#
+        )
+        .unwrap();
+        writeln!(
+            file,
+            r#"{{"id":"t1","thread_name":"New","updated_at":"2026-11-21T02:00:01Z"}}"#
+        )
+        .unwrap();
+        let event = attachment.recv_timeout(Duration::from_secs(5)).unwrap();
+        assert_eq!(
+            event.kind,
+            AgentEventKind::TitleChanged {
+                title: "New".into()
+            }
+        );
+        assert!(attachment.recv_timeout(Duration::from_millis(600)).is_err());
     }
 
     #[test]
