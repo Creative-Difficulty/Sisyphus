@@ -7,19 +7,26 @@
 //! directory and where it came from.
 
 use std::fs::{self, File};
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::time::UNIX_EPOCH;
 
 use serde_json::Value;
 
 use crate::agents::{
-    AgentError, AgentEvent, AgentInstance, AgentIntegration, AttachMode, Attachment,
+    AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
+    Attachment, shorten,
 };
 
 pub mod rollout;
+pub mod titles;
 
 use rollout::RolloutParser;
+use titles::{Title, Titles};
+
+/// Bytes read from the start of a rollout to find its first prompt, for
+/// sessions without a name.
+const FIRST_PROMPT_SCAN: u64 = 256 * 1024;
 
 pub struct AgentIntegrationCodex;
 
@@ -74,6 +81,8 @@ impl AgentIntegration for AgentIntegrationCodex {
 pub struct AgentInstanceCodex {
     thread_id: String,
     title: String,
+    /// The name from the session index, if the thread has one.
+    named: Option<Title>,
     project_path: PathBuf,
     rollout_path: PathBuf,
     last_activity_ms: Option<u64>,
@@ -83,14 +92,22 @@ pub struct AgentInstanceCodex {
 impl AgentInstanceCodex {
     /// Read a session from its rollout file. `None` if it isn't a rollout,
     /// or isn't a thread the user drove (see [`Meta::is_user_thread`]).
-    pub fn load(rollout_path: &Path) -> Option<Self> {
+    fn load(rollout_path: &Path, titles: &Titles) -> Option<Self> {
         let meta = Meta::read(rollout_path)?;
         if !meta.is_user_thread() {
             return None;
         }
+        let named = titles.get(&meta.id).cloned();
+        let title = match &named {
+            Some(title) => title.name.clone(),
+            None => first_prompt(rollout_path)
+                .map(|p| shorten(&p, 60))
+                .unwrap_or_else(|| "Untitled session".to_string()),
+        };
         Some(Self {
             thread_id: meta.id,
-            title: "Untitled session".to_string(),
+            title,
+            named,
             project_path: meta.cwd,
             rollout_path: rollout_path.to_path_buf(),
             last_activity_ms: modified_ms(rollout_path),
@@ -140,6 +157,23 @@ impl AgentInstance for AgentInstanceCodex {
         // rest from being read.
         for line in BufReader::new(File::open(&self.rollout_path)?).split(b'\n') {
             events.extend(parser.parse_line(&String::from_utf8_lossy(&line?)));
+        }
+        // The name isn't in the rollout; put it where it was set.
+        if let Some(title) = &self.named {
+            let time_ms = title
+                .updated_ms
+                .or_else(|| events.first().map(|e| e.time_ms))
+                .unwrap_or(0);
+            let at = events.partition_point(|e| e.time_ms <= time_ms);
+            events.insert(
+                at,
+                AgentEvent {
+                    time_ms,
+                    kind: AgentEventKind::TitleChanged {
+                        title: title.name.clone(),
+                    },
+                },
+            );
         }
         Ok(events)
     }
@@ -198,9 +232,10 @@ impl Meta {
 /// The user's sessions under `home`, most recently active first, one per
 /// thread (a reverted thread has several files; the newest wins).
 fn list_sessions(home: &Path) -> Vec<AgentInstanceCodex> {
+    let titles = Titles::load(&index_path(home));
     let mut instances: Vec<AgentInstanceCodex> = rollout_files(&home.join("sessions"))
         .iter()
-        .filter_map(|path| AgentInstanceCodex::load(path))
+        .filter_map(|path| AgentInstanceCodex::load(path, &titles))
         .collect();
     instances.sort_by_key(|i| std::cmp::Reverse(i.last_activity_ms));
     let mut seen = std::collections::HashSet::new();
@@ -209,6 +244,7 @@ fn list_sessions(home: &Path) -> Vec<AgentInstanceCodex> {
 }
 
 fn find_session(home: &Path, thread_id: &str) -> Option<AgentInstanceCodex> {
+    let titles = Titles::load(&index_path(home));
     rollout_files(&home.join("sessions"))
         .iter()
         .filter(|p| {
@@ -216,7 +252,7 @@ fn find_session(home: &Path, thread_id: &str) -> Option<AgentInstanceCodex> {
                 .and_then(|n| n.to_str())
                 .is_some_and(|n| n.contains(thread_id))
         })
-        .filter_map(|p| AgentInstanceCodex::load(p))
+        .filter_map(|p| AgentInstanceCodex::load(p, &titles))
         .filter(|i| i.thread_id == thread_id)
         .max_by_key(|i| i.last_activity_ms)
 }
@@ -254,6 +290,24 @@ fn rollout_files(sessions: &Path) -> Vec<PathBuf> {
         }
     }
     files
+}
+
+fn index_path(home: &Path) -> PathBuf {
+    home.join("session_index.jsonl")
+}
+
+/// The first prompt within the first [`FIRST_PROMPT_SCAN`] bytes.
+fn first_prompt(rollout_path: &Path) -> Option<String> {
+    let file = File::open(rollout_path).ok()?;
+    let mut parser = RolloutParser::new();
+    BufReader::new(file.take(FIRST_PROMPT_SCAN))
+        .split(b'\n')
+        .map_while(Result::ok)
+        .flat_map(|line| parser.parse_line(&String::from_utf8_lossy(&line)))
+        .find_map(|e| match e.kind {
+            AgentEventKind::Prompt { text, .. } => Some(text),
+            _ => None,
+        })
 }
 
 fn modified_ms(path: &Path) -> Option<u64> {
@@ -379,6 +433,56 @@ pub(crate) mod tests {
         assert_eq!(listed[0].rollout_path(), newer);
         assert_eq!(find_session(&home, "t1").unwrap().rollout_path(), newer);
         assert!(find_session(&home, "missing").is_none());
+    }
+
+    fn prompt_line(text: &str) -> String {
+        format!(
+            r#"{{"timestamp":"2026-11-21T01:00:01Z","type":"event_msg","payload":{{"type":"item_completed","item":{{"type":"UserMessage","id":"u","content":[{{"type":"text","text":"{text}"}}]}}}}}}"#
+        )
+    }
+
+    #[test]
+    fn titles_from_index_then_first_prompt() {
+        let home = temp_home("titles");
+        let meta = |id| meta_line(id, "/p", r#""cli""#, Some("user"));
+        write_rollout(
+            &home,
+            "01-00-00",
+            "named",
+            &[meta("named"), prompt_line("ignored")],
+        );
+        write_rollout(
+            &home,
+            "01-00-01",
+            "unnamed",
+            &[meta("unnamed"), prompt_line("fix the login page")],
+        );
+        write_rollout(&home, "01-00-02", "empty", &[meta("empty")]);
+        fs::write(
+            home.join("session_index.jsonl"),
+            r#"{"id":"named","thread_name":"Login fixes","updated_at":"2026-11-21T01:00:05Z"}"#,
+        )
+        .unwrap();
+        let title = |id| find_session(&home, id).unwrap().get_title();
+        assert_eq!(title("named"), "Login fixes");
+        assert_eq!(title("unnamed"), "fix the login page");
+        assert_eq!(title("empty"), "Untitled session");
+
+        // History has the name at the time it was set, after the prompt.
+        let kinds: Vec<_> = find_session(&home, "named")
+            .unwrap()
+            .read_events()
+            .unwrap()
+            .into_iter()
+            .map(|e| e.kind)
+            .collect();
+        assert!(matches!(kinds[0], AgentEventKind::Prompt { .. }));
+        assert_eq!(
+            kinds[1],
+            AgentEventKind::TitleChanged {
+                title: "Login fixes".into()
+            }
+        );
     }
 
     #[test]
