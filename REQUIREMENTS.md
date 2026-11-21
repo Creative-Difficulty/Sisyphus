@@ -67,8 +67,10 @@ product must:
     from Hyprland IPC, Sway IPC, the "Window Calls" GNOME Shell extension,
     a KWin script on KDE, or `wlr-foreign-toplevel-management`.
 - Client window (iced):
-  - on Wayland, a one-time consent popup for reading the focused app, also
-    changeable in settings
+  - an onboarding step asking to allow activity on every OS: required to
+    count time, says exactly what is shared (the kind of app and whether the
+    user was active) and what never is (typing, keys, mouse movements, app
+    names, titles, screen); changeable in settings
   - settings to connect and disconnect agents
   - a dashboard of recent sessions with placeholder "Recorded today" figures
   - a pink light and dark theme that follows the OS
@@ -168,8 +170,9 @@ product must:
   - `agent_edits` is what the agent's edit calls claim for that file.
 - Input is detected without a keylogger and without root: OS "time since last
   input" APIs plus the class of the focused app.
-- On Wayland, reading the focused app needs the user's permission: a popup
-  asks for it and explains how the data is used. Decided 2026-11-21: use the
+- Reading activity needs the user's permission on every OS (decided
+  2026-11-21): an onboarding step says it is required to count time and
+  explains exactly what is shared. On Wayland, decided 2026-11-21: use the
   most cross-compositor way that needs no root (see Built). Root would be
   acceptable behind a clear popup, but nothing needs it: root only adds raw
   `/dev/input` access, which is keylogger-level access.
@@ -178,6 +181,9 @@ product must:
   Shipping our own GNOME Shell extension is for later.
 - The agent's edit calls and the working directory's changes must match up,
   file by file.
+- A prompt submitted to a session means the user is focused on that session
+  (decided 2026-11-21). Matching the focused window to an agent process
+  narrows the candidates; the most recent prompt picks among them.
 
 ### Server
 
@@ -271,5 +277,29 @@ product must:
   not be exact.
 - "Make the value of actions": the meaning is unclear; ask before acting on
   it.
+- Against mouse jigglers and autotypers (raised 2026-11-21, nothing
+  decided; ask first):
+  - Input already only counts while the agent's window has focus, and
+    attention needs agent-side evidence: prompts, tool approvals,
+    interrupts, matching file edits. Moving the mouse produces none.
+  - Synthetic input: macOS can compare hardware-only idle time
+    (`HIDSystemState`) with the combined one, which also counts injected
+    events. On Windows, injected input is only visible through low-level
+    hooks (flag `LLMHF_INJECTED`), which read every key event. On X11, XTEST
+    devices are distinguishable through XInput2. On Wayland, uinput tools
+    (ydotool) look like hardware. Hardware USB jigglers can't be told apart
+    anywhere.
+  - Statistics on the server: perfectly regular input for hours, prompt
+    cadence (always the same delay after a turn ends), no reading time
+    proportional to the response length, typed characters far beyond what
+    the input slots allow.
+  - AI prompting AI: prompts that arrive while nobody touched the keyboard
+    or the agent's window wasn't focused (tmux send-keys, pipes, the SDK)
+    are visible as prompts without input. Claude Code records the
+    entrypoint (CLI vs SDK) per session. An autotyper in front of the window
+    can only be caught statistically or by the AI-prompt classifier (low
+    priority, never decides alone).
+  - Anything suspicious is flagged for reviewers, not decided
+    automatically.
 - Rejected: having the AI commit after every round. It conflicts with the
   rule against touching user repositories.
