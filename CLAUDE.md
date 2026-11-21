@@ -43,6 +43,7 @@ cargo run -p sisyphus-client                                  # open the window
 cargo run -p sisyphus-client -- sessions                      # list sessions of all agents, with running state
 cargo run -p sisyphus-client -- watch [SESSION_ID] [--replay] # print a session's events live; never exits on its own
 cargo run -p sisyphus-client -- activity                      # print idle time, focused app and per-session agent focus each second; never exits
+cargo run -p sisyphus-client -- track                         # record and upload heartbeats without the window, printing each; never exits
 
 cargo run -p sisyphus-server                 # needs DATABASE_URL (from the environment or .env, see .env.example)
 ```
@@ -58,13 +59,13 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is still the v1 shape (WakaTime-style gaps, free-form `app` string). The final v2 scheme is in `REQUIREMENTS.md` ("Heartbeat scheme"); only switch to it when the user asks.
-- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`) plus a binary (`main.rs`).
-  - Run without arguments, the binary opens the iced window; `sessions`, `watch` and `activity` are CLI commands.
+  - `heartbeat.rs` is the v2 scheme from `REQUIREMENTS.md` ("Heartbeat scheme"): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v2`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`).
+- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
+  - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
   - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
   - `activity/`: time since the last input and the focused app, per OS (see "Activity" below).
-  - It does not yet build heartbeats, use the chain or upload anything.
+  - `tracker/`: builds, signs, queues and uploads heartbeats (see "Tracker" below).
 - **`sisyphus-server`**: axum + Postgres (sqlx).
   - Configured from the environment or `.env` (`.env` is git-ignored; `.env.example` lists every key): `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), `PUBLIC_URL` (login redirect and whether cookies are `Secure`), `HACKCLUB_CLIENT_ID` / `HACKCLUB_CLIENT_SECRET` (login is disabled without them), optional `HACKCLUB_AUTH_URL`.
   - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start.
@@ -87,7 +88,7 @@ Three crates in `crates/`:
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.
-  - It does not yet build session UUIDs, compute attention or credit, or know the v2 heartbeat.
+  - It stores v2 heartbeats but does not yet build session UUIDs or compute attention or credit.
 
 ### Deployment (`deploy/`)
 
@@ -174,6 +175,23 @@ Reads, without a keylogger and without root, the time since the last input (any 
   - Linux X11 (`linux/x11.rs`): XScreenSaver; `_NET_ACTIVE_WINDOW`, `WM_CLASS`, `_NET_WM_PID`.
   - Linux Wayland: idle from `ext-idle-notify` v2 input notifications (ignores idle inhibitors; 1 s resolution), or Mutter's IdleMonitor over D-Bus on GNOME. Focus, first that applies: Hyprland IPC (`j/activewindow`), Sway IPC (`get_tree`), GNOME via the third-party "Window Calls" Shell extension (`org.gnome.Shell.Extensions.Windows.List`; unknown without it), KDE via a KWin script loaded over D-Bus that calls our bus name `dev.aelx.Sisyphus` with the active window's class and pid, then `wlr-foreign-toplevel-management` (niri, river, labwc, Wayfire, …). The Wayland connection runs on its own thread, stopped when the `Monitor` is dropped.
 
+### Tracker (`crates/client/src/tracker/`)
+
+Records heartbeats (v2) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
+- One tracker per machine: `tracker.lock` next to the config is locked (`File::try_lock`); a second window or `track` doesn't record.
+- `mod.rs`, once a second:
+  - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
+  - follows (attaches to) sessions that are running, or were active or in front within 30 min, with `AttachMode::Since(ms)` so events from just before attaching aren't missed
+  - samples input and focus into the open minute. Among sessions of the same agent and project whose agent runs in the focused window, the most recently active one gets `agent`; the others get the window's plain class
+  - counts prompts (typed = length − pasted), responses (visible characters), and edit claims (on a successful tool result)
+  - closes minutes 5 s after they end. A session's minute becomes a heartbeat when its agent ran, its window was in front for most of a slot, or anything happened in it (decided 2026-11-21). Without consent, `activity` is false and slots are `unknown`.
+  - Events for an already closed minute go into the current one.
+- `files.rs`: `ProjectWatch` polls a project folder every 2 s while one of its sessions runs (and 10 s after). Each line is kept only as a hash of its non-whitespace characters plus their count; changes are counted as non-whitespace characters of lines added/removed (common prefix/suffix stripped, then a multiset difference). The first poll after arming is a baseline that doesn't count. Skips dependency/build/VCS folders, files over 1 MB, non-UTF-8 or binary files, symlinks, and stops at 20,000 files. A change goes to the session that last claimed an edit to that file, otherwise the most recently active running session in the folder. Because the working directory is counted in whole lines and claims count only the replaced text, `working_dir` is usually somewhat higher than `agent_edits` for edits inside a line; claims above `working_dir` are the suspicious direction.
+- `edits.rs`: edit claims from Claude Code's `Edit`/`MultiEdit`/`Write` and opencode's `edit`/`write`, counted the same way. A `Write` is compared with the file's version before the write, from the watch. Paths outside the project are dropped; other tools (shell, patches) only show up in the working directory.
+- `minute.rs`: a session's minute; a slot's focus is the class seen most often (latest on a tie).
+- `queue.rs`: heartbeats are signed with the device key into the chain, appended to `queue.jsonl` (written before the tip) and the tip saved in `chain.json`, both next to the config. The uploader thread sends batches of up to 500 every 30 s while logged in (`account()`) and the server is https or localhost, never holding the queue's lock during a request. On `OutOfSync` it drops what the server already has, or signs the unsent heartbeats again from the server's tip if the chains differ. At most 50,000 are kept.
+- Not built: correction labels (`corrections` is 0 until the embedding model exists), opencode on Windows, tmux/terminal-tab disambiguation beyond "most recently active".
+
 ### Local config (`config.rs`)
 
 JSON in the OS config directory:
@@ -188,7 +206,7 @@ Fields:
 - `server_url`: the Sisyphus server; absent means production, `https://sisyphus.aelx.dev` (`DEFAULT_SERVER_URL`). Changeable in Settings.
 - `account`: `{ "name": …, "server": … }` once logged in, absent when logged out. A device is linked per server, so `Config::account()` only returns the account when its `server` matches the current one; switching servers (or an older account without `server`) means logging in again. Always use `account()`, not the field.
 
-`device.key` (the device's private key) lives next to it.
+`device.key` (the device's private key) lives next to it, as do the tracker's `queue.jsonl`, `chain.json` and `tracker.lock`.
 
 Unknown fields are ignored. Saving replaces the file atomically.
 
@@ -251,11 +269,17 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - macOS: the workspace can't be checked for `aarch64-apple-darwin` here (ring and sqlite need Apple's SDK). Type-check and clippy `macos.rs` in a scratch crate that includes it with `#[path]` and stubs `FocusReading`, `FocusedApp`, `Process` and `agent_of`, using the workspace `Cargo.lock` and `--offline`.
 - Not testable here: Sway, GNOME, KDE. Ask the user to test those.
 
-### Heartbeat design (decided 2026-11-20, not implemented yet)
+### Testing the tracker
+
+- Start a throwaway Postgres and server (see "Testing the server"). Link a device without a login: run `track` once with a temporary `XDG_CONFIG_HOME` to create `device.key`, derive its public key (e.g. Python `cryptography`), and insert a `users` row and a `devices` row (`next_seq` 0, `prev` 64 zeros, `user_id`) with `psql`.
+- Config: `connected_agents`, `"activity_allowed": true`, `server_url` pointing at the local server and a matching `account`.
+- Run `timeout 400 sisyphus-client track`; the agent session you are working in is itself a running session, so your own edits show up as `agent_edits` and `working_dir`. Check the stored rows in `heartbeats`.
+
+### Heartbeat design (decided 2026-11-20; the client records and uploads it, the server only stores it)
 
 The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat scheme"). The essentials:
 
-- **Per session.** Time is counted and calculated per agent session. Each session sends its own heartbeat each minute while its agent is running or the user is working on its prompt.
+- **Per session.** Time is counted and calculated per agent session. Each session sends its own heartbeat each minute while its agent is running, or while it isn't running but its agent's window is in front (decided 2026-11-21).
 - **What a heartbeat carries:**
   - the minute, agent, agent session id, the agent's session title, and the project folder name
   - whether the agent was running, and `activity`: whether the user allowed activity reading

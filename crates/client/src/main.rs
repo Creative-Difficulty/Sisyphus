@@ -12,12 +12,16 @@ fn main() {
             activity();
             Ok(())
         }
+        Some("track") => track(),
         None => sisyphus_client::gui::run().map_err(Into::into),
         Some(_) => {
             println!("usage: sisyphus-client                 open the window");
             println!("       sisyphus-client sessions        list sessions");
             println!("       sisyphus-client watch [SESSION_ID] [--replay]");
             println!("       sisyphus-client activity        print input and focus each second");
+            println!(
+                "       sisyphus-client track           record and upload heartbeats, printing each"
+            );
             Ok(())
         }
     };
@@ -91,6 +95,16 @@ fn activity() {
             agents.join(", ")
         );
         std::thread::sleep(Duration::from_secs(1));
+    }
+}
+
+/// Record heartbeats without the window, printing each one and every
+/// upload. Never exits on its own.
+fn track() -> Result<(), Box<dyn std::error::Error>> {
+    let _tracker = sisyphus_client::tracker::Tracker::start(true)?;
+    println!("tracking; heartbeats appear a few seconds after each minute");
+    loop {
+        std::thread::park();
     }
 }
 

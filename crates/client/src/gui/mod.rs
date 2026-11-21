@@ -52,6 +52,9 @@ struct App {
     /// The server address as typed in settings, not yet saved.
     server_input: String,
     server_error: Option<String>,
+    /// Records and uploads heartbeats while the window is open. `None` if
+    /// another Sisyphus already does.
+    _tracker: Option<crate::tracker::Tracker>,
 }
 
 enum Screen {
@@ -109,6 +112,9 @@ impl App {
             login_error: None,
             server_input: String::new(),
             server_error: None,
+            _tracker: crate::tracker::Tracker::start(false)
+                .inspect_err(|e| eprintln!("not tracking: {e}"))
+                .ok(),
         };
         app.server_input = app.config.server_url();
         let task = app.resume();

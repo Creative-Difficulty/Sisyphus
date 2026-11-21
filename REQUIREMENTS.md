@@ -58,8 +58,13 @@ product must:
   large pastes, so small pastes count as typed.
 - Activity on every OS, without a keylogger or root: time since the last
   input and the focused app's class, including whether the focused window
-  runs the session's agent (matched through the process tree). Not in
-  heartbeats yet.
+  runs the session's agent (matched through the process tree).
+- Heartbeat recording (v2 scheme), while the window is open: one heartbeat
+  per session per minute, signed into the hash chain, queued on disk and
+  uploaded every 30 seconds while logged in. File changes are found by
+  polling the project folder while its agent runs; agent edit claims come
+  from the edit tool calls. `corrections` stays 0 until the prompt model
+  exists.
   - Windows: `GetLastInputInfo`, the foreground window's process.
   - macOS: CoreGraphics idle time, `NSWorkspace`'s frontmost app.
   - Linux X11: XScreenSaver, `_NET_ACTIVE_WINDOW`.
@@ -95,7 +100,13 @@ product must:
 ### Heartbeat scheme (final, approved 2026-11-20)
 
 - Time is counted and calculated per agent session. Each session sends its own
-  heartbeat every minute while its agent runs or its prompt is being written.
+  heartbeat every minute while its agent runs, or while it doesn't run but
+  its agent's window is in front (decided 2026-11-21; mouse-jiggle handling
+  comes later).
+- For now the client records only while its window is open; a background
+  service comes later (decided 2026-11-21).
+- `working_dir` changes are found by checking the project folder for
+  changes while the agent runs (decided 2026-11-21).
 - Heartbeats are signed into the hash chain, queued offline and uploaded about
   every 30 seconds. The device id is sent once per upload batch.
 - No 0–1 value, attention, struggle value or session UUID comes from the
