@@ -1,6 +1,8 @@
 use ed25519_dalek::SigningKey;
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat, verify};
-use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION};
+use sisyphus_common::heartbeat::{
+    Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION,
+};
 
 fn writer() -> ChainWriter {
     ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]))
@@ -17,16 +19,31 @@ fn minute(i: u64) -> Heartbeat {
         agent_running: true,
         activity: true,
         input_kinds: InputKinds::Exact,
-        slots: [Slot { input: true, keys: 3, mouse: 1, focus: Focus::Agent }; 6],
+        slots: [Slot {
+            input: true,
+            keys: 3,
+            mouse: 1,
+            focus: Focus::Agent,
+        }; 6],
         tested_programs: vec![],
         running_programs: vec![],
-        prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
+        prompts: Prompts {
+            submitted: 1,
+            typed_chars: 100 + i as u32,
+            ..Prompts::default()
+        },
         interrupts: 0,
         responses: Responses::default(),
         files: vec![FileChange {
             path: "src/main.rs".into(),
-            working_dir: Changes { added: 20, removed: 3 },
-            agent_edits: Changes { added: 20, removed: 3 },
+            working_dir: Changes {
+                added: 20,
+                removed: 3,
+            },
+            agent_edits: Changes {
+                added: 20,
+                removed: 3,
+            },
         }],
     }
 }
@@ -40,7 +57,10 @@ fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
 #[test]
 fn valid_chain_verifies() {
     let (w, hbs) = signed(10);
-    assert_eq!(verify(&hbs, &w.device_id(), &ChainTip::GENESIS), Ok(w.tip()));
+    assert_eq!(
+        verify(&hbs, &w.device_id(), &ChainTip::GENESIS),
+        Ok(w.tip())
+    );
 }
 
 #[test]
@@ -110,12 +130,18 @@ fn resumed_writer_continues_chain() {
     let (w, mut hbs) = signed(3);
     let mut w2 = ChainWriter::resume(SigningKey::from_bytes(&[7u8; 32]), w.tip());
     hbs.push(w2.sign(minute(3)));
-    assert_eq!(verify(&hbs, &w.device_id(), &ChainTip::GENESIS), Ok(w2.tip()));
+    assert_eq!(
+        verify(&hbs, &w.device_id(), &ChainTip::GENESIS),
+        Ok(w2.tip())
+    );
 }
 
 #[test]
 fn heartbeat_json_roundtrip() {
     let (_, hbs) = signed(1);
     let json = serde_json::to_string(&hbs[0]).unwrap();
-    assert_eq!(serde_json::from_str::<SignedHeartbeat>(&json).unwrap(), hbs[0]);
+    assert_eq!(
+        serde_json::from_str::<SignedHeartbeat>(&json).unwrap(),
+        hbs[0]
+    );
 }

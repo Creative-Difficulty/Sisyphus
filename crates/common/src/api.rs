@@ -37,16 +37,22 @@ pub enum UploadError {
     Empty,
     /// The batch doesn't start where the server's copy of the chain ends.
     /// The client should resend starting from `expected`.
-    OutOfSync { expected: ChainTip },
+    OutOfSync {
+        expected: ChainTip,
+    },
     /// The batch was tampered with or signed by the wrong device.
     Invalid(ChainError),
     /// Heartbeat `at` has a scheme version this server doesn't accept.
-    UnsupportedVersion { at: usize },
+    UnsupportedVersion {
+        at: usize,
+    },
     /// Heartbeat `at` is dated in the future: its minute hasn't ended yet
     /// by the server's clock (the device's clock is ahead). The heartbeats
     /// before it may be sent on their own; it and the rest only once their
     /// minute has passed.
-    FutureDated { at: usize },
+    FutureDated {
+        at: usize,
+    },
 }
 
 /// A heartbeat as the server stores it.
@@ -60,7 +66,8 @@ pub struct StoredHeartbeat {
 impl StoredHeartbeat {
     /// How long after its claimed time the server received it.
     pub fn delay_ms(&self) -> u64 {
-        self.received_at_ms.saturating_sub(self.signed.heartbeat.minute_ms)
+        self.received_at_ms
+            .saturating_sub(self.signed.heartbeat.minute_ms)
     }
 
     /// True if it was likely recorded offline. Its claimed time then rests on
@@ -81,16 +88,29 @@ pub fn is_future_dated(heartbeat: &crate::heartbeat::Heartbeat, now_ms: u64) -> 
 
 /// Server side: check a batch against the device's stored chain tip, at
 /// the server's time `now_ms`. Returns the new tip to store.
-pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip, now_ms: u64) -> Result<ChainTip, UploadError> {
+pub fn verify_batch(
+    batch: &UploadBatch,
+    tip: &ChainTip,
+    now_ms: u64,
+) -> Result<ChainTip, UploadError> {
     let first = batch.heartbeats.first().ok_or(UploadError::Empty)?;
-    if let Some(at) = batch.heartbeats.iter().position(|h| h.heartbeat.version != VERSION) {
+    if let Some(at) = batch
+        .heartbeats
+        .iter()
+        .position(|h| h.heartbeat.version != VERSION)
+    {
         return Err(UploadError::UnsupportedVersion { at });
     }
     if first.seq != tip.next_seq {
         return Err(UploadError::OutOfSync { expected: *tip });
     }
-    let new_tip = chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)?;
-    if let Some(at) = batch.heartbeats.iter().position(|h| is_future_dated(&h.heartbeat, now_ms)) {
+    let new_tip =
+        chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)?;
+    if let Some(at) = batch
+        .heartbeats
+        .iter()
+        .position(|h| is_future_dated(&h.heartbeat, now_ms))
+    {
         return Err(UploadError::FutureDated { at });
     }
     Ok(new_tip)

@@ -79,7 +79,12 @@ pub struct Slot {
 }
 
 impl Slot {
-    pub const UNKNOWN: Self = Self { input: false, keys: 0, mouse: 0, focus: Focus::Unknown };
+    pub const UNKNOWN: Self = Self {
+        input: false,
+        keys: 0,
+        mouse: 0,
+        focus: Focus::Unknown,
+    };
 }
 
 /// How a heartbeat's key and mouse counts were read.
