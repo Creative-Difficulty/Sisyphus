@@ -26,7 +26,7 @@
 //! messages, which are not prompts. The format is undocumented, so unknown
 //! lines and fields are skipped rather than treated as errors.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use serde_json::Value;
 
@@ -40,6 +40,10 @@ pub struct RolloutParser {
     /// Outcomes from `item_completed` statuses, waiting for their call's
     /// output line.
     outcomes: HashMap<String, ToolOutcome>,
+    /// Tool calls of this turn without an output yet.
+    open_calls: HashSet<String>,
+    /// A tool output this turn said the user aborted it.
+    tool_aborted: bool,
 }
 
 impl RolloutParser {
@@ -69,6 +73,19 @@ impl RolloutParser {
             Some("compacted") => vec![AgentEventKind::Compacted],
             _ => Vec::new(),
         };
+        for kind in &kinds {
+            match kind {
+                AgentEventKind::ToolCall { id, name, .. }
+                    if !id.is_empty() && name != "web_search" =>
+                {
+                    self.open_calls.insert(id.clone());
+                }
+                AgentEventKind::ToolResult { id, .. } => {
+                    self.open_calls.remove(id);
+                }
+                _ => {}
+            }
+        }
         kinds
             .into_iter()
             .map(|kind| AgentEvent { time_ms, kind })
@@ -80,9 +97,30 @@ impl RolloutParser {
     fn event_msg(&mut self, payload: &Value) -> Vec<AgentEventKind> {
         let text = |name| payload.get(name).and_then(Value::as_str).unwrap_or("");
         match payload.get("type").and_then(Value::as_str) {
-            Some("task_complete" | "turn_complete") => vec![AgentEventKind::TurnEnd {
-                duration_ms: payload.get("duration_ms").and_then(Value::as_u64),
-            }],
+            Some("task_started" | "turn_started") => {
+                self.end_turn();
+                Vec::new()
+            }
+            Some("task_complete" | "turn_complete") => {
+                self.end_turn();
+                vec![AgentEventKind::TurnEnd {
+                    duration_ms: payload.get("duration_ms").and_then(Value::as_u64),
+                }]
+            }
+            // Esc, or cancelling an approval ("No, and tell Codex what to
+            // do differently"), aborts the turn with `interrupted`. Other
+            // reasons (replaced, review ended, budget reached) just end it.
+            Some("turn_aborted") => {
+                let during_tool_use = self.tool_aborted || !self.open_calls.is_empty();
+                self.end_turn();
+                if text("reason") == "interrupted" {
+                    vec![AgentEventKind::Interrupt { during_tool_use }]
+                } else {
+                    vec![AgentEventKind::TurnEnd {
+                        duration_ms: payload.get("duration_ms").and_then(Value::as_u64),
+                    }]
+                }
+            }
             Some("user_message") => prompt(text("message")),
             Some("agent_message") => response(text("message")),
             Some("agent_reasoning") => vec![AgentEventKind::Thinking {
@@ -135,6 +173,11 @@ impl RolloutParser {
         }
     }
 
+    fn end_turn(&mut self) {
+        self.open_calls.clear();
+        self.tool_aborted = false;
+    }
+
     fn response_item(&mut self, payload: &Value) -> Vec<AgentEventKind> {
         let str_field = |name| payload.get(name).and_then(Value::as_str).unwrap_or("");
         let call = |name: &str, input: Value| {
@@ -167,10 +210,16 @@ impl RolloutParser {
             ),
             Some("function_call_output" | "custom_tool_call_output") => {
                 let id = str_field("call_id").to_string();
+                let text = output_text(payload.get("output"));
+                // Codex closes tools the user stopped with this output
+                // before it writes `turn_aborted`.
+                if text.starts_with("aborted by user") || text.contains("\naborted by user") {
+                    self.tool_aborted = true;
+                }
                 let outcome = self
                     .outcomes
                     .remove(&id)
-                    .unwrap_or_else(|| outcome_of(&output_text(payload.get("output"))));
+                    .unwrap_or_else(|| outcome_of(&text));
                 vec![AgentEventKind::ToolResult { id, outcome }]
             }
             _ => Vec::new(),
@@ -531,6 +580,63 @@ mod tests {
         assert_eq!(outcome_of(&output_text(Some(&list))), ToolOutcome::Rejected);
         let object = serde_json::json!({"content": "Exit code: 1", "success": false});
         assert_eq!(outcome_of(&output_text(Some(&object))), ToolOutcome::Error);
+    }
+
+    #[test]
+    fn interrupts() {
+        let mut p = RolloutParser::new();
+        let started = r#"{"type":"event_msg","payload":{"type":"task_started","turn_id":"t"}}"#;
+        let aborted = r#"{"type":"event_msg","payload":{"type":"turn_aborted","turn_id":"t","reason":"interrupted","duration_ms":9}}"#;
+        let call = r#"{"type":"response_item","payload":{"type":"function_call","name":"exec_command","arguments":"{}","call_id":"c"}}"#;
+        let stopped = r#"{"type":"response_item","payload":{"type":"function_call_output","call_id":"c","output":"aborted by user after 3.0s"}}"#;
+        let done = r#"{"type":"response_item","payload":{"type":"function_call_output","call_id":"c","output":"Exit code: 0"}}"#;
+        let interrupt = |during_tool_use| vec![AgentEventKind::Interrupt { during_tool_use }];
+
+        // Esc while the model writes.
+        kinds(&mut p, started);
+        assert_eq!(kinds(&mut p, aborted), interrupt(false));
+
+        // Esc while a command runs: the call is closed as aborted first.
+        kinds(&mut p, started);
+        kinds(&mut p, call);
+        assert_eq!(kinds(&mut p, stopped), result("c", ToolOutcome::Error));
+        assert_eq!(kinds(&mut p, aborted), interrupt(true));
+
+        // Cancelling an approval: the call never gets an output.
+        kinds(&mut p, started);
+        kinds(&mut p, call);
+        assert_eq!(kinds(&mut p, aborted), interrupt(true));
+
+        // A finished tool doesn't make a later interrupt "during tool use".
+        kinds(&mut p, started);
+        kinds(&mut p, call);
+        kinds(&mut p, done);
+        assert_eq!(kinds(&mut p, aborted), interrupt(false));
+
+        // A call left open in an earlier turn doesn't leak into this one.
+        kinds(&mut p, call);
+        kinds(&mut p, started);
+        assert_eq!(kinds(&mut p, aborted), interrupt(false));
+    }
+
+    #[test]
+    fn other_abort_reasons_end_the_turn() {
+        let mut p = RolloutParser::new();
+        for reason in [
+            "replaced",
+            "review_ended",
+            "budget_limited",
+            "something_new",
+        ] {
+            let line = format!(
+                r#"{{"type":"event_msg","payload":{{"type":"turn_aborted","reason":"{reason}"}}}}"#
+            );
+            assert_eq!(
+                kinds(&mut p, &line),
+                vec![AgentEventKind::TurnEnd { duration_ms: None }],
+                "{reason}"
+            );
+        }
     }
 
     #[test]
