@@ -77,8 +77,8 @@ product must:
     user was active) and what never is (typing, keys, mouse movements, app
     names, titles, screen); changeable in settings
   - settings to connect and disconnect agents
-  - a dashboard of recent sessions with today's credited time from the
-    server (the three smaller figures are still placeholders)
+  - a dashboard of recent sessions with today's credited time and agent
+    time from the server (prompts and sessions are still placeholders)
   - a pink light and dark theme that follows the OS
 - `sisyphus-common`: an ed25519-signed hash chain of heartbeats with
   tamper-detection tests.
@@ -86,7 +86,7 @@ product must:
   - accepts signed heartbeat batches, checks the chain and signatures, and
     stores them with its own receive time
   - a web dashboard in the client's style with a sidebar: Overview (tracked
-    time and counts), Projects (each project with its tracked time) and
+    time, agent time and counts), Projects (each project with its tracked time) and
     Settings (the time zone)
   - a debug view, Heartbeats, listing every heartbeat the user's devices
     uploaded; clicking one shows the stored record in a popup
@@ -96,8 +96,8 @@ product must:
     links its device key to the account
   - uploads accepted only from devices linked to an account; each user sees
     only their own devices and heartbeats
-  - signed app requests: today's total and logging the device out on the
-    server
+  - signed app requests: today's credited and agent time, and logging the
+    device out on the server
   - crediting: server-side sessions (UUID from device, agent and agent
     session id), attention per slot, the multiplier per minute, sharing
     concurrent sessions' minutes, AI time kept apart, offline flags; rebuilt

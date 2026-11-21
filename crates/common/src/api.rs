@@ -151,8 +151,12 @@ pub fn request_message(method: &str, path_and_query: &str, time_ms: u64, body: &
 }
 
 /// Reply to `GET /api/app/today?start_ms=…`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Today {
     /// Credited time since `start_ms` (the start of the user's local day).
     pub tracked_ms: u64,
+    /// Time an agent ran since then; a minute with several agents running
+    /// counts once.
+    #[serde(default)]
+    pub agent_ms: u64,
 }

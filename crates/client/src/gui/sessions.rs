@@ -8,6 +8,7 @@ use iced::{Center, Element, Fill, FillPortion};
 
 use super::{Message, style};
 use crate::agents::{AgentInstance, Integration};
+use sisyphus_common::api::Today;
 
 /// How many sessions the list shows.
 const LIMIT: usize = 100;
@@ -61,8 +62,9 @@ fn summary(agent: usize, instance: &dyn AgentInstance) -> SessionSummary {
 }
 
 /// `None` while loading.
-/// `today_ms`: today's credited time from the server, if it answered.
-pub fn view(sessions: Option<&[SessionSummary]>, today_ms: Option<u64>) -> Element<'_, Message> {
+/// `today`: today's credited time and agent time from the server, if it
+/// answered.
+pub fn view(sessions: Option<&[SessionSummary]>, today: Option<Today>) -> Element<'_, Message> {
     let quiet =
         |label| -> Element<'_, Message> { center(text(label).size(13).style(style::muted)).into() };
     let body = match sessions {
@@ -85,19 +87,19 @@ pub fn view(sessions: Option<&[SessionSummary]>, today_ms: Option<u64>) -> Eleme
         .spacing(14)
         .height(FillPortion(1));
 
-    container(container(column![list, stats(today_ms)].spacing(24)).max_width(760))
+    container(container(column![list, stats(today.unwrap_or_default())].spacing(24)).max_width(760))
         .padding(iced::Padding::from([0, 40]).bottom(32))
         .center_x(Fill)
         .into()
 }
 
-/// Today's recorded time, from the server, and a few figures.
-///
-/// The three figures are placeholders (zero) for now.
-fn stats<'a>(today_ms: Option<u64>) -> Element<'a, Message> {
-    let minutes = today_ms.unwrap_or(0) / 60_000;
+/// Today's recorded time and agent time, from the server, and a few
+/// figures. Prompts and sessions are placeholders (zero) for now.
+fn stats<'a>(today: Today) -> Element<'a, Message> {
+    let agent = short_duration(today.agent_ms);
+    let minutes = today.tracked_ms / 60_000;
     let today = format!("{}h {:02}m", minutes / 60, minutes % 60);
-    let figure = |value: &'a str, label: &'a str| {
+    let figure = |value: String, label: &'a str| {
         column![
             text(value).size(30).font(style::BOLD),
             text(label).size(14).style(style::muted),
@@ -109,9 +111,9 @@ fn stats<'a>(today_ms: Option<u64>) -> Element<'a, Message> {
             text("Recorded today").size(16).style(style::muted),
             text(today).size(84).font(style::BOLD).style(style::accent),
             row![
-                figure("0", "prompts"),
-                figure("0", "sessions"),
-                figure("0m", "agent time"),
+                figure("0".to_string(), "prompts"),
+                figure("0".to_string(), "sessions"),
+                figure(agent, "agent time"),
             ]
             .spacing(56),
         ]
@@ -120,6 +122,16 @@ fn stats<'a>(today_ms: Option<u64>) -> Element<'a, Message> {
     )
     .height(FillPortion(1))
     .into()
+}
+
+/// "42m", or "1h 05m" from an hour on.
+fn short_duration(ms: u64) -> String {
+    let minutes = ms / 60_000;
+    if minutes < 60 {
+        format!("{minutes}m")
+    } else {
+        format!("{}h {:02}m", minutes / 60, minutes % 60)
+    }
 }
 
 /// One session as a bubble: agent, title, project, age. A running

@@ -52,8 +52,9 @@ struct App {
     /// The server address as typed in settings, not yet saved.
     server_input: String,
     server_error: Option<String>,
-    /// Today's credited time from the server; `None` until it answered.
-    today_ms: Option<u64>,
+    /// Today's credited time and agent time from the server; `None` until
+    /// it answered.
+    today: Option<sisyphus_common::api::Today>,
     /// Logging out on the server is under way.
     logout_pending: bool,
     /// Logging out on the server failed.
@@ -97,8 +98,8 @@ pub enum Message {
     Logout,
     /// The server answered the logout.
     LogoutFinished(Result<(), String>),
-    /// Today's credited time from the server.
-    TodayLoaded(Result<u64, String>),
+    /// Today's credited time and agent time from the server.
+    TodayLoaded(Result<sisyphus_common::api::Today, String>),
     /// Next first-start step.
     Continue,
     /// The server address field in settings changed.
@@ -122,7 +123,7 @@ impl App {
             login_error: None,
             server_input: String::new(),
             server_error: None,
-            today_ms: None,
+            today: None,
             logout_pending: false,
             logout_error: None,
             _tracker: crate::tracker::Tracker::start(false)
@@ -158,8 +159,8 @@ impl App {
             },
             Message::TodayLoaded(result) => {
                 // On failure keep the last value; the next refresh retries.
-                if let Ok(ms) = result {
-                    self.today_ms = Some(ms);
+                if let Ok(today) = result {
+                    self.today = Some(today);
                 }
                 Task::none()
             }
@@ -228,7 +229,7 @@ impl App {
                     self.login_error = Some(format!("Could not save: {e}"));
                 }
                 self.config = config;
-                self.today_ms = None;
+                self.today = None;
                 self.screen = Screen::Login;
                 Task::none()
             }
@@ -287,7 +288,7 @@ impl App {
                     error: self.logout_error.as_deref(),
                 },
             ),
-            Screen::Sessions(list) => sessions::view(list.as_deref(), self.today_ms),
+            Screen::Sessions(list) => sessions::view(list.as_deref(), self.today),
         };
         // Top left: settings from the dashboard, back from settings.
         // Nothing during first start. Top right: light/dark.

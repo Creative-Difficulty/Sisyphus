@@ -2,7 +2,7 @@
 //! `sisyphus_common::api::request_message`). Only devices linked to an
 //! account get an answer:
 //!
-//! - `GET /api/app/today?start_ms=…`: credited time today, in the time zone
+//! - `GET /api/app/today?start_ms=…`: credited time and agent time today, in the time zone
 //!   set on the website, or since `start_ms` (the app's local midnight)
 //!   while none is set.
 //! - `POST /api/app/logout`: unlink this device from its account. It can't
@@ -147,11 +147,12 @@ pub async fn today(
     } else {
         params.start_ms.min(i64::MAX as u64) as i64
     };
-    let tracked = crate::dashboard::credited_since(&state.db, device.user_id, start)
+    let (tracked, agent) = crate::dashboard::credited_since(&state.db, device.user_id, start)
         .await
         .map_err(failed)?;
     Ok(Json(Today {
         tracked_ms: tracked.max(0) as u64,
+        agent_ms: agent.max(0) as u64,
     }))
 }
 

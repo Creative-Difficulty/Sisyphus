@@ -10,15 +10,14 @@ use sisyphus_common::api::{HEADER_DEVICE, HEADER_SIGNATURE, HEADER_TIME, Today, 
 
 const HTTP_TIMEOUT: Duration = Duration::from_secs(15);
 
-/// Credited time since the start of today, local time.
-pub fn today(server: &str) -> Result<u64, String> {
+/// Credited time and agent time since the start of today, local time.
+pub fn today(server: &str) -> Result<Today, String> {
     let path = format!("/api/app/today?start_ms={}", local_day_start_ms(now_ms()));
     let mut response = request(server, "GET", &path)?;
     match response.status().as_u16() {
         200 => response
             .body_mut()
             .read_json::<Today>()
-            .map(|t| t.tracked_ms)
             .map_err(|e| format!("Unexpected answer from the server: {e}")),
         status => Err(refused(status)),
     }

@@ -36,6 +36,9 @@ function renderOverview(data) {
   setText("today", duration(data.tracked_today_ms));
   setText("week", duration(data.tracked_week_ms));
   setText("total", duration(data.tracked_total_ms));
+  setText("agent-today", duration(data.agent_today_ms));
+  setText("agent-week", duration(data.agent_week_ms));
+  setText("agent-total", duration(data.agent_total_ms));
   setText("project-count", data.projects);
   setText("session-count", data.sessions);
   setText("device-count", data.devices);

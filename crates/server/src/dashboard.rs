@@ -23,6 +23,11 @@ pub struct Dashboard {
     tracked_today_ms: i64,
     tracked_week_ms: i64,
     tracked_total_ms: i64,
+    /// Time an agent ran (AI time, not credit); a minute with several
+    /// agents running counts once.
+    agent_today_ms: i64,
+    agent_week_ms: i64,
+    agent_total_ms: i64,
     projects: i64,
     sessions: i64,
     devices: i64,
@@ -57,7 +62,12 @@ pub async fn dashboard(
     let row = sqlx::query(
         "SELECT coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $2), 0)::bigint AS today,
                 coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $3), 0)::bigint AS week,
-                coalesce(sum(credit_ms), 0)::bigint AS total
+                coalesce(sum(credit_ms), 0)::bigint AS total,
+                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0 AND minute_ms >= $2)
+                    AS agent_today,
+                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0 AND minute_ms >= $3)
+                    AS agent_week,
+                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0) AS agent_total
          FROM session_minutes WHERE user_id = $1",
     )
     .bind(user.id)
@@ -79,6 +89,9 @@ pub async fn dashboard(
         tracked_today_ms: row.get("today"),
         tracked_week_ms: row.get("week"),
         tracked_total_ms: row.get("total"),
+        agent_today_ms: row.get("agent_today"),
+        agent_week_ms: row.get("agent_week"),
+        agent_total_ms: row.get("agent_total"),
         projects: counts.get("projects"),
         sessions: counts.get("sessions"),
         devices: counts.get("devices"),
@@ -140,17 +153,22 @@ pub async fn day_and_week_start(db: &sqlx::PgPool, user_id: i64) -> sqlx::Result
     Ok((row.get("day"), row.get("week")))
 }
 
-/// Credited time of `user_id` since `since_ms`.
-pub async fn credited_since(db: &sqlx::PgPool, user_id: i64, since_ms: i64) -> sqlx::Result<i64> {
-    Ok(sqlx::query(
-        "SELECT coalesce(sum(credit_ms), 0)::bigint AS n FROM session_minutes
-         WHERE user_id = $1 AND minute_ms >= $2",
+/// Credited time and agent time of `user_id` since `since_ms`.
+pub async fn credited_since(
+    db: &sqlx::PgPool,
+    user_id: i64,
+    since_ms: i64,
+) -> sqlx::Result<(i64, i64)> {
+    let row = sqlx::query(
+        "SELECT coalesce(sum(credit_ms), 0)::bigint AS credit,
+                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0) AS agent
+         FROM session_minutes WHERE user_id = $1 AND minute_ms >= $2",
     )
     .bind(user_id)
     .bind(since_ms)
     .fetch_one(db)
-    .await?
-    .get("n"))
+    .await?;
+    Ok((row.get("credit"), row.get("agent")))
 }
 
 /// Heartbeats per page of the debug view.
