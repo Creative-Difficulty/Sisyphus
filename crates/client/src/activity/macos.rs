@@ -8,7 +8,7 @@ use std::time::Duration;
 
 use objc2_app_kit::NSWorkspace;
 
-use super::process::{Process, agent_of};
+use super::process::{Process, agent_of, is_claude_build, is_version_name};
 use super::{FocusReading, FocusedApp};
 
 #[link(name = "CoreGraphics", kind = "framework")]
@@ -79,9 +79,13 @@ pub fn processes() -> Vec<Process> {
         .into_iter()
         .filter_map(|pid| {
             let info = bsd_info(pid)?;
-            let name = c_chars(&info.pbi_name)
+            let mut name = c_chars(&info.pbi_name)
                 .filter(|n| !n.is_empty())
                 .or_else(|| c_chars(&info.pbi_comm))?;
+            // Claude Code's native builds are named after their version.
+            if is_version_name(&name) && exe_path(pid).is_some_and(|p| is_claude_build(&p)) {
+                name = "claude".to_string();
+            }
             let args = if matches!(
                 name.as_str(),
                 "node" | "bun" | "deno" | "claude" | "opencode"
@@ -99,9 +103,23 @@ pub fn processes() -> Vec<Process> {
                 agent,
                 cwd,
                 session: None,
+                background: false,
+                manager: super::process::manager_of(&name, &args),
             })
         })
         .collect()
+}
+
+/// The process's executable path.
+fn exe_path(pid: c_int) -> Option<PathBuf> {
+    let mut buf = vec![0u8; libc::PROC_PIDPATHINFO_MAXSIZE as usize];
+    // SAFETY: the buffer holds `buf.len()` bytes.
+    let n = unsafe { libc::proc_pidpath(pid, buf.as_mut_ptr().cast(), buf.len() as u32) };
+    if n <= 0 {
+        return None;
+    }
+    buf.truncate(n as usize);
+    Some(PathBuf::from(String::from_utf8(buf).ok()?))
 }
 
 fn pids() -> Vec<c_int> {

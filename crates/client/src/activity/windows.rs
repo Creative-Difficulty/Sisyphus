@@ -14,7 +14,7 @@ use windows_sys::Win32::System::Threading::{
 use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
 use windows_sys::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowThreadProcessId};
 
-use super::process::{Process, agent_of};
+use super::process::{Process, agent_of, is_claude_build, is_version_name};
 use super::{FocusReading, FocusedApp};
 
 pub struct Monitor;
@@ -104,7 +104,14 @@ pub fn processes() -> Vec<Process> {
             .iter()
             .position(|c| *c == 0)
             .unwrap_or(entry.szExeFile.len());
-        let name = String::from_utf16_lossy(&entry.szExeFile[..len]);
+        let mut name = String::from_utf16_lossy(&entry.szExeFile[..len]);
+        // Claude Code's native builds are named after their version.
+        if is_version_name(&name)
+            && exe_path(entry.th32ProcessID)
+                .is_some_and(|p| is_claude_build(std::path::Path::new(&p.replace('\\', "/"))))
+        {
+            name = "claude.exe".to_string();
+        }
         let lower = name.to_lowercase();
         list.push(Process {
             pid: entry.th32ProcessID,
@@ -113,6 +120,8 @@ pub fn processes() -> Vec<Process> {
             name: lower.strip_suffix(".exe").unwrap_or(&lower).to_string(),
             cwd: None,
             session: None,
+            background: false,
+            manager: None,
         });
         // SAFETY: as above.
         ok = unsafe { Process32NextW(snapshot, &mut entry) };

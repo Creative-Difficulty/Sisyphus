@@ -36,9 +36,10 @@ impl AgentIntegrationClaudeCode {
         Some(PathBuf::from(home).join(".claude"))
     }
 
-    /// The session a running Claude Code process works on, from the
-    /// `sessions/<pid>.json` file it keeps while running.
-    pub fn session_of_pid(pid: u32) -> Option<String> {
+    /// The session a running Claude Code process works on, and whether it
+    /// runs in the background (started from the session manager, `claude
+    /// agents`), from the `sessions/<pid>.json` file it keeps while running.
+    pub fn session_of_pid(pid: u32) -> Option<(String, bool)> {
         let path = Self::config_dir()?
             .join("sessions")
             .join(format!("{pid}.json"));
@@ -47,10 +48,9 @@ impl AgentIntegrationClaudeCode {
         if value.get("pid").and_then(serde_json::Value::as_u64) != Some(u64::from(pid)) {
             return None;
         }
-        value
-            .get("sessionId")
-            .and_then(serde_json::Value::as_str)
-            .map(str::to_string)
+        let id = value.get("sessionId")?.as_str()?.to_string();
+        let background = value.get("kind").and_then(serde_json::Value::as_str) == Some("bg");
+        Some((id, background))
     }
 
     fn history() -> PromptHistory {

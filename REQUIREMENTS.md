@@ -211,7 +211,11 @@ product must:
   file by file.
 - A prompt submitted to a session means the user is focused on that session
   (decided 2026-11-21). Matching the focused window to an agent process
-  narrows the candidates; the most recent prompt picks among them.
+  narrows the candidates; the most recent prompt picks among them. Claude
+  Code names the session of each process, which makes the match exact. Its
+  session manager (`claude agents`) doesn't say which background session it
+  shows, so there the background session with the latest prompt counts as
+  in front (decided 2026-11-21).
 
 ### Server
 

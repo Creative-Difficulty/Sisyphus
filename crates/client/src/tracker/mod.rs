@@ -197,6 +197,8 @@ struct Session {
     running: bool,
     /// Last time its agent's window was in front.
     focused_ms: Option<u64>,
+    /// When the latest prompt seen since tracking started was sent.
+    last_prompt_ms: Option<u64>,
     attachment: Option<Attachment>,
     /// Attaching failed; don't retry before this.
     retry_at: Option<Instant>,
@@ -309,6 +311,7 @@ impl State {
                     last_activity_ms: 0,
                     running: false,
                     focused_ms: None,
+                    last_prompt_ms: None,
                     attachment: None,
                     retry_at: None,
                     calls: HashMap::new(),
@@ -397,6 +400,7 @@ impl State {
                 let chars = text.chars().count();
                 let pasted = pasted_chars.unwrap_or(0).min(chars);
                 session.running = true;
+                session.last_prompt_ms = session.last_prompt_ms.max(Some(event.time_ms));
                 let minute = session.minute(minute_ms);
                 minute.running = true;
                 let prompts = &mut minute.prompts;
@@ -510,7 +514,29 @@ impl State {
                 }
             }
         }
-        let in_front: Vec<Key> = in_front.into_values().map(|(k, _)| k.clone()).collect();
+        let mut in_front: Vec<Key> = in_front.into_values().map(|(k, _)| k.clone()).collect();
+
+        // The agent's session manager (`claude agents`) shows background
+        // sessions without saying which; the one that got the latest prompt
+        // counts as in front (decided 2026-11-21).
+        if let FocusReading::App(app) = &reading {
+            for integration in &Integration::ALL {
+                let agent = integration.id();
+                if !self.processes.window_runs_manager(app, agent) {
+                    continue;
+                }
+                let background: HashSet<&str> = self.processes.background_sessions(agent).collect();
+                if let Some((key, _)) = self
+                    .sessions
+                    .iter()
+                    .filter(|(_, s)| s.agent == agent && background.contains(s.id.as_str()))
+                    .max_by_key(|(_, s)| (s.last_prompt_ms, s.last_activity_ms))
+                    && !in_front.contains(key)
+                {
+                    in_front.push(key.clone());
+                }
+            }
+        }
 
         for (key, session) in &mut self.sessions {
             let front = in_front.contains(key);

@@ -26,6 +26,12 @@ pub struct Process {
     /// The agent session this process runs, where the agent says so
     /// (Claude Code's `sessions/<pid>.json`).
     pub session: Option<String>,
+    /// The session runs in the background, shown through the agent's
+    /// session manager instead of its own terminal.
+    pub background: bool,
+    /// This is the agent's session manager (`claude agents`), which shows
+    /// background sessions.
+    pub manager: Option<&'static str>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -41,11 +47,14 @@ impl Processes {
     pub fn snapshot() -> Self {
         let mut list = list();
         for process in &mut list {
-            if process.agent == Some("claude-code") {
-                process.session =
+            if process.agent == Some("claude-code")
+                && let Some((id, background)) =
                     crate::agents::claude_code::AgentIntegrationClaudeCode::session_of_pid(
                         process.pid,
-                    );
+                    )
+            {
+                process.session = Some(id);
+                process.background = background;
             }
         }
         Self::from_list(list)
@@ -100,16 +109,39 @@ impl Processes {
     /// has an ancestor whose executable matches the app id, which can't tell
     /// two windows of the same terminal apart.
     pub fn window_runs_agent(&self, app: &FocusedApp, session: AgentSession<'_>) -> bool {
-        self.agent_processes(session).any(|agent| {
-            let mut ancestors = self.ancestors(agent.pid).skip(1);
-            match app.pid {
-                Some(pid) => ancestors.any(|p| p.pid == pid),
-                None => {
-                    let id = app_name(&app.app_id);
-                    !id.is_empty() && ancestors.any(|p| p.name == id)
-                }
+        self.agent_processes(session)
+            .any(|agent| self.window_runs(app, agent.pid))
+    }
+
+    /// Whether the focused window runs `agent`'s session manager.
+    pub fn window_runs_manager(&self, app: &FocusedApp, agent: &str) -> bool {
+        self.by_pid
+            .values()
+            .filter(|p| p.manager == Some(agent))
+            .any(|p| self.window_runs(app, p.pid))
+    }
+
+    /// The sessions of `agent` running in the background right now.
+    pub fn background_sessions<'a>(&'a self, agent: &'a str) -> impl Iterator<Item = &'a str> {
+        self.by_pid
+            .values()
+            .filter(move |p| p.agent == Some(agent) && p.background)
+            .filter_map(|p| p.session.as_deref())
+    }
+
+    /// Whether process `pid` descends from the focused window's process.
+    /// Without the window's pid (wlr-foreign-toplevel gives only the app
+    /// id): an ancestor's executable matches the app id, which can't tell
+    /// two windows of the same terminal apart.
+    fn window_runs(&self, app: &FocusedApp, pid: u32) -> bool {
+        let mut ancestors = self.ancestors(pid).skip(1);
+        match app.pid {
+            Some(window) => ancestors.any(|p| p.pid == window),
+            None => {
+                let id = app_name(&app.app_id);
+                !id.is_empty() && ancestors.any(|p| p.name == id)
             }
-        })
+        }
     }
 }
 
@@ -159,21 +191,48 @@ const NOT_A_SESSION: &[&str] = &[
 /// `opencode serve`, …) don't count.
 pub fn agent_of(name: &str, args: &[String]) -> Option<&'static str> {
     let agent = runtime_agent(name, args)?;
-    // The first argument after the program (or the script) is the
-    // subcommand, if any.
-    let script_at = args
-        .iter()
-        .skip(1)
-        .position(|a| !a.starts_with('-'))
-        .map(|i| i + 1);
-    let runs_script = matches!(base_name(name).as_str(), "node" | "bun" | "deno");
-    let subcommand = match (runs_script, script_at) {
-        (true, Some(i)) => args.get(i + 1),
-        _ => args.get(1),
-    };
-    match subcommand {
+    match subcommand(name, args) {
         Some(sub) if NOT_A_SESSION.contains(&sub.as_str()) => None,
         _ => Some(agent),
+    }
+}
+
+/// Whether `path` is a Claude Code build from its native installer, which
+/// keeps each version as `…/claude/versions/<version>` and runs it under
+/// that name (with its process title set to `claude …`).
+pub fn is_claude_build(path: &Path) -> bool {
+    let dir = path.parent();
+    dir.and_then(Path::file_name)
+        .is_some_and(|n| n == "versions")
+        && dir
+            .and_then(Path::parent)
+            .and_then(Path::file_name)
+            .is_some_and(|n| n == "claude")
+}
+
+/// Whether an executable name looks like a version number (`2.1.330`), as
+/// Claude Code's native builds are named.
+pub fn is_version_name(name: &str) -> bool {
+    let name = name.strip_suffix(".exe").unwrap_or(name);
+    name.contains('.') && name.chars().all(|c| c.is_ascii_digit() || c == '.')
+}
+
+/// The agent whose session manager a process runs (`claude agents`).
+pub fn manager_of(name: &str, args: &[String]) -> Option<&'static str> {
+    let agent = runtime_agent(name, args)?;
+    (agent == "claude-code" && subcommand(name, args).is_some_and(|s| s == "agents"))
+        .then_some(agent)
+}
+
+/// The first argument after the program (or the script run by node, bun
+/// or deno), if any.
+fn subcommand<'a>(name: &str, args: &'a [String]) -> Option<&'a String> {
+    let runs_script = matches!(base_name(name).as_str(), "node" | "bun" | "deno");
+    if runs_script {
+        let script = args.iter().skip(1).position(|a| !a.starts_with('-'))? + 1;
+        args.get(script + 1)
+    } else {
+        args.get(1)
     }
 }
 
@@ -227,26 +286,36 @@ fn list() -> Vec<Process> {
         // `pid (comm) state ppid …`; comm may contain spaces and parens.
         let (comm, rest) = stat.split_once(" (")?.1.rsplit_once(") ")?;
         let ppid = rest.split(' ').nth(1)?.parse().ok()?;
-        // Command lines are only needed to recognise agents and scripts run
-        // by a JavaScript runtime; skip everyone else's.
-        let args: Vec<String> = if matches!(comm, "node" | "bun" | "deno" | "claude" | "opencode") {
-            std::fs::read(entry.path().join("cmdline"))
-                .map(|raw| {
-                    raw.split(|b| *b == 0)
-                        .filter(|a| !a.is_empty())
-                        .map(|a| String::from_utf8_lossy(a).into_owned())
-                        .collect()
-                })
-                .unwrap_or_default()
-        } else {
-            Vec::new()
-        };
         // `comm` is cut to 15 bytes; prefer the executable's file name.
-        let name = std::fs::read_link(entry.path().join("exe"))
-            .ok()
+        let exe = std::fs::read_link(entry.path().join("exe")).ok();
+        let mut name = exe
+            .as_deref()
             .and_then(|p| p.file_name().map(|n| n.to_string_lossy().into_owned()))
             .unwrap_or_else(|| comm.to_string());
+        if exe.as_deref().is_some_and(is_claude_build) {
+            name = "claude".to_string();
+        }
+        // Command lines are only needed to recognise agents and scripts run
+        // by a JavaScript runtime; skip everyone else's.
+        let args: Vec<String> =
+            if matches!(
+                name.as_str(),
+                "node" | "bun" | "deno" | "claude" | "opencode"
+            ) || matches!(comm, "node" | "bun" | "deno" | "claude" | "opencode")
+            {
+                std::fs::read(entry.path().join("cmdline"))
+                    .map(|raw| {
+                        raw.split(|b| *b == 0)
+                            .filter(|a| !a.is_empty())
+                            .map(|a| String::from_utf8_lossy(a).into_owned())
+                            .collect()
+                    })
+                    .unwrap_or_default()
+            } else {
+                Vec::new()
+            };
         let agent = agent_of(comm, &args).or_else(|| agent_of(&name, &args));
+        let manager = manager_of(comm, &args).or_else(|| manager_of(&name, &args));
         let cwd = agent.and_then(|_| std::fs::read_link(entry.path().join("cwd")).ok());
         Some(Process {
             pid,
@@ -255,6 +324,8 @@ fn list() -> Vec<Process> {
             agent,
             cwd,
             session: None,
+            background: false,
+            manager,
         })
     })
     .collect()
@@ -287,6 +358,8 @@ mod tests {
             agent,
             cwd: agent.map(|_| PathBuf::from("/nonexistent/project")),
             session: None,
+            background: false,
+            manager: None,
         }
     }
 
@@ -384,6 +457,47 @@ mod tests {
                 &s(&["node", "/x/claude-code/cli.js", "mcp", "serve"])
             ),
             None
+        );
+    }
+
+    #[test]
+    fn recognises_native_claude_builds() {
+        assert!(is_claude_build(Path::new(
+            "/home/u/.local/share/claude/versions/2.1.330"
+        )));
+        assert!(!is_claude_build(Path::new("/usr/lib/versions/2.1.330")));
+        assert!(is_version_name("2.1.330"));
+        assert!(is_version_name("2.1.330.exe"));
+        assert!(!is_version_name("claude"));
+        assert!(!is_version_name("12"));
+    }
+
+    #[test]
+    fn recognises_the_session_manager() {
+        let s = |v: &[&str]| v.iter().map(|a| a.to_string()).collect::<Vec<_>>();
+        assert_eq!(
+            manager_of("claude", &s(&["claude", "agents"])),
+            Some("claude-code")
+        );
+        assert_eq!(manager_of("claude", &s(&["claude"])), None);
+        assert_eq!(manager_of("claude", &s(&["claude", "daemon", "run"])), None);
+
+        let mut list = table().by_pid.into_values().collect::<Vec<_>>();
+        list.push(Process {
+            manager: Some("claude-code"),
+            ..p(203, 201, "claude", None)
+        });
+        list.push(Process {
+            session: Some("bg1".into()),
+            background: true,
+            ..p(400, 1, "claude", Some("claude-code"))
+        });
+        let t = Processes::from_list(list);
+        assert!(t.window_runs_manager(&app("kitty", Some(200)), "claude-code"));
+        assert!(!t.window_runs_manager(&app("kitty", Some(100)), "claude-code"));
+        assert_eq!(
+            t.background_sessions("claude-code").collect::<Vec<_>>(),
+            ["bg1"]
         );
     }
 
