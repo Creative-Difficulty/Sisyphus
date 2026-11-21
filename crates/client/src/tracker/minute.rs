@@ -57,6 +57,7 @@ pub struct SessionMinute {
     pub slots: [SlotSamples; SLOTS],
     pub running: bool,
     pub prompts: Prompts,
+    pub interrupts: u32,
     pub responses: Responses,
     /// Per path: working directory changes, agent claims.
     pub files: BTreeMap<String, (Changes, Changes)>,
@@ -82,6 +83,7 @@ impl SessionMinute {
         self.running
             || self.slots.iter().any(|s| s.focus() == Focus::Agent)
             || self.prompts.submitted > 0
+            || self.interrupts > 0
             || self.responses.finished > 0
             || !self.files.is_empty()
     }
@@ -108,6 +110,7 @@ impl SessionMinute {
             activity: meta.activity,
             slots,
             prompts: self.prompts,
+            interrupts: self.interrupts,
             responses: self.responses,
             files: self
                 .files

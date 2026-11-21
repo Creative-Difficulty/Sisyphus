@@ -15,7 +15,7 @@ use std::time::Duration;
 use ed25519_dalek::SigningKey;
 use sisyphus_common::api::{UploadAck, UploadBatch, UploadError};
 use sisyphus_common::chain::{ChainTip, ChainWriter, SignedHeartbeat};
-use sisyphus_common::heartbeat::Heartbeat;
+use sisyphus_common::heartbeat::{Heartbeat, VERSION};
 
 /// At most this many heartbeats per upload request.
 const BATCH: usize = 500;
@@ -47,7 +47,10 @@ pub enum Uploaded {
 impl Queue {
     /// Load the queue in `dir`, continuing its chain.
     pub fn load(dir: PathBuf, key: SigningKey) -> Self {
-        let pending = read_pending(&dir.join("queue.jsonl"));
+        let mut pending = read_pending(&dir.join("queue.jsonl"));
+        // Heartbeats of an older scheme version would be refused forever.
+        // Dropping them leaves a gap, which the next upload re-aligns.
+        pending.retain(|h| h.heartbeat.version == VERSION);
         let saved = std::fs::read_to_string(dir.join("chain.json"))
             .ok()
             .and_then(|s| serde_json::from_str::<ChainTip>(&s).ok())
@@ -227,7 +230,7 @@ fn read_pending(path: &std::path::Path) -> Vec<SignedHeartbeat> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sisyphus_common::heartbeat::{Prompts, Responses, SLOTS, Slot, VERSION};
+    use sisyphus_common::heartbeat::{Prompts, Responses, SLOTS, Slot};
 
     fn heartbeat(minute: u64) -> Heartbeat {
         Heartbeat {
@@ -241,6 +244,7 @@ mod tests {
             activity: false,
             slots: [Slot::UNKNOWN; SLOTS],
             prompts: Prompts::default(),
+            interrupts: 0,
             responses: Responses::default(),
             files: Vec::new(),
         }

@@ -456,7 +456,13 @@ impl State {
                         .insert((project.clone(), claim.path), key.clone());
                 }
             }
-            AgentEventKind::Interrupt { .. } | AgentEventKind::TurnEnd { .. } => {
+            AgentEventKind::Interrupt { .. } => {
+                session.running = false;
+                let minute = session.minute(minute_ms);
+                minute.running = true;
+                minute.interrupts += 1;
+            }
+            AgentEventKind::TurnEnd { .. } => {
                 session.running = false;
             }
             AgentEventKind::TitleChanged { title } => session.title = title,

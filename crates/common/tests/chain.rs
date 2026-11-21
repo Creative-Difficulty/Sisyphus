@@ -18,6 +18,7 @@ fn minute(i: u64) -> Heartbeat {
         activity: true,
         slots: [Slot { input: true, focus: Focus::Agent }; 6],
         prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
+        interrupts: 0,
         responses: Responses::default(),
         files: vec![FileChange {
             path: "src/main.rs".into(),
