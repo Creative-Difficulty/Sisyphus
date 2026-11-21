@@ -39,27 +39,34 @@
     <a class="pill" href="/auth/login">Log in with Hack Club</a>
   </main>
 
-  <main id="dashboard" hidden>
-    <section class="today">
-      <p class="muted">Recorded today</p>
-      <!-- Placeholder until the server credits time. -->
-      <p class="big">0h 00m</p>
-      <div class="figures">
-        <div><strong id="device-count">0</strong><span class="muted">devices</span></div>
-        <div><strong id="heartbeat-count">0</strong><span class="muted">heartbeats</span></div>
-      </div>
-    </section>
+  <div id="app" class="layout" hidden>
+    <nav class="sidebar" aria-label="Views">
+      <a class="nav" href="#overview" data-view="overview">Overview</a>
+      <a class="nav" href="#projects" data-view="projects">Projects</a>
+    </nav>
 
-    <section>
-      <h2>Recent heartbeats</h2>
-      <ul id="recent" class="bubbles"></ul>
-    </section>
+    <main>
+      <!-- Tracked time is a placeholder until the server credits time. -->
+      <section id="view-overview" class="today">
+        <p class="muted">Tracked today</p>
+        <p class="big" id="today">0h 00m</p>
+        <div class="figures">
+          <div><strong id="week">0h 00m</strong><span class="muted">this week</span></div>
+          <div><strong id="total">0h 00m</strong><span class="muted">all time</span></div>
+        </div>
+        <div class="figures">
+          <div><strong id="project-count">0</strong><span class="muted">projects</span></div>
+          <div><strong id="session-count">0</strong><span class="muted">sessions</span></div>
+          <div><strong id="device-count">0</strong><span class="muted">devices</span></div>
+        </div>
+      </section>
 
-    <section>
-      <h2>Devices</h2>
-      <ul id="devices" class="bubbles"></ul>
-    </section>
-  </main>
+      <section id="view-projects" hidden>
+        <h2>Projects</h2>
+        <ul id="projects" class="bubbles"></ul>
+      </section>
+    </main>
+  </div>
 
   <script src="/app.js"></script>
 </body>

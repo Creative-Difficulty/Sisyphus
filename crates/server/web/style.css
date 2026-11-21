@@ -158,3 +158,53 @@ main { padding-bottom: 48px; }
 .bubbles .sub { font-size: 13px; color: var(--muted); }
 .bubbles .age { font-size: 14px; color: var(--muted); white-space: nowrap; }
 .bubbles .empty { background: none; justify-content: center; color: var(--muted); }
+
+/* Dashboard: a sidebar to switch views, content on the right. */
+/* The header spans the same width, so the title lines up with the sidebar. */
+body:has(#app:not([hidden])) header { max-width: 980px; }
+.layout {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+.layout main {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.layout main section { margin-top: 0; }
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 170px;
+  flex: none;
+}
+.nav {
+  display: block;
+  padding: 10px 20px;
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav:hover { background: var(--bubble); }
+.nav.active {
+  background: var(--pink);
+  color: #fff;
+  font-weight: 600;
+}
+
+.today .figures + .figures { margin-top: 28px; }
+#view-overview { padding-top: 24px; }
+
+/* Phones: the views become a row of pills above the content. */
+@media (max-width: 640px) {
+  .layout { flex-direction: column; gap: 24px; align-items: stretch; }
+  .sidebar { flex-direction: row; width: auto; }
+}

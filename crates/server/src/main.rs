@@ -138,6 +138,7 @@ async fn main() {
         .route("/health", get(|| async { "ok" }))
         .route("/api/upload", post(upload::upload))
         .route("/api/dashboard", get(dashboard::dashboard))
+        .route("/api/projects", get(dashboard::projects))
         .merge(auth::routes())
         .merge(web::routes())
         .layer(middleware::from_fn_with_state(

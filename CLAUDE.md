@@ -75,11 +75,13 @@ Three crates in `crates/`:
     - The device's row is locked and its chain tip checked with `verify_batch`.
     - On success the heartbeats are stored with the server's receive time and an `UploadAck` with the new tip comes back.
     - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`.
-  - `GET /api/dashboard` (`dashboard.rs`): the logged-in user's devices, total heartbeats and 50 latest heartbeats, each flagged offline if received more than 5 min after its claimed time (backend only; the page doesn't show it). 401 without a session.
+  - `GET /api/dashboard` and `GET /api/projects` (`dashboard.rs`): the logged-in user's tracked time (today, this week, all time), project/session/device counts, and each project with its tracked time and session count. 401 without a session.
+    - Only the device count is real. Tracked time, projects and sessions are placeholders (zero / empty) until the v2 heartbeat and server-side crediting exist; the response shapes are meant to stay, so the page won't need to change.
   - `GET /health` returns `ok`.
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
-    - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles, and a placeholder "Recorded today".
-    - Logged out it shows a "Log in with Hack Club" button; logged in, the dashboard plus the name and "Log out" in the header.
+    - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles.
+    - Logged out it shows a "Log in with Hack Club" button; logged in, the name and "Log out" in the header and the dashboard.
+    - The dashboard has a sidebar (a row of pills on phones) switching between Overview (tracked today big, this week and all time, then project/session/device counts) and Projects (one bubble per project with its tracked time). The view is kept in the URL hash (`#overview` / `#projects`).
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.

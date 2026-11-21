@@ -65,8 +65,9 @@ product must:
 - Server (axum + Postgres):
   - accepts signed heartbeat batches, checks the chain and signatures, and
     stores them with its own receive time
-  - a read-only web dashboard in the client's style, with devices, recent
-    heartbeats and a placeholder "Recorded today"
+  - a web dashboard in the client's style with a sidebar: Overview (tracked
+    time and counts) and Projects (each project with its tracked time);
+    tracked time and projects are placeholders until crediting exists
   - a Dockerfile for deployment
   - accounts via Hack Club Auth (OpenID Connect) for the website and the
     app: the server is the only OAuth client; the app logs in through it and

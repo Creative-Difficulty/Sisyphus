@@ -1,17 +1,15 @@
-// Shows the login screen or, once logged in, the user's dashboard from
-// /api/dashboard, refreshed every 10 seconds. Data is only ever inserted as
+// Shows the login screen or, once logged in, the dashboard: a sidebar with
+// Overview (tracked time and figures) and Projects (each project with its
+// tracked time). Refreshed every 10 seconds. Data is only ever inserted as
 // text, never as HTML.
 
 const REFRESH_MS = 10_000;
+const VIEWS = ["overview", "projects"];
 
-// Compact age like the client: "now", "4m", "2h", "3d", "5w".
-function age(ms, now) {
-  const minutes = Math.floor(Math.max(0, now - ms) / 60000);
-  if (minutes < 1) return "now";
-  if (minutes < 60) return `${minutes}m`;
-  if (minutes < 1440) return `${Math.floor(minutes / 60)}h`;
-  if (minutes < 10080) return `${Math.floor(minutes / 1440)}d`;
-  return `${Math.floor(minutes / 10080)}w`;
+// "2h 05m"
+function duration(ms) {
+  const minutes = Math.floor(Math.max(0, ms) / 60000);
+  return `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, "0")}m`;
 }
 
 function el(tag, className, text) {
@@ -21,68 +19,83 @@ function el(tag, className, text) {
   return node;
 }
 
-function bubble(title, sub, ageText) {
+function bubble(title, sub, right) {
   const li = el("li");
   const about = el("div", "about");
   about.append(el("div", "title", title), el("div", "sub", sub));
-  li.append(about, el("span", "age", ageText));
+  li.append(about, el("span", "age", right));
   return li;
 }
 
-function fill(list, items, empty) {
-  list.replaceChildren(...(items.length ? items : [el("li", "empty", empty)]));
+function setText(id, value) {
+  document.getElementById(id).textContent = value;
 }
 
-function render(data) {
-  const now = data.server_time_ms;
-  document.getElementById("device-count").textContent = data.devices.length;
-  document.getElementById("heartbeat-count").textContent = data.total_heartbeats;
-
-  fill(
-    document.getElementById("recent"),
-    data.recent.map((h) =>
-      // `h.offline` is kept for the backend (later review), not shown here.
-      bubble(h.project || h.app || "Unknown", h.app, age(h.received_ms, now)),
-    ),
-    "No heartbeats yet",
-  );
-
-  fill(
-    document.getElementById("devices"),
-    data.devices.map((d) =>
-      bubble(
-        `Device ${d.short_id}`,
-        `${d.heartbeats} heartbeat${d.heartbeats === 1 ? "" : "s"}`,
-        age(d.last_seen_ms, now),
-      ),
-    ),
-    "No devices yet",
-  );
+function renderOverview(data) {
+  setText("today", duration(data.tracked_today_ms));
+  setText("week", duration(data.tracked_week_ms));
+  setText("total", duration(data.tracked_total_ms));
+  setText("project-count", data.projects);
+  setText("session-count", data.sessions);
+  setText("device-count", data.devices);
 }
 
-function show(loggedIn, name) {
+function renderProjects(data) {
+  const items = data.projects.map((p) =>
+    bubble(p.name, `${p.sessions} session${p.sessions === 1 ? "" : "s"}`, duration(p.tracked_ms)),
+  );
+  const list = document.getElementById("projects");
+  list.replaceChildren(...(items.length ? items : [el("li", "empty", "No projects tracked yet")]));
+}
+
+// The view comes from the URL (#overview / #projects), so reloads keep it.
+function currentView() {
+  const view = location.hash.slice(1);
+  return VIEWS.includes(view) ? view : "overview";
+}
+
+function showView() {
+  const view = currentView();
+  for (const name of VIEWS) {
+    document.getElementById(`view-${name}`).hidden = name !== view;
+  }
+  for (const link of document.querySelectorAll(".nav")) {
+    const active = link.dataset.view === view;
+    link.classList.toggle("active", active);
+    if (active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  }
+}
+
+function showLoggedIn(loggedIn, name) {
   document.getElementById("welcome").hidden = loggedIn;
-  document.getElementById("dashboard").hidden = !loggedIn;
+  document.getElementById("app").hidden = !loggedIn;
   document.getElementById("logout").hidden = !loggedIn;
   const account = document.getElementById("account-name");
   account.hidden = !loggedIn || !name;
   account.textContent = name || "";
 }
 
+async function getJson(url) {
+  const response = await fetch(url, { credentials: "same-origin" });
+  if (response.status === 401) throw new Error("logged out");
+  if (!response.ok) throw new Error(`${url} answered ${response.status}`);
+  return response.json();
+}
+
 async function refresh() {
   try {
-    const response = await fetch("/api/dashboard", { credentials: "same-origin" });
-    if (response.status === 401) {
-      show(false);
-      return;
-    }
-    if (!response.ok) return;
-    const data = await response.json();
-    const me = await fetch("/api/me", { credentials: "same-origin" });
-    show(true, me.ok ? (await me.json()).name : null);
-    render(data);
-  } catch (_) {
-    // Keep showing the last data; the next refresh tries again.
+    const [overview, projects, me] = await Promise.all([
+      getJson("/api/dashboard"),
+      getJson("/api/projects"),
+      getJson("/api/me"),
+    ]);
+    showLoggedIn(true, me.name);
+    renderOverview(overview);
+    renderProjects(projects);
+  } catch (error) {
+    if (error.message === "logged out") showLoggedIn(false);
+    // Otherwise keep showing the last data; the next refresh tries again.
   }
 }
 
@@ -99,5 +112,7 @@ document.getElementById("theme").addEventListener("click", () => {
   } catch (_) {}
 });
 
+window.addEventListener("hashchange", showView);
+showView();
 refresh();
 setInterval(refresh, REFRESH_MS);
