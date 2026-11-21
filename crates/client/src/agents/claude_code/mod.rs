@@ -36,6 +36,23 @@ impl AgentIntegrationClaudeCode {
         Some(PathBuf::from(home).join(".claude"))
     }
 
+    /// The session a running Claude Code process works on, from the
+    /// `sessions/<pid>.json` file it keeps while running.
+    pub fn session_of_pid(pid: u32) -> Option<String> {
+        let path = Self::config_dir()?
+            .join("sessions")
+            .join(format!("{pid}.json"));
+        let text = fs::read_to_string(path).ok()?;
+        let value: serde_json::Value = serde_json::from_str(&text).ok()?;
+        if value.get("pid").and_then(serde_json::Value::as_u64) != Some(u64::from(pid)) {
+            return None;
+        }
+        value
+            .get("sessionId")
+            .and_then(serde_json::Value::as_str)
+            .map(str::to_string)
+    }
+
     fn history() -> PromptHistory {
         match Self::config_dir() {
             Some(dir) => PromptHistory::load(&dir.join("history.jsonl")),

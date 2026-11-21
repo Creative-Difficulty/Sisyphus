@@ -112,6 +112,7 @@ pub fn processes() -> Vec<Process> {
             agent: agent_of(&name, &[]),
             name: lower.strip_suffix(".exe").unwrap_or(&lower).to_string(),
             cwd: None,
+            session: None,
         });
         // SAFETY: as above.
         ok = unsafe { Process32NextW(snapshot, &mut entry) };

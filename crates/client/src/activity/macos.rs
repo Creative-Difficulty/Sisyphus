@@ -82,7 +82,10 @@ pub fn processes() -> Vec<Process> {
             let name = c_chars(&info.pbi_name)
                 .filter(|n| !n.is_empty())
                 .or_else(|| c_chars(&info.pbi_comm))?;
-            let args = if matches!(name.as_str(), "node" | "bun" | "deno") {
+            let args = if matches!(
+                name.as_str(),
+                "node" | "bun" | "deno" | "claude" | "opencode"
+            ) {
                 args(pid)
             } else {
                 Vec::new()
@@ -95,6 +98,7 @@ pub fn processes() -> Vec<Process> {
                 name: name.to_lowercase(),
                 agent,
                 cwd,
+                session: None,
             })
         })
         .collect()

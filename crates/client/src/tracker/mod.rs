@@ -486,21 +486,21 @@ impl State {
         }
         let base = to_focus(reading.focus(None, &self.processes));
 
-        // The session whose agent's window is in front: among sessions of
-        // the same agent and project, the most recently active one.
+        // The session whose agent's window is in front. Where the agent
+        // names the session its process runs, that's exact; otherwise the
+        // process is matched by folder and, among sessions of the same agent
+        // and project, the most recently active one wins.
         let mut in_front: HashMap<(&'static str, &Path), (&Key, u64)> = HashMap::new();
         if matches!(reading, FocusReading::App(_)) {
-            let mut checked: HashMap<(&'static str, &Path), bool> = HashMap::new();
             for (key, session) in &self.sessions {
+                let agent_session = AgentSession {
+                    agent: session.agent,
+                    project: &session.project,
+                    id: &session.id,
+                };
+                let runs = reading.focus(Some(agent_session), &self.processes)
+                    == Some(activity::Focus::Agent);
                 let pair = (session.agent, session.project.as_path());
-                let runs = *checked.entry(pair).or_insert_with(|| {
-                    let agent_session = AgentSession {
-                        agent: session.agent,
-                        project: &session.project,
-                    };
-                    reading.focus(Some(agent_session), &self.processes)
-                        == Some(activity::Focus::Agent)
-                });
                 if runs
                     && in_front
                         .get(&pair)

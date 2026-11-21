@@ -3,8 +3,9 @@
 //! process (a terminal, or an editor's built-in terminal).
 //!
 //! Only process ids, parent ids, executable names, agent command lines (to
-//! recognise the agent) and the agents' working directories are read. None
-//! of it leaves the machine.
+//! recognise the agent), the agents' working directories and Claude Code's
+//! session files (`sessions/<pid>.json`, which name the session a process
+//! runs) are read. None of it leaves the machine.
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -22,6 +23,9 @@ pub struct Process {
     /// Working directory, read only for agent processes and only where the
     /// OS allows it (not on Windows).
     pub cwd: Option<PathBuf>,
+    /// The agent session this process runs, where the agent says so
+    /// (Claude Code's `sessions/<pid>.json`).
+    pub session: Option<String>,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -35,7 +39,16 @@ const MAX_DEPTH: usize = 64;
 impl Processes {
     /// Read the process table now. Empty if the OS doesn't let us.
     pub fn snapshot() -> Self {
-        Self::from_list(list())
+        let mut list = list();
+        for process in &mut list {
+            if process.agent == Some("claude-code") {
+                process.session =
+                    crate::agents::claude_code::AgentIntegrationClaudeCode::session_of_pid(
+                        process.pid,
+                    );
+            }
+        }
+        Self::from_list(list)
     }
 
     pub fn from_list(list: Vec<Process>) -> Self {
@@ -48,8 +61,10 @@ impl Processes {
         self.by_pid.get(&pid)
     }
 
-    /// Processes running `session`'s agent in its project folder. Where the
-    /// working directory is unknown, any process of that agent counts.
+    /// Processes running `session`. A process whose session is known must
+    /// run exactly that one; otherwise its working directory must be the
+    /// session's project folder, and where that's unknown too, any process
+    /// of that agent counts.
     pub fn agent_processes<'a>(
         &'a self,
         session: AgentSession<'a>,
@@ -57,7 +72,10 @@ impl Processes {
         let project = canonical(session.project);
         self.by_pid.values().filter(move |p| {
             p.agent == Some(session.agent)
-                && p.cwd.as_deref().is_none_or(|cwd| canonical(cwd) == project)
+                && match &p.session {
+                    Some(id) => id == session.id,
+                    None => p.cwd.as_deref().is_none_or(|cwd| canonical(cwd) == project),
+                }
         })
     }
 
@@ -105,17 +123,69 @@ fn canonical(path: &Path) -> PathBuf {
     std::fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf())
 }
 
-/// The agent a process runs, from its executable name and command line.
-/// Claude Code runs as `claude` (native, or node with its process title set)
-/// or as node/bun running `@anthropic-ai/claude-code`; opencode as
-/// `opencode`.
+/// Subcommands that run something other than a session: the session
+/// manager, the background daemon, setup and maintenance.
+const NOT_A_SESSION: &[&str] = &[
+    "agents",
+    "auth",
+    "config",
+    "daemon",
+    "doctor",
+    "install",
+    "mcp",
+    "migrate-installer",
+    "plugin",
+    "plugins",
+    "ps",
+    "remote-control",
+    "setup-token",
+    "update",
+    "upgrade",
+    // opencode
+    "acp",
+    "export",
+    "github",
+    "import",
+    "models",
+    "serve",
+    "stats",
+    "web",
+];
+
+/// The agent session a process runs, from its executable name and command
+/// line. Claude Code runs as `claude` (native, or node with its process
+/// title set) or as node/bun running `@anthropic-ai/claude-code`; opencode
+/// as `opencode`. Their other subcommands (`claude agents`, `claude daemon`,
+/// `opencode serve`, …) don't count.
 pub fn agent_of(name: &str, args: &[String]) -> Option<&'static str> {
-    let base = |s: &str| {
-        let file = s.rsplit(['/', '\\']).next().unwrap_or(s).to_lowercase();
-        file.strip_suffix(".exe")
-            .map(str::to_string)
-            .unwrap_or(file)
+    let agent = runtime_agent(name, args)?;
+    // The first argument after the program (or the script) is the
+    // subcommand, if any.
+    let script_at = args
+        .iter()
+        .skip(1)
+        .position(|a| !a.starts_with('-'))
+        .map(|i| i + 1);
+    let runs_script = matches!(base_name(name).as_str(), "node" | "bun" | "deno");
+    let subcommand = match (runs_script, script_at) {
+        (true, Some(i)) => args.get(i + 1),
+        _ => args.get(1),
     };
+    match subcommand {
+        Some(sub) if NOT_A_SESSION.contains(&sub.as_str()) => None,
+        _ => Some(agent),
+    }
+}
+
+fn base_name(s: &str) -> String {
+    let file = s.rsplit(['/', '\\']).next().unwrap_or(s).to_lowercase();
+    file.strip_suffix(".exe")
+        .map(str::to_string)
+        .unwrap_or(file)
+}
+
+fn runtime_agent(name: &str, args: &[String]) -> Option<&'static str> {
+    let base = base_name;
     let mut names = std::iter::once(base(name)).chain(args.first().map(|a| base(a)));
     if let Some(agent) = names.find_map(|n| match n.as_str() {
         "claude" => Some("claude-code"),
@@ -157,9 +227,9 @@ fn list() -> Vec<Process> {
         // `pid (comm) state ppid …`; comm may contain spaces and parens.
         let (comm, rest) = stat.split_once(" (")?.1.rsplit_once(") ")?;
         let ppid = rest.split(' ').nth(1)?.parse().ok()?;
-        // Command lines are only needed to recognise scripts run by a
-        // JavaScript runtime; skip everyone else's.
-        let args: Vec<String> = if matches!(comm, "node" | "bun" | "deno") {
+        // Command lines are only needed to recognise agents and scripts run
+        // by a JavaScript runtime; skip everyone else's.
+        let args: Vec<String> = if matches!(comm, "node" | "bun" | "deno" | "claude" | "opencode") {
             std::fs::read(entry.path().join("cmdline"))
                 .map(|raw| {
                     raw.split(|b| *b == 0)
@@ -184,6 +254,7 @@ fn list() -> Vec<Process> {
             name: exe_name(&name),
             agent,
             cwd,
+            session: None,
         })
     })
     .collect()
@@ -215,6 +286,7 @@ mod tests {
             name: name.to_string(),
             agent,
             cwd: agent.map(|_| PathBuf::from("/nonexistent/project")),
+            session: None,
         }
     }
 
@@ -234,6 +306,7 @@ mod tests {
         AgentSession {
             agent,
             project: Path::new("/nonexistent/project"),
+            id: "s1",
         }
     }
 
@@ -268,6 +341,7 @@ mod tests {
         let other = AgentSession {
             agent: "claude-code",
             project: Path::new("/nonexistent/other"),
+            id: "s1",
         };
         assert!(!t.window_runs_agent(&app("kitty", Some(100)), other));
     }
@@ -290,6 +364,45 @@ mod tests {
         assert_eq!(agent_of("opencode", &s(&["opencode"])), Some("opencode"));
         assert_eq!(agent_of("node", &s(&["node", "server.js"])), None);
         assert_eq!(agent_of("zsh", &s(&["zsh"])), None);
+        assert_eq!(
+            agent_of("claude", &s(&["claude", "--resume"])),
+            Some("claude-code")
+        );
+        assert_eq!(
+            agent_of("claude", &s(&["claude", "fix the tests"])),
+            Some("claude-code")
+        );
+        assert_eq!(agent_of("claude", &s(&["claude", "agents"])), None);
+        assert_eq!(
+            agent_of("claude", &s(&["/x/claude", "daemon", "run"])),
+            None
+        );
+        assert_eq!(agent_of("opencode", &s(&["opencode", "serve"])), None);
+        assert_eq!(
+            agent_of(
+                "node",
+                &s(&["node", "/x/claude-code/cli.js", "mcp", "serve"])
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn a_known_session_matches_only_itself() {
+        let mut list = table().by_pid.into_values().collect::<Vec<_>>();
+        for p in &mut list {
+            if p.pid == 102 {
+                p.session = Some("s2".into());
+            }
+        }
+        let t = Processes::from_list(list);
+        // Same folder, but the process runs another session.
+        assert!(!t.window_runs_agent(&app("kitty", Some(100)), session("claude-code")));
+        let s2 = AgentSession {
+            id: "s2",
+            ..session("claude-code")
+        };
+        assert!(t.window_runs_agent(&app("kitty", Some(100)), s2));
     }
 
     #[cfg(target_os = "linux")]

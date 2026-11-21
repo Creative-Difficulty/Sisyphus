@@ -83,7 +83,7 @@ fn activity() {
         let agents: Vec<String> = sessions
             .iter()
             .map(|(agent, id, project)| {
-                let session = AgentSession { agent, project };
+                let session = AgentSession { agent, project, id };
                 let focus = reading
                     .focus(Some(session), &processes)
                     .map_or("unknown", |f| f.as_str());

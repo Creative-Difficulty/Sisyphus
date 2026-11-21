@@ -89,6 +89,8 @@ pub struct AgentSession<'a> {
     pub agent: &'a str,
     /// The session's project folder.
     pub project: &'a Path,
+    /// The agent's session id.
+    pub id: &'a str,
 }
 
 impl FocusReading {
