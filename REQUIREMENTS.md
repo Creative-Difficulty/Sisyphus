@@ -385,5 +385,25 @@ product must:
     priority, never decides alone).
   - Anything suspicious is flagged for reviewers, not decided
     automatically.
+- From sablier (espcaa/sablier, another AGPLv3 entry for the bounty;
+  raised 2026-11-21, nothing decided; ask first):
+  - Approvals as a signal: approving a tool call is human work, and the
+    time the permission dialog was open is real attention. Today only
+    rejected tool calls are events; approval latency might be inferred from
+    the transcript's tool call and result timestamps.
+  - Credit backwards from a prompt: the time between the agent's last turn
+    end and the next prompt was spent reading and writing, up to a cap.
+    A simple starting point for the reading/typing budget in the
+    mouse-jiggle proposal.
+  - "Approval-like" prompts: flag prompts that are only "yes", "continue",
+    "ok", "lgtm" and similar (a fixed list, matched on the device; only the
+    flag leaves the machine). Cheap, needs no embedding model, and catches
+    farming by spamming "continue".
+  - A salted prompt hash (HMAC of the normalized text, salt stays on the
+    device) to find exactly repeated prompts for the re-prompting signal,
+    without uploading text. It doesn't catch near-identical prompts.
+  - Project identity from the git `origin` remote (or a project file like
+    `.wakatime-project`), so the same repo matches across machines and
+    folder renames. Would also help the git integration.
 - Rejected: having the AI commit after every round. It conflicts with the
   rule against touching user repositories.
