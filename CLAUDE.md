@@ -227,7 +227,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - Top bar: gear on the dashboard, back arrow in settings, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
-  - Bottom half: "Recorded today" and three figures. These are placeholders (zero) until time is recorded; don't compute anything there unless asked.
+  - Bottom half: "Recorded today" and three figures. These are placeholders (zero) for now. Decided 2026-11-21: the app fetches the day's total time from a server endpoint rather than computing it itself (not built yet).
 - Blocking work never runs on the UI thread:
   - `on_thread` runs it on its own thread and hands the result to a `Task`.
   - The session list reloads every 10 s through a `Subscription` whose stream is fed by a timer thread.

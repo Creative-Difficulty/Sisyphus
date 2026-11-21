@@ -232,6 +232,8 @@ product must:
 - Flags it when the agent's edit calls claim more changes than actually
   happened in the files, compared file by file.
 - The client runs the same formulas only for display and to compare.
+- The app gets the day's total time from a server endpoint; it doesn't
+  compute it itself (decided 2026-11-21).
 - Attention returns to 1.0 on input. It drops slowly while the agent's window
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
