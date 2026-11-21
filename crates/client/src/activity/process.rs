@@ -487,13 +487,24 @@ fn base_name(s: &str) -> String {
         .unwrap_or(file)
 }
 
+/// Whether an executable is Codex's native binary: `codex` (`codex.exe`),
+/// or `codex-<target triple>` up to v0.40. Linux cuts process names to 15
+/// bytes, so only the start of the triple is checked.
+pub fn is_codex_binary(name: &str) -> bool {
+    let base = base_name(name);
+    base == "codex"
+        || ["codex-x86_64", "codex-aarch64", "codex-arm64"]
+            .iter()
+            .any(|prefix| base.starts_with(prefix))
+}
+
 fn runtime_agent(name: &str, args: &[String]) -> Option<&'static str> {
     let base = base_name;
-    let mut names = std::iter::once(base(name)).chain(args.first().map(|a| base(a)));
-    if let Some(agent) = names.find_map(|n| match n.as_str() {
+    let mut names = std::iter::once(name.to_string()).chain(args.first().cloned());
+    if let Some(agent) = names.find_map(|n| match base(&n).as_str() {
         "claude" => Some("claude-code"),
         "opencode" => Some("opencode"),
-        "codex" => Some("codex"),
+        _ if is_codex_binary(&n) => Some("codex"),
         _ => None,
     }) {
         return Some(agent);
@@ -546,24 +557,25 @@ fn list() -> Vec<Process> {
         }
         // Command lines are only needed to recognise agents and scripts run
         // by a JavaScript runtime; skip everyone else's.
-        let args: Vec<String> = if matches!(
-            name.as_str(),
-            "node" | "bun" | "deno" | "claude" | "opencode" | "codex"
-        ) || matches!(
-            comm,
-            "node" | "bun" | "deno" | "claude" | "opencode" | "codex"
-        ) {
-            std::fs::read(entry.path().join("cmdline"))
-                .map(|raw| {
-                    raw.split(|b| *b == 0)
-                        .filter(|a| !a.is_empty())
-                        .map(|a| String::from_utf8_lossy(a).into_owned())
-                        .collect()
-                })
-                .unwrap_or_default()
-        } else {
-            Vec::new()
-        };
+        let args: Vec<String> =
+            if matches!(
+                name.as_str(),
+                "node" | "bun" | "deno" | "claude" | "opencode"
+            ) || matches!(comm, "node" | "bun" | "deno" | "claude" | "opencode")
+                || is_codex_binary(&name)
+                || is_codex_binary(comm)
+            {
+                std::fs::read(entry.path().join("cmdline"))
+                    .map(|raw| {
+                        raw.split(|b| *b == 0)
+                            .filter(|a| !a.is_empty())
+                            .map(|a| String::from_utf8_lossy(a).into_owned())
+                            .collect()
+                    })
+                    .unwrap_or_default()
+            } else {
+                Vec::new()
+            };
         let agent = agent_of(comm, &args).or_else(|| agent_of(&name, &args));
         let manager = manager_of(comm, &args).or_else(|| manager_of(&name, &args));
         let cwd = agent.and_then(|_| std::fs::read_link(entry.path().join("cwd")).ok());
@@ -740,6 +752,19 @@ mod tests {
             Some("codex")
         );
         assert_eq!(agent_of("codex.exe", &s(&["codex.exe"])), Some("codex"));
+        // Up to v0.40 the binary was named after its target; Linux cuts names.
+        let triple = "codex-x86_64-unknown-linux-musl";
+        assert_eq!(agent_of(triple, &s(&[triple])), Some("codex"));
+        let mac = "/x/codex-aarch64-apple-darwin";
+        assert_eq!(
+            agent_of("codex-aarch64-a", &s(&[mac, "resume"])),
+            Some("codex")
+        );
+        assert_eq!(
+            agent_of("codex-x86_64-pc-windows-msvc.exe", &[]),
+            Some("codex")
+        );
+        assert!(!is_codex_binary("codex-helper"));
         // The npm launcher run by node.
         assert_eq!(
             agent_of(

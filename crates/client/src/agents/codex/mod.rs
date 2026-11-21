@@ -37,7 +37,17 @@ impl AgentIntegrationCodex {
         if let Some(dir) = std::env::var_os("CODEX_HOME").filter(|d| !d.is_empty()) {
             return Some(PathBuf::from(dir));
         }
-        let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE"))?;
+        // Codex resolves `~` with the `dirs` crate: the user profile folder
+        // on Windows (where Git Bash may set a different `HOME`), `HOME`
+        // elsewhere.
+        let (first, second) = if cfg!(windows) {
+            ("USERPROFILE", "HOME")
+        } else {
+            ("HOME", "USERPROFILE")
+        };
+        let home = std::env::var_os(first)
+            .filter(|h| !h.is_empty())
+            .or_else(|| std::env::var_os(second))?;
         Some(PathBuf::from(home).join(".codex"))
     }
 
@@ -251,9 +261,7 @@ impl AgentInstance for AgentInstanceCodex {
 struct Meta {
     id: String,
     cwd: PathBuf,
-    /// `cli`, `vscode`, `exec`, `mcp`, …; `None` for structured sources
-    /// (sub-agents, internal threads).
-    source: Option<String>,
+    source: Source,
     /// `user`, `subagent`, `tui_side_chat`, …; absent in older versions.
     thread_source: Option<String>,
 }
@@ -278,7 +286,11 @@ impl Meta {
         Some(Self {
             id: str_field("id")?,
             cwd: PathBuf::from(str_field("cwd")?),
-            source: str_field("source"),
+            source: match payload.get("source") {
+                None | Some(Value::Null) => Source::Missing,
+                Some(Value::String(s)) => Source::Named(s.clone()),
+                Some(_) => Source::Structured,
+            },
             thread_source: str_field("thread_source"),
         })
     }
@@ -287,8 +299,25 @@ impl Meta {
     /// sub-agent, side chat, `codex exec` run or internal thread.
     fn is_user_thread(&self) -> bool {
         self.thread_source.as_deref().is_none_or(|s| s == "user")
-            && matches!(self.source.as_deref(), Some("cli" | "vscode"))
+            && match &self.source {
+                Source::Named(s) => matches!(s.as_str(), "cli" | "vscode"),
+                // Before v0.44 there was no `source`; Codex reads that as
+                // an editor session.
+                Source::Missing => true,
+                Source::Structured => false,
+            }
     }
+}
+
+/// Where a thread came from (`session_meta.source`).
+#[derive(Debug)]
+enum Source {
+    /// `cli`, `vscode`, `exec`, `mcp`, …
+    Named(String),
+    /// Sub-agents, internal and custom threads (`{"subagent": …}`, …).
+    Structured,
+    /// Before v0.44.
+    Missing,
 }
 
 /// The user's sessions under `home`, most recently active first, one per
@@ -490,6 +519,7 @@ pub(crate) mod tests {
             ("user-cli", cli, Some("user")),
             ("user-vscode", vscode, Some("user")),
             ("legacy", vscode, None),
+            ("no-source", "null", None),
             ("exec", r#""exec""#, None),
             ("side", vscode, Some("tui_side_chat")),
             ("sub", r#"{"subagent":"review"}"#, Some("subagent")),
@@ -503,7 +533,7 @@ pub(crate) mod tests {
         }
         assert_eq!(
             ids(&list_sessions(&home)),
-            ["legacy", "user-cli", "user-vscode"]
+            ["legacy", "no-source", "user-cli", "user-vscode"]
         );
         let one = list_sessions(&home)
             .into_iter()

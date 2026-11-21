@@ -3,12 +3,25 @@
 //! Every line of a rollout is `{timestamp, type, payload}`. Two formats
 //! exist, and one file uses only one of them:
 //!
-//! - legacy (sessions from Codex before 0.147): prompts, replies and
-//!   reasoning are `event_msg` lines of type `user_message`,
+//! - legacy (v0.32 to v0.150, and older sessions resumed later): prompts,
+//!   replies and reasoning are `event_msg` lines of type `user_message`,
 //!   `agent_message` and `agent_reasoning`.
-//! - paginated (the terminal UI since 0.147): they are `event_msg` lines of
-//!   type `item_completed` whose `item` is a `UserMessage`, `AgentMessage`
-//!   or `Reasoning`.
+//! - paginated (since v0.144; the default for new terminal and editor
+//!   threads since v0.151): they are `event_msg` lines of type
+//!   `item_completed` whose `item` is a `UserMessage`, `AgentMessage` or
+//!   `Reasoning`.
+//!
+//! Turn starts and ends (`task_started`, `task_complete`) are only written
+//! since v0.100; `turn_aborted` since v0.35. Files from before v0.32 have no
+//! `{timestamp, type, payload}` wrapper and produce no events.
+//!
+//! A legacy fork (v0.81 to v0.150) copies its parent's whole history into
+//! the new file, parent `session_meta` included, with fork-time timestamps.
+//! That copied block is skipped so nothing is counted twice: it starts at a
+//! second `session_meta` line and is written in one burst, so it ends at
+//! the first line written more than [`COPY_GAP_MS`] after the line before.
+//! (Paginated forks reference the parent instead of copying it.) Sources
+//! for all of this are in Codex's repository; see the integration's spec.
 //!
 //! Their record types don't overlap, so both are parsed without knowing
 //! which one a file uses. Both have `event_msg` `task_complete` (a turn
@@ -33,10 +46,19 @@ use serde_json::Value;
 use crate::agents::time::parse_timestamp_ms;
 use crate::agents::{AgentEvent, AgentEventKind, ToolOutcome};
 
+/// Lines of a copied fork history are written back to back; the first
+/// line more than this after the previous one is new activity.
+const COPY_GAP_MS: u64 = 1000;
+
 /// Parses one session's lines in order.
 #[derive(Debug, Default)]
 pub struct RolloutParser {
     last_time_ms: u64,
+    /// `session_meta` lines seen so far.
+    metas: u32,
+    /// While skipping a legacy fork's copied history: the time of the last
+    /// copied line.
+    copying_since: Option<u64>,
     /// Outcomes from `item_completed` statuses, waiting for their call's
     /// output line.
     outcomes: HashMap<String, ToolOutcome>,
@@ -56,12 +78,29 @@ impl RolloutParser {
         let Ok(entry) = serde_json::from_str::<Value>(line) else {
             return Vec::new();
         };
-        if let Some(t) = entry
+        let line_time = entry
             .get("timestamp")
             .and_then(Value::as_str)
-            .and_then(parse_timestamp_ms)
-        {
+            .and_then(parse_timestamp_ms);
+        if let Some(t) = line_time {
             self.last_time_ms = t;
+        }
+        if entry.get("type").and_then(Value::as_str) == Some("session_meta") {
+            self.metas += 1;
+            if self.metas > 1 {
+                // A legacy fork's copy of its parent starts here.
+                self.copying_since = Some(self.last_time_ms);
+            }
+            return Vec::new();
+        }
+        if let Some(last) = self.copying_since {
+            match line_time {
+                Some(t) if t > last + COPY_GAP_MS => self.copying_since = None,
+                _ => {
+                    self.copying_since = Some(line_time.unwrap_or(last).max(last));
+                    return Vec::new();
+                }
+            }
         }
         let time_ms = self.last_time_ms;
         let payload = entry.get("payload").unwrap_or(&Value::Null);
@@ -649,6 +688,56 @@ mod tests {
                 name: "!".into(),
                 args: "git log --oneline".into()
             }]
+        );
+    }
+
+    #[test]
+    fn legacy_fork_copy_is_skipped() {
+        let mut p = RolloutParser::new();
+        let meta = |time: &str, id: &str| {
+            format!(
+                r#"{{"timestamp":"{time}","type":"session_meta","payload":{{"id":"{id}","cwd":"/p"}}}}"#
+            )
+        };
+        let prompt = |time: &str, text: &str| {
+            format!(
+                r#"{{"timestamp":"{time}","type":"event_msg","payload":{{"type":"user_message","message":"{text}"}}}}"#
+            )
+        };
+        let lines = [
+            meta("2026-11-21T10:00:00.000Z", "fork"),
+            // The parent's meta and history, rewritten at fork time.
+            meta("2026-11-21T10:00:00.010Z", "parent"),
+            prompt("2026-11-21T10:00:00.020Z", "parent prompt one"),
+            r#"{"timestamp":"2026-11-21T10:00:00.030Z","type":"event_msg","payload":{"type":"task_complete"}}"#.to_string(),
+            prompt("2026-11-21T10:00:00.900Z", "parent prompt two"),
+            // The user types in the fork a few seconds later.
+            prompt("2026-11-21T10:00:07.000Z", "new prompt"),
+            prompt("2026-11-21T10:00:07.100Z", "steering right after"),
+        ];
+        let kinds: Vec<_> = lines.iter().flat_map(|l| kinds(&mut p, l)).collect();
+        assert_eq!(
+            kinds,
+            vec![
+                prompt_kind("new prompt"),
+                prompt_kind("steering right after")
+            ]
+        );
+    }
+
+    #[test]
+    fn a_single_meta_skips_nothing() {
+        let mut p = RolloutParser::new();
+        kinds(
+            &mut p,
+            r#"{"timestamp":"2026-11-21T10:00:00Z","type":"session_meta","payload":{"id":"t","cwd":"/p"}}"#,
+        );
+        assert_eq!(
+            kinds(
+                &mut p,
+                r#"{"timestamp":"2026-11-21T10:00:00.100Z","type":"event_msg","payload":{"type":"user_message","message":"quick"}}"#
+            ),
+            vec![prompt_kind("quick")]
         );
     }
 

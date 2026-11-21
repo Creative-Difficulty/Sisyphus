@@ -95,6 +95,7 @@ const CODEX_PATCH_TOOLS: &[&str] = &[
     "shell",
     "shell_command",
     "local_shell",
+    "container.exec",
 ];
 
 const BEGIN_PATCH: &str = "*** Begin Patch";
@@ -331,6 +332,14 @@ mod tests {
         let expected = vec![claim("sub/x.py", replace(2, 1))];
         assert_eq!(
             claims_of("exec_command", &json!({"cmd": script}), project),
+            expected
+        );
+        assert_eq!(
+            claims_of(
+                "container.exec",
+                &json!({"command": ["bash", "-lc", script]}),
+                project
+            ),
             expected
         );
         assert_eq!(

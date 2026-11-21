@@ -40,9 +40,8 @@ impl Titles {
             let (Some(id), Some(name)) = (text("id"), text("thread_name")) else {
                 continue;
             };
-            if name.trim().is_empty() {
-                continue;
-            }
+            // An empty name means the name was cleared; it is kept so it can
+            // override older names, and `get` treats it as no name.
             let title = Title {
                 name: name.to_string(),
                 updated_ms: text("updated_at").and_then(parse_timestamp_ms),
@@ -60,7 +59,7 @@ impl Titles {
     }
 
     pub fn get(&self, thread_id: &str) -> Option<&Title> {
-        self.0.get(thread_id)
+        self.0.get(thread_id).filter(|t| !t.name.trim().is_empty())
     }
 }
 
@@ -95,7 +94,8 @@ mod tests {
                 updated_ms: parse_timestamp_ms("2026-11-21T03:00:00.5Z"),
             })
         );
-        assert_eq!(titles.get("b").map(|t| t.name.as_str()), Some("Other"));
+        // `b` was cleared by a newer empty name.
+        assert_eq!(titles.get("b"), None);
         assert_eq!(titles.get("c"), None);
         assert!(Titles::load(&dir.join("missing.jsonl")).get("a").is_none());
     }
