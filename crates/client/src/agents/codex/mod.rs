@@ -9,13 +9,14 @@
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
+use std::sync::atomic::Ordering;
 use std::time::UNIX_EPOCH;
 
 use serde_json::Value;
 
 use crate::agents::{
     AgentError, AgentEvent, AgentEventKind, AgentInstance, AgentIntegration, AttachMode,
-    Attachment, is_running, shorten,
+    Attachment, is_running, shorten, tail,
 };
 
 pub mod rollout;
@@ -178,9 +179,39 @@ impl AgentInstance for AgentInstanceCodex {
         Ok(events)
     }
 
-    fn attach(&self, _mode: AttachMode) -> Result<Attachment, AgentError> {
+    fn attach(&self, mode: AttachMode) -> Result<Attachment, AgentError> {
         self.ensure_exists()?;
-        Ok(Attachment::spawn(|_, _| {}))
+        let path = self.rollout_path.clone();
+        let title = self.named.clone();
+        Ok(Attachment::spawn(move |tx, stop| {
+            // The name isn't in the rollout; send it first if asked for.
+            if let Some(title) = title {
+                let event = AgentEvent {
+                    time_ms: title.updated_ms.unwrap_or(0),
+                    kind: AgentEventKind::TitleChanged { title: title.name },
+                };
+                if mode.sends_history(&event) && tx.send(event).is_err() {
+                    return;
+                }
+            }
+            // History is always parsed so the parser knows which tool
+            // calls are open, but only sent when asked for.
+            let mut parser = RolloutParser::new();
+            let result = tail::follow_lines(&path, &stop, |line, is_history| {
+                let mut events = parser.parse_line(line);
+                if is_history {
+                    events.retain(|e| mode.sends_history(e));
+                }
+                events.into_iter().all(|e| tx.send(e).is_ok())
+            });
+            if let Err(e) = result {
+                // The receiver only sees the channel close; there is no
+                // error event, so leave a trace for debugging.
+                if !stop.load(Ordering::Relaxed) {
+                    eprintln!("codex: stopped following {}: {e}", path.display());
+                }
+            }
+        }))
     }
 }
 
@@ -592,6 +623,51 @@ pub(crate) mod tests {
         assert!(!running("aborted"));
         assert!(!running("idle"));
         assert!(running("long"));
+    }
+
+    #[test]
+    fn attach_since_then_live() {
+        use std::io::Write;
+        use std::time::Duration;
+        let home = temp_home("attach");
+        let reply = |time: &str, text: &str| {
+            format!(
+                r#"{{"timestamp":"{time}","type":"event_msg","payload":{{"type":"agent_message","message":"{text}"}}}}"#
+            )
+        };
+        let path = write_rollout(
+            &home,
+            "01-00-00",
+            "t1",
+            &[
+                meta_line("t1", "/p", r#""cli""#, Some("user")),
+                reply("1970-01-01T00:00:01Z", "old"),
+                reply("1970-01-01T00:00:02Z", "recent"),
+            ],
+        );
+        let session = find_session(&home, "t1").unwrap();
+        let attachment = session.attach(AttachMode::Since(2000)).unwrap();
+        let next = || {
+            attachment
+                .recv_timeout(Duration::from_secs(5))
+                .unwrap()
+                .kind
+        };
+        let response = |t: &str| AgentEventKind::Response { text: t.into() };
+        assert_eq!(next(), response("recent"));
+
+        // A line written after attaching arrives, even in two writes.
+        let mut file = File::options().append(true).open(&path).unwrap();
+        let live = reply("1970-01-01T00:00:03Z", "live");
+        let (a, b) = live.split_at(20);
+        file.write_all(a.as_bytes()).unwrap();
+        file.flush().unwrap();
+        std::thread::sleep(Duration::from_millis(300));
+        file.write_all(format!("{b}\n").as_bytes()).unwrap();
+        assert_eq!(next(), response("live"));
+
+        let new_only = session.attach(AttachMode::NewOnly).unwrap();
+        assert!(new_only.recv_timeout(Duration::from_millis(600)).is_err());
     }
 
     #[test]
