@@ -8,6 +8,7 @@
 //! - the dashboard ([`sessions`]), refreshed every few seconds
 //! - settings ([`settings`], gear icon): account and agents as a compact list
 
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use iced::futures::{SinkExt, Stream, StreamExt};
@@ -69,6 +70,9 @@ struct App {
     errors: Vec<Option<String>>,
     /// A login in the browser is under way.
     login_pending: bool,
+    /// The login page of the login under way, once the login thread built
+    /// it, so the button can open it again.
+    login_url: Arc<Mutex<Option<String>>>,
     login_error: Option<String>,
     /// The server address as typed in settings, not yet saved.
     server_input: String,
@@ -167,6 +171,7 @@ impl App {
             screen: Screen::Login,
             errors: vec![None; Integration::ALL.len()],
             login_pending: false,
+            login_url: Arc::default(),
             login_error: None,
             server_input: String::new(),
             server_error: None,
@@ -257,16 +262,38 @@ impl App {
                 Task::none()
             }
             Message::Login => {
+                // Already waiting: open the same login page again (the tab
+                // may have gone to the wrong browser or been closed). The
+                // waiting login still finishes when it is used.
+                if self.login_pending {
+                    let url = self.login_url.lock().ok().and_then(|u| u.clone());
+                    if let Some(url) = url
+                        && let Err(e) = crate::login::open_browser(&url)
+                    {
+                        self.login_error = Some(e);
+                    }
+                    return Task::none();
+                }
                 self.login_pending = true;
                 self.login_error = None;
                 let server_url = self.config.server_url();
+                let login_url = self.login_url.clone();
                 Task::perform(
-                    on_thread(move || crate::login::login(&server_url)),
+                    on_thread(move || {
+                        crate::login::login(&server_url, |url| {
+                            if let Ok(mut slot) = login_url.lock() {
+                                *slot = Some(url.to_string());
+                            }
+                        })
+                    }),
                     Message::LoginFinished,
                 )
             }
             Message::LoginFinished(result) => {
                 self.login_pending = false;
+                if let Ok(mut slot) = self.login_url.lock() {
+                    *slot = None;
+                }
                 match result {
                     Ok(name) => {
                         let mut config = self.config.clone();
