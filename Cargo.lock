@@ -3984,11 +3984,20 @@ dependencies = [
  "getrandom 0.4.3",
  "hex",
  "iced",
+ "libc",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
  "rusqlite",
  "serde_json",
  "sha2 0.10.9",
  "sisyphus-common",
  "ureq",
+ "wayland-client",
+ "wayland-protocols",
+ "wayland-protocols-wlr",
+ "windows-sys 0.61.2",
+ "x11rb",
+ "zbus",
 ]
 
 [[package]]

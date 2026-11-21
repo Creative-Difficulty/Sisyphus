@@ -8,17 +8,89 @@ fn main() {
             Ok(())
         }
         Some("watch") => watch(&args[1..]),
+        Some("activity") => {
+            activity();
+            Ok(())
+        }
         None => sisyphus_client::gui::run().map_err(Into::into),
         Some(_) => {
             println!("usage: sisyphus-client                 open the window");
             println!("       sisyphus-client sessions        list sessions");
             println!("       sisyphus-client watch [SESSION_ID] [--replay]");
+            println!("       sisyphus-client activity        print input and focus each second");
             Ok(())
         }
     };
     if let Err(e) = result {
         eprintln!("error: {e}");
         std::process::exit(1);
+    }
+}
+
+/// Print the time since the last input and the focused app every second,
+/// and for each running agent session whether its window has focus. Never
+/// exits on its own. App ids are printed here only; they never leave the
+/// machine.
+fn activity() {
+    use sisyphus_client::activity::{AgentSession, FocusReading, Monitor, Processes};
+    use std::path::PathBuf;
+    use std::time::{Duration, Instant};
+
+    let allowed = sisyphus_client::config::Config::load().focus_allowed == Some(true);
+    let mut monitor = Monitor::new(allowed);
+    println!("{}", monitor.describe());
+
+    let mut sessions: Vec<(&'static str, String, PathBuf)> = Vec::new();
+    let mut sessions_read: Option<Instant> = None;
+    loop {
+        if sessions_read.is_none_or(|t| t.elapsed() > Duration::from_secs(10)) {
+            sessions = Integration::ALL
+                .iter()
+                .flat_map(|integration| {
+                    integration
+                        .instances()
+                        .unwrap_or_default()
+                        .into_iter()
+                        .filter(|i| i.is_running())
+                        .filter_map(|i| {
+                            Some((integration.id(), i.get_uuid(), i.get_project_path()?))
+                        })
+                })
+                .collect();
+            sessions_read = Some(Instant::now());
+        }
+
+        let idle = monitor
+            .since_last_input()
+            .map_or("?".to_string(), |d| format!("{:.1}s", d.as_secs_f32()));
+        let reading = monitor.focused();
+        let processes = Processes::snapshot();
+        let class = reading
+            .focus(None, &processes)
+            .map_or("unknown", |f| f.as_str());
+        let app = match &reading {
+            FocusReading::App(app) => format!(
+                "{} {}",
+                app.app_id,
+                app.pid.map_or(String::new(), |p| format!("pid {p}"))
+            ),
+            _ => String::new(),
+        };
+        let agents: Vec<String> = sessions
+            .iter()
+            .map(|(agent, id, project)| {
+                let session = AgentSession { agent, project };
+                let focus = reading
+                    .focus(Some(session), &processes)
+                    .map_or("unknown", |f| f.as_str());
+                format!("{agent} {}: {focus}", &id[..id.len().min(8)])
+            })
+            .collect();
+        println!(
+            "input {idle:>7}  focus {class:<8} {app:<32} {}",
+            agents.join(", ")
+        );
+        std::thread::sleep(Duration::from_secs(1));
     }
 }
 

@@ -22,3 +22,27 @@ jsonwebtoken = { version = "11", default-features = false, features = ["rust_cry
 getrandom = "0.4"
 sisyphus-common = { path = "crates/common" }
 iced = { version = "0.14", features = ["svg"] }
+
+# Activity (time since the last input, the focused app), per OS. All of
+# these were already compiled into the client through iced/winit.
+# Windows: GetLastInputInfo, the foreground window and the process table.
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_System_Diagnostics_ToolHelp",
+    "Win32_System_SystemInformation",
+    "Win32_System_Threading",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_WindowsAndMessaging",
+] }
+# macOS: the frontmost app (NSWorkspace) and the process table (libproc).
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "libc", "NSRunningApplication", "NSWorkspace"] }
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSString"] }
+libc = "0.2"
+# Linux X11: the active window and XScreenSaver idle time.
+x11rb = { version = "0.13", features = ["screensaver"] }
+# Linux Wayland: ext-idle-notify and wlr-foreign-toplevel.
+wayland-client = "0.31"
+wayland-protocols = { version = "0.32", features = ["client", "staging"] }
+wayland-protocols-wlr = { version = "0.3", features = ["client"] }
+# Linux D-Bus: GNOME idle time and focus, the KDE focus script.
+zbus = "5"
