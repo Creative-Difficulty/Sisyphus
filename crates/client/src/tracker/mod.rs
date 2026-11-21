@@ -29,6 +29,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{Focus, Heartbeat, SLOT_SECS, SLOTS};
 
+use crate::activity::process::WindowAgent;
 use crate::activity::{self, AgentSession, FocusReading, Monitor, Processes};
 use crate::agents::{AgentEvent, AgentEventKind, AttachMode, Attachment, Integration, ToolOutcome};
 use crate::config::Config;
@@ -300,6 +301,11 @@ struct State {
     since_input_ms: Option<u64>,
     focus: Option<Focus>,
     in_front: Vec<Key>,
+    /// Each second's reading for the open minutes: the plain class of the
+    /// app in front and the agent processes running in it. Fills in the
+    /// slots of a session found only after it started (opencode creates a
+    /// session with its first prompt; sessions are listed every 10 s).
+    front_history: std::collections::VecDeque<(u64, Focus, Vec<WindowAgent>)>,
     log: bool,
     started_ms: u64,
     config: Config,
@@ -328,6 +334,7 @@ impl State {
             since_input_ms: None,
             focus: None,
             in_front: Vec::new(),
+            front_history: std::collections::VecDeque::new(),
             log,
             started_ms: now_ms(),
             config,
@@ -420,6 +427,7 @@ impl State {
     /// Attach to sessions worth following, detach from the rest.
     fn follow(&mut self, now: u64) {
         let since = now.saturating_sub(20_000).max(self.started_ms);
+        let open_from = self.open_from(now);
         for ((agent, _), session) in &mut self.sessions {
             let wanted = session.follow(now);
             let alive = session
@@ -441,6 +449,9 @@ impl State {
                     .attachment
                     .is_none()
                     .then(|| Instant::now() + RELOAD);
+                if session.attachment.is_some() {
+                    backfill(session, &self.front_history, open_from);
+                }
             } else if !wanted && session.attachment.is_some() {
                 session.attachment = None;
                 session.calls.clear();
@@ -483,6 +494,9 @@ impl State {
                 session.last_prompt_ms = session.last_prompt_ms.max(Some(event.time_ms));
                 let minute = session.minute(minute_ms);
                 minute.running = true;
+                if minute_of(event.time_ms) == minute_ms {
+                    minute.prompt_slots[slot_of(event.time_ms)] = true;
+                }
                 let prompts = &mut minute.prompts;
                 prompts.submitted += 1;
                 prompts.typed_chars = prompts.typed_chars.saturating_add(count(chars - pasted));
@@ -578,6 +592,19 @@ impl State {
         }
         let base = to_focus(reading.focus(None, &self.processes));
         self.focus = Some(base);
+        let window_agents = match &reading {
+            FocusReading::App(app) => self.processes.agents_in_window(app),
+            _ => Vec::new(),
+        };
+        self.front_history.push_back((now, base, window_agents));
+        let open_from = self.open_from(now);
+        while self
+            .front_history
+            .front()
+            .is_some_and(|(at, ..)| minute_of(*at) < open_from)
+        {
+            self.front_history.pop_front();
+        }
 
         // The session whose agent's window is in front. Where the agent
         // names the session its process runs, that's exact; otherwise the
@@ -837,6 +864,45 @@ impl State {
     }
 }
 
+/// Fill the slots a newly followed session has no readings for from the
+/// recent window readings, so the time before it was found counts.
+fn backfill(
+    session: &mut Session,
+    history: &std::collections::VecDeque<(u64, Focus, Vec<WindowAgent>)>,
+    open_from: u64,
+) {
+    let agent_session = AgentSession {
+        agent: session.agent,
+        project: &session.project,
+        id: &session.id,
+    };
+    let readings: Vec<(u64, Focus)> = history
+        .iter()
+        .filter(|(at, ..)| minute_of(*at) >= open_from)
+        .map(|(at, base, agents)| {
+            let front = agents.iter().any(|a| a.runs(agent_session));
+            (*at, if front { Focus::Agent } else { *base })
+        })
+        .collect();
+    // Only slots without any reading of their own.
+    let empty: HashSet<(u64, usize)> = readings
+        .iter()
+        .map(|(at, _)| (minute_of(*at), slot_of(*at)))
+        .filter(|(m, i)| {
+            session
+                .minutes
+                .get(m)
+                .is_none_or(|minute| minute.slots[*i].is_empty())
+        })
+        .collect();
+    for (at, focus) in readings {
+        let key = (minute_of(at), slot_of(at));
+        if empty.contains(&key) {
+            session.minute(key.0).slots[key.1].add(focus);
+        }
+    }
+}
+
 /// A heartbeat as input to the attention formula.
 fn heartbeat_minute(hb: &Heartbeat) -> attention::Minute<'_> {
     attention::Minute {
@@ -867,6 +933,55 @@ fn count(n: usize) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn session(project: &str) -> Session {
+        Session {
+            agent: "opencode",
+            id: "ses_new".into(),
+            title: String::new(),
+            project: PathBuf::from(project),
+            last_activity_ms: 0,
+            running: true,
+            focused_ms: None,
+            last_prompt_ms: None,
+            attachment: None,
+            retry_at: None,
+            calls: HashMap::new(),
+            minutes: BTreeMap::new(),
+            carry: None,
+        }
+    }
+
+    #[test]
+    fn a_new_session_gets_the_readings_from_before_it_was_found() {
+        let m = 1_795_201_380_000;
+        let window = vec![WindowAgent {
+            agent: "opencode",
+            cwd: Some(PathBuf::from("/nonexistent/test")),
+            session: None,
+        }];
+        let mut history = std::collections::VecDeque::new();
+        for s in 0..25 {
+            // Seconds 0-14: the opencode window; 15-24: the browser.
+            let agents = if s < 15 { window.clone() } else { Vec::new() };
+            history.push_back((m + s * 1000, Focus::Browser, agents));
+        }
+        let mut s = session("/nonexistent/test");
+        // Slot 2 already has its own reading.
+        s.minute(m).slots[2].add(Focus::Terminal);
+        backfill(&mut s, &history, m);
+        let minute = &s.minutes[&m];
+        assert_eq!(minute.focus(0), Focus::Agent);
+        // Slot 1: 5 readings in the window, 5 in the browser; the latest wins.
+        assert_eq!(minute.focus(1), Focus::Browser);
+        assert_eq!(minute.focus(2), Focus::Terminal);
+        assert_eq!(minute.focus(3), Focus::Unknown);
+
+        // Another project's session doesn't get the window.
+        let mut other = session("/nonexistent/other");
+        backfill(&mut other, &history, m);
+        assert_eq!(other.minutes[&m].focus(0), Focus::Browser);
+    }
 
     #[test]
     fn minutes_and_slots() {

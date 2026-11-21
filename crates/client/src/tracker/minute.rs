@@ -14,6 +14,11 @@ pub struct SlotSamples {
 }
 
 impl SlotSamples {
+    /// No reading yet.
+    pub fn is_empty(&self) -> bool {
+        self.last.is_none()
+    }
+
     pub fn add(&mut self, focus: Focus) {
         let n = &mut self.counts[index(focus)];
         *n = n.saturating_add(1);
@@ -55,6 +60,11 @@ fn index(focus: Focus) -> usize {
 #[derive(Debug, Default)]
 pub struct SessionMinute {
     pub slots: [SlotSamples; SLOTS],
+    /// Slots in which a prompt was submitted to this session. A prompt
+    /// means the user was focused on it (decided 2026-11-21), so those
+    /// slots count as `agent` whatever the window readings say. Input still
+    /// comes only from the OS.
+    pub prompt_slots: [bool; SLOTS],
     pub running: bool,
     pub prompts: Prompts,
     pub interrupts: u32,
@@ -77,6 +87,15 @@ pub struct Meta<'a> {
 }
 
 impl SessionMinute {
+    /// The focus a heartbeat carries for slot `i`.
+    pub fn focus(&self, i: usize) -> Focus {
+        if self.prompt_slots[i] {
+            Focus::Agent
+        } else {
+            self.slots[i].focus()
+        }
+    }
+
     /// The first `upto` slots as a heartbeat would carry them, for the
     /// attention formula while the minute is still open.
     pub fn slots_so_far(&self, input: &[bool; SLOTS], upto: usize, activity: bool) -> Vec<Slot> {
@@ -85,7 +104,7 @@ impl SessionMinute {
                 if activity {
                     Slot {
                         input: input[i],
-                        focus: self.slots[i].focus(),
+                        focus: self.focus(i),
                     }
                 } else {
                     Slot::UNKNOWN
@@ -98,7 +117,7 @@ impl SessionMinute {
     /// happened in the session.
     pub fn worth_sending(&self) -> bool {
         self.running
-            || self.slots.iter().any(|s| s.focus() == Focus::Agent)
+            || (0..SLOTS).any(|i| self.focus(i) == Focus::Agent)
             || self.prompts.submitted > 0
             || self.interrupts > 0
             || self.responses.finished > 0
@@ -110,7 +129,7 @@ impl SessionMinute {
             if meta.activity {
                 Slot {
                     input: meta.input[i],
-                    focus: self.slots[i].focus(),
+                    focus: self.focus(i),
                 }
             } else {
                 Slot::UNKNOWN
@@ -162,6 +181,30 @@ mod tests {
             slot.add(f);
         }
         assert_eq!(slot.focus(), Focus::Browser);
+    }
+
+    #[test]
+    fn a_prompt_marks_its_slot_as_agent() {
+        let mut minute = SessionMinute::default();
+        minute.slots[2].add(Focus::Browser);
+        minute.prompt_slots[2] = true;
+        let hb = minute.into_heartbeat(Meta {
+            minute_ms: 60_000,
+            agent: "opencode",
+            agent_session_id: "s",
+            session_name: "t",
+            project: "p",
+            activity: true,
+            input: [false, false, true, false, false, false],
+        });
+        assert_eq!(
+            hb.slots[2],
+            Slot {
+                input: true,
+                focus: Focus::Agent
+            }
+        );
+        assert_eq!(hb.slots[3], Slot::UNKNOWN);
     }
 
     #[test]

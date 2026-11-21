@@ -211,6 +211,8 @@ Records heartbeats (v2) and uploads them. The window starts it (`Tracker::start`
   - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
   - follows (attaches to) sessions that are running, or were active or in front within 30 min, with `AttachMode::Since(ms)` so events from just before attaching aren't missed
   - samples input and focus into the open minute. Among sessions of the same agent and project whose agent runs in the focused window, the most recently active one gets `agent`; the others get the window's plain class
+  - remembers each second's window reading for the open minutes (plain class plus the agent processes in the window, `Processes::agents_in_window`). When a session is first followed (opencode creates a session only with its first prompt, and sessions are listed every 10 s), its slots without readings are filled from this history (`backfill`), so typing the first prompt counts
+  - a prompt submitted to a session marks its slot as `agent` for that session (`SessionMinute::prompt_slots`; a prompt means the user was focused on it). Input still comes only from the OS
   - counts prompts (typed = length − pasted), responses (visible characters), and edit claims (on a successful tool result)
   - closes minutes 5 s after they end. A session's minute becomes a heartbeat when its agent ran, its window was in front for most of a slot, or anything happened in it (decided 2026-11-21). Without consent, `activity` is false and slots are `unknown`.
   - Events for an already closed minute go into the current one.

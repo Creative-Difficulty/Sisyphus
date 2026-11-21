@@ -129,6 +129,21 @@ impl Processes {
             .filter_map(|p| p.session.as_deref())
     }
 
+    /// The agent processes running in the focused window: agent, working
+    /// directory (canonical, where known) and session (where the agent
+    /// names it).
+    pub fn agents_in_window(&self, app: &FocusedApp) -> Vec<WindowAgent> {
+        self.by_pid
+            .values()
+            .filter(|p| p.agent.is_some() && self.window_runs(app, p.pid))
+            .map(|p| WindowAgent {
+                agent: p.agent.unwrap_or_default(),
+                cwd: p.cwd.as_deref().map(canonical),
+                session: p.session.clone(),
+            })
+            .collect()
+    }
+
     /// Whether process `pid` descends from the focused window's process.
     /// Without the window's pid (wlr-foreign-toplevel gives only the app
     /// id): an ancestor's executable matches the app id, which can't tell
@@ -151,7 +166,31 @@ fn app_name(app_id: &str) -> String {
     app_id.rsplit('.').next().unwrap_or(app_id).to_lowercase()
 }
 
-fn canonical(path: &Path) -> PathBuf {
+/// An agent process running in the focused window.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WindowAgent {
+    pub agent: &'static str,
+    pub cwd: Option<PathBuf>,
+    pub session: Option<String>,
+}
+
+impl WindowAgent {
+    /// Whether this process runs `session`: exactly where the agent names
+    /// its session, otherwise by working directory.
+    pub fn runs(&self, session: AgentSession<'_>) -> bool {
+        self.agent == session.agent
+            && match &self.session {
+                Some(id) => id == session.id,
+                None => self
+                    .cwd
+                    .as_deref()
+                    .is_none_or(|cwd| cwd == canonical(session.project)),
+            }
+    }
+}
+
+/// `path` with symlinks resolved, or as it is if that fails.
+pub fn canonical(path: &Path) -> PathBuf {
     std::fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf())
 }
 
