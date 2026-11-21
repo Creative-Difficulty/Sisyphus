@@ -15,6 +15,7 @@ pub mod claude_code;
 pub mod codex;
 pub mod opencode;
 mod tail;
+pub(crate) mod time;
 
 pub trait AgentInstance {
     fn get_title(&self) -> String;
