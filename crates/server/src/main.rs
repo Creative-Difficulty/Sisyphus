@@ -25,6 +25,7 @@ use axum::routing::{get, post};
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 
+mod app;
 mod auth;
 mod crypto;
 mod dashboard;
@@ -42,6 +43,8 @@ pub struct AppState {
     pub public_url: Arc<str>,
     /// Cookies are only `Secure` (and use the `__Host-` prefix) on https.
     pub secure: bool,
+    /// Signed app requests already answered, against replays.
+    pub seen_requests: Arc<app::SeenRequests>,
 }
 
 impl AppState {
@@ -126,6 +129,7 @@ async fn main() {
         hackclub,
         public_url: public_url.into(),
         secure,
+        seen_requests: Arc::default(),
     };
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
@@ -133,6 +137,8 @@ async fn main() {
         .route("/api/dashboard", get(dashboard::dashboard))
         .route("/api/projects", get(dashboard::projects))
         .route("/api/heartbeats", get(dashboard::heartbeats))
+        .route("/api/app/today", get(app::today))
+        .route("/api/app/logout", post(app::logout))
         .merge(auth::routes())
         .merge(web::routes())
         .layer(middleware::from_fn_with_state(

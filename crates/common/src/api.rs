@@ -111,3 +111,48 @@ pub struct AppTokenResponse {
     /// The account's display name, if Hack Club Auth provided one.
     pub name: Option<String>,
 }
+
+// ---------------------------------------------------------------------------
+// Signed app requests
+//
+// The app has no session cookie or token: it proves who it is by signing
+// each request with its device key. The server checks the signature, that
+// the time is close to its own clock, that the same request wasn't sent
+// before, and that the device is linked to an account. Heartbeat uploads
+// don't need this: every heartbeat in them is already signed and chained.
+
+/// Domain tag for signed app requests. Bump the version when the signed
+/// message changes.
+pub const REQUEST_CONTEXT: &[u8] = b"sisyphus/request/v1\0";
+
+/// The device's public key, hex.
+pub const HEADER_DEVICE: &str = "sisyphus-device";
+/// When the request was signed (unix ms, device clock).
+pub const HEADER_TIME: &str = "sisyphus-time";
+/// Device signature over [`request_message`], hex.
+pub const HEADER_SIGNATURE: &str = "sisyphus-signature";
+
+/// Requests signed further than this from the server's clock are refused.
+pub const REQUEST_MAX_SKEW_MS: u64 = 5 * 60 * 1000;
+
+/// What the app signs for a request: the method, the path with its query,
+/// the time and the SHA-256 of the body.
+pub fn request_message(method: &str, path_and_query: &str, time_ms: u64, body: &[u8]) -> Vec<u8> {
+    use sha2::{Digest, Sha256};
+    let mut message = REQUEST_CONTEXT.to_vec();
+    message.extend_from_slice(
+        format!(
+            "{method}\n{path_and_query}\n{time_ms}\n{}",
+            hex::encode(Sha256::digest(body))
+        )
+        .as_bytes(),
+    );
+    message
+}
+
+/// Reply to `GET /api/app/today?start_ms=…`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Today {
+    /// Credited time since `start_ms` (the start of the user's local day).
+    pub tracked_ms: u64,
+}
