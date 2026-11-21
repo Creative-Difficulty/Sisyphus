@@ -81,7 +81,7 @@ Three crates in `crates/`:
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
     - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles.
     - Logged out it shows a "Log in with Hack Club" button; logged in, the name and "Log out" in the header and the dashboard.
-    - The dashboard has a sidebar (a row of pills on phones) switching between Overview (tracked today big, this week and all time, then project/session/device counts) and Projects (one bubble per project with its tracked time). The view is kept in the URL hash (`#overview` / `#projects`).
+    - The dashboard spans the full window width: a sidebar at the left edge (a row of pills on phones), the content centred in the space to its right. The sidebar switches between Overview (tracked today big, this week and all time, then project/session/device counts) and Projects (one bubble per project with its tracked time). The view is kept in the URL hash (`#overview` / `#projects`).
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.
