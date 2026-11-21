@@ -5,8 +5,8 @@
 //! every 30 seconds while logged in.
 //!
 //! Every second the tracker:
-//! - reads the time since the last input and the focused app (only with
-//!   the user's consent),
+//! - reads the time since the last input, the key presses and mouse events
+//!   counted (where the system tells them apart) and the focused app,
 //! - works out, per session, whether its agent's window is in front (the
 //!   most recently active session wins among sessions of the same agent and
 //!   project),
@@ -30,7 +30,9 @@ use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{Focus, Heartbeat, SLOT_SECS, SLOTS};
 
 use crate::activity::process::{self, WindowAgent};
-use crate::activity::{self, AgentSession, FocusReading, Monitor, Processes};
+use crate::activity::{
+    self, AgentSession, FocusReading, InputCounts, InputKinds, Monitor, Processes,
+};
 use crate::agents::{AgentEvent, AgentEventKind, AttachMode, Attachment, Integration, ToolOutcome};
 use crate::config::Config;
 
@@ -41,7 +43,7 @@ pub mod queue;
 
 use edits::{Claim, ClaimKind, claims_of};
 use files::{ProjectWatch, diff};
-use minute::{Meta, SessionMinute};
+use minute::{Meta, MinuteInput, SessionMinute};
 use queue::{Queue, Uploaded};
 
 const MINUTE_MS: u64 = 60_000;
@@ -76,8 +78,10 @@ pub struct Tracker {
 pub struct DebugInfo {
     /// Which activity backends are in use.
     pub backends: String,
-    /// The user allowed reading activity.
-    pub activity: bool,
+    /// How keys and mouse are told apart right now (`None`: they can't be).
+    pub input_kinds: Option<InputKinds>,
+    /// Key presses and mouse events this minute so far.
+    pub minute_input: InputCounts,
     /// Time since the last keyboard or mouse input.
     pub since_input_ms: Option<u64>,
     /// The class of the app in front, as any session that doesn't run in
@@ -309,15 +313,16 @@ struct State {
     log: bool,
     started_ms: u64,
     config: Config,
-    allowed: bool,
     monitor: Monitor,
     reloaded: Option<Instant>,
     processes: Processes,
     processes_read: Instant,
     sessions: HashMap<Key, Session>,
     watches: HashMap<PathBuf, Watch>,
-    /// Input per slot of each open minute.
-    input: BTreeMap<u64, [bool; SLOTS]>,
+    /// Input per slot of each open minute, for the whole system.
+    input: BTreeMap<u64, MinuteInput>,
+    /// How keys and mouse were told apart at the latest reading.
+    input_kinds: Option<InputKinds>,
     /// Which session last claimed an edit to a file, by project and path.
     claimed: HashMap<(PathBuf, String), Key>,
 }
@@ -325,7 +330,6 @@ struct State {
 impl State {
     fn new(queue: Arc<Mutex<Queue>>, debug: Arc<Mutex<DebugInfo>>, log: bool) -> Self {
         let config = Config::load();
-        let allowed = config.activity_allowed == Some(true);
         Self {
             queue,
             debug,
@@ -338,8 +342,8 @@ impl State {
             log,
             started_ms: now_ms(),
             config,
-            allowed,
-            monitor: Monitor::new(allowed),
+            monitor: Monitor::new(true),
+            input_kinds: None,
             reloaded: None,
             processes: Processes::snapshot(),
             processes_read: Instant::now(),
@@ -366,11 +370,6 @@ impl State {
     /// Re-read the config and the session list.
     fn reload(&mut self) {
         self.config = Config::load();
-        let allowed = self.config.activity_allowed == Some(true);
-        if allowed != self.allowed {
-            self.allowed = allowed;
-            self.monitor = Monitor::new(allowed);
-        }
 
         let mut listed = HashSet::new();
         for integration in &Integration::ALL {
@@ -578,10 +577,21 @@ impl State {
         if let Some(idle) = idle {
             let at = now.saturating_sub(idle.as_millis() as u64);
             if at >= self.open_from(now) {
-                self.input.entry(minute_of(at)).or_default()[slot_of(at)] = true;
+                self.input.entry(minute_of(at)).or_default().slots[slot_of(at)].any = true;
             }
         }
-        self.input.entry(minute_ms).or_default();
+        let counted = self.monitor.take_input();
+        self.input_kinds = counted.map(|(_, kinds)| kinds);
+        let input = self.input.entry(minute_ms).or_default();
+        match counted {
+            Some((counts, kinds)) => {
+                let s = &mut input.slots[slot];
+                s.keys = s.keys.saturating_add(counts.keys);
+                s.mouse = s.mouse.saturating_add(counts.mouse);
+                input.add_kinds(kinds);
+            }
+            None => input.add_kinds(InputKinds::Unknown),
+        }
 
         let reading = self.monitor.focused();
         if let FocusReading::App(app) = &reading {
@@ -781,7 +791,7 @@ impl State {
                     agent_session_id: &session.id,
                     session_name: &session.title,
                     project: &project_name,
-                    activity: self.allowed,
+                    activity: true,
                     input: self.input.get(&minute_ms).copied().unwrap_or_default(),
                 });
                 let carry = session
@@ -837,11 +847,12 @@ impl State {
                         SLOTS
                     };
                     let input = self.input.get(&minute_ms).copied().unwrap_or_default();
-                    let slots = minute.slots_so_far(&input, upto, self.allowed);
+                    let slots = minute.slots_so_far(&input, upto, true);
                     let o = attention::minute(
                         &attention::Minute {
-                            activity: self.allowed,
+                            activity: true,
                             agent_running: minute.running,
+                            input_kinds: input.kinds(),
                             slots: &slots,
                             prompts: minute.prompts.submitted,
                             interrupts: minute.interrupts,
@@ -872,7 +883,12 @@ impl State {
         let queued = lock(&self.queue).len();
         let mut debug = lock(&self.debug);
         debug.backends = self.monitor.describe();
-        debug.activity = self.allowed;
+        debug.input_kinds = self.input_kinds;
+        let now_input = self.input.get(&current).copied().unwrap_or_default();
+        debug.minute_input = InputCounts {
+            keys: now_input.slots.iter().map(|s| s.keys).sum(),
+            mouse: now_input.slots.iter().map(|s| s.mouse).sum(),
+        };
         debug.since_input_ms = self.since_input_ms;
         debug.focus = self.focus;
         debug.sessions = sessions.into_iter().map(|(_, s)| s).collect();
@@ -950,6 +966,7 @@ fn heartbeat_minute(hb: &Heartbeat) -> attention::Minute<'_> {
     attention::Minute {
         activity: hb.activity,
         agent_running: hb.agent_running,
+        input_kinds: hb.input_kinds,
         slots: &hb.slots,
         prompts: hb.prompts.submitted,
         interrupts: hb.interrupts,

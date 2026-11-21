@@ -126,39 +126,10 @@ pub fn view<'a>(
             .push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
     }
 
-    let allowed = config.activity_allowed == Some(true);
-    let action = if allowed {
-        quiet_button("Stop", Message::AllowActivity(false))
-    } else {
-        button(text("Allow").size(14))
-            .padding([6, 18])
-            .style(style::rounded(style::pink))
-            .on_press(Message::AllowActivity(true))
-            .into()
-    };
-    let (title, detail) = if allowed {
-        ("Activity", "Only the kind of app and whether you're active")
-    } else {
-        ("Activity is off", "Sisyphus may lose time without it")
-    };
-    let activity = bubble(
-        row![
-            column![
-                text(title).size(16),
-                text(detail).size(13).style(style::muted),
-            ]
-            .spacing(2)
-            .width(Fill),
-            action,
-        ]
-        .align_y(Center),
-    );
-
     let content = column![
         text("Settings").size(26).font(style::BOLD),
         section("Account", account.into()),
         section("Agents", agents.into()),
-        section("Privacy", activity.into()),
         section("Server", server_section.into()),
     ]
     .spacing(24);

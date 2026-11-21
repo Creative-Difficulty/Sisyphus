@@ -1,27 +1,46 @@
 //! Windows: `GetLastInputInfo` for idle time, the foreground window's
-//! process for the focused app, Toolhelp for the process table.
+//! process for the focused app, Toolhelp for the process table. Keys are
+//! told from mouse by polling the last input time, the cursor and the mouse
+//! buttons ([`super::sampler`]); no keyboard hook.
 
 use std::time::Duration;
 
+use windows_sys::Win32::Foundation::POINT;
 use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW, TH32CS_SNAPPROCESS,
 };
-use windows_sys::Win32::System::SystemInformation::GetTickCount;
+use windows_sys::Win32::System::SystemInformation::{GetTickCount, GetTickCount64};
 use windows_sys::Win32::System::Threading::{
     OpenProcess, PROCESS_NAME_WIN32, PROCESS_QUERY_LIMITED_INFORMATION, QueryFullProcessImageNameW,
 };
-use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
-use windows_sys::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowThreadProcessId};
+use windows_sys::Win32::UI::Input::KeyboardAndMouse::{
+    GetAsyncKeyState, GetLastInputInfo, LASTINPUTINFO, VK_LBUTTON, VK_MBUTTON, VK_RBUTTON,
+    VK_XBUTTON1, VK_XBUTTON2,
+};
+use windows_sys::Win32::UI::WindowsAndMessaging::{
+    GetCursorPos, GetForegroundWindow, GetWindowThreadProcessId,
+};
 
 use super::process::{Process, agent_of, is_claude_build, is_version_name};
-use super::{FocusReading, FocusedApp};
+use super::sampler::{Inferred, Probe};
+use super::{FocusReading, FocusedApp, InputCounts, InputKinds};
 
-pub struct Monitor;
+pub struct Monitor {
+    kinds: Option<Inferred>,
+}
 
 impl Monitor {
     pub fn start() -> Self {
-        Monitor
+        // GetTickCount ticks in steps of about 16 ms, and the two clocks
+        // below are read one after the other.
+        Monitor {
+            kinds: Inferred::start(20, probe),
+        }
+    }
+
+    pub fn take_input(&mut self) -> Option<(InputCounts, InputKinds)> {
+        Some((self.kinds.as_ref()?.take(), InputKinds::Inferred))
     }
 
     pub fn since_last_input(&mut self) -> Option<Duration> {
@@ -61,8 +80,39 @@ impl Monitor {
     }
 
     pub fn describe(&self) -> String {
-        "input: GetLastInputInfo, focus: foreground window".to_string()
+        "input: GetLastInputInfo, focus: foreground window, keys/mouse: idle time and cursor"
+            .to_string()
     }
+}
+
+/// The last input time, the cursor and whether a mouse button is down.
+/// Only the mouse buttons' state is asked for, never a key's.
+fn probe() -> Option<Probe> {
+    let mut info = LASTINPUTINFO {
+        cbSize: size_of::<LASTINPUTINFO>() as u32,
+        dwTime: 0,
+    };
+    // SAFETY: `info` is a LASTINPUTINFO with its size set.
+    if unsafe { GetLastInputInfo(&mut info) } == 0 {
+        return None;
+    }
+    // SAFETY: no arguments.
+    let (now32, now64) = unsafe { (GetTickCount(), GetTickCount64()) };
+    let idle = u64::from(now32.wrapping_sub(info.dwTime));
+    let mut point = POINT { x: 0, y: 0 };
+    // SAFETY: `point` is a valid out pointer.
+    if unsafe { GetCursorPos(&mut point) } == 0 {
+        return None;
+    }
+    let button_down = [VK_LBUTTON, VK_RBUTTON, VK_MBUTTON, VK_XBUTTON1, VK_XBUTTON2]
+        .into_iter()
+        // SAFETY: plain call with a virtual-key code; the high bit means down.
+        .any(|vk| unsafe { GetAsyncKeyState(vk.into()) } as u16 & 0x8000 != 0);
+    Some(Probe {
+        last_input_ms: now64.saturating_sub(idle),
+        cursor: (point.x, point.y),
+        button_down,
+    })
 }
 
 /// The executable of a process, if we may query it.

@@ -1,13 +1,16 @@
-//! X11: XScreenSaver for idle time, EWMH properties for the active window.
+//! X11: XScreenSaver for idle time, EWMH properties for the active window,
+//! and keys told from mouse by polling the idle time and the pointer
+//! ([`crate::activity::sampler`]).
 
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use x11rb::connection::Connection;
 use x11rb::protocol::screensaver::ConnectionExt as _;
-use x11rb::protocol::xproto::{AtomEnum, ConnectionExt as _, Window};
+use x11rb::protocol::xproto::{AtomEnum, ConnectionExt as _, KeyButMask, Window};
 use x11rb::rust_connection::RustConnection;
 
 use super::{FocusSource, IdleSource};
+use crate::activity::sampler::{Inferred, Probe};
 use crate::activity::{FocusReading, FocusedApp};
 
 pub struct Idle {
@@ -39,6 +42,32 @@ impl IdleSource for Idle {
     fn name(&self) -> &'static str {
         "XScreenSaver"
     }
+}
+
+/// Start counting keys and mouse events on their own connection.
+pub fn input_kinds() -> Option<Inferred> {
+    let (conn, screen) = x11rb::connect(None).ok()?;
+    let root = conn.setup().roots.get(screen)?.root;
+    conn.screensaver_query_version(1, 1).ok()?.reply().ok()?;
+    let start = Instant::now();
+    let buttons = KeyButMask::BUTTON1 | KeyButMask::BUTTON2 | KeyButMask::BUTTON3;
+    // The idle time is in ms; with the round trips the computed input time
+    // wobbles by a few ms.
+    Inferred::start(15, move || {
+        let idle = conn
+            .screensaver_query_info(root)
+            .ok()?
+            .reply()
+            .ok()?
+            .ms_since_user_input;
+        let pointer = conn.query_pointer(root).ok()?.reply().ok()?;
+        let now = start.elapsed().as_millis() as u64;
+        Some(Probe {
+            last_input_ms: now.saturating_sub(idle.into()),
+            cursor: (pointer.root_x.into(), pointer.root_y.into()),
+            button_down: u16::from(pointer.mask) & u16::from(buttons) != 0,
+        })
+    })
 }
 
 pub struct Focus {

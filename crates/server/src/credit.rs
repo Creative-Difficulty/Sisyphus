@@ -23,8 +23,9 @@ use sqlx::{PgConnection, PgPool, Row};
 
 /// The version of the calculation below.
 /// 1: per slot, leaving half-life 20 s. 2: per slot, 30 s. 3: one
-/// attention value per heartbeat.
-pub const FORMULA: i32 = 3;
+/// attention value per heartbeat. 4: in the agent's window only more than
+/// five key presses count.
+pub const FORMULA: i32 = 4;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -43,6 +44,8 @@ pub struct Body {
     #[serde(default)]
     pub activity: bool,
     #[serde(default)]
+    pub input_kinds: InputKinds,
+    #[serde(default)]
     pub slots: Vec<Slot>,
     #[serde(default)]
     pub prompts: Prompts,
@@ -55,7 +58,22 @@ pub struct Slot {
     #[serde(default)]
     pub input: bool,
     #[serde(default)]
+    pub keys: u32,
+    #[serde(default)]
+    pub mouse: u32,
+    #[serde(default)]
     pub focus: Focus,
+}
+
+/// Heartbeats before version 5 don't have it: unknown.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InputKinds {
+    Exact,
+    Inferred,
+    #[default]
+    #[serde(other)]
+    Unknown,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
@@ -88,6 +106,8 @@ pub fn compute(body: &Body, carry: Option<Carry>) -> Outcome {
         .iter()
         .map(|s| heartbeat::Slot {
             input: s.input,
+            keys: s.keys,
+            mouse: s.mouse,
             focus: match s.focus {
                 Focus::Agent => heartbeat::Focus::Agent,
                 Focus::Terminal => heartbeat::Focus::Terminal,
@@ -104,6 +124,11 @@ pub fn compute(body: &Body, carry: Option<Carry>) -> Outcome {
         &attention::Minute {
             activity: body.activity,
             agent_running: body.agent_running,
+            input_kinds: match body.input_kinds {
+                InputKinds::Exact => heartbeat::InputKinds::Exact,
+                InputKinds::Inferred => heartbeat::InputKinds::Inferred,
+                InputKinds::Unknown => heartbeat::InputKinds::Unknown,
+            },
             slots: &slots,
             prompts: body.prompts.submitted,
             interrupts: body.interrupts,
@@ -289,6 +314,20 @@ mod tests {
         let out = compute(&idle, Some(Carry { attention: 1.0 }));
         let leave = attention::decay(attention::LEAVE_HALF_LIFE_SECS);
         assert!((out.multiplier - leave).abs() < 1e-9);
+    }
+
+    #[test]
+    fn counted_keys_decide_in_the_agent_window() {
+        let body = |keys: u32| -> Body {
+            serde_json::from_str(&format!(
+                r#"{{"minute_ms": 0, "agent": "claude-code", "agent_session_id": "s",
+                    "agent_running": true, "activity": true, "input_kinds": "exact",
+                    "slots": [{{"input": true, "keys": {keys}, "mouse": 40, "focus": "agent"}}]}}"#
+            ))
+            .unwrap()
+        };
+        assert_eq!(compute(&body(5), None).multiplier, 0.0);
+        assert_eq!(compute(&body(6), None).multiplier, 1.0);
     }
 
     #[test]

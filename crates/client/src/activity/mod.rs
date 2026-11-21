@@ -3,6 +3,10 @@
 //!
 //! - **time since the last input** (any key or mouse event; which key is
 //!   never seen), from the OS idle-time APIs
+//! - **how many key presses and mouse events** happened (never which
+//!   keys): exact on macOS (CoreGraphics event counters) and on Linux
+//!   Wayland with the input helper ([`crate::input_helper`]), inferred from
+//!   the idle time and the cursor on Windows and X11 ([`sampler`])
 //! - **the focused app**, reduced to a coarse [`Focus`] class
 //!
 //! | OS            | last input                        | focused app                         |
@@ -12,8 +16,7 @@
 //! | Linux X11     | XScreenSaver                      | `_NET_ACTIVE_WINDOW`, `WM_CLASS`, `_NET_WM_PID` |
 //! | Linux Wayland | `ext-idle-notify` (GNOME: Mutter's IdleMonitor) | see [`linux`]          |
 //!
-//! Nothing is read without the user's consent, on every OS (asked during
-//! onboarding, saved as `Config::activity_allowed`).
+//! Activity is always read (decided 2026-11-21: no consent step).
 //!
 //! The app id and process id of a [`FocusedApp`] stay on this machine: only
 //! the [`Focus`] class may go into a heartbeat. Window titles are never read
@@ -24,6 +27,8 @@ use std::time::Duration;
 
 mod classify;
 pub mod process;
+#[cfg(any(windows, all(unix, not(target_os = "macos"))))]
+mod sampler;
 
 #[cfg(all(unix, not(target_os = "macos")))]
 pub mod linux;
@@ -34,6 +39,28 @@ mod windows;
 
 pub use classify::{AppClass, classify};
 pub use process::Processes;
+pub use sisyphus_common::heartbeat::InputKinds;
+
+/// Key presses and mouse events (movements, clicks, scrolling) counted over
+/// some time. Never which keys.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct InputCounts {
+    pub keys: u32,
+    pub mouse: u32,
+}
+
+/// Whether this system needs the input helper to tell keys from mouse
+/// (Linux Wayland) and doesn't have it running.
+pub fn input_helper_missing() -> bool {
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        linux::is_wayland() && !linux::helper::available()
+    }
+    #[cfg(not(all(unix, not(target_os = "macos"))))]
+    {
+        false
+    }
+}
 
 /// The focus class of one heartbeat slot, as in the heartbeat scheme.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -156,6 +183,12 @@ impl Monitor {
     /// `None` if this system can't tell.
     pub fn since_last_input(&mut self) -> Option<Duration> {
         self.inner.as_mut()?.since_last_input()
+    }
+
+    /// Key presses and mouse events since the last call, and how they were
+    /// told apart. `None` when this system can't tell them apart right now.
+    pub fn take_input(&mut self) -> Option<(InputCounts, InputKinds)> {
+        self.inner.as_mut()?.take_input()
     }
 
     /// The app in front right now.

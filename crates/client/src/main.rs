@@ -13,6 +13,8 @@ fn main() {
             Ok(())
         }
         Some("track") => track(),
+        #[cfg(all(unix, not(target_os = "macos")))]
+        Some("input-helper") => input_helper(&args[1..]),
         None => sisyphus_client::gui::run().map_err(Into::into),
         Some(_) => {
             println!("usage: sisyphus-client                 open the window");
@@ -22,6 +24,10 @@ fn main() {
             println!(
                 "       sisyphus-client track           record and upload heartbeats, printing each"
             );
+            #[cfg(all(unix, not(target_os = "macos")))]
+            println!(
+                "       sisyphus-client input-helper install|uninstall   (as root) the Wayland input helper"
+            );
             Ok(())
         }
     };
@@ -29,6 +35,32 @@ fn main() {
         eprintln!("error: {e}");
         std::process::exit(1);
     }
+}
+
+/// The Wayland input helper service: `serve --uid N` (what the service
+/// runs), `install` and `uninstall` (as root).
+#[cfg(all(unix, not(target_os = "macos")))]
+fn input_helper(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
+    use sisyphus_client::input_helper;
+    match args.first().map(String::as_str) {
+        Some("serve") => {
+            let uid = match args.get(1..3) {
+                Some([flag, uid]) if flag == "--uid" => uid.parse()?,
+                _ => return Err("usage: input-helper serve --uid <uid>".into()),
+            };
+            input_helper::serve(uid)?;
+        }
+        Some("install") => {
+            input_helper::install()?;
+            println!("installed and started {}", input_helper::SERVICE);
+        }
+        Some("uninstall") => {
+            input_helper::uninstall()?;
+            println!("removed {}", input_helper::SERVICE);
+        }
+        _ => return Err("usage: input-helper install|uninstall|serve --uid <uid>".into()),
+    }
+    Ok(())
 }
 
 /// Print the time since the last input and the focused app every second,
@@ -40,8 +72,7 @@ fn activity() {
     use std::path::PathBuf;
     use std::time::{Duration, Instant};
 
-    let allowed = sisyphus_client::config::Config::load().activity_allowed == Some(true);
-    let mut monitor = Monitor::new(allowed);
+    let mut monitor = Monitor::new(true);
     println!("{}", monitor.describe());
 
     let mut sessions: Vec<(&'static str, String, PathBuf)> = Vec::new();
@@ -90,8 +121,12 @@ fn activity() {
                 format!("{agent} {}: {focus}", &id[..id.len().min(8)])
             })
             .collect();
+        let kinds = match monitor.take_input() {
+            Some((c, kinds)) => format!("keys {:>3} mouse {:>4} ({kinds:?})", c.keys, c.mouse),
+            None => "keys/mouse unknown".to_string(),
+        };
         println!(
-            "input {idle:>7}  focus {class:<8} {app:<32} {}",
+            "input {idle:>7}  {kinds}  focus {class:<8} {app:<32} {}",
             agents.join(", ")
         );
         std::thread::sleep(Duration::from_secs(1));

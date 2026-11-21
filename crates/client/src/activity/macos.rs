@@ -1,4 +1,5 @@
-//! macOS: CoreGraphics for idle time, NSWorkspace for the frontmost app,
+//! macOS: CoreGraphics for idle time and key/mouse event counts (counters
+//! per event type, never which key), NSWorkspace for the frontmost app,
 //! libproc for the process table. Needs no permission prompt: none of these
 //! read window titles or screen contents.
 
@@ -9,11 +10,12 @@ use std::time::Duration;
 use objc2_app_kit::NSWorkspace;
 
 use super::process::{Process, agent_of, is_claude_build, is_version_name};
-use super::{FocusReading, FocusedApp};
+use super::{FocusReading, FocusedApp, InputCounts, InputKinds};
 
 #[link(name = "CoreGraphics", kind = "framework")]
 unsafe extern "C" {
     fn CGEventSourceSecondsSinceLastEventType(state: i32, event_type: u32) -> f64;
+    fn CGEventSourceCounterForEventType(state: i32, event_type: u32) -> u32;
 }
 
 // Part of the Objective-C runtime, which objc2 already links.
@@ -27,11 +29,40 @@ const COMBINED_SESSION_STATE: i32 = 0;
 /// `kCGAnyInputEventType`
 const ANY_INPUT_EVENT: u32 = !0;
 
-pub struct Monitor;
+/// `kCGEventKeyDown`
+const KEY_EVENTS: [u32; 1] = [10];
+/// Mouse down (left, right, other), moved, dragged (left, right, other)
+/// and scroll wheel events.
+const MOUSE_EVENTS: [u32; 8] = [1, 3, 25, 5, 6, 7, 27, 22];
+
+pub struct Monitor {
+    /// The event counters at the last `take_input`.
+    counters: Option<(u32, u32)>,
+}
 
 impl Monitor {
     pub fn start() -> Self {
-        Monitor
+        Monitor { counters: None }
+    }
+
+    pub fn take_input(&mut self) -> Option<(InputCounts, InputKinds)> {
+        let sum = |types: &[u32]| {
+            types.iter().fold(0u32, |sum, &t| {
+                // SAFETY: a plain C function taking two integers.
+                sum.wrapping_add(unsafe {
+                    CGEventSourceCounterForEventType(COMBINED_SESSION_STATE, t)
+                })
+            })
+        };
+        let now = (sum(&KEY_EVENTS), sum(&MOUSE_EVENTS));
+        let before = self.counters.replace(now).unwrap_or(now);
+        Some((
+            InputCounts {
+                keys: now.0.wrapping_sub(before.0),
+                mouse: now.1.wrapping_sub(before.1),
+            },
+            InputKinds::Exact,
+        ))
     }
 
     pub fn since_last_input(&mut self) -> Option<Duration> {
@@ -69,7 +100,7 @@ impl Monitor {
     }
 
     pub fn describe(&self) -> String {
-        "input: CoreGraphics, focus: NSWorkspace".to_string()
+        "input: CoreGraphics, focus: NSWorkspace, keys/mouse: CoreGraphics counters".to_string()
     }
 }
 

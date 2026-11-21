@@ -7,6 +7,7 @@ use iced::widget::{column, container, row, scrollable, text};
 use iced::{Center, Element, Fill};
 
 use super::{Message, style};
+use crate::activity::InputKinds;
 use crate::tracker::{DebugInfo, SessionDebug};
 
 /// `info` is `None` when this window doesn't track (`error` says why).
@@ -123,8 +124,20 @@ fn now_rows<'a>(info: &DebugInfo, now_ms: u64) -> Element<'a, Message> {
         ("Last input", input),
         ("App in front", focus),
         (
-            "Activity",
-            if info.activity { "allowed" } else { "off" }.to_string(),
+            "Keys and mouse",
+            match info.input_kinds {
+                Some(InputKinds::Exact) => "counted",
+                Some(InputKinds::Inferred) => "guessed from idle time and cursor",
+                Some(InputKinds::Unknown) | None => "not told apart",
+            }
+            .to_string(),
+        ),
+        (
+            "This minute",
+            format!(
+                "{} keys, {} mouse events",
+                info.minute_input.keys, info.minute_input.mouse
+            ),
         ),
         ("Backends", info.backends.clone()),
         ("Watched folders", info.watched_folders.to_string()),

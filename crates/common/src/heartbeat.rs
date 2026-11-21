@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v4).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v5).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -14,7 +14,7 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 4;
+pub const VERSION: u32 = 5;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -40,9 +40,12 @@ pub struct Heartbeat {
 
     /// The agent worked on a turn at some point in this minute.
     pub agent_running: bool,
-    /// The user allowed reading activity. Without it every slot is
-    /// `{ input: false, focus: unknown }`.
+    /// Activity was read. Without it every slot is
+    /// `{ input: false, keys: 0, mouse: 0, focus: unknown }`.
     pub activity: bool,
+    /// How keyboard and mouse were told apart this minute (`keys` and
+    /// `mouse` are 0 when `unknown`).
+    pub input_kinds: InputKinds,
     /// The minute's six 10-second slots, in order.
     pub slots: [Slot; SLOTS],
     /// The project's own programs that were in front this minute (focus
@@ -63,12 +66,32 @@ pub struct Slot {
     /// Any keyboard or mouse input, from the OS idle time. Which key is
     /// never known.
     pub input: bool,
+    /// Key presses in the slot (never which keys).
+    pub keys: u32,
+    /// Mouse events in the slot: movements, clicks and scrolling.
+    pub mouse: u32,
     /// The app that held focus for most of the slot.
     pub focus: Focus,
 }
 
 impl Slot {
-    pub const UNKNOWN: Self = Self { input: false, focus: Focus::Unknown };
+    pub const UNKNOWN: Self = Self { input: false, keys: 0, mouse: 0, focus: Focus::Unknown };
+}
+
+/// How a heartbeat's key and mouse counts were read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InputKinds {
+    /// Not told apart: `keys` and `mouse` are 0, only `input` counts.
+    Unknown,
+    /// Guessed from the idle time and the mouse: input while the mouse
+    /// neither moved nor had a button down counts as a key press (Windows,
+    /// X11). Clicks and scrolling without movement may count as keys, and
+    /// fast typing may count low.
+    Inferred,
+    /// Counted from the events themselves (macOS, Linux with the input
+    /// helper).
+    Exact,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]

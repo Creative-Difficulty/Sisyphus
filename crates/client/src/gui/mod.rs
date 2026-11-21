@@ -1,9 +1,10 @@
 //! The client's window.
 //!
 //! Screens:
-//! - first start ([`onboarding`]): log in with Hack Club, connect agents,
-//!   then allow activity ([`consent`]). The window resumes at whichever step
-//!   isn't done yet.
+//! - first start ([`onboarding`]): log in with Hack Club, connect agents.
+//!   The window resumes at whichever step isn't done yet.
+//! - on Linux Wayland without the input helper, a popup asking to set it up
+//!   ([`input_helper`]), once per start
 //! - the dashboard ([`sessions`]), refreshed every few seconds
 //! - settings ([`settings`], gear icon): account and agents as a compact list
 
@@ -17,8 +18,8 @@ use iced::{Element, Fill, Subscription, Task, Theme};
 use crate::agents::Integration;
 use crate::config::Config;
 
-mod consent;
 mod debug;
+mod input_helper;
 mod onboarding;
 mod sessions;
 mod settings;
@@ -67,6 +68,10 @@ struct App {
     /// When Ctrl+D was last pressed; a second press soon after toggles the
     /// debug screen.
     debug_key_at: Option<std::time::Instant>,
+    /// The input helper popup was answered (set up or "not now") this run.
+    input_helper_answered: bool,
+    input_helper_pending: bool,
+    input_helper_error: Option<String>,
 }
 
 enum Screen {
@@ -74,8 +79,8 @@ enum Screen {
     Login,
     /// First start, step 2: connect agents.
     ConnectAgents,
-    /// First start, step 3: allow reading activity.
-    Activity,
+    /// Linux Wayland without the input helper: ask to set it up.
+    InputHelper,
     /// Account and agents, from the gear icon.
     Settings,
     /// Live attention and tracker state, from Ctrl+D pressed twice.
@@ -115,8 +120,11 @@ pub enum Message {
     SaveServer,
     /// Go back to the default server.
     ResetServer,
-    /// The user answered whether Sisyphus may read their activity.
-    AllowActivity(bool),
+    /// Install the input helper (polkit asks for the password).
+    SetUpInputHelper,
+    /// Not now: don't ask again until the next start.
+    SkipInputHelper,
+    InputHelperFinished(Result<(), String>),
     /// Ctrl+D was pressed.
     DebugKey,
     /// Redraw the debug screen.
@@ -140,6 +148,9 @@ impl App {
             tracker: None,
             tracker_error: None,
             debug_key_at: None,
+            input_helper_answered: false,
+            input_helper_pending: false,
+            input_helper_error: None,
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -287,15 +298,26 @@ impl App {
                 self.set_server(server_url)
             }
             Message::ResetServer => self.set_server(None),
-            Message::AllowActivity(allowed) => {
-                let mut config = self.config.clone();
-                config.activity_allowed = Some(allowed);
-                // If saving fails the answer still applies until restart.
-                let _ = config.save();
-                self.config = config;
-                match self.screen {
-                    Screen::Activity => self.resume(),
-                    _ => Task::none(),
+            Message::SetUpInputHelper => {
+                self.input_helper_pending = true;
+                self.input_helper_error = None;
+                set_up_input_helper()
+            }
+            Message::SkipInputHelper => {
+                self.input_helper_answered = true;
+                self.resume()
+            }
+            Message::InputHelperFinished(result) => {
+                self.input_helper_pending = false;
+                match result {
+                    Ok(()) => {
+                        self.input_helper_answered = true;
+                        self.resume()
+                    }
+                    Err(e) => {
+                        self.input_helper_error = Some(e);
+                        Task::none()
+                    }
                 }
             }
         }
@@ -311,7 +333,10 @@ impl App {
                 },
             ),
             Screen::ConnectAgents => onboarding::agents(&self.config, &self.errors),
-            Screen::Activity => consent::view(),
+            Screen::InputHelper => input_helper::view(
+                self.input_helper_pending,
+                self.input_helper_error.as_deref(),
+            ),
             Screen::Settings => settings::view(
                 &self.config,
                 &self.errors,
@@ -339,7 +364,7 @@ impl App {
             Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
             Screen::Settings => icon_button(style::Icon::Back, Message::ShowSessions),
             Screen::Debug => icon_button(style::Icon::Back, Message::Continue),
-            Screen::Login | Screen::ConnectAgents | Screen::Activity => space().into(),
+            Screen::Login | Screen::ConnectAgents | Screen::InputHelper => space().into(),
         };
         let theme_icon = if self.is_dark() {
             style::Icon::Sun
@@ -406,8 +431,8 @@ impl App {
         } else if self.config.connected_agents.is_empty() {
             self.screen = Screen::ConnectAgents;
             Task::none()
-        } else if self.config.activity_allowed.is_none() {
-            self.screen = Screen::Activity;
+        } else if !self.input_helper_answered && crate::activity::input_helper_missing() {
+            self.screen = Screen::InputHelper;
             Task::none()
         } else {
             self.show_sessions()
@@ -518,6 +543,22 @@ fn debug_ticks() -> impl Stream<Item = Message> {
 }
 
 /// Run blocking work on its own thread, so the window stays responsive.
+/// Install the input helper on a worker thread (pkexec waits for the
+/// password).
+fn set_up_input_helper() -> Task<Message> {
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        Task::perform(
+            on_thread(crate::input_helper::set_up),
+            Message::InputHelperFinished,
+        )
+    }
+    #[cfg(not(all(unix, not(target_os = "macos"))))]
+    {
+        Task::done(Message::InputHelperFinished(Ok(())))
+    }
+}
+
 fn on_thread<T: Send + 'static>(
     work: impl FnOnce() -> T + Send + 'static,
 ) -> impl Future<Output = T> {

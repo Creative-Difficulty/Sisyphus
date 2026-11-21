@@ -242,6 +242,7 @@ mod tests {
             project: "p".into(),
             agent_running: true,
             activity: false,
+            input_kinds: sisyphus_common::heartbeat::InputKinds::Unknown,
             slots: [Slot::UNKNOWN; SLOTS],
             tested_programs: Vec::new(),
             prompts: Prompts::default(),

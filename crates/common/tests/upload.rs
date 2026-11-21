@@ -1,7 +1,7 @@
 use ed25519_dalek::SigningKey;
 use sisyphus_common::api::{StoredHeartbeat, UploadBatch, UploadError, verify_batch};
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat};
-use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, Prompts, Responses, Slot, VERSION};
+use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION};
 
 fn minute(i: u64) -> Heartbeat {
     Heartbeat {
@@ -13,7 +13,8 @@ fn minute(i: u64) -> Heartbeat {
         project: "demo".into(),
         agent_running: true,
         activity: true,
-        slots: [Slot { input: true, focus: Focus::Agent }; 6],
+        input_kinds: InputKinds::Exact,
+        slots: [Slot { input: true, keys: 3, mouse: 1, focus: Focus::Agent }; 6],
         tested_programs: vec![],
         prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
         interrupts: 0,

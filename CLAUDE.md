@@ -59,7 +59,7 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 4 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v4`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
+  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 5 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v5`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
 - **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
@@ -100,7 +100,7 @@ Three crates in `crates/`:
 
 The attention formula is `sisyphus_common::attention` (`minute()`), shared by the server (credit) and the client (debug screen), so both always compute the same. Each heartbeat becomes one `session_minutes` row of its server-side session:
 - `agent_sessions.id`: UUID-formatted SHA-256 of device id, agent and agent session id; named by the latest `session_name`, grouped into projects by `project`.
-- Attention is one value per heartbeat (formula 3). With `activity` and at least one known slot: any slot with input whose focus is `agent` makes the whole heartbeat 1.0 (a sent prompt's slot is `agent`, so writing and sending a prompt guarantees 1.0). Otherwise it decays from the session's previous heartbeat (`attention_end`): with a 2 min half-life if `agent` held most of the six slots (staying), else 30 s (leaving; `unknown` and `testing` slots count as another app; what `testing` earns isn't decided). It starts at 0 after a gap. The multiplier is the heartbeat's attention.
+- Attention is one value per heartbeat (formula 4). With `activity` and at least one known slot: interaction in the agent's window makes the whole heartbeat 1.0: more than 5 key presses (`attention::AGENT_KEYS`) summed over the slots whose focus is `agent`, mouse ignored there (decided 2026-11-21). With `input_kinds` `unknown` (Wayland without the input helper, heartbeats before v5) any input in an `agent` slot counts instead. A sent prompt's slot is `agent`, so typing a prompt of 6+ characters guarantees 1.0. Otherwise it decays from the session's previous heartbeat (`attention_end`): with a 2 min half-life if `agent` held most of the six slots (staying), else 30 s (leaving; `unknown` and `testing` slots count as another app; what `testing` earns isn't decided). It starts at 0 after a gap. The multiplier is the heartbeat's attention.
 - Without `activity`, or with every slot `unknown`: a prompt gives 1.0, an interrupt 0.5, otherwise 0; nothing carries over.
 - Only minutes with `agent_running` earn credit (no time after a turn ends); `ai_ms` is 60000 for them, kept apart from credit.
 - `share_minute`: if a user's multipliers for one `minute_ms` add up to more than 1.0 (across all devices), each gets its share; `credit_ms = 60000 × multiplier / max(1, sum)`.
@@ -190,9 +190,14 @@ To add an agent:
 
 ### Activity (`crates/client/src/activity/`)
 
-Reads, without a keylogger and without root, the time since the last input (any key or mouse event; never which key) and the focused app. Not wired into heartbeats yet; the `activity` CLI command prints it.
+Reads, without a keyboard hook, the time since the last input (any key or mouse event; never which key), how many key presses and mouse events happened, and the focused app. The tracker records it; the `activity` CLI command prints it.
 
-- `Monitor::new(allowed)`: nothing is read without the user's consent (`Config::activity_allowed`), on every OS; without it every reading is unknown. `since_last_input()`, `focused()` → `FocusReading` (`Unknown` / `Nothing` / `App(FocusedApp { app_id, pid })`), `describe()` (which backends are in use).
+- Activity is always read (decided 2026-11-21: no consent step, no settings row). `Monitor::new(true)`; `since_last_input()`, `take_input()` → key/mouse counts since the last call and their `InputKinds` (`None` when they can't be told apart), `focused()` → `FocusReading` (`Unknown` / `Nothing` / `App(FocusedApp { app_id, pid })`), `describe()` (which backends are in use).
+- Keys vs mouse (decided 2026-11-21):
+  - macOS: exact, `CGEventSourceCounterForEventType` per event type (key down; mouse down/moved/dragged/scroll), deltas between calls.
+  - Windows and X11: inferred (`sampler.rs`): a thread polls the last input time (`GetLastInputInfo` / XScreenSaver), the cursor (`GetCursorPos` / `QueryPointer`) and the mouse buttons (`GetAsyncKeyState` for mouse buttons only / the pointer's button mask) 25 times a second. New input with the cursor still and no button down is a key event; key events are halved into presses (releases reset the idle time too). Clicks and scrolls without movement count as keys.
+  - Linux Wayland: exact through the input helper (`linux/helper.rs` connects to `/run/sisyphus-input/socket`, reconnecting every 5 s); unknown without it. `activity::input_helper_missing()` says whether to show the setup popup.
+- Input helper (`input_helper.rs`, Linux only, decided 2026-11-21): `sisyphus-client input-helper install` (as root through `pkexec`, for `PKEXEC_UID`/`SUDO_UID`) copies the binary to `/usr/local/libexec/sisyphus-input-helper`, writes `/etc/systemd/system/sisyphus-input-helper.service` and enables it; `uninstall` removes both. The service runs `input-helper serve --uid N` as a `DynamicUser` in the `input` group (no capabilities, no network, `DeviceAllow=char-input r`, `ProtectSystem=strict`), reads `/dev/input/event*` (rescanned every 5 s), counts key presses (value 1, codes outside the button range; no repeats or releases) and mouse events (relative-motion frames, button presses, absolute frames only while `BTN_TOUCH`), and every 250 ms with anything counted writes `<keys> <mouse>\n` to connections from that uid only (`SO_PEERCRED`). Key codes are only compared against the button range, never stored or sent.
 - `FocusReading::focus(session, &processes)` → the heartbeat's `Focus` class (`agent`/`terminal`/`editor`/`browser`/`other`/`testing`/`none`; `None` = unknown). `testing` (decided 2026-11-21): the window runs an executable inside the session's project folder, which must be a git repository (`process::git_root`: has `.git`). `Processes::programs_in_window` collects the executables of the window's process and its descendants, stopping at agent processes (what an agent runs isn't the user testing); executable paths are read only for those (`process::exe_path`: `/proc/<pid>/exe` without a ` (deleted)` suffix, `proc_pidpath`, `QueryFullProcessImageNameW`). Without a window pid, processes named like the app id stand in for the window. `classify.rs` maps app ids (Wayland app ids, X11 classes, macOS bundle ids, Windows exe names) to classes; unknown apps are `other`.
 - `agent` matching (`process.rs`): the focused window runs the session's agent if an agent process (`claude`, `opencode`, or node/bun/deno running Claude Code or opencode) running that session descends from the window's process. A Claude Code process names its session in `~/.claude/sessions/<pid>.json` (`sessionId`); where that file exists the match is exact, otherwise the process's working directory must be the session's project. Subcommands that aren't sessions (`claude agents`, `claude daemon`, `claude mcp`, `opencode serve`, …) never count, and are never the session's agent. Claude Code's native builds run as `…/claude/versions/<version>` (process title `claude …`) and are recognised by that path. Command lines are read for `claude`/`opencode` and node/bun/deno.
 - Session manager (`claude agents`): it shows background sessions (`kind: "bg"` in the pid file) without telling us which one. When the focused window runs it, the background session that got the latest prompt (falling back to the latest activity) is in front (decided 2026-11-21; `Processes::window_runs_manager`, `background_sessions`, picked in the tracker). Without a window pid (wlr-foreign-toplevel) an ancestor's executable must match the app id, which can't tell two windows of the same terminal apart. Windows can't read other processes' working directories, so there any process of that agent counts.
@@ -232,7 +237,6 @@ JSON in the OS config directory:
 Fields:
 - `connected_agents`: a list of `Integration::id()`s.
 - `dark_mode`: the window's light/dark choice; absent means follow the OS.
-- `activity_allowed`: whether the user allowed reading activity (time since the last input and the kind of app in front); absent until asked.
 - `server_url`: the Sisyphus server; absent means production, `https://sisyphus.aelx.dev` (`DEFAULT_SERVER_URL`). Changeable in Settings.
 - `account`: `{ "name": …, "server": … }` once logged in, absent when logged out. A device is linked per server, so `Config::account()` only returns the account when its `server` matches the current one; switching servers (or an older account without `server`) means logging in again. Always use `account()`, not the field.
 
@@ -242,18 +246,17 @@ Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Window (`crates/client/src/gui/`, iced 0.14)
 
-- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; otherwise the dashboard.
+- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; Linux Wayland without a running input helper (and not answered this run) → the input helper popup; otherwise the dashboard.
 - First start (`onboarding.rs`), never the settings screen:
   1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
   2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
-  3. Activity step (`consent.rs`), on every OS, until answered (`activity_allowed` absent): says it's required to count time and Sisyphus can lose time without it; one bubble with the only activity shared (the kind of app in front and whether the user was active, per 10 s), one with what's never recorded (typing, keys, mouse movements, app names, titles, screen). "Allow", or a quiet "Not now".
+- Input helper popup (`input_helper.rs`, only on Linux Wayland without the helper running): says why (Wayland doesn't tell apps keys from mouse), what it does (counts only, never which keys), what the password allows (the installed copy, the service, `/dev/input`, not root, no network, only this account reads it), how to remove it, and "Questions or concerns? Contact @simon on Slack." "Set up" runs `pkexec … input-helper install` on a worker thread ("Waiting for your password" meanwhile; errors for cancel, no polkit agent, failures); "Not now" skips it until the next start. There is no activity consent step any more (removed 2026-11-21).
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out unlinks the device on the server first, shows "Logging out" meanwhile and an error if that fails, then returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)
-  - a "Privacy" row for activity: Allow / Stop; while off it says Sisyphus may lose time
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
 - Top bar: gear on the dashboard, back arrow in settings and the debug screen, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
-- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, consent, backends, watched folders, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
+- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, how keys and mouse are told apart and this minute's counts, backends, watched folders, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
   - Bottom half: "Recorded today" and three figures. "Recorded today" and the "agent time" figure come from the server (`GET /api/app/today`: `tracked_ms`, `agent_ms`, for the local day; decided 2026-11-21), fetched with each 10 s refresh. "prompts" and "sessions" are placeholders (zero).
@@ -293,7 +296,9 @@ Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Testing activity
 
-- Run `activity` with a temporary `XDG_CONFIG_HOME` whose config has `"activity_allowed": true`.
+- Run `activity` with a temporary `XDG_CONFIG_HOME`. It prints key and mouse counts per second too.
+- X11 and Windows key/mouse inference: `xdotool type --delay 120 "hello world"` should give 11 keys; under Wine type into the focused `wine notepad` without `--window` (Wine ignores synthetic events sent to a window).
+- Input helper: don't run `serve` on the real devices (the user is in the `input` group; that would count their live typing). Run it in `bwrap --dev-bind / / --tmpfs /run --dir /run/sisyphus-input --tmpfs /dev/input --bind <fifo> /dev/input/event0` and write `struct input_event`s (`struct.pack("qqHHi", 0, 0, type, code, value)`) into the FIFO; a Python client on the socket sees the counts. Check the unit with `systemd-analyze verify` and `systemd-analyze security --offline=true`. Installing needs the user's password: ask them to click "Set up".
 - Hyprland: as is. wlr-foreign-toplevel: unset `HYPRLAND_INSTANCE_SIGNATURE` (Hyprland supports the protocol too).
 - X11: `Xvfb :77`, `openbox` and `xterm` on `DISPLAY=:77`, with `WAYLAND_DISPLAY` unset and `XDG_SESSION_TYPE=x11`; `xdotool mousemove` resets the idle time.
 - Windows: `cargo build --target x86_64-pc-windows-gnu`, then run the `.exe` under `wine` with its own `WINEPREFIX` in the scratchpad, on the Xvfb display (`wine notepad` gives a focused window without touching the user's screen).
@@ -303,7 +308,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 ### Testing the tracker
 
 - Start a throwaway Postgres and server (see "Testing the server"). Link a device without a login: run `track` once with a temporary `XDG_CONFIG_HOME` to create `device.key`, derive its public key (e.g. Python `cryptography`), and insert a `users` row and a `devices` row (`next_seq` 0, `prev` 64 zeros, `user_id`) with `psql`.
-- Config: `connected_agents`, `"activity_allowed": true`, `server_url` pointing at the local server and a matching `account`.
+- Config: `connected_agents`, `server_url` pointing at the local server and a matching `account`.
 - Run `timeout 400 sisyphus-client track`; the agent session you are working in is itself a running session, so your own edits show up as `agent_edits` and `working_dir`. Check the stored rows in `heartbeats`.
 
 ### Heartbeat design (decided 2026-11-20; the client records and uploads it, the server credits it, see "Crediting")
@@ -313,8 +318,8 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 - **Per session.** Time is counted and calculated per agent session. Each session sends its own heartbeat each minute while its agent is running, or while it isn't running but its agent's window is in front (decided 2026-11-21).
 - **What a heartbeat carries:**
   - the minute, agent, agent session id, the agent's session title, and the project folder name
-  - whether the agent was running, and `activity`: whether the user allowed activity reading
-  - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `testing` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
+  - whether the agent was running, `activity` (always true now), and `input_kinds`: how keys and mouse were told apart (`exact` / `inferred` / `unknown`)
+  - six 10-second slots, each with whether there was input, key presses and mouse events counted, and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `testing` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
   - `tested_programs`: the project's own executables that were in front (focus `testing`), relative to the project folder
   - prompt counts: submitted, typed chars, pasted chars, corrections; interrupts
   - response counts: responses finished this minute and their visible characters (never text)
@@ -323,21 +328,21 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 - **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session is named by the agent's session title.
 - **Server computes** attention and the 0.0–1.0 multiplier per session. The client runs the same formulas only for display and to compare against the server.
 - **Overlap.** If the multipliers of concurrent sessions for the same real minute add up to more than 1.0, each session gets its share of one minute (two sessions at 1.0 each get 30 s each).
-- **Attention** is one value per heartbeat: input in the agent's window anywhere in the minute makes it 1.0; otherwise it drops from the previous heartbeat with a 2 min half-life if the agent's window held most of the minute, else 30 s. Without activity, a prompt is worth 1.0 and an interrupt 0.5, back to 0 the next minute. Only minutes where the agent ran earn credit. An agent working alone earns no credit; that time still counts as AI time. No mouse-jiggle rule yet (later).
+- **Attention** is one value per heartbeat: more than 5 key presses in the agent's window in the minute make it 1.0 (mouse doesn't count there; in other apps, including testing, keys and mouse both count as activity); otherwise it drops from the previous heartbeat with a 2 min half-life if the agent's window held most of the minute, else 30 s. Without activity, a prompt is worth 1.0 and an interrupt 0.5, back to 0 the next minute. Only minutes where the agent ran earn credit. An agent working alone earns no credit; that time still counts as AI time. No mouse-jiggle rule yet (later).
 - **Focused session.** A prompt submitted to a session means the user is focused on that session (decided 2026-11-21). The window match narrows candidates; the latest prompt picks among them.
 - **No quick-switch farming.** Switching to the agent's window for ~5 s without real interaction gives little or no attention.
   - A slot's `focus` is the app that held focus for most of the slot.
-  - Input (including alt-tab) only counts in slots where the agent's terminal or editor held focus.
+  - Input (including alt-tab) only counts in slots where the agent's terminal or editor held focus, and there only key presses, more than 5 per heartbeat.
   - Attention never rises without input; watching without input only slows the decay when the agent's window held most of the minute.
 - **Struggle value.** Each heartbeat has one, calculated on both the client and the server. Struggle does not affect credit for now; it is only kept.
   - Decided input: correction prompts.
   - Possible future signals, not decided (ask first): interrupts, rejected tool calls, re-prompting (near-identical prompts) and reverts (Claude Code rewinds, opencode reverts). Interrupts and rejected tool calls are already `AgentEvent`s.
-- **No keylogging and no root.** Input is detected only through OS idle-time APIs:
-  - Windows: `GetLastInputInfo`
-  - macOS: `CGEventSourceSecondsSinceLastEventType`
-  - Linux X11: XScreenSaver extension
-  - Linux Wayland: `ext-idle-notify` (Mutter's IdleMonitor on GNOME).
-  - On every OS, activity is read only after the user allowed it in onboarding (or settings), which says what is and isn't shared. Per compositor: see "Activity" above.
+- **No keylogging.** Input is detected through OS idle-time APIs and event counters, never which key:
+  - Windows: `GetLastInputInfo`, keys vs mouse inferred
+  - macOS: `CGEventSourceSecondsSinceLastEventType`, `CGEventSourceCounterForEventType`
+  - Linux X11: XScreenSaver extension, keys vs mouse inferred
+  - Linux Wayland: `ext-idle-notify` (Mutter's IdleMonitor on GNOME); key/mouse counts only through the input helper, which the user installs with their password after a popup that says exactly what it does (decided 2026-11-21). It reads `/dev/input` as its own unprivileged user and passes on counts only.
+  - Activity is read without a consent step (decided 2026-11-21). Per compositor: see "Activity" above.
 - **Edits must match.** While an agent runs, the client watches its working directory. The agent's edit calls and the actual file changes must match up, file by file; the server flags it when the agent claims more than actually changed.
 - **Prompt classification.** A really small local embedding model classifies each prompt on the device. The model is deliberately not chosen yet: the architecture comes first. Only the label leaves the machine.
   - Correction prompts ("no, you did this wrong, redo it") add to struggle; they don't reduce time, for now.

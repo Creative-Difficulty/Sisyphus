@@ -3,8 +3,48 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, Prompts, Responses, SLOTS, Slot, VERSION,
+    Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, SLOTS, Slot, VERSION,
 };
+
+/// One slot's input, for the whole system.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct SlotInput {
+    /// Any input, from the idle time.
+    pub any: bool,
+    pub keys: u32,
+    pub mouse: u32,
+}
+
+/// A minute's input, for the whole system.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct MinuteInput {
+    pub slots: [SlotInput; SLOTS],
+    /// How keys and mouse were told apart: the weakest way seen in the
+    /// minute (`None` before the first reading).
+    kinds: Option<InputKinds>,
+}
+
+impl MinuteInput {
+    pub fn add_kinds(&mut self, kinds: InputKinds) {
+        self.kinds = Some(self.kinds.map_or(kinds, |k| k.min(kinds)));
+    }
+
+    pub fn kinds(&self) -> InputKinds {
+        self.kinds.unwrap_or(InputKinds::Unknown)
+    }
+
+    /// Slot `i` as a heartbeat carries it, with `focus`.
+    fn slot(&self, i: usize, focus: Focus) -> Slot {
+        let s = self.slots[i];
+        let told_apart = self.kinds() != InputKinds::Unknown;
+        Slot {
+            input: s.any || s.keys > 0 || s.mouse > 0,
+            keys: if told_apart { s.keys } else { 0 },
+            mouse: if told_apart { s.mouse } else { 0 },
+            focus,
+        }
+    }
+}
 
 /// The once-a-second focus readings of one slot.
 #[derive(Debug, Clone, Copy, Default)]
@@ -86,10 +126,10 @@ pub struct Meta<'a> {
     pub agent_session_id: &'a str,
     pub session_name: &'a str,
     pub project: &'a str,
-    /// Activity reading was allowed.
+    /// Activity was read.
     pub activity: bool,
     /// Input per slot, for the whole system.
-    pub input: [bool; SLOTS],
+    pub input: MinuteInput,
 }
 
 impl SessionMinute {
@@ -104,14 +144,11 @@ impl SessionMinute {
 
     /// The first `upto` slots as a heartbeat would carry them, for the
     /// attention formula while the minute is still open.
-    pub fn slots_so_far(&self, input: &[bool; SLOTS], upto: usize, activity: bool) -> Vec<Slot> {
+    pub fn slots_so_far(&self, input: &MinuteInput, upto: usize, activity: bool) -> Vec<Slot> {
         (0..upto.min(SLOTS))
             .map(|i| {
                 if activity {
-                    Slot {
-                        input: input[i],
-                        focus: self.focus(i),
-                    }
+                    input.slot(i, self.focus(i))
                 } else {
                     Slot::UNKNOWN
                 }
@@ -133,10 +170,7 @@ impl SessionMinute {
     pub fn into_heartbeat(self, meta: Meta<'_>) -> Heartbeat {
         let slots = std::array::from_fn(|i| {
             if meta.activity {
-                Slot {
-                    input: meta.input[i],
-                    focus: self.focus(i),
-                }
+                meta.input.slot(i, self.focus(i))
             } else {
                 Slot::UNKNOWN
             }
@@ -150,6 +184,11 @@ impl SessionMinute {
             project: meta.project.to_string(),
             agent_running: self.running,
             activity: meta.activity,
+            input_kinds: if meta.activity {
+                meta.input.kinds()
+            } else {
+                InputKinds::Unknown
+            },
             slots,
             tested_programs: if meta.activity {
                 self.tested_programs.into_iter().collect()
@@ -206,15 +245,27 @@ mod tests {
             session_name: "t",
             project: "p",
             activity: true,
-            input: [false, false, true, false, false, false],
+            input: {
+                let mut input = MinuteInput::default();
+                input.slots[2] = SlotInput {
+                    any: true,
+                    keys: 12,
+                    mouse: 3,
+                };
+                input.add_kinds(InputKinds::Exact);
+                input
+            },
         });
         assert_eq!(
             hb.slots[2],
             Slot {
                 input: true,
+                keys: 12,
+                mouse: 3,
                 focus: Focus::Agent
             }
         );
+        assert_eq!(hb.input_kinds, InputKinds::Exact);
         assert_eq!(hb.slots[3], Slot::UNKNOWN);
     }
 
@@ -232,7 +283,7 @@ mod tests {
             session_name: "t",
             project: "p",
             activity: false,
-            input: [true; SLOTS],
+            input: MinuteInput::default(),
         });
         assert_eq!(hb.slots, [Slot::UNKNOWN; SLOTS]);
         assert!(!hb.activity);

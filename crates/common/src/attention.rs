@@ -2,10 +2,13 @@
 //! it; the client runs the same code only to show it and compare.
 //!
 //! Attention is one value per heartbeat (one session's minute):
-//! - With activity allowed:
-//!   - any input in a slot where the session's agent window is in front
-//!     makes the whole heartbeat 1.0 (writing a prompt is such input, and
-//!     the slot a prompt is sent in counts as the agent's)
+//! - With activity read:
+//!   - interaction in the session's agent window makes the whole heartbeat
+//!     1.0: more than [`AGENT_KEYS`] key presses in the slots where it was
+//!     in front (mouse events don't count there; decided 2026-11-21). When
+//!     keys and mouse can't be told apart (`input_kinds` unknown), any
+//!     input in such a slot counts. The slot a prompt is sent in counts as
+//!     the agent's, so typing a prompt is such interaction.
 //!   - otherwise it decays from the session's previous heartbeat: with a
 //!     2-minute half-life if the agent's window was in front for most of
 //!     the minute (staying), with a 30-second half-life if not (leaving)
@@ -20,7 +23,7 @@
 //!
 //! Floats are fine here: none of this is hashed or signed.
 
-use crate::heartbeat::{Focus, Slot};
+use crate::heartbeat::{Focus, InputKinds, Slot};
 
 /// Seconds in one heartbeat.
 pub const HEARTBEAT_SECS: f64 = 60.0;
@@ -31,6 +34,9 @@ pub const LEAVE_HALF_LIFE_SECS: f64 = 30.0;
 /// Without activity: what agent events are worth.
 pub const PROMPT: f64 = 1.0;
 pub const INTERRUPT: f64 = 0.5;
+/// In the agent's window, only more than this many key presses in a
+/// heartbeat count as interaction.
+pub const AGENT_KEYS: u32 = 5;
 
 /// What's left of attention after one heartbeat with a half-life of `secs`.
 pub fn decay(secs: f64) -> f64 {
@@ -48,6 +54,7 @@ pub struct Carry {
 pub struct Minute<'a> {
     pub activity: bool,
     pub agent_running: bool,
+    pub input_kinds: InputKinds,
     pub slots: &'a [Slot],
     pub prompts: u32,
     pub interrupts: u32,
@@ -68,7 +75,13 @@ pub struct Outcome {
 pub fn minute(m: &Minute<'_>, carry: Option<Carry>) -> Outcome {
     let known = m.slots.iter().any(|s| s.focus != Focus::Unknown);
     let (attention, carry) = if m.activity && known {
-        let engaged = m.slots.iter().any(|s| s.focus == Focus::Agent && s.input);
+        let mut agent = m.slots.iter().filter(|s| s.focus == Focus::Agent);
+        let engaged = match m.input_kinds {
+            InputKinds::Unknown => agent.any(|s| s.input),
+            InputKinds::Inferred | InputKinds::Exact => {
+                agent.map(|s| s.keys).sum::<u32>() > AGENT_KEYS
+            }
+        };
         let attention = if engaged {
             1.0
         } else {
@@ -107,15 +120,45 @@ mod tests {
     const B: Focus = Focus::Browser;
 
     fn slots(list: &[(bool, Focus)]) -> Vec<Slot> {
-        list.iter().map(|&(input, focus)| Slot { input, focus }).collect()
+        list.iter().map(|&(input, focus)| Slot { input, keys: 0, mouse: 0, focus }).collect()
+    }
+
+    fn run_slots(slots: &[Slot], kinds: InputKinds, carry: Option<Carry>) -> Outcome {
+        minute(
+            &Minute {
+                activity: true,
+                agent_running: true,
+                input_kinds: kinds,
+                slots,
+                prompts: 0,
+                interrupts: 0,
+            },
+            carry,
+        )
     }
 
     fn run(list: &[(bool, Focus)], carry: Option<Carry>) -> Outcome {
-        let slots = slots(list);
-        minute(
-            &Minute { activity: true, agent_running: true, slots: &slots, prompts: 0, interrupts: 0 },
-            carry,
-        )
+        run_slots(&slots(list), InputKinds::Unknown, carry)
+    }
+
+    fn counted(keys: u32, mouse: u32, focus: Focus) -> Slot {
+        Slot { input: keys + mouse > 0, keys, mouse, focus }
+    }
+
+    #[test]
+    fn in_the_agent_window_only_more_than_five_keys_count() {
+        let mut list = vec![counted(0, 0, B); 6];
+        list[1] = counted(3, 500, A);
+        list[2] = counted(2, 0, A);
+        // Five keys and plenty of mouse: not interaction.
+        let out = run_slots(&list, InputKinds::Exact, None);
+        assert_eq!(out.attention, 0.0);
+        list[3] = counted(1, 0, A);
+        assert_eq!(run_slots(&list, InputKinds::Exact, None).attention, 1.0);
+        assert_eq!(run_slots(&list, InputKinds::Inferred, None).attention, 1.0);
+        // Keys in another app don't count for the agent.
+        let elsewhere = vec![counted(50, 0, B); 6];
+        assert_eq!(run_slots(&elsewhere, InputKinds::Exact, None).attention, 0.0);
     }
 
     fn full() -> Option<Carry> {
@@ -163,7 +206,14 @@ mod tests {
     fn no_credit_without_the_agent_running() {
         let slots = slots(&[(true, A); 6]);
         let out = minute(
-            &Minute { activity: true, agent_running: false, slots: &slots, prompts: 0, interrupts: 0 },
+            &Minute {
+                activity: true,
+                agent_running: false,
+                input_kinds: InputKinds::Unknown,
+                slots: &slots,
+                prompts: 0,
+                interrupts: 0,
+            },
             None,
         );
         assert_eq!(out.attention, 1.0);
@@ -174,7 +224,14 @@ mod tests {
     #[test]
     fn without_activity_only_prompts_and_interrupts_count() {
         let unknown = slots(&[(false, Focus::Unknown); 6]);
-        let mut m = Minute { activity: false, agent_running: true, slots: &unknown, prompts: 0, interrupts: 0 };
+        let mut m = Minute {
+            activity: false,
+            agent_running: true,
+            input_kinds: InputKinds::Unknown,
+            slots: &unknown,
+            prompts: 0,
+            interrupts: 0,
+        };
         assert_eq!(minute(&m, full()).multiplier, 0.0);
         m.interrupts = 1;
         assert_eq!(minute(&m, None).multiplier, 0.5);

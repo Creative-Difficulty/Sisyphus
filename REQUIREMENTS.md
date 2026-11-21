@@ -57,9 +57,16 @@ product must:
 - Running detection: whether an agent is mid-turn.
 - Pasted characters per prompt, from the prompt history. Agents only record
   large pastes, so small pastes count as typed.
-- Activity on every OS, without a keylogger or root: time since the last
-  input and the focused app's class, including whether the focused window
-  runs the session's agent (matched through the process tree).
+- Activity on every OS, without a keylogger: time since the last input,
+  key presses and mouse events counted (never which keys), and the focused
+  app's class, including whether the focused window runs the session's
+  agent (matched through the process tree).
+  - Keys vs mouse: exact on macOS (CoreGraphics event counters); inferred
+    on Windows and X11 (the last input time polled 25 times a second
+    with the cursor and mouse buttons; input without mouse movement or a
+    held button is a key, key events halved since releases count too); on
+    Linux Wayland exact through the input helper (below), unknown without
+    it.
 - Heartbeat recording (v2 scheme), while the window is open: one heartbeat
   per session per minute, signed into the hash chain, queued on disk and
   uploaded every 30 seconds while logged in. File changes are found by
@@ -73,10 +80,9 @@ product must:
     from Hyprland IPC, Sway IPC, the "Window Calls" GNOME Shell extension,
     a KWin script on KDE, or `wlr-foreign-toplevel-management`.
 - Client window (iced):
-  - an onboarding step asking to allow activity on every OS: required to
-    count time, says exactly what is shared (the kind of app and whether the
-    user was active) and what never is (typing, keys, mouse movements, app
-    names, titles, screen); changeable in settings
+  - no consent step for activity (removed 2026-11-21); on Linux Wayland
+    without the input helper, a popup that says exactly what setting it up
+    asks for and installs it through polkit
   - settings to connect and disconnect agents
   - a debug screen (Ctrl+D twice): the current heartbeat's attention per
     session computed
@@ -138,7 +144,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 4,
+    "version": 5,
     "minute_ms": 1795201380000,
 
     "agent": "claude-code",
@@ -148,13 +154,14 @@ product must:
 
     "agent_running": true,
     "activity": true,
+    "input_kinds": "exact",
     "slots": [
-      { "input": true, "focus": "agent" },
-      { "input": true, "focus": "agent" },
-      { "input": false, "focus": "agent" },
-      { "input": false, "focus": "browser" },
-      { "input": true, "focus": "editor" },
-      { "input": false, "focus": "testing" }
+      { "input": true, "keys": 41, "mouse": 0, "focus": "agent" },
+      { "input": true, "keys": 12, "mouse": 30, "focus": "agent" },
+      { "input": false, "keys": 0, "mouse": 0, "focus": "agent" },
+      { "input": false, "keys": 0, "mouse": 0, "focus": "browser" },
+      { "input": true, "keys": 0, "mouse": 212, "focus": "editor" },
+      { "input": false, "keys": 0, "mouse": 0, "focus": "testing" }
     ],
     "tested_programs": ["target/debug/game"],
 
@@ -190,13 +197,20 @@ product must:
 - `session_name`: the agent's own session title. Visible only to the user and
   reviewers.
 - `project`: the working directory's folder name only.
-- `activity` (added 2026-11-21): whether the user allowed activity reading.
-  When `false`, the six slots are still sent, each `{ "input": false,
-  "focus": "unknown" }`, so the server can tell "tracking not allowed" apart
-  from "away".
+- `activity` (added 2026-11-21): whether activity was read. Since the
+  consent step was removed (2026-11-21) it is always `true`; `false` sends
+  every slot as `{ "input": false, "keys": 0, "mouse": 0, "focus":
+  "unknown" }`.
+- `input_kinds` (decided 2026-11-21, scheme version 5): how key presses
+  and mouse events were told apart this minute: `exact` (macOS, Linux
+  with the input helper), `inferred` (Windows, X11) or `unknown` (Linux
+  Wayland without the helper; `keys` and `mouse` are then 0). The weakest
+  way seen in the minute.
 - `slots`: the minute's six 10-second slots.
   - `input` is any keyboard or mouse input, read from the OS idle time; keys
     are never recorded.
+  - `keys`: key presses in the slot (never which keys). `mouse`: mouse
+    events (movements, clicks, scrolling, touchpad touches).
   - `focus` is one of `agent` (the agent's own window), `terminal`, `editor`,
     `browser`, `other`, `testing` or `none`: the app that held focus for most of the
     slot, so a short flash into another window doesn't change it. `unknown`
@@ -226,14 +240,21 @@ product must:
   - `working_dir` counts non-whitespace characters added and removed, as
     actually seen in the file while the agent runs.
   - `agent_edits` is what the agent's edit calls claim for that file.
-- Input is detected without a keylogger and without root: OS "time since last
-  input" APIs plus the class of the focused app.
-- Reading activity needs the user's permission on every OS (decided
-  2026-11-21): an onboarding step says it is required to count time and
-  explains exactly what is shared. On Wayland, decided 2026-11-21: use the
-  most cross-compositor way that needs no root (see Built). Root would be
-  acceptable behind a clear popup, but nothing needs it: root only adds raw
-  `/dev/input` access, which is keylogger-level access.
+- Input is detected without a keylogger hook: OS "time since last input"
+  APIs, key/mouse counts (see Built), plus the class of the focused app.
+- Activity is read without asking (decided 2026-11-21: the consent step
+  and the settings row are gone on every system).
+- The input helper (decided 2026-11-21), only on systems that can't tell
+  keys from mouse otherwise (Linux Wayland): a popup at start explains
+  exactly what is requested (what it counts, what gets installed, that it
+  doesn't run as root, how to remove it, and to contact @simon on Slack
+  with concerns), then polkit (`pkexec`) asks for the password once. It
+  installs a copy of the app at `/usr/local/libexec/sisyphus-input-helper`
+  and the systemd service `sisyphus-input-helper`, which runs as a
+  throwaway user (`DynamicUser`) in the `input` group, without network or
+  capabilities, reads `/dev/input` and sends only key and mouse counts to
+  the installing user over `/run/sisyphus-input/socket`. "Not now" asks
+  again at the next start.
 - GNOME doesn't expose the focused window. For now it is read through the
   third-party "Window Calls" extension when installed, otherwise unknown.
   Shipping our own GNOME Shell extension is for later.
@@ -271,8 +292,15 @@ product must:
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
 - Attention is one value per heartbeat (decided 2026-11-21, formula 3):
-  any input while the agent's window is in front makes the whole heartbeat
-  1.0, so writing and sending a prompt guarantees 1.0 for that minute.
+  interaction while the agent's window is in front makes the whole
+  heartbeat 1.0, so writing and sending a prompt guarantees 1.0 for that
+  minute.
+- Interaction in the agent's window (decided 2026-11-21, formula 4): more
+  than 5 key presses in the heartbeat's slots where it was in front; mouse
+  events don't count there. In all other apps, including testing the
+  project's programs, keys and mouse both count as activity (the slot's
+  `input`). Where keys and mouse can't be told apart (`input_kinds`
+  unknown), any input in the agent's window still counts.
   Otherwise it decays from the session's previous heartbeat. The slots are
   only the readings it's computed from.
 - Decay speeds (decided 2026-11-21): half-life 2 minutes while the agent's
@@ -305,7 +333,8 @@ product must:
   few seconds without real interaction gives nothing, because it could just
   be flicking between windows:
   - input (including the alt-tab key press) only counts in slots where the
-    agent's terminal or editor held focus
+    agent's terminal or editor held focus, and there only more than 5 key
+    presses (formula 4)
   - attention never rises without such input; watching without input only
     slows the decay, and only when the agent's window held focus for most
     of the minute (replaces the earlier two-slots rule, 2026-11-21)

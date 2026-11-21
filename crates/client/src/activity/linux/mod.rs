@@ -13,12 +13,18 @@
 //!    labwc, Wayfire, …): the activated toplevel's app id, without a pid.
 //!
 //! Idle time comes from `ext-idle-notify`, or Mutter's IdleMonitor on GNOME.
+//!
+//! Key presses and mouse events: on X11 inferred from the idle time and the
+//! pointer; on Wayland, which gives apps neither, counted by the input
+//! helper service when the user installed it ([`helper`]).
 
 use std::time::Duration;
 
-use super::FocusReading;
+use super::sampler::Inferred;
+use super::{FocusReading, InputCounts, InputKinds};
 
 mod gnome;
+pub mod helper;
 mod hyprland;
 mod kwin;
 mod sway;
@@ -46,9 +52,15 @@ trait FocusSource: Send {
     fn name(&self) -> &'static str;
 }
 
+enum Kinds {
+    Inferred(Inferred),
+    Helper(helper::Helper),
+}
+
 pub struct Monitor {
     idle: Option<Box<dyn IdleSource>>,
     focus: Option<Box<dyn FocusSource>>,
+    kinds: Option<Kinds>,
 }
 
 impl Monitor {
@@ -59,6 +71,7 @@ impl Monitor {
             Self {
                 idle: x11::Idle::connect().map(|s| Box::new(s) as _),
                 focus: x11::Focus::connect().map(|s| Box::new(s) as _),
+                kinds: x11::input_kinds().map(Kinds::Inferred),
             }
         }
     }
@@ -89,7 +102,18 @@ impl Monitor {
         if idle.is_none() && desktop_is("GNOME") {
             idle = gnome::Idle::connect().map(|s| Box::new(s) as _);
         }
-        Self { idle, focus }
+        Self {
+            idle,
+            focus,
+            kinds: helper::Helper::start().map(Kinds::Helper),
+        }
+    }
+
+    pub fn take_input(&mut self) -> Option<(InputCounts, InputKinds)> {
+        match self.kinds.as_ref()? {
+            Kinds::Inferred(s) => Some((s.take(), InputKinds::Inferred)),
+            Kinds::Helper(h) => h.take().map(|c| (c, InputKinds::Exact)),
+        }
     }
 
     pub fn since_last_input(&mut self) -> Option<Duration> {
@@ -106,6 +130,12 @@ impl Monitor {
     pub fn describe(&self) -> String {
         let idle = self.idle.as_ref().map_or("none", |s| s.name());
         let focus = self.focus.as_ref().map_or("none", |s| s.name());
-        format!("input: {idle}, focus: {focus}")
+        let kinds = match &self.kinds {
+            Some(Kinds::Inferred(_)) => "idle time and pointer",
+            Some(Kinds::Helper(h)) if h.connected() => "input helper",
+            Some(Kinds::Helper(_)) => "input helper not running",
+            None => "none",
+        };
+        format!("input: {idle}, focus: {focus}, keys/mouse: {kinds}")
     }
 }
