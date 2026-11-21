@@ -121,6 +121,7 @@ product must:
     "project": "Sisyphus",
 
     "agent_running": true,
+    "activity": true,
     "slots": [
       { "input": true, "focus": "agent" },
       { "input": true, "focus": "agent" },
@@ -135,6 +136,11 @@ product must:
       "typed_chars": 86,
       "pasted_chars": 0,
       "corrections": 1
+    },
+
+    "responses": {
+      "finished": 1,
+      "chars": 4200
     },
 
     "files": [
@@ -155,14 +161,25 @@ product must:
 - `session_name`: the agent's own session title. Visible only to the user and
   reviewers.
 - `project`: the working directory's folder name only.
+- `activity` (added 2026-11-21): whether the user allowed activity reading.
+  When `false`, the six slots are still sent, each `{ "input": false,
+  "focus": "unknown" }`, so the server can tell "tracking not allowed" apart
+  from "away".
 - `slots`: the minute's six 10-second slots.
   - `input` is any keyboard or mouse input, read from the OS idle time; keys
     are never recorded.
   - `focus` is one of `agent` (the agent's own window), `terminal`, `editor`,
     `browser`, `other` or `none`: the app that held focus for most of the
-    slot, so a short flash into another window doesn't change it.
+    slot, so a short flash into another window doesn't change it. `unknown`
+    when activity isn't allowed, or the system can't tell (for example GNOME
+    without the Window Calls extension).
 - `prompts`: counts only, never text.
   - `corrections` counts prompts the local model labelled as corrections.
+- `responses` (added 2026-11-21): counts only, never text.
+  - `finished`: agent responses that finished this minute.
+  - `chars`: characters of their visible response text (not thinking, not
+    tool calls). Lets the server check reading time: a human can't sensibly
+    answer a long response seconds after it ends.
 - `files`: one entry per file edited this minute, sorted by path.
   - `path` is relative to the project folder.
   - `working_dir` counts non-whitespace characters added and removed, as
@@ -243,8 +260,8 @@ product must:
 
 - Our own GNOME Shell extension for the focused app, so GNOME users don't
   need Window Calls.
-- How an unknown focus (for example GNOME without the extension) counts in
-  a heartbeat slot.
+- How `unknown` slots and heartbeats with `activity: false` count toward
+  credit.
 - Pasted error logs and stack traces are real struggle. They may need an
   exemption from the paste penalty.
 - Which embedding model (small, multilingual). The architecture comes first.

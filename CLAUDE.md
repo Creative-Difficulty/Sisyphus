@@ -258,9 +258,10 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 - **Per session.** Time is counted and calculated per agent session. Each session sends its own heartbeat each minute while its agent is running or the user is working on its prompt.
 - **What a heartbeat carries:**
   - the minute, agent, agent session id, the agent's session title, and the project folder name
-  - whether the agent was running
-  - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `none`)
+  - whether the agent was running, and `activity`: whether the user allowed activity reading
+  - six 10-second slots, each with whether there was input and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
   - prompt counts: submitted, typed chars, pasted chars, corrections
+  - response counts: responses finished this minute and their visible characters (never text)
   - per edited file, its path relative to the project folder, with non-whitespace characters added/removed in the working directory and what the agent's edit calls claim
 - **Never from the client:** a 0–1 value, attention, the struggle value, or a session UUID.
 - **Session identity.** The server builds its own session UUID from the machine id, the agent and the agent's session id. Each server-side session is named by the agent's session title.
