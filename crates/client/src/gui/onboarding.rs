@@ -37,10 +37,12 @@ pub fn login<'a>(config: &'a Config, login: LoginState<'a>) -> Element<'a, Messa
             } else {
                 "Log in with Hack Club"
             };
+            // Stays clickable while waiting: a click opens the login page
+            // again.
             button(text(label).size(17))
                 .padding([12, 32])
                 .style(style::rounded(style::pink))
-                .on_press_maybe((!login.pending).then_some(Message::Login))
+                .on_press(Message::Login)
                 .into()
         }
     };

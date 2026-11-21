@@ -29,7 +29,10 @@ pub struct ChainTip {
 
 impl ChainTip {
     /// The tip of a chain with nothing in it yet.
-    pub const GENESIS: Self = Self { next_seq: 0, prev: Hash::ZERO };
+    pub const GENESIS: Self = Self {
+        next_seq: 0,
+        prev: Hash::ZERO,
+    };
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -60,8 +63,12 @@ fn hash_of(seq: u64, prev: &Hash, heartbeat: &Heartbeat) -> Hash {
     }
     // Struct fields serialize in declaration order and heartbeats contain no
     // floats or maps, so this encoding is deterministic.
-    let body = serde_json::to_vec(&Body { seq, prev, heartbeat })
-        .expect("heartbeat serialization cannot fail");
+    let body = serde_json::to_vec(&Body {
+        seq,
+        prev,
+        heartbeat,
+    })
+    .expect("heartbeat serialization cannot fail");
     let mut d = Sha256::new();
     // Domain tag; bump the version when the hashed format changes.
     d.update(b"sisyphus/heartbeat/v6\0");
@@ -98,8 +105,17 @@ impl ChainWriter {
         let prev = self.tip.prev;
         let hash = hash_of(seq, &prev, &heartbeat);
         let sig = Hex(self.key.sign(&hash.0).to_bytes());
-        self.tip = ChainTip { next_seq: seq + 1, prev: hash };
-        SignedHeartbeat { seq, prev, heartbeat, hash, sig }
+        self.tip = ChainTip {
+            next_seq: seq + 1,
+            prev: hash,
+        };
+        SignedHeartbeat {
+            seq,
+            prev,
+            heartbeat,
+            hash,
+            sig,
+        }
     }
 }
 
@@ -138,7 +154,10 @@ pub fn verify(
         }
         key.verify(&hb.hash.0, &Signature::from_bytes(&hb.sig.0))
             .map_err(|_| ChainError::BadSignature { at })?;
-        tip = ChainTip { next_seq: hb.seq + 1, prev: hb.hash };
+        tip = ChainTip {
+            next_seq: hb.seq + 1,
+            prev: hb.hash,
+        };
     }
     Ok(tip)
 }

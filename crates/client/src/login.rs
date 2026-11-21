@@ -13,7 +13,9 @@
 //!    account. Only this process knows the verifier and only this device has
 //!    the key, so an intercepted code is useless.
 //!
-//! Blocking; run it off the UI thread.
+//! Blocking; run it off the UI thread. While it waits, the login page can
+//! be opened again (`on_url` hands it out), for example when the first
+//! browser tab went to the wrong place.
 
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -31,7 +33,9 @@ const LOGIN_TIMEOUT: Duration = Duration::from_secs(5 * 60);
 const HTTP_TIMEOUT: Duration = Duration::from_secs(15);
 
 /// Log in and link this device. Returns the account's display name.
-pub fn login(server_url: &str) -> Result<Option<String>, String> {
+/// `on_url` gets the login page's address before the browser opens it; the
+/// same address can be opened again with [`open_browser`] while this waits.
+pub fn login(server_url: &str, on_url: impl FnOnce(&str)) -> Result<Option<String>, String> {
     let server_url = server_url.trim_end_matches('/');
     if !is_safe_server(server_url) {
         return Err("The server address must use https.".to_string());
@@ -50,9 +54,9 @@ pub fn login(server_url: &str) -> Result<Option<String>, String> {
         .map_err(|e| format!("Could not start the login listener: {e}"))?
         .port();
 
-    open_browser(&format!(
-        "{server_url}/auth/app?port={port}&challenge={challenge}&device={device_id}"
-    ))?;
+    let url = format!("{server_url}/auth/app?port={port}&challenge={challenge}&device={device_id}");
+    on_url(&url);
+    open_browser(&url)?;
     let code = wait_for_code(&listener)?;
 
     let signature = key.sign(&device_link_message(&code));
@@ -157,7 +161,7 @@ fn random_hex() -> String {
 
 /// Open `url` in the default browser. The URL is passed as a single
 /// argument, never through a shell.
-fn open_browser(url: &str) -> Result<(), String> {
+pub fn open_browser(url: &str) -> Result<(), String> {
     let mut command = if cfg!(target_os = "windows") {
         let mut c = std::process::Command::new("rundll32");
         c.args(["url.dll,FileProtocolHandler", url]);

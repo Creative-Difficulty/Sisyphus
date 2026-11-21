@@ -1,7 +1,9 @@
 use ed25519_dalek::SigningKey;
 use sisyphus_common::api::{StoredHeartbeat, UploadBatch, UploadError, verify_batch as verify_at};
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat};
-use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION};
+use sisyphus_common::heartbeat::{
+    Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION,
+};
 
 fn minute(i: u64) -> Heartbeat {
     Heartbeat {
@@ -14,25 +16,38 @@ fn minute(i: u64) -> Heartbeat {
         agent_running: true,
         activity: true,
         input_kinds: InputKinds::Exact,
-        slots: [Slot { input: true, keys: 3, mouse: 1, focus: Focus::Agent }; 6],
+        slots: [Slot {
+            input: true,
+            keys: 3,
+            mouse: 1,
+            focus: Focus::Agent,
+        }; 6],
         tested_programs: vec![],
         running_programs: vec![],
-        prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
+        prompts: Prompts {
+            submitted: 1,
+            typed_chars: 100 + i as u32,
+            ..Prompts::default()
+        },
         interrupts: 0,
         responses: Responses::default(),
         files: vec![FileChange {
             path: "src/main.rs".into(),
-            working_dir: Changes { added: 20, removed: 3 },
-            agent_edits: Changes { added: 20, removed: 3 },
+            working_dir: Changes {
+                added: 20,
+                removed: 3,
+            },
+            agent_edits: Changes {
+                added: 20,
+                removed: 3,
+            },
         }],
     }
 }
 
 fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
     let mut w = ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]));
-    let hbs = (0..n)
-        .map(|i| w.sign(minute(i)))
-        .collect();
+    let hbs = (0..n).map(|i| w.sign(minute(i))).collect();
     (w, hbs)
 }
 
@@ -44,7 +59,10 @@ fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, UploadE
 }
 
 fn batch(w: &ChainWriter, hbs: &[SignedHeartbeat]) -> UploadBatch {
-    UploadBatch { device: w.device_id(), heartbeats: hbs.to_vec() }
+    UploadBatch {
+        device: w.device_id(),
+        heartbeats: hbs.to_vec(),
+    }
 }
 
 #[test]
@@ -61,7 +79,9 @@ fn skipping_ahead_is_out_of_sync() {
     let (w, hbs) = signed(10);
     assert_eq!(
         verify_batch(&batch(&w, &hbs[3..]), &ChainTip::GENESIS),
-        Err(UploadError::OutOfSync { expected: ChainTip::GENESIS })
+        Err(UploadError::OutOfSync {
+            expected: ChainTip::GENESIS
+        })
     );
 }
 
@@ -88,15 +108,24 @@ fn tampered_batch_is_rejected() {
 #[test]
 fn empty_batch_is_rejected() {
     let (w, _) = signed(0);
-    assert_eq!(verify_batch(&batch(&w, &[]), &ChainTip::GENESIS), Err(UploadError::Empty));
+    assert_eq!(
+        verify_batch(&batch(&w, &[]), &ChainTip::GENESIS),
+        Err(UploadError::Empty)
+    );
 }
 
 #[test]
 fn late_heartbeats_are_flagged_offline() {
     let (_, hbs) = signed(1);
     let t = hbs[0].heartbeat.minute_ms;
-    let live = StoredHeartbeat { signed: hbs[0].clone(), received_at_ms: t + 30_000 };
-    let late = StoredHeartbeat { signed: hbs[0].clone(), received_at_ms: t + 3 * 3_600_000 };
+    let live = StoredHeartbeat {
+        signed: hbs[0].clone(),
+        received_at_ms: t + 30_000,
+    };
+    let late = StoredHeartbeat {
+        signed: hbs[0].clone(),
+        received_at_ms: t + 3 * 3_600_000,
+    };
     assert!(!live.is_offline());
     assert!(late.is_offline());
 }

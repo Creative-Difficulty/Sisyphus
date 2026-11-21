@@ -219,6 +219,7 @@ pub fn logo(integration: &Integration, size: f32) -> svg::Svg<'static> {
     let bytes: &'static [u8] = match integration {
         Integration::ClaudeCode(_) => include_bytes!("../../assets/claude-code.svg"),
         Integration::OpenCode(_) => include_bytes!("../../assets/opencode.svg"),
+        Integration::Codex(_) => include_bytes!("../../assets/codex.svg"),
     };
     svg(svg::Handle::from_memory(bytes))
         .width(size)

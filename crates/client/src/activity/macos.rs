@@ -120,7 +120,8 @@ pub fn processes() -> Vec<Process> {
             let args = if matches!(
                 name.as_str(),
                 "node" | "bun" | "deno" | "claude" | "opencode"
-            ) {
+            ) || super::process::is_codex_binary(&name)
+            {
                 args(pid)
             } else {
                 Vec::new()

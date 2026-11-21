@@ -120,7 +120,14 @@ mod tests {
     const B: Focus = Focus::Browser;
 
     fn slots(list: &[(bool, Focus)]) -> Vec<Slot> {
-        list.iter().map(|&(input, focus)| Slot { input, keys: 0, mouse: 0, focus }).collect()
+        list.iter()
+            .map(|&(input, focus)| Slot {
+                input,
+                keys: 0,
+                mouse: 0,
+                focus,
+            })
+            .collect()
     }
 
     fn run_slots(slots: &[Slot], kinds: InputKinds, carry: Option<Carry>) -> Outcome {
@@ -142,7 +149,12 @@ mod tests {
     }
 
     fn counted(keys: u32, mouse: u32, focus: Focus) -> Slot {
-        Slot { input: keys + mouse > 0, keys, mouse, focus }
+        Slot {
+            input: keys + mouse > 0,
+            keys,
+            mouse,
+            focus,
+        }
     }
 
     #[test]
@@ -158,7 +170,10 @@ mod tests {
         assert_eq!(run_slots(&list, InputKinds::Inferred, None).attention, 1.0);
         // Keys in another app don't count for the agent.
         let elsewhere = vec![counted(50, 0, B); 6];
-        assert_eq!(run_slots(&elsewhere, InputKinds::Exact, None).attention, 0.0);
+        assert_eq!(
+            run_slots(&elsewhere, InputKinds::Exact, None).attention,
+            0.0
+        );
     }
 
     fn full() -> Option<Carry> {
@@ -168,7 +183,17 @@ mod tests {
     #[test]
     fn any_input_in_the_agent_window_makes_the_whole_heartbeat_full() {
         // One slot of typing (say, a prompt), the rest of the minute elsewhere.
-        let out = run(&[(false, B), (true, A), (false, B), (false, B), (false, B), (false, B)], None);
+        let out = run(
+            &[
+                (false, B),
+                (true, A),
+                (false, B),
+                (false, B),
+                (false, B),
+                (false, B),
+            ],
+            None,
+        );
         assert_eq!(out.attention, 1.0);
         assert_eq!(out.multiplier, 1.0);
         assert_eq!(out.carry.attention, 1.0);
@@ -179,7 +204,17 @@ mod tests {
         let out = run(&[(false, A); 6], full());
         assert!((out.attention - 0.5f64.powf(0.5)).abs() < 1e-9);
         // Most of the minute in the window still counts as staying.
-        let mostly = run(&[(false, A), (false, A), (false, A), (false, A), (false, B), (false, B)], full());
+        let mostly = run(
+            &[
+                (false, A),
+                (false, A),
+                (false, A),
+                (false, A),
+                (false, B),
+                (false, B),
+            ],
+            full(),
+        );
         assert_eq!(mostly.attention, out.attention);
     }
 
@@ -188,7 +223,17 @@ mod tests {
         let out = run(&[(false, B); 6], full());
         assert!((out.attention - 0.25).abs() < 1e-9);
         // Half the minute isn't most of it.
-        let half = run(&[(false, A), (false, A), (false, A), (false, B), (false, B), (false, B)], full());
+        let half = run(
+            &[
+                (false, A),
+                (false, A),
+                (false, A),
+                (false, B),
+                (false, B),
+                (false, B),
+            ],
+            full(),
+        );
         assert_eq!(half.attention, out.attention);
     }
 

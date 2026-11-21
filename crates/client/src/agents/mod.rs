@@ -8,11 +8,14 @@ use std::thread::JoinHandle;
 use std::time::Duration;
 
 use crate::agents::claude_code::AgentIntegrationClaudeCode;
+use crate::agents::codex::AgentIntegrationCodex;
 use crate::agents::opencode::AgentIntegrationOpenCode;
 
 pub mod claude_code;
+pub mod codex;
 pub mod opencode;
 mod tail;
+pub(crate) mod time;
 
 pub trait AgentInstance {
     fn get_title(&self) -> String;
@@ -44,18 +47,21 @@ pub trait AgentIntegration: Sync {
 pub enum Integration {
     ClaudeCode(AgentIntegrationClaudeCode),
     OpenCode(AgentIntegrationOpenCode),
+    Codex(AgentIntegrationCodex),
 }
 
 impl Integration {
-    pub const ALL: [Integration; 2] = [
+    pub const ALL: [Integration; 3] = [
         Integration::ClaudeCode(AgentIntegrationClaudeCode),
         Integration::OpenCode(AgentIntegrationOpenCode),
+        Integration::Codex(AgentIntegrationCodex),
     ];
 
     pub fn name(&self) -> String {
         match self {
             Integration::ClaudeCode(i) => i.get_name(),
             Integration::OpenCode(i) => i.get_name(),
+            Integration::Codex(i) => i.get_name(),
         }
     }
 
@@ -64,6 +70,7 @@ impl Integration {
         match self {
             Integration::ClaudeCode(_) => "claude-code",
             Integration::OpenCode(_) => "opencode",
+            Integration::Codex(_) => "codex",
         }
     }
 
@@ -71,6 +78,7 @@ impl Integration {
         match self {
             Integration::ClaudeCode(i) => i.is_installed(),
             Integration::OpenCode(i) => i.is_installed(),
+            Integration::Codex(i) => i.is_installed(),
         }
     }
 
@@ -78,6 +86,7 @@ impl Integration {
         match self {
             Integration::ClaudeCode(i) => i.install(),
             Integration::OpenCode(i) => i.install(),
+            Integration::Codex(i) => i.install(),
         }
     }
 
@@ -91,6 +100,7 @@ impl Integration {
         match self {
             Integration::ClaudeCode(i) => i.get_instances().map(boxed),
             Integration::OpenCode(i) => i.get_instances().map(boxed),
+            Integration::Codex(i) => i.get_instances().map(boxed),
         }
     }
 
@@ -99,6 +109,7 @@ impl Integration {
         Ok(match self {
             Integration::ClaudeCode(i) => Box::new(i.get_instance(id)?),
             Integration::OpenCode(i) => Box::new(i.get_instance(id)?),
+            Integration::Codex(i) => Box::new(i.get_instance(id)?),
         })
     }
 }

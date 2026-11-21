@@ -1,2 +1,10 @@
 /target
 .env
+**/.DS_Store
+
+sisyphus-ssh
+sisyphus-ssh.pub
+
+CLAUDE.local.md
+docs/agents/
+.scratch/
