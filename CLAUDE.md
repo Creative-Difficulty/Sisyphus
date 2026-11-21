@@ -246,11 +246,11 @@ Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Window (`crates/client/src/gui/`, iced 0.14)
 
-- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; Linux Wayland without a running input helper (and not answered this run) → the input helper popup; otherwise the dashboard.
+- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; Linux Wayland without a running input helper → the input helper popup; otherwise the dashboard.
 - First start (`onboarding.rs`), never the settings screen:
   1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
   2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
-- Input helper popup (`input_helper.rs`, only on Linux Wayland without the helper running): says why (Wayland doesn't tell apps keys from mouse), what it does (counts only, never which keys), what the password allows (the installed copy, the service, `/dev/input`, not root, no network, only this account reads it), how to remove it, and "Questions or concerns? Contact @simon on Slack." "Set up" runs `pkexec … input-helper install` on a worker thread ("Waiting for your password" meanwhile; errors for cancel, no polkit agent, failures); "Not now" skips it until the next start. There is no activity consent step any more (removed 2026-11-21).
+- Input helper popup (`input_helper.rs`, only on Linux Wayland without the helper running): says why (Wayland doesn't tell apps keys from mouse), what it does (counts only, never which keys), what the password allows (the installed copy, the service, `/dev/input`, not root, no network, only this account reads it), how to remove it, and "Questions or concerns? Contact @simon on Slack." "Set up" runs `pkexec … input-helper install` on a worker thread ("Waiting for your password" meanwhile; errors for cancel, no polkit agent, failures); it can't be skipped (decided 2026-11-21: the counts are needed), so the dashboard only opens once the helper answers. There is no activity consent step any more (removed 2026-11-21).
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out unlinks the device on the server first, shows "Logging out" meanwhile and an error if that fails, then returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)

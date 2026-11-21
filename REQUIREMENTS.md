@@ -253,8 +253,9 @@ product must:
   and the systemd service `sisyphus-input-helper`, which runs as a
   throwaway user (`DynamicUser`) in the `input` group, without network or
   capabilities, reads `/dev/input` and sends only key and mouse counts to
-  the installing user over `/run/sisyphus-input/socket`. "Not now" asks
-  again at the next start.
+  the installing user over `/run/sisyphus-input/socket`. The popup can't
+  be skipped (decided 2026-11-21: the counts are needed); the app only
+  continues once the helper runs.
 - GNOME doesn't expose the focused window. For now it is read through the
   third-party "Window Calls" extension when installed, otherwise unknown.
   Shipping our own GNOME Shell extension is for later.

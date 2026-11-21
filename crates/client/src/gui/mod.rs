@@ -3,8 +3,8 @@
 //! Screens:
 //! - first start ([`onboarding`]): log in with Hack Club, connect agents.
 //!   The window resumes at whichever step isn't done yet.
-//! - on Linux Wayland without the input helper, a popup asking to set it up
-//!   ([`input_helper`]), once per start
+//! - on Linux Wayland without the input helper, a popup to set it up
+//!   ([`input_helper`]); it can't be skipped
 //! - the dashboard ([`sessions`]), refreshed every few seconds
 //! - settings ([`settings`], gear icon): account and agents as a compact list
 
@@ -68,8 +68,6 @@ struct App {
     /// When Ctrl+D was last pressed; a second press soon after toggles the
     /// debug screen.
     debug_key_at: Option<std::time::Instant>,
-    /// The input helper popup was answered (set up or "not now") this run.
-    input_helper_answered: bool,
     input_helper_pending: bool,
     input_helper_error: Option<String>,
 }
@@ -122,8 +120,6 @@ pub enum Message {
     ResetServer,
     /// Install the input helper (polkit asks for the password).
     SetUpInputHelper,
-    /// Not now: don't ask again until the next start.
-    SkipInputHelper,
     InputHelperFinished(Result<(), String>),
     /// Ctrl+D was pressed.
     DebugKey,
@@ -148,7 +144,6 @@ impl App {
             tracker: None,
             tracker_error: None,
             debug_key_at: None,
-            input_helper_answered: false,
             input_helper_pending: false,
             input_helper_error: None,
         };
@@ -303,17 +298,10 @@ impl App {
                 self.input_helper_error = None;
                 set_up_input_helper()
             }
-            Message::SkipInputHelper => {
-                self.input_helper_answered = true;
-                self.resume()
-            }
             Message::InputHelperFinished(result) => {
                 self.input_helper_pending = false;
                 match result {
-                    Ok(()) => {
-                        self.input_helper_answered = true;
-                        self.resume()
-                    }
+                    Ok(()) => self.resume(),
                     Err(e) => {
                         self.input_helper_error = Some(e);
                         Task::none()
@@ -431,7 +419,7 @@ impl App {
         } else if self.config.connected_agents.is_empty() {
             self.screen = Screen::ConnectAgents;
             Task::none()
-        } else if !self.input_helper_answered && crate::activity::input_helper_missing() {
+        } else if crate::activity::input_helper_missing() {
             self.screen = Screen::InputHelper;
             Task::none()
         } else {

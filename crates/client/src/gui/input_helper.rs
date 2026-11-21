@@ -1,6 +1,7 @@
 //! Linux Wayland only: asks to set up the input helper
 //! ([`crate::input_helper`]), saying exactly what it asks for. Shown at
-//! start while the helper isn't running, until set up or "Not now".
+//! start while the helper isn't running. It can't be skipped (decided
+//! 2026-11-21): the key and mouse counts are needed.
 
 use iced::widget::{button, column, container, scrollable, text};
 use iced::{Center, Element, Fill};
@@ -83,11 +84,7 @@ pub fn view(pending: bool, error: Option<&str>) -> Element<'static, Message> {
     .padding([12, 48])
     .style(style::rounded(style::pink))
     .on_press_maybe((!pending).then_some(Message::SetUpInputHelper));
-    let skip = button(text("Not now").size(14))
-        .padding([6, 12])
-        .style(button::text)
-        .on_press_maybe((!pending).then_some(Message::SkipInputHelper));
-    content = content.push(column![set_up, skip].spacing(6).align_x(Center));
+    content = content.push(set_up);
 
     scrollable(
         container(container(content).max_width(560))
