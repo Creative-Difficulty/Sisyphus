@@ -39,17 +39,19 @@ impl Hyprland {
 }
 
 /// The reply is the window as JSON, or `{}` when nothing has focus. Only
-/// the class and pid are kept.
+/// the class and pid are kept. A window without a class (apps that set no
+/// app id) is still a window when it has a pid.
 fn parse(body: &[u8]) -> Option<FocusReading> {
     let v: Value = serde_json::from_slice(body).ok()?;
-    let class = v.get("class").and_then(Value::as_str);
-    let Some(class) = class.filter(|c| !c.is_empty()) else {
-        return Some(FocusReading::Nothing);
-    };
+    let class = v.get("class").and_then(Value::as_str).unwrap_or_default();
     let pid = v
         .get("pid")
         .and_then(Value::as_i64)
-        .and_then(|p| u32::try_from(p).ok());
+        .and_then(|p| u32::try_from(p).ok())
+        .filter(|p| *p > 0);
+    if class.is_empty() && pid.is_none() {
+        return Some(FocusReading::Nothing);
+    }
     Some(FocusReading::App(FocusedApp {
         app_id: class.to_string(),
         pid,
@@ -81,6 +83,14 @@ mod tests {
             }))
         );
         assert_eq!(parse(b"{}"), Some(FocusReading::Nothing));
+        // A window without an app id.
+        assert_eq!(
+            parse(br#"{"class":"","pid":77}"#),
+            Some(FocusReading::App(FocusedApp {
+                app_id: String::new(),
+                pid: Some(77),
+            }))
+        );
         assert_eq!(parse(b"not json"), None);
     }
 }

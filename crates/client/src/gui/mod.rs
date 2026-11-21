@@ -36,10 +36,29 @@ pub fn run() -> iced::Result {
         .font(style::FONTS[1])
         .default_font(style::FONT)
         .title("Sisyphus")
-        .window_size((720.0, 560.0))
-        .centered()
+        .window(window_settings())
         .run()
 }
+
+fn window_settings() -> iced::window::Settings {
+    iced::window::Settings {
+        size: iced::Size::new(720.0, 560.0),
+        position: iced::window::Position::Centered,
+        // Without an app id, Wayland compositors report an empty class for
+        // this window (and the tracker couldn't tell it apart from nothing
+        // in front).
+        #[cfg(all(unix, not(target_os = "macos")))]
+        platform_specific: iced::window::settings::PlatformSpecific {
+            application_id: APP_ID.to_string(),
+            ..Default::default()
+        },
+        ..Default::default()
+    }
+}
+
+/// The window's Wayland app id / X11 class.
+#[cfg(all(unix, not(target_os = "macos")))]
+const APP_ID: &str = "dev.aelx.Sisyphus";
 
 struct App {
     config: Config,

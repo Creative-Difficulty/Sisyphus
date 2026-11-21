@@ -49,13 +49,13 @@ impl Sink {
     /// Called by the KWin script. Only callers on this user's session bus
     /// can reach it.
     fn active(&self, class: String, pid: i32) {
-        let reading = if class.is_empty() {
+        // A window without a class (no app id) is still a window when it
+        // has a pid.
+        let pid = u32::try_from(pid).ok().filter(|p| *p > 0);
+        let reading = if class.is_empty() && pid.is_none() {
             FocusReading::Nothing
         } else {
-            FocusReading::App(FocusedApp {
-                app_id: class,
-                pid: u32::try_from(pid).ok().filter(|p| *p > 0),
-            })
+            FocusReading::App(FocusedApp { app_id: class, pid })
         };
         *self.0.lock().unwrap_or_else(|e| e.into_inner()) = reading;
     }

@@ -60,16 +60,18 @@ fn focused(tree: &Value) -> FocusReading {
         node.pointer("/window_properties/class")
             .and_then(Value::as_str)
     });
-    let Some(app_id) = app_id else {
-        // A focused workspace or output: no window has focus.
-        return FocusReading::Nothing;
-    };
     let pid = node
         .get("pid")
         .and_then(Value::as_i64)
-        .and_then(|p| u32::try_from(p).ok());
+        .and_then(|p| u32::try_from(p).ok())
+        .filter(|p| *p > 0);
+    // A focused workspace or output has neither: no window has focus. A
+    // window without an app id still has a pid.
+    if app_id.is_none() && pid.is_none() {
+        return FocusReading::Nothing;
+    }
     FocusReading::App(FocusedApp {
-        app_id: app_id.to_string(),
+        app_id: app_id.unwrap_or_default().to_string(),
         pid,
     })
 }
