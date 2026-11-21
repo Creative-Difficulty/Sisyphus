@@ -51,6 +51,12 @@ product must:
   - Claude Code: session transcripts and `history.jsonl`.
   - opencode: its SQLite database (v2 tables, or the v1 tables of older
     versions) and `prompt-history.jsonl`.
+  - Codex: its rollout files (legacy and paginated formats, v0.32 and
+    later) and `session_index.jsonl` for titles, followed live; only the
+    user's own threads, not sub-agents, side chats or `codex exec` runs.
+    Its patches count as edit claims, and its process is recognised in the
+    focused window. Pasted characters can't be measured for Codex (it saves
+    pastes expanded).
 - One plugin per agent, behind the same interface.
 - Events: prompt (with pasted characters), response, thinking, tool call and
   result (done / failed / rejected), interrupt, turn end, compaction, slash
