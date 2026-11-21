@@ -285,6 +285,10 @@ product must:
 ### Server
 
 - Verifies the chain and stamps its own receive time.
+- Refuses heartbeats dated in the future (decided 2026-11-21): a
+  heartbeat whose minute hasn't ended yet by the server's clock can't have
+  been recorded, so the batch is refused. The app keeps those heartbeats
+  and sends them once their minute has passed on the server.
 - Builds its own session UUID from the machine id, the agent and the agent's
   session id, so sessions from different machines or agents never collide.
   Each session on the server still has a name.

@@ -42,6 +42,11 @@ pub enum UploadError {
     Invalid(ChainError),
     /// Heartbeat `at` has a scheme version this server doesn't accept.
     UnsupportedVersion { at: usize },
+    /// Heartbeat `at` is dated in the future: its minute hasn't ended yet
+    /// by the server's clock (the device's clock is ahead). The heartbeats
+    /// before it may be sent on their own; it and the rest only once their
+    /// minute has passed.
+    FutureDated { at: usize },
 }
 
 /// A heartbeat as the server stores it.
@@ -65,9 +70,18 @@ impl StoredHeartbeat {
     }
 }
 
-/// Server side: check a batch against the device's stored chain tip.
-/// Returns the new tip to store.
-pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, UploadError> {
+/// A heartbeat covers one minute from its `minute_ms`.
+pub const MINUTE_MS: u64 = 60_000;
+
+/// Whether `heartbeat`'s minute hasn't ended yet at `now_ms` (server
+/// clock): it can't have been recorded yet.
+pub fn is_future_dated(heartbeat: &crate::heartbeat::Heartbeat, now_ms: u64) -> bool {
+    heartbeat.minute_ms.saturating_add(MINUTE_MS) > now_ms
+}
+
+/// Server side: check a batch against the device's stored chain tip, at
+/// the server's time `now_ms`. Returns the new tip to store.
+pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip, now_ms: u64) -> Result<ChainTip, UploadError> {
     let first = batch.heartbeats.first().ok_or(UploadError::Empty)?;
     if let Some(at) = batch.heartbeats.iter().position(|h| h.heartbeat.version != VERSION) {
         return Err(UploadError::UnsupportedVersion { at });
@@ -75,7 +89,11 @@ pub fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, Upl
     if first.seq != tip.next_seq {
         return Err(UploadError::OutOfSync { expected: *tip });
     }
-    chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)
+    let new_tip = chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)?;
+    if let Some(at) = batch.heartbeats.iter().position(|h| is_future_dated(&h.heartbeat, now_ms)) {
+        return Err(UploadError::FutureDated { at });
+    }
+    Ok(new_tip)
 }
 
 /// Domain tag for the signature that links a device to a user account.

@@ -29,6 +29,10 @@ pub struct Queue {
     key: SigningKey,
     writer: ChainWriter,
     pending: Vec<SignedHeartbeat>,
+    /// The server refused this heartbeat (by seq) as dated in the future
+    /// (this computer's clock is ahead): the next batch stops before it.
+    /// Cleared once that batch is sent, so it's tried again later.
+    hold_from: Option<u64>,
 }
 
 /// What an upload attempt did.
@@ -40,6 +44,10 @@ pub enum Uploaded {
     Sent(usize),
     /// The chain was re-aligned with the server's; try again.
     Realigned,
+    /// The server refused heartbeats dated in its future (this computer's
+    /// clock is ahead). `before` heartbeats ahead of them can go now; the
+    /// `held` rest wait until their minute has passed on the server.
+    Early { before: usize, held: usize },
     /// Rejected or unreachable; kept for later.
     Failed(String),
 }
@@ -68,6 +76,7 @@ impl Queue {
             dir,
             key,
             pending,
+            hold_from: None,
         }
     }
 
@@ -101,9 +110,16 @@ impl Queue {
 
     /// The next batch to upload, if anything is queued.
     pub fn next_batch(&self) -> Option<UploadBatch> {
-        (!self.pending.is_empty()).then(|| UploadBatch {
+        let heartbeats: Vec<SignedHeartbeat> = self
+            .pending
+            .iter()
+            .take_while(|h| self.hold_from.is_none_or(|held| h.seq < held))
+            .take(BATCH)
+            .cloned()
+            .collect();
+        (!heartbeats.is_empty()).then(|| UploadBatch {
             device: self.writer.device_id(),
-            heartbeats: self.pending.iter().take(BATCH).cloned().collect(),
+            heartbeats,
         })
     }
 
@@ -119,12 +135,25 @@ impl Queue {
                 let before = self.pending.len();
                 self.pending.retain(|h| h.seq >= ack.tip.next_seq);
                 let sent = before - self.pending.len();
+                self.hold_from = None;
                 saved(self, Uploaded::Sent(sent))
             }
             Ok(Reply::Rejected(UploadError::OutOfSync { expected })) => {
                 match self.realign(expected) {
                     Ok(()) => Uploaded::Realigned,
                     Err(e) => Uploaded::Failed(format!("could not save the queue: {e}")),
+                }
+            }
+            Ok(Reply::Rejected(UploadError::FutureDated { at })) => {
+                // The batch started at the front of the queue. When the
+                // first is refused there's nothing to send before it: the
+                // next round tries the whole queue again.
+                self.hold_from = (at > 0)
+                    .then(|| self.pending.get(at).map(|h| h.seq))
+                    .flatten();
+                Uploaded::Early {
+                    before: at,
+                    held: self.pending.len().saturating_sub(at),
                 }
             }
             Ok(Reply::Rejected(other)) => Uploaded::Failed(format!("rejected: {other:?}")),
@@ -135,6 +164,7 @@ impl Queue {
     /// Continue from the server's tip: drop what it already has, or sign
     /// the rest again if our chain doesn't lead to its tip.
     fn realign(&mut self, expected: ChainTip) -> io::Result<()> {
+        self.hold_from = None;
         if let Some(at) = self
             .pending
             .iter()
@@ -310,6 +340,35 @@ mod tests {
             Ok(queue.writer.tip())
         );
         assert_eq!(queue.pending[0].heartbeat.minute_ms, 2 * 60_000);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn future_dated_heartbeats_wait() {
+        let dir = temp_dir("queue-future");
+        let mut queue = Queue::load(dir.clone(), SigningKey::from_bytes(&[3u8; 32]));
+        for m in 0..4 {
+            queue.push(heartbeat(m)).unwrap();
+        }
+        let refused = Ok(Reply::Rejected(UploadError::FutureDated { at: 2 }));
+        assert_eq!(queue.apply(refused), Uploaded::Early { before: 2, held: 2 });
+        // Only the two before the refused one go next.
+        let batch = queue.next_batch().unwrap();
+        assert_eq!(batch.heartbeats.len(), 2);
+        let ack = UploadAck {
+            tip: ChainTip {
+                next_seq: 2,
+                prev: batch.heartbeats[1].hash,
+            },
+            received_at_ms: 0,
+        };
+        assert_eq!(queue.apply(Ok(Reply::Accepted(ack))), Uploaded::Sent(2));
+        // The rest are tried again later.
+        assert_eq!(queue.next_batch().unwrap().heartbeats.len(), 2);
+        // Refused from the first: nothing is held back for good.
+        let refused = Ok(Reply::Rejected(UploadError::FutureDated { at: 0 }));
+        assert_eq!(queue.apply(refused), Uploaded::Early { before: 0, held: 2 });
+        assert_eq!(queue.next_batch().unwrap().heartbeats.len(), 2);
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

@@ -1,5 +1,5 @@
 use ed25519_dalek::SigningKey;
-use sisyphus_common::api::{StoredHeartbeat, UploadBatch, UploadError, verify_batch};
+use sisyphus_common::api::{StoredHeartbeat, UploadBatch, UploadError, verify_batch as verify_at};
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat};
 use sisyphus_common::heartbeat::{Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION};
 
@@ -34,6 +34,13 @@ fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
         .map(|i| w.sign(minute(i)))
         .collect();
     (w, hbs)
+}
+
+/// Long after every test minute.
+const NOW: u64 = 1_900_000_000_000;
+
+fn verify_batch(batch: &UploadBatch, tip: &ChainTip) -> Result<ChainTip, UploadError> {
+    verify_at(batch, tip, NOW)
 }
 
 fn batch(w: &ChainWriter, hbs: &[SignedHeartbeat]) -> UploadBatch {
@@ -104,4 +111,16 @@ fn other_versions_are_rejected() {
         verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS),
         Err(UploadError::UnsupportedVersion { at: 1 })
     );
+}
+
+#[test]
+fn future_dated_heartbeats_are_rejected() {
+    let (w, hbs) = signed(4);
+    // Minute 2 ends exactly now: fine. Minute 3 hasn't ended yet.
+    let now = hbs[2].heartbeat.minute_ms + 60_000;
+    assert_eq!(
+        verify_at(&batch(&w, &hbs), &ChainTip::GENESIS, now),
+        Err(UploadError::FutureDated { at: 3 })
+    );
+    assert!(verify_at(&batch(&w, &hbs[..3]), &ChainTip::GENESIS, now).is_ok());
 }

@@ -80,7 +80,8 @@ Three crates in `crates/`:
     - Only devices linked to an account may upload (403 otherwise).
     - The device's row is locked and its chain tip checked with `verify_batch`.
     - On success the heartbeats are stored with the server's receive time and offline flag, credited in the same transaction, and an `UploadAck` with the new tip comes back.
-    - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`/`UnsupportedVersion`.
+    - Heartbeats dated in the future are refused (decided 2026-11-21): if any heartbeat's minute hasn't ended by the server's clock (`api::is_future_dated`: `minute_ms + 60 s > now`), the whole batch gets 400 `FutureDated { at }`. The client (`queue.rs`) then sends only the heartbeats before `at` and keeps the rest queued until their minute has passed on the server (the debug screen says the computer's clock is ahead).
+    - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`/`UnsupportedVersion`/`FutureDated`.
   - `GET /api/dashboard` and `GET /api/projects` (`dashboard.rs`): the logged-in user's tracked time (today, this week, all time), project/session/device counts, and each project with its tracked time and session count. 401 without a session.
     - Tracked time is the sum of `session_minutes.credit_ms`; agent time (`agent_today_ms`/`agent_week_ms`/`agent_total_ms`) counts the distinct minutes with `ai_ms > 0`, so concurrent agents count once; today and this week (from Monday) are in the user's time zone (UTC until set), computed in Postgres (`day_and_week_start`). Projects group `agent_sessions` by folder name.
   - `GET /api/settings` and `POST /api/settings` (`settings.rs`): `{ "timezone": IANA name | null }`. Saving needs the `Origin` to match `PUBLIC_URL` and a zone Postgres knows (`pg_timezone_names`).

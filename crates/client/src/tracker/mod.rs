@@ -238,12 +238,19 @@ fn upload_loop(queue: &Mutex<Queue>, stop: &AtomicBool, debug: &Mutex<DebugInfo>
                 Uploaded::Nothing => "nothing to send".to_string(),
                 Uploaded::Sent(n) => format!("sent {n}"),
                 Uploaded::Realigned => "re-aligned the chain with the server".to_string(),
+                Uploaded::Early { held, .. } => format!(
+                    "{held} waiting: dated after the server's time (this computer's clock is ahead)"
+                ),
                 Uploaded::Failed(e) => e.clone(),
             };
             lock(debug).last_upload = Some((now_ms(), described));
-            if !matches!(outcome, Uploaded::Sent(_) | Uploaded::Realigned)
-                || stop.load(Ordering::Relaxed)
-            {
+            // After `Early`, send what came before the refused heartbeats.
+            let again = match outcome {
+                Uploaded::Sent(_) | Uploaded::Realigned => true,
+                Uploaded::Early { before, .. } => before > 0,
+                Uploaded::Nothing | Uploaded::Failed(_) => false,
+            };
+            if !again || stop.load(Ordering::Relaxed) {
                 break;
             }
         }

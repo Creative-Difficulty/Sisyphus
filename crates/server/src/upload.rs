@@ -2,7 +2,9 @@
 //!
 //! Only devices linked to an account (see `auth.rs`) may upload; others get
 //! 403. The batch must continue the device's hash chain exactly where the
-//! stored chain tip ends (see `sisyphus_common::api`). On success the
+//! stored chain tip ends (see `sisyphus_common::api`), and no heartbeat
+//! may be dated in the future (its minute not over by the server's clock;
+//! the whole batch is refused with `FutureDated`). On success the
 //! heartbeats are stored with the server's receive time (flagged offline
 //! when they arrive more than 5 minutes after their minute), credited (see
 //! `credit.rs`) and the new tip is returned.
@@ -27,7 +29,8 @@ pub async fn upload(State(state): State<AppState>, Json(batch): Json<UploadBatch
                 UploadError::OutOfSync { .. } => StatusCode::CONFLICT,
                 UploadError::Empty
                 | UploadError::Invalid(_)
-                | UploadError::UnsupportedVersion { .. } => StatusCode::BAD_REQUEST,
+                | UploadError::UnsupportedVersion { .. }
+                | UploadError::FutureDated { .. } => StatusCode::BAD_REQUEST,
             };
             (status, Json(e)).into_response()
         }
@@ -89,7 +92,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
     };
 
     let user_id: i64 = row.get("user_id");
-    let new_tip = verify_batch(batch, &tip).map_err(Rejected::Upload)?;
+    let new_tip = verify_batch(batch, &tip, now as u64).map_err(Rejected::Upload)?;
     let mut minutes = std::collections::BTreeSet::new();
 
     for signed in &batch.heartbeats {
