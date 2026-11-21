@@ -12,8 +12,8 @@
 //! | Linux X11     | XScreenSaver                      | `_NET_ACTIVE_WINDOW`, `WM_CLASS`, `_NET_WM_PID` |
 //! | Linux Wayland | `ext-idle-notify` (GNOME: Mutter's IdleMonitor) | see [`linux`]          |
 //!
-//! On Wayland, reading the focused app needs the user's consent
-//! ([`focus_needs_consent`], saved as `Config::focus_allowed`).
+//! Nothing is read without the user's consent, on every OS (asked during
+//! onboarding, saved as `Config::activity_allowed`).
 //!
 //! The app id and process id of a [`FocusedApp`] stay on this machine: only
 //! the [`Focus`] class may go into a heartbeat. Window titles are never read
@@ -115,65 +115,48 @@ impl FocusReading {
     }
 }
 
-/// Whether reading the focused app needs the user's OK first. True on
-/// Wayland, where apps aren't meant to see other apps' windows.
-pub fn focus_needs_consent() -> bool {
-    #[cfg(all(unix, not(target_os = "macos")))]
-    {
-        linux::is_wayland()
-    }
-    #[cfg(not(all(unix, not(target_os = "macos"))))]
-    {
-        false
-    }
-}
-
 /// Reads input idle time and the focused app. Create one and keep it: some
 /// backends keep a connection or a background thread open.
 pub struct Monitor {
-    #[cfg(all(unix, not(target_os = "macos")))]
-    inner: linux::Monitor,
-    #[cfg(target_os = "macos")]
-    inner: macos::Monitor,
-    #[cfg(windows)]
-    inner: windows::Monitor,
+    /// `None` without the user's consent.
+    inner: Option<Inner>,
 }
 
+#[cfg(all(unix, not(target_os = "macos")))]
+type Inner = linux::Monitor;
+#[cfg(target_os = "macos")]
+type Inner = macos::Monitor;
+#[cfg(windows)]
+type Inner = windows::Monitor;
+
 impl Monitor {
-    /// `allow_focus`: the user agreed to reading the focused app. Only
-    /// matters where [`focus_needs_consent`] is true; elsewhere the focus is
-    /// read regardless.
-    pub fn new(allow_focus: bool) -> Self {
-        let allow_focus = allow_focus || !focus_needs_consent();
+    /// `allowed`: the user agreed to activity being read. Without it,
+    /// nothing is read and every reading is unknown.
+    pub fn new(allowed: bool) -> Self {
         Self {
-            #[cfg(all(unix, not(target_os = "macos")))]
-            inner: linux::Monitor::new(allow_focus),
-            #[cfg(target_os = "macos")]
-            inner: {
-                let _ = allow_focus;
-                macos::Monitor
-            },
-            #[cfg(windows)]
-            inner: {
-                let _ = allow_focus;
-                windows::Monitor
-            },
+            inner: allowed.then(Inner::start),
         }
     }
 
     /// Time since the last keyboard or mouse input anywhere on the system.
     /// `None` if this system can't tell.
     pub fn since_last_input(&mut self) -> Option<Duration> {
-        self.inner.since_last_input()
+        self.inner.as_mut()?.since_last_input()
     }
 
     /// The app in front right now.
     pub fn focused(&mut self) -> FocusReading {
-        self.inner.focused()
+        match &mut self.inner {
+            Some(inner) => inner.focused(),
+            None => FocusReading::Unknown,
+        }
     }
 
     /// Which backends are in use, for the `activity` command.
     pub fn describe(&self) -> String {
-        self.inner.describe()
+        match &self.inner {
+            Some(inner) => inner.describe(),
+            None => "not allowed".to_string(),
+        }
     }
 }

@@ -3,7 +3,7 @@
 //! - `ext-idle-notify-v1`: tells us when the user has been idle for a
 //!   second and when they're back. Version 2's input notification ignores
 //!   idle inhibitors, so a playing video doesn't count as input.
-//! - `wlr-foreign-toplevel-management-v1` (only with consent): every
+//! - `wlr-foreign-toplevel-management-v1`: every
 //!   toplevel's app id and whether it's activated. Titles arrive too but are
 //!   dropped on the spot.
 
@@ -77,7 +77,7 @@ pub struct Session(Arc<Inner>);
 
 impl Session {
     /// Connect and bind what the compositor offers. `toplevels`: also track
-    /// windows (needs the user's consent).
+    /// windows (when no compositor IPC tells us the focus).
     pub fn connect(toplevels: bool) -> Option<Self> {
         let conn = Connection::connect_to_env().ok()?;
         let (globals, mut queue) = registry_queue_init::<State>(&conn).ok()?;

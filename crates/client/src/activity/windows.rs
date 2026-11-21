@@ -20,6 +20,10 @@ use super::{FocusReading, FocusedApp};
 pub struct Monitor;
 
 impl Monitor {
+    pub fn start() -> Self {
+        Monitor
+    }
+
     pub fn since_last_input(&mut self) -> Option<Duration> {
         let mut info = LASTINPUTINFO {
             cbSize: size_of::<LASTINPUTINFO>() as u32,

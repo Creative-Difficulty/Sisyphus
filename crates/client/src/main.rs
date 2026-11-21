@@ -36,7 +36,7 @@ fn activity() {
     use std::path::PathBuf;
     use std::time::{Duration, Instant};
 
-    let allowed = sisyphus_client::config::Config::load().focus_allowed == Some(true);
+    let allowed = sisyphus_client::config::Config::load().activity_allowed == Some(true);
     let mut monitor = Monitor::new(allowed);
     println!("{}", monitor.describe());
 

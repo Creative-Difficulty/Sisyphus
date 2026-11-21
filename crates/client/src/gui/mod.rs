@@ -1,21 +1,19 @@
 //! The client's window.
 //!
 //! Screens:
-//! - first start ([`onboarding`]): log in with Hack Club, then connect
-//!   agents. The window resumes at whichever step isn't done yet.
+//! - first start ([`onboarding`]): log in with Hack Club, connect agents,
+//!   then allow activity ([`consent`]). The window resumes at whichever step
+//!   isn't done yet.
 //! - the dashboard ([`sessions`]), refreshed every few seconds
 //! - settings ([`settings`], gear icon): account and agents as a compact list
-//! - on Wayland, a one-time popup ([`consent`]) asking to read which app is
-//!   in front
 
 use std::time::Duration;
 
 use iced::futures::{SinkExt, Stream, StreamExt};
 use iced::theme::Mode;
-use iced::widget::{button, column, opaque, row, space, stack};
+use iced::widget::{button, column, row, space};
 use iced::{Element, Fill, Subscription, Task, Theme};
 
-use crate::activity;
 use crate::agents::Integration;
 use crate::config::Config;
 
@@ -61,6 +59,8 @@ enum Screen {
     Login,
     /// First start, step 2: connect agents.
     ConnectAgents,
+    /// First start, step 3: allow reading activity.
+    Activity,
     /// Account and agents, from the gear icon.
     Settings,
     /// `None` while loading.
@@ -94,8 +94,8 @@ pub enum Message {
     SaveServer,
     /// Go back to the default server.
     ResetServer,
-    /// The user answered whether Sisyphus may read the focused app.
-    AllowFocus(bool),
+    /// The user answered whether Sisyphus may read their activity.
+    AllowActivity(bool),
 }
 
 impl App {
@@ -207,13 +207,16 @@ impl App {
                 self.set_server(server_url)
             }
             Message::ResetServer => self.set_server(None),
-            Message::AllowFocus(allowed) => {
+            Message::AllowActivity(allowed) => {
                 let mut config = self.config.clone();
-                config.focus_allowed = Some(allowed);
+                config.activity_allowed = Some(allowed);
                 // If saving fails the answer still applies until restart.
                 let _ = config.save();
                 self.config = config;
-                Task::none()
+                match self.screen {
+                    Screen::Activity => self.resume(),
+                    _ => Task::none(),
+                }
             }
         }
     }
@@ -228,6 +231,7 @@ impl App {
                 },
             ),
             Screen::ConnectAgents => onboarding::agents(&self.config, &self.errors),
+            Screen::Activity => consent::view(),
             Screen::Settings => settings::view(
                 &self.config,
                 &self.errors,
@@ -243,14 +247,14 @@ impl App {
         let nav: Element<'_, Message> = match self.screen {
             Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
             Screen::Settings => icon_button(style::Icon::Back, Message::ShowSessions),
-            Screen::Login | Screen::ConnectAgents => space().into(),
+            Screen::Login | Screen::ConnectAgents | Screen::Activity => space().into(),
         };
         let theme_icon = if self.is_dark() {
             style::Icon::Sun
         } else {
             style::Icon::Moon
         };
-        let window = column![
+        column![
             row![
                 nav,
                 space().width(Fill),
@@ -258,20 +262,8 @@ impl App {
             ]
             .padding([14, 20]),
             screen,
-        ];
-        if self.asks_focus_consent() {
-            stack![window, opaque(consent::view())].into()
-        } else {
-            window.into()
-        }
-    }
-
-    /// Ask once, on the dashboard, where the OS needs the user's OK to see
-    /// the focused app.
-    fn asks_focus_consent(&self) -> bool {
-        matches!(self.screen, Screen::Sessions(_))
-            && self.config.focus_allowed.is_none()
-            && activity::focus_needs_consent()
+        ]
+        .into()
     }
 
     fn subscription(&self) -> Subscription<Message> {
@@ -317,6 +309,9 @@ impl App {
             Task::none()
         } else if self.config.connected_agents.is_empty() {
             self.screen = Screen::ConnectAgents;
+            Task::none()
+        } else if self.config.activity_allowed.is_none() {
+            self.screen = Screen::Activity;
             Task::none()
         } else {
             self.show_sessions()

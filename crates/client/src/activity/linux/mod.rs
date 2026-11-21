@@ -1,8 +1,7 @@
 //! Linux: X11, or Wayland with a per-compositor focus source.
 //!
 //! Wayland has no standard way to see another app's window, so the focused
-//! app comes from the first of these that works (only with the user's
-//! consent):
+//! app comes from the first of these that works:
 //!
 //! 1. Hyprland: its IPC socket (`activewindow`), with the window's pid.
 //! 2. Sway: its IPC socket (`get_tree`), with the window's pid.
@@ -50,36 +49,32 @@ trait FocusSource: Send {
 pub struct Monitor {
     idle: Option<Box<dyn IdleSource>>,
     focus: Option<Box<dyn FocusSource>>,
-    focus_allowed: bool,
 }
 
 impl Monitor {
-    pub fn new(allow_focus: bool) -> Self {
+    pub fn start() -> Self {
         if is_wayland() {
-            Self::wayland(allow_focus)
+            Self::wayland()
         } else {
             Self {
                 idle: x11::Idle::connect().map(|s| Box::new(s) as _),
                 focus: x11::Focus::connect().map(|s| Box::new(s) as _),
-                focus_allowed: true,
             }
         }
     }
 
-    fn wayland(allow_focus: bool) -> Self {
+    fn wayland() -> Self {
         let mut focus: Option<Box<dyn FocusSource>> = None;
-        if allow_focus {
-            if let Some(source) = hyprland::Hyprland::detect() {
-                focus = Some(Box::new(source));
-            } else if let Some(source) = sway::Sway::detect() {
-                focus = Some(Box::new(source));
-            } else if desktop_is("GNOME") {
-                focus = gnome::Focus::connect().map(|s| Box::new(s) as _);
-            } else if desktop_is("KDE") {
-                focus = kwin::Kwin::start().map(|s| Box::new(s) as _);
-            }
+        if let Some(source) = hyprland::Hyprland::detect() {
+            focus = Some(Box::new(source));
+        } else if let Some(source) = sway::Sway::detect() {
+            focus = Some(Box::new(source));
+        } else if desktop_is("GNOME") {
+            focus = gnome::Focus::connect().map(|s| Box::new(s) as _);
+        } else if desktop_is("KDE") {
+            focus = kwin::Kwin::start().map(|s| Box::new(s) as _);
         }
-        let want_toplevels = allow_focus && focus.is_none();
+        let want_toplevels = focus.is_none();
         let session = wayland::Session::connect(want_toplevels);
 
         let mut idle: Option<Box<dyn IdleSource>> = None;
@@ -94,11 +89,7 @@ impl Monitor {
         if idle.is_none() && desktop_is("GNOME") {
             idle = gnome::Idle::connect().map(|s| Box::new(s) as _);
         }
-        Self {
-            idle,
-            focus,
-            focus_allowed: allow_focus,
-        }
+        Self { idle, focus }
     }
 
     pub fn since_last_input(&mut self) -> Option<Duration> {
@@ -114,11 +105,7 @@ impl Monitor {
 
     pub fn describe(&self) -> String {
         let idle = self.idle.as_ref().map_or("none", |s| s.name());
-        let focus = match &self.focus {
-            Some(source) => source.name(),
-            None if !self.focus_allowed => "not allowed",
-            None => "none",
-        };
+        let focus = self.focus.as_ref().map_or("none", |s| s.name());
         format!("input: {idle}, focus: {focus}")
     }
 }

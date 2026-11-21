@@ -30,6 +30,10 @@ const ANY_INPUT_EVENT: u32 = !0;
 pub struct Monitor;
 
 impl Monitor {
+    pub fn start() -> Self {
+        Monitor
+    }
+
     pub fn since_last_input(&mut self) -> Option<Duration> {
         // SAFETY: a plain C function taking two integers.
         let seconds = unsafe {

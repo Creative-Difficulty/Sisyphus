@@ -77,21 +77,13 @@ pub fn bubble(theme: &Theme, running: bool) -> container::Style {
     }
 }
 
-/// Behind a popup: the window, faded out.
-pub fn backdrop(theme: &Theme) -> container::Style {
-    container::Style {
-        background: Some(theme.palette().background.scale_alpha(0.8).into()),
-        ..container::Style::default()
-    }
-}
-
-/// A popup: a solid round bubble, a deeper pink than the background.
-pub fn popup(theme: &Theme) -> container::Style {
+/// A block of text on a solid bubble, a deeper pink than the background.
+pub fn card(theme: &Theme) -> container::Style {
     let palette = theme.palette();
     container::Style {
-        background: Some(mix(palette.background, palette.primary, 0.16).into()),
+        background: Some(mix(palette.background, palette.primary, 0.14).into()),
         border: Border {
-            radius: 32.0.into(),
+            radius: 26.0.into(),
             ..Border::default()
         },
         ..container::Style::default()

@@ -25,9 +25,9 @@ pub struct Config {
     /// The account this device was linked to, once logged in. Use
     /// [`Config::account`], which only returns it for the current server.
     pub account: Option<Account>,
-    /// Whether the user allowed reading which app is in front, where the
-    /// OS needs their OK (Wayland). `None` until they're asked.
-    pub focus_allowed: Option<bool>,
+    /// Whether the user allowed reading their activity: time since the
+    /// last input and the kind of app in front. `None` until asked.
+    pub activity_allowed: Option<bool>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -125,13 +125,13 @@ impl Config {
             name: a.get("name").and_then(Value::as_str).map(str::to_string),
             server: a.get("server").and_then(Value::as_str).map(str::to_string),
         });
-        let focus_allowed = v.get("focus_allowed").and_then(Value::as_bool);
+        let activity_allowed = v.get("activity_allowed").and_then(Value::as_bool);
         Self {
             connected_agents,
             dark_mode,
             server_url,
             account,
-            focus_allowed,
+            activity_allowed,
         }
     }
 
@@ -144,7 +144,7 @@ impl Config {
                 .account
                 .as_ref()
                 .map(|a| json!({ "name": a.name, "server": a.server })),
-            "focus_allowed": self.focus_allowed,
+            "activity_allowed": self.activity_allowed,
         })
     }
 }
@@ -169,7 +169,7 @@ mod tests {
         let mut c = Config::default();
         c.set_connected("claude-code", true);
         c.dark_mode = Some(true);
-        c.focus_allowed = Some(false);
+        c.activity_allowed = Some(false);
         c.server_url = Some("https://sisyphus.example/".to_string());
         c.account = Some(Account {
             name: Some("Ada".to_string()),
