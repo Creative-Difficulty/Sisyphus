@@ -144,7 +144,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 5,
+    "version": 6,
     "minute_ms": 1795201380000,
 
     "agent": "claude-code",
@@ -164,6 +164,7 @@ product must:
       { "input": false, "keys": 0, "mouse": 0, "focus": "testing" }
     ],
     "tested_programs": ["target/debug/game"],
+    "running_programs": ["target/debug/game"],
 
     "prompts": {
       "submitted": 1,
@@ -226,6 +227,14 @@ product must:
   absolute. Scripts run by an interpreter outside the project (`python
   main.py`, `node server.js`) aren't recognised, because the executable is
   the interpreter.
+- `running_programs` (decided 2026-11-21, scheme version 6): the
+  project's own programs (same rule as `testing`, any window or none)
+  that ran this minute, relative paths. While one runs, the project's
+  most recently active session sends a heartbeat every minute even when
+  its agent is idle and its window isn't in front. The slots where the
+  program is in front are `testing`. It earns no attention or credit for
+  now (decided 2026-11-21). Only the tracking process itself is left out,
+  so a running Sisyphus app counts for the Sisyphus repo.
 - `interrupts` (added 2026-11-21, scheme version 3): times the user
   stopped the agent mid-turn this minute.
 - `prompts`: counts only, never text.
@@ -255,7 +264,10 @@ product must:
   capabilities, reads `/dev/input` and sends only key and mouse counts to
   the installing user over `/run/sisyphus-input/socket`. The popup can't
   be skipped (decided 2026-11-21: the counts are needed); the app only
-  continues once the helper runs.
+  continues once the helper runs. Settings has an "Input helper" row
+  (Linux Wayland, or wherever it's installed): Running / Not running,
+  Restart, Uninstall, or Set up when it doesn't answer; each asks for the
+  password through polkit (decided 2026-11-21).
 - GNOME doesn't expose the focused window. For now it is read through the
   third-party "Window Calls" extension when installed, otherwise unknown.
   Shipping our own GNOME Shell extension is for later.
@@ -315,10 +327,9 @@ product must:
 - Implementation choices to confirm: a minute where no slot's focus is
   known counts like activity off; a single `unknown` slot counts like
   being in another app.
-- Not decided: what `testing` earns. For now it counts like any other app
-  (no input credit, attention decays as when leaving), and a minute with
-  only `testing` (agent not running, its window not in front) sends no
-  heartbeat.
+- `testing` earns no attention for now (decided 2026-11-21): it counts
+  like any other app (attention decays as when leaving). Minutes where
+  the project's program runs are sent (`running_programs`).
 - No time after a turn ends for now (decided 2026-11-21): only minutes in
   which the agent ran earn credit. Attention is still followed through the
   others.

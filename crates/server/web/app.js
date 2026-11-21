@@ -91,7 +91,7 @@ function renderHeartbeats() {
 // The database sorts keys alphabetically; show them in the scheme's order.
 const KEY_ORDER = [
   "version", "minute_ms", "agent", "agent_session_id", "session_name", "project",
-  "agent_running", "activity", "input_kinds", "slots", "tested_programs", "prompts", "interrupts", "responses", "files",
+  "agent_running", "activity", "input_kinds", "slots", "tested_programs", "running_programs", "prompts", "interrupts", "responses", "files",
   "submitted", "typed_chars", "pasted_chars", "corrections", "finished", "chars",
   "input", "keys", "mouse", "focus", "path", "working_dir", "agent_edits", "added", "removed",
 ];

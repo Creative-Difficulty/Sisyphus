@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v5).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v6).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -14,7 +14,7 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 5;
+pub const VERSION: u32 = 6;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -52,6 +52,10 @@ pub struct Heartbeat {
     /// `testing`): their executables' paths relative to the project folder,
     /// with `/` separators, sorted. Empty without activity.
     pub tested_programs: Vec<String>,
+    /// The project's own programs running this minute, in front or not
+    /// (not ones an agent started): paths relative to the project folder,
+    /// sorted. A running program alone makes the session send heartbeats.
+    pub running_programs: Vec<String>,
 
     pub prompts: Prompts,
     /// Times the user stopped the agent mid-turn this minute.

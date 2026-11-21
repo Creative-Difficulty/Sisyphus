@@ -265,6 +265,9 @@ struct Session {
     /// The project folder (canonical) if it is a git repository, so its
     /// programs count as `testing`. Refreshed with the session list.
     git_root: Option<PathBuf>,
+    /// The project's programs running now (relative paths), set only on
+    /// the project's most recently active session. Refreshed every 10 s.
+    programs: Vec<String>,
     /// When the latest prompt seen since tracking started was sent.
     last_prompt_ms: Option<u64>,
     attachment: Option<Attachment>,
@@ -285,6 +288,7 @@ impl Session {
             || self
                 .focused_ms
                 .is_some_and(|t| now.saturating_sub(t) < FOLLOW_MS)
+            || !self.programs.is_empty()
     }
 
     fn minute(&mut self, minute_ms: u64) -> &mut SessionMinute {
@@ -397,6 +401,7 @@ impl State {
                     running: false,
                     focused_ms: None,
                     git_root: None,
+                    programs: Vec::new(),
                     last_prompt_ms: None,
                     attachment: None,
                     retry_at: None,
@@ -413,6 +418,8 @@ impl State {
                 session.running = instance.is_running();
             }
         }
+        self.find_running_programs();
+
         // Forget sessions that are gone or disconnected, once their open
         // minutes are sent.
         self.sessions
@@ -422,6 +429,35 @@ impl State {
                 session.attachment = None;
                 session.running = false;
             }
+        }
+    }
+
+    /// Give each git project whose own program runs (not started by an
+    /// agent) to its most recently active session, which then sends
+    /// heartbeats for it.
+    fn find_running_programs(&mut self) {
+        if self.processes_read.elapsed() >= PROCESSES_RELOAD {
+            self.processes = Processes::snapshot();
+            self.processes_read = Instant::now();
+        }
+        let running = self.processes.programs_running();
+        let mut owner: HashMap<&Path, (&Key, u64)> = HashMap::new();
+        for (key, session) in &self.sessions {
+            if let Some(root) = &session.git_root
+                && !process::programs_under(&running, root).is_empty()
+                && owner
+                    .get(root.as_path())
+                    .is_none_or(|(_, best)| session.last_activity_ms > *best)
+            {
+                owner.insert(root, (key, session.last_activity_ms));
+            }
+        }
+        let owners: HashSet<Key> = owner.into_values().map(|(k, _)| k.clone()).collect();
+        for (key, session) in &mut self.sessions {
+            session.programs = match &session.git_root {
+                Some(root) if owners.contains(key) => process::programs_under(&running, root),
+                _ => Vec::new(),
+            };
         }
     }
 
@@ -688,6 +724,7 @@ impl State {
                 Some(root) if !front => process::programs_under(&programs, root),
                 _ => Vec::new(),
             };
+            let programs = session.programs.clone();
             let minute = session.minute(minute_ms);
             minute.slots[slot].add(if front {
                 Focus::Agent
@@ -697,6 +734,7 @@ impl State {
                 base
             });
             minute.tested_programs.extend(tested);
+            minute.running_programs.extend(programs);
             if running {
                 minute.running = true;
             }
@@ -1004,6 +1042,7 @@ mod tests {
             running: true,
             focused_ms: None,
             git_root: None,
+            programs: Vec::new(),
             last_prompt_ms: None,
             attachment: None,
             retry_at: None,

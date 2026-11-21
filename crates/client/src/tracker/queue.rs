@@ -245,6 +245,7 @@ mod tests {
             input_kinds: sisyphus_common::heartbeat::InputKinds::Unknown,
             slots: [Slot::UNKNOWN; SLOTS],
             tested_programs: Vec::new(),
+            running_programs: Vec::new(),
             prompts: Prompts::default(),
             interrupts: 0,
             responses: Responses::default(),

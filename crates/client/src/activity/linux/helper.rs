@@ -17,7 +17,7 @@ const RETRY: Duration = Duration::from_secs(5);
 
 /// Whether the helper is installed and running.
 pub fn available() -> bool {
-    UnixStream::connect(SOCKET).is_ok()
+    crate::input_helper::running()
 }
 
 #[derive(Default)]

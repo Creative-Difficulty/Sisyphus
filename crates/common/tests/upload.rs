@@ -16,6 +16,7 @@ fn minute(i: u64) -> Heartbeat {
         input_kinds: InputKinds::Exact,
         slots: [Slot { input: true, keys: 3, mouse: 1, focus: Focus::Agent }; 6],
         tested_programs: vec![],
+        running_programs: vec![],
         prompts: Prompts { submitted: 1, typed_chars: 100 + i as u32, ..Prompts::default() },
         interrupts: 0,
         responses: Responses::default(),

@@ -70,6 +70,18 @@ struct App {
     debug_key_at: Option<std::time::Instant>,
     input_helper_pending: bool,
     input_helper_error: Option<String>,
+    /// For the settings row: whether the input helper answers and whether
+    /// it's installed. `None` where it doesn't apply (not Linux, or X11
+    /// without it installed).
+    input_helper_running: Option<(bool, bool)>,
+}
+
+/// What the input helper can be asked to do.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HelperAction {
+    Install,
+    Restart,
+    Uninstall,
 }
 
 enum Screen {
@@ -118,9 +130,10 @@ pub enum Message {
     SaveServer,
     /// Go back to the default server.
     ResetServer,
-    /// Install the input helper (polkit asks for the password).
-    SetUpInputHelper,
-    InputHelperFinished(Result<(), String>),
+    /// Install, restart or uninstall the input helper (polkit asks for the
+    /// password).
+    InputHelper(HelperAction),
+    InputHelperFinished(HelperAction, Result<(), String>),
     /// Ctrl+D was pressed.
     DebugKey,
     /// Redraw the debug screen.
@@ -146,6 +159,7 @@ impl App {
             debug_key_at: None,
             input_helper_pending: false,
             input_helper_error: None,
+            input_helper_running: None,
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -168,6 +182,8 @@ impl App {
             }
             Message::ShowSettings => {
                 self.screen = Screen::Settings;
+                self.input_helper_error = None;
+                self.input_helper_running = input_helper_status();
                 Task::none()
             }
             Message::ShowSessions => self.show_sessions(),
@@ -293,19 +309,27 @@ impl App {
                 self.set_server(server_url)
             }
             Message::ResetServer => self.set_server(None),
-            Message::SetUpInputHelper => {
+            Message::InputHelper(action) => {
                 self.input_helper_pending = true;
                 self.input_helper_error = None;
-                set_up_input_helper()
+                input_helper_task(action)
             }
-            Message::InputHelperFinished(result) => {
+            Message::InputHelperFinished(action, result) => {
                 self.input_helper_pending = false;
-                match result {
-                    Ok(()) => self.resume(),
-                    Err(e) => {
-                        self.input_helper_error = Some(e);
-                        Task::none()
-                    }
+                self.input_helper_running = input_helper_status();
+                if let Err(e) = result {
+                    self.input_helper_error = Some(e);
+                    return Task::none();
+                }
+                // Installing continues from the popup; after uninstalling on
+                // Wayland the popup is due again.
+                if action == HelperAction::Install
+                    || !matches!(self.screen, Screen::Settings)
+                    || crate::activity::input_helper_missing()
+                {
+                    self.resume()
+                } else {
+                    Task::none()
                 }
             }
         }
@@ -336,6 +360,13 @@ impl App {
                     pending: self.logout_pending,
                     error: self.logout_error.as_deref(),
                 },
+                self.input_helper_running
+                    .map(|(running, installed)| settings::HelperState {
+                        running,
+                        installed,
+                        pending: self.input_helper_pending,
+                        error: self.input_helper_error.as_deref(),
+                    }),
             ),
             Screen::Sessions(list) => sessions::view(list.as_deref(), self.today),
             Screen::Debug => debug::view(
@@ -530,23 +561,42 @@ fn debug_ticks() -> impl Stream<Item = Message> {
     })
 }
 
-/// Run blocking work on its own thread, so the window stays responsive.
-/// Install the input helper on a worker thread (pkexec waits for the
+/// Run an input helper action on a worker thread (pkexec waits for the
 /// password).
-fn set_up_input_helper() -> Task<Message> {
+fn input_helper_task(action: HelperAction) -> Task<Message> {
     #[cfg(all(unix, not(target_os = "macos")))]
     {
-        Task::perform(
-            on_thread(crate::input_helper::set_up),
-            Message::InputHelperFinished,
-        )
+        use crate::input_helper::{Action, run_as_admin};
+        let admin = match action {
+            HelperAction::Install => Action::Install,
+            HelperAction::Restart => Action::Restart,
+            HelperAction::Uninstall => Action::Uninstall,
+        };
+        Task::perform(on_thread(move || run_as_admin(admin)), move |result| {
+            Message::InputHelperFinished(action, result)
+        })
     }
     #[cfg(not(all(unix, not(target_os = "macos"))))]
     {
-        Task::done(Message::InputHelperFinished(Ok(())))
+        Task::done(Message::InputHelperFinished(action, Ok(())))
     }
 }
 
+/// Whether the input helper answers, where it applies: on Linux Wayland,
+/// or wherever it's installed.
+fn input_helper_status() -> Option<(bool, bool)> {
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        use crate::input_helper::{installed, running};
+        (crate::activity::linux::is_wayland() || installed()).then(|| (running(), installed()))
+    }
+    #[cfg(not(all(unix, not(target_os = "macos"))))]
+    {
+        None
+    }
+}
+
+/// Run blocking work on its own thread, so the window stays responsive.
 fn on_thread<T: Send + 'static>(
     work: impl FnOnce() -> T + Send + 'static,
 ) -> impl Future<Output = T> {

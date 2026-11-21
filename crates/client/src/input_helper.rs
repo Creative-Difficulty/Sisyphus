@@ -348,13 +348,51 @@ pub fn uninstall() -> Result<(), String> {
     systemctl(&["daemon-reload"])
 }
 
-/// From the window: install the helper through polkit's password dialog,
-/// then wait for it to answer. Blocking.
-pub fn set_up() -> Result<(), String> {
+/// Restart the service. Runs as root.
+pub fn restart() -> Result<(), String> {
+    // SAFETY: no arguments.
+    if unsafe { libc::geteuid() } != 0 {
+        return Err("run this through pkexec or sudo".into());
+    }
+    systemctl(&["restart", SERVICE])
+}
+
+/// Whether the service is installed (its unit file exists).
+pub fn installed() -> bool {
+    Path::new(UNIT).exists()
+}
+
+/// Whether the service answers.
+pub fn running() -> bool {
+    UnixStream::connect(SOCKET).is_ok()
+}
+
+/// What the window can ask for with the user's password.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Action {
+    Install,
+    Restart,
+    Uninstall,
+}
+
+impl Action {
+    fn arg(self) -> &'static str {
+        match self {
+            Action::Install => "install",
+            Action::Restart => "restart",
+            Action::Uninstall => "uninstall",
+        }
+    }
+}
+
+/// From the window: run `action` as root through polkit's password dialog,
+/// then (installing or restarting) wait for the helper to answer.
+/// Blocking.
+pub fn run_as_admin(action: Action) -> Result<(), String> {
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let output = Command::new("pkexec")
         .arg(&exe)
-        .args(["input-helper", "install"])
+        .args(["input-helper", action.arg()])
         .output()
         .map_err(|e| match e.kind() {
             ErrorKind::NotFound => "pkexec (polkit) isn't installed on this system.".to_string(),
@@ -367,24 +405,28 @@ pub fn set_up() -> Result<(), String> {
             return Err(format!(
                 "Couldn't ask for your password. If no password dialog appeared, your desktop \
                  has no polkit agent running. You can run this in a terminal instead: \
-                 pkexec {} input-helper install",
-                exe.display()
+                 pkexec {} input-helper {}",
+                exe.display(),
+                action.arg()
             ));
         }
         _ => {
             let stderr = String::from_utf8_lossy(&output.stderr);
             let reason = stderr.lines().last().unwrap_or("unknown error").trim();
-            return Err(format!("Setting it up failed: {reason}"));
+            return Err(format!("That failed: {reason}"));
         }
     }
+    if action == Action::Uninstall {
+        return Ok(());
+    }
     for _ in 0..50 {
-        if UnixStream::connect(SOCKET).is_ok() {
+        if running() {
             return Ok(());
         }
         std::thread::sleep(Duration::from_millis(100));
     }
     Err(format!(
-        "It was installed but doesn't answer. `systemctl status {SERVICE}` says why."
+        "The helper doesn't answer. `systemctl status {SERVICE}` says why."
     ))
 }
 

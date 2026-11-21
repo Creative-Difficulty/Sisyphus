@@ -180,6 +180,27 @@ impl Processes {
         programs
     }
 
+    /// The executables (canonical paths) of all processes no agent started,
+    /// except this one. Paths are read for every process, so call this
+    /// rarely (the tracker: every 10 s).
+    pub fn programs_running(&self) -> Vec<PathBuf> {
+        let me = std::process::id();
+        let mut programs: Vec<PathBuf> = self
+            .by_pid
+            .values()
+            .filter(|p| p.pid != me)
+            .filter(|p| {
+                !self
+                    .ancestors(p.pid)
+                    .any(|a| a.agent.is_some() || a.manager.is_some())
+            })
+            .filter_map(|p| exe_path(p.pid))
+            .collect();
+        programs.sort();
+        programs.dedup();
+        programs
+    }
+
     /// Whether process `pid` descends from the focused window's process.
     /// Without the window's pid (wlr-foreign-toplevel gives only the app
     /// id): an ancestor's executable matches the app id, which can't tell

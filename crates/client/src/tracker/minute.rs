@@ -112,6 +112,9 @@ pub struct SessionMinute {
     /// The project's programs seen in front (relative paths), for
     /// `tested_programs`.
     pub tested_programs: BTreeSet<String>,
+    /// The project's programs seen running (relative paths), for
+    /// `running_programs`.
+    pub running_programs: BTreeSet<String>,
     pub prompts: Prompts,
     pub interrupts: u32,
     pub responses: Responses,
@@ -156,8 +159,8 @@ impl SessionMinute {
             .collect()
     }
 
-    /// Sent when the agent ran, its window was in front, or anything
-    /// happened in the session.
+    /// Sent when the agent ran, its window was in front, anything happened
+    /// in the session, or the project's program ran.
     pub fn worth_sending(&self) -> bool {
         self.running
             || (0..SLOTS).any(|i| self.focus(i) == Focus::Agent)
@@ -165,6 +168,7 @@ impl SessionMinute {
             || self.interrupts > 0
             || self.responses.finished > 0
             || !self.files.is_empty()
+            || !self.running_programs.is_empty()
     }
 
     pub fn into_heartbeat(self, meta: Meta<'_>) -> Heartbeat {
@@ -195,6 +199,7 @@ impl SessionMinute {
             } else {
                 Vec::new()
             },
+            running_programs: self.running_programs.into_iter().collect(),
             prompts: self.prompts,
             interrupts: self.interrupts,
             responses: self.responses,
@@ -267,6 +272,26 @@ mod tests {
         );
         assert_eq!(hb.input_kinds, InputKinds::Exact);
         assert_eq!(hb.slots[3], Slot::UNKNOWN);
+    }
+
+    #[test]
+    fn a_running_program_alone_sends_a_heartbeat() {
+        let mut minute = SessionMinute::default();
+        minute.slots[0].add(Focus::Testing);
+        assert!(!minute.worth_sending());
+        minute.running_programs.insert("target/debug/game".into());
+        assert!(minute.worth_sending());
+        let hb = minute.into_heartbeat(Meta {
+            minute_ms: 60_000,
+            agent: "claude-code",
+            agent_session_id: "s",
+            session_name: "t",
+            project: "p",
+            activity: true,
+            input: MinuteInput::default(),
+        });
+        assert_eq!(hb.running_programs, ["target/debug/game"]);
+        assert!(!hb.agent_running);
     }
 
     #[test]

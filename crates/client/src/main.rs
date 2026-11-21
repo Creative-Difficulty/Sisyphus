@@ -26,7 +26,7 @@ fn main() {
             );
             #[cfg(all(unix, not(target_os = "macos")))]
             println!(
-                "       sisyphus-client input-helper install|uninstall   (as root) the Wayland input helper"
+                "       sisyphus-client input-helper install|restart|uninstall   (as root) the Wayland input helper"
             );
             Ok(())
         }
@@ -38,7 +38,7 @@ fn main() {
 }
 
 /// The Wayland input helper service: `serve --uid N` (what the service
-/// runs), `install` and `uninstall` (as root).
+/// runs), `install`, `restart` and `uninstall` (as root).
 #[cfg(all(unix, not(target_os = "macos")))]
 fn input_helper(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
     use sisyphus_client::input_helper;
@@ -54,11 +54,15 @@ fn input_helper(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
             input_helper::install()?;
             println!("installed and started {}", input_helper::SERVICE);
         }
+        Some("restart") => {
+            input_helper::restart()?;
+            println!("restarted {}", input_helper::SERVICE);
+        }
         Some("uninstall") => {
             input_helper::uninstall()?;
             println!("removed {}", input_helper::SERVICE);
         }
-        _ => return Err("usage: input-helper install|uninstall|serve --uid <uid>".into()),
+        _ => return Err("usage: input-helper install|restart|uninstall|serve --uid <uid>".into()),
     }
     Ok(())
 }

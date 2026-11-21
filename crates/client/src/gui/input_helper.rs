@@ -6,7 +6,7 @@
 use iced::widget::{button, column, container, scrollable, text};
 use iced::{Center, Element, Fill};
 
-use super::{Message, style};
+use super::{HelperAction, Message, style};
 
 pub fn view(pending: bool, error: Option<&str>) -> Element<'static, Message> {
     let card = |title: &'static str, body: &'static str| {
@@ -83,7 +83,7 @@ pub fn view(pending: bool, error: Option<&str>) -> Element<'static, Message> {
     )
     .padding([12, 48])
     .style(style::rounded(style::pink))
-    .on_press_maybe((!pending).then_some(Message::SetUpInputHelper));
+    .on_press_maybe((!pending).then_some(Message::InputHelper(HelperAction::Install)));
     content = content.push(set_up);
 
     scrollable(

@@ -1,10 +1,11 @@
 //! Settings (gear icon): a compact list of the account, the agents, the
-//! activity permission and the server, in the dashboard's bubble style.
+//! input helper (Linux Wayland) and the server, in the dashboard's bubble
+//! style.
 
 use iced::widget::{button, column, container, row, scrollable, text, text_input};
 use iced::{Center, Element, Fill};
 
-use super::{Message, style};
+use super::{HelperAction, Message, style};
 use crate::agents::Integration;
 use crate::config::{Config, DEFAULT_SERVER_URL};
 
@@ -39,11 +40,23 @@ pub struct LogoutState<'a> {
     pub error: Option<&'a str>,
 }
 
+/// The input helper's row.
+pub struct HelperState<'a> {
+    /// It answers.
+    pub running: bool,
+    /// Its service is installed.
+    pub installed: bool,
+    /// Waiting for the password dialog or the action.
+    pub pending: bool,
+    pub error: Option<&'a str>,
+}
+
 pub fn view<'a>(
     config: &'a Config,
     errors: &'a [Option<String>],
     server: ServerState<'a>,
     logout: LogoutState<'a>,
+    helper: Option<HelperState<'a>>,
 ) -> Element<'a, Message> {
     let account_name = config
         .account()
@@ -126,13 +139,16 @@ pub fn view<'a>(
             .push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
     }
 
-    let content = column![
+    let mut content = column![
         text("Settings").size(26).font(style::BOLD),
         section("Account", account.into()),
         section("Agents", agents.into()),
-        section("Server", server_section.into()),
     ]
     .spacing(24);
+    if let Some(helper) = helper {
+        content = content.push(section("Input helper", helper_row(helper)));
+    }
+    let content = content.push(section("Server", server_section.into()));
 
     scrollable(
         container(container(content).max_width(560))
@@ -140,6 +156,59 @@ pub fn view<'a>(
             .center_x(Fill),
     )
     .into()
+}
+
+/// Running or not, with Restart and Uninstall (or Set up when it doesn't
+/// answer). Each asks for the password.
+fn helper_row(helper: HelperState<'_>) -> Element<'_, Message> {
+    let (title, detail) = if helper.running {
+        ("Running", "Counts your key presses and mouse events")
+    } else {
+        ("Not running", "Sisyphus can't tell typing from the mouse")
+    };
+    let mut line = row![
+        column![
+            text(title).size(16),
+            text(detail).size(13).style(style::muted),
+        ]
+        .spacing(2)
+        .width(Fill),
+    ]
+    .spacing(14)
+    .align_y(Center);
+    if helper.pending {
+        line = line.push(
+            text("Waiting for your password")
+                .size(14)
+                .style(style::muted),
+        );
+    } else {
+        if helper.running {
+            line = line.push(quiet_button(
+                "Restart",
+                Message::InputHelper(HelperAction::Restart),
+            ));
+        } else {
+            // Installing again also restarts it.
+            line = line.push(
+                button(text("Set up").size(14))
+                    .padding([6, 18])
+                    .style(style::rounded(style::pink))
+                    .on_press(Message::InputHelper(HelperAction::Install)),
+            );
+        }
+        if helper.installed {
+            line = line.push(quiet_button(
+                "Uninstall",
+                Message::InputHelper(HelperAction::Uninstall),
+            ));
+        }
+    }
+    let mut body = column![bubble(line)].spacing(6);
+    if let Some(error) = helper.error {
+        body = body.push(container(text(error).size(13).style(text::danger)).padding([0, 22]));
+    }
+    body.into()
 }
 
 fn section<'a>(label: &'a str, body: Element<'a, Message>) -> Element<'a, Message> {
