@@ -1,5 +1,6 @@
-//! The debug screen, opened and closed with Ctrl+D pressed twice: the live
-//! attention of each followed session (computed with the server's formula),
+//! The debug screen, opened and closed with Ctrl+D pressed twice: the
+//! current heartbeat's attention of each followed session (computed with
+//! the server's formula from the minute's readings so far),
 //! what the tracker reads right now, uploads, and the last heartbeat.
 
 use iced::widget::{column, container, row, scrollable, text};
@@ -70,7 +71,6 @@ fn session_bubble<'a>(session: &SessionDebug) -> Element<'a, Message> {
         about = about.push(text(session.project.clone()).size(13).style(style::muted));
     }
     let mut facts = row![
-        small(format!("this minute {:.2}", session.minute_attention)),
         small(format!("credit {:.2}", session.multiplier)),
         small(
             if session.running {

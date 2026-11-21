@@ -77,7 +77,8 @@ product must:
     user was active) and what never is (typing, keys, mouse movements, app
     names, titles, screen); changeable in settings
   - settings to connect and disconnect agents
-  - a debug screen (Ctrl+D twice): live attention per session computed
+  - a debug screen (Ctrl+D twice): the current heartbeat's attention per
+    session computed
     with the server's formula, what the tracker reads, uploads and the last
     heartbeat
   - a dashboard of recent sessions with today's credited time and agent
@@ -257,10 +258,15 @@ product must:
 - Attention returns to 1.0 on input. It drops slowly while the agent's window
   stays focused and quickly in other apps. An agent working alone earns no
   credit; that time still counts as AI time.
+- Attention is one value per heartbeat (decided 2026-11-21, formula 3):
+  any input while the agent's window is in front makes the whole heartbeat
+  1.0, so writing and sending a prompt guarantees 1.0 for that minute.
+  Otherwise it decays from the session's previous heartbeat. The slots are
+  only the readings it's computed from.
 - Decay speeds (decided 2026-11-21): half-life 2 minutes while the agent's
-  window stays in front, 30 seconds after leaving it (changed from 20 s
-  on 2026-11-21). The minute's
-  multiplier is the average attention over its six slots.
+  window stays in front (for most of the minute), 30 seconds otherwise
+  (changed from 20 s on 2026-11-21). The multiplier is the heartbeat's
+  attention.
 - With activity off (decided 2026-11-21), only agent events give attention:
   a prompt is worth 1.0 and an interrupt 0.5, falling to 0.0 at the next
   heartbeat. Other user actions may get some low values later (which ones
@@ -280,13 +286,13 @@ product must:
   The app's total uses it too, or the app's own midnight while none is
   set.
 - Quick switches don't farm attention. Switching to the agent's window for a
-  few seconds (around 5) without real interaction gives little or no
-  attention, because it could just be flicking between windows:
+  few seconds without real interaction gives nothing, because it could just
+  be flicking between windows:
   - input (including the alt-tab key press) only counts in slots where the
     agent's terminal or editor held focus
-  - watching without input only counts once the agent's window has held focus
-    for about 20 seconds (two slots in a row); exact thresholds get tuned
-    with real data
+  - attention never rises without such input; watching without input only
+    slows the decay, and only when the agent's window held focus for most
+    of the minute (replaces the earlier two-slots rule, 2026-11-21)
 
 ### Struggle
 

@@ -105,11 +105,9 @@ pub struct SessionDebug {
     pub running: bool,
     /// Its agent's window is in front.
     pub in_front: bool,
-    /// Attention right now: after the latest slot.
+    /// This heartbeat's attention, from the minute's readings so far.
     pub attention: f64,
-    /// Average attention over this minute's slots so far.
-    pub minute_attention: f64,
-    /// The multiplier this minute would get so far (0 without the agent
+    /// The multiplier this heartbeat would get so far (0 without the agent
     /// running).
     pub multiplier: f64,
 }
@@ -830,7 +828,6 @@ impl State {
                     last = Some((minute_ms, o.carry));
                     outcome = Some(o);
                 }
-                let attention = last.map_or(0.0, |(_, c)| c.attention);
                 let debug = SessionDebug {
                     agent: session.agent,
                     title: session.title.clone(),
@@ -841,8 +838,7 @@ impl State {
                         .unwrap_or_default(),
                     running: session.running,
                     in_front: self.in_front.contains(key),
-                    attention,
-                    minute_attention: outcome.map_or(0.0, |o| o.attention),
+                    attention: outcome.map_or(0.0, |o| o.attention),
                     multiplier: outcome.map_or(0.0, |o| o.multiplier),
                 };
                 (session.last_activity_ms, debug)

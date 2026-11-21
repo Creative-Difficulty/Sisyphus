@@ -22,8 +22,9 @@ use sisyphus_common::heartbeat;
 use sqlx::{PgConnection, PgPool, Row};
 
 /// The version of the calculation below.
-/// 1: leaving half-life 20 s. 2: 30 s.
-pub const FORMULA: i32 = 2;
+/// 1: per slot, leaving half-life 20 s. 2: per slot, 30 s. 3: one
+/// attention value per heartbeat.
+pub const FORMULA: i32 = 3;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -166,7 +167,7 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .await?;
 
     let carry = sqlx::query(
-        "SELECT attention_end, last_slot_agent FROM session_minutes
+        "SELECT attention_end FROM session_minutes
          WHERE session_id = $1 AND minute_ms = $2",
     )
     .bind(&id)
@@ -175,14 +176,13 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .await?
     .map(|row| Carry {
         attention: row.get("attention_end"),
-        last_slot_agent: row.get("last_slot_agent"),
     });
     let outcome = compute(&body, carry);
     let inserted = sqlx::query(
         "INSERT INTO session_minutes
              (session_id, minute_ms, user_id, device_id, seq, attention_end,
-              last_slot_agent, multiplier, credit_ms, ai_ms, offline, formula)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0, $9, $10, $11)
+              multiplier, credit_ms, ai_ms, offline, formula)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 0, $8, $9, $10)
          ON CONFLICT (session_id, minute_ms) DO NOTHING",
     )
     .bind(&id)
@@ -191,7 +191,6 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .bind(hb.device_id)
     .bind(hb.seq)
     .bind(outcome.carry.attention)
-    .bind(outcome.carry.last_slot_agent)
     .bind(outcome.multiplier)
     .bind(if body.agent_running { MINUTE_MS } else { 0 })
     .bind(hb.offline)
@@ -273,10 +272,21 @@ mod tests {
                 "slots": [{"input": true, "focus": "agent"}, {"input": false, "focus": "future_class"}]}"#,
         )
         .unwrap();
-        let out = compute(&body, None);
-        // An unknown class counts like another app.
-        let second = attention::decay(attention::LEAVE_HALF_LIFE_SECS);
-        assert!((out.multiplier - (1.0 + second) / 2.0).abs() < 1e-9);
+        // Input in the agent's window: the whole heartbeat is 1.0.
+        assert_eq!(compute(&body, None).multiplier, 1.0);
+        // Without it, unknown classes count like another app, so the agent's
+        // window wasn't in front for most of the minute: leaving.
+        let idle: Body = serde_json::from_str(
+            r#"{"minute_ms": 0, "agent": "claude-code", "agent_session_id": "s",
+                "agent_running": true, "activity": true,
+                "slots": [{"input": false, "focus": "agent"},
+                          {"input": false, "focus": "future_class"},
+                          {"input": false, "focus": "future_class"}]}"#,
+        )
+        .unwrap();
+        let out = compute(&idle, Some(Carry { attention: 1.0 }));
+        let leave = attention::decay(attention::LEAVE_HALF_LIFE_SECS);
+        assert!((out.multiplier - leave).abs() < 1e-9);
     }
 
     #[test]
