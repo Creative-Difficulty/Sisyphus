@@ -34,10 +34,10 @@ pub fn view() -> Element<'static, Message> {
                     .center(),
                 column![
                     card(
-                        "The only thing shared",
+                        "The only activity shared",
                         "The kind of app in front (your agent, a terminal, an \
                          editor, a browser or something else) and whether you \
-                         were active, for every 10 seconds. Nothing else.",
+                         were active, for every 10 seconds. Nothing more.",
                     ),
                     card(
                         "Never recorded",

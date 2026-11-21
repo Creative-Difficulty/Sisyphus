@@ -198,7 +198,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 - First start (`onboarding.rs`), never the settings screen:
   1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
   2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
-  3. Activity step (`consent.rs`), on every OS, until answered (`activity_allowed` absent): says it's required to count time and Sisyphus can lose time without it; one bubble with the only thing shared (the kind of app in front and whether the user was active, per 10 s), one with what's never recorded (typing, keys, mouse movements, app names, titles, screen). "Allow", or a quiet "Not now".
+  3. Activity step (`consent.rs`), on every OS, until answered (`activity_allowed` absent): says it's required to count time and Sisyphus can lose time without it; one bubble with the only activity shared (the kind of app in front and whether the user was active, per 10 s), one with what's never recorded (typing, keys, mouse movements, app names, titles, screen). "Allow", or a quiet "Not now".
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out returns to the login step)
   - one row per agent (small logo, name, Connect/Disconnect)
