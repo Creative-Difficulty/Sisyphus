@@ -1,0 +1,250 @@
+{"text": "选项2听起来更好，用那个", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "好，现在把按钮改成粉色", "lang": "zh", "act": "approval", "task": "ui_styling"}
+{"text": "行，你把测试写了吧", "lang": "zh", "act": "approval", "task": "tests"}
+{"text": "可以，push吧", "lang": "zh", "act": "approval", "task": "setup_deploy"}
+{"text": "没问题，现在加个highscore", "lang": "zh", "act": "approval", "task": "feature"}
+{"text": "早啊", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "算了，取消", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "颜色改回去，之前的更好看", "lang": "zh", "act": "stop_undo", "task": "ui_styling"}
+{"text": "把重构撤了，我更喜欢以前的结构", "lang": "zh", "act": "stop_undo", "task": "refactor"}
+{"text": "撤掉npm install，把我的node_modules搞坏了", "lang": "zh", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "把登录功能删掉", "lang": "zh", "act": "stop_undo", "task": "feature"}
+{"text": "把你刚写的测试删了", "lang": "zh", "act": "stop_undo", "task": "tests"}
+{"text": "这个fix更糟了，撤回", "lang": "zh", "act": "stop_undo", "task": "bug_fix"}
+{"text": "readme的改动撤销一下", "lang": "zh", "act": "stop_undo", "task": "docs_writing"}
+{"text": "把整个app做出来，别问我", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "你自己想吧，设计加开发整个搞定，别烦我", "lang": "zh", "act": "handoff", "task": "planning_design"}
+{"text": "你自己把测试覆盖率搞到90%，没到就别停", "lang": "zh", "act": "handoff", "task": "tests"}
+{"text": "把整个项目用typescript重写，别问问题，一直做到能编译为止", "lang": "zh", "act": "handoff", "task": "refactor"}
+{"text": "把所有东西迁到postgres，代码也全改了，别问我", "lang": "zh", "act": "handoff", "task": "setup_deploy"}
+{"text": "把整个repo都写上文档，每个文件都要，别问我任何东西", "lang": "zh", "act": "handoff", "task": "docs_writing"}
+{"text": "把整个前端重新设计一遍，所有页面，要看起来专业。做完之前别问我意见", "lang": "zh", "act": "handoff", "task": "ui_styling"}
+{"text": "你自己把项目里所有bug都找出来修掉，花多久我不管", "lang": "zh", "act": "handoff", "task": "bug_fix"}
+{"text": "把整个repo过一遍，你觉得不对的都改了，不用问", "lang": "zh", "act": "handoff", "task": "review"}
+{"text": "接下来几个小时你觉得项目怎么好就怎么做吧", "lang": "zh", "act": "handoff", "task": "other"}
+{"text": "我这里的utils.js和helpers.js有啥区别", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "git merge和rebase有什么区别？", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "一个小的discord bot用sqlite还是postgres？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "这个怎么部署到vercel", "lang": "zh", "act": "question", "task": "setup_deploy"}
+{"text": "为什么我笔记本上的计时器比我朋友电脑上的快", "lang": "zh", "act": "question", "task": "bug_fix"}
+{"text": "为什么我的navbar盖住内容了", "lang": "zh", "act": "question", "task": "ui_styling"}
+{"text": "为什么我的测试本地能跑但在github actions上不行？", "lang": "zh", "act": "question", "task": "tests"}
+{"text": "我的密码hash这样行吗还是太弱了", "lang": "zh", "act": "question", "task": "review"}
+{"text": "一个好的readme应该写什么", "lang": "zh", "act": "question", "task": "docs_writing"}
+{"text": "我所有代码都在一个2000行的文件里是不是很糟？", "lang": "zh", "act": "question", "task": "refactor"}
+{"text": "用这个库能让bot加入语音频道吗？", "lang": "zh", "act": "question", "task": "feature"}
+{"text": "我接下来该学哪个语言", "lang": "zh", "act": "question", "task": "other"}
+{"text": "/clear", "lang": "zh", "act": "other", "task": "other"}
+{"text": "给npc写个a*寻路", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "我的网页在手机上显示坏了，菜单打不开", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "把字符串常量换成enum", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "给embed加个绿色边条和缩略图", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "mock一下discord api这样我们就能测命令了", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "装一下pygame", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "在readme里加一段怎么在本地跑bot", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "设计一下boss战的状态机", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "看看我的css里有没有我用不到的东西", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "告诉我highscore存在哪", "lang": "zh", "act": "new_request", "task": "understand_code"}
+{"text": "教我排序算法怎么工作，用个小例子", "lang": "zh", "act": "new_request", "task": "learn_concept"}
+{"text": "把文件夹改名叫starhopper", "lang": "zh", "act": "new_request", "task": "other"}
+{"text": "兄弟这不行啊", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "不对，分数还是没保存，你只改了变量名", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "不对，我要的是蓝色不是绿色", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "命令应该是/kick不是!kick", "lang": "zh", "act": "correction", "task": "feature"}
+{"text": "你把我不想改名的东西也改名了", "lang": "zh", "act": "correction", "task": "refactor"}
+{"text": "你测错函数了，我说的是calculate_damage", "lang": "zh", "act": "correction", "task": "tests"}
+{"text": "npm install还是报一样的错", "lang": "zh", "act": "correction", "task": "setup_deploy"}
+{"text": "readme太长太正式了，弄短一点随意一点", "lang": "zh", "act": "correction", "task": "docs_writing"}
+{"text": "不对，这个架构对学校项目来说太复杂了", "lang": "zh", "act": "correction", "task": "planning_design"}
+{"text": "你漏了第40行那个明显的bug", "lang": "zh", "act": "correction", "task": "review"}
+{"text": "这个解释不对，循环是倒着跑的", "lang": "zh", "act": "correction", "task": "understand_code"}
+{"text": "你改完之后我还是得到这个：\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "zh", "act": "correction", "task": "error_paste"}
+{"text": "敌人应该是僵尸，2d俯视角", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "要粉色和紫色", "lang": "zh", "act": "clarification", "task": "ui_styling"}
+{"text": "点了play就直接崩了，菜单都还没出来", "lang": "zh", "act": "clarification", "task": "bug_fix"}
+{"text": "repo是私有的，我用户名是coolkid42", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "只测后端，前端跳过", "lang": "zh", "act": "clarification", "task": "tests"}
+{"text": "只改敌人那部分的代码", "lang": "zh", "act": "clarification", "task": "refactor"}
+{"text": "用英文写，再留几个放截图的位置", "lang": "zh", "act": "clarification", "task": "docs_writing"}
+{"text": "我们想自己托管，不用云", "lang": "zh", "act": "clarification", "task": "planning_design"}
+{"text": "主要注意一下性能", "lang": "zh", "act": "clarification", "task": "review"}
+{"text": "utils/math.py里那个", "lang": "zh", "act": "clarification", "task": "understand_code"}
+{"text": "用游戏的例子解释一下", "lang": "zh", "act": "clarification", "task": "learn_concept"}
+{"text": "不，第二个", "lang": "zh", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "zh", "act": "other", "task": "error_paste"}
+{"text": "修一下这个：IndexError: list index out of range", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "这是啥意思？？error: linker `cc` not found", "lang": "zh", "act": "question", "task": "error_paste"}
+{"text": "你会怎么做一个同时在很多服务器上跑的bot？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "zh", "act": "other", "task": "error_paste"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Spiel.run(Spiel.java:77)", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "这个函数线程安全吗？", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "给整个codebase写测试，把失败的全修了，不绿就别停", "lang": "zh", "act": "handoff", "task": "tests"}
+{"text": "分页那里有个off by one的bug", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "用vscode打开这个项目", "lang": "zh", "act": "new_request", "task": "other"}
+{"text": "你自己把项目里所有bug找出来修掉，花多久我不在乎", "lang": "zh", "act": "handoff", "task": "bug_fix"}
+{"text": "开始之前先做个架构计划", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "行为变了，现在输出不一样了", "lang": "zh", "act": "correction", "task": "refactor"}
+{"text": "我不是这个意思，重来", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "header，不是footer", "lang": "zh", "act": "clarification", "task": "ui_styling"}
+{"text": "我应该把highscore存文件还是存数据库", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "REST是什么意思", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "给quiz加一个60秒的倒计时", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "专业的人看了这段代码会怎么说", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "生成20个搞笑的敌人名字", "lang": "zh", "act": "new_request", "task": "other"}
+{"text": "找一下我项目里的code smell", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "用类代替所有那些全局变量", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "给game.py里每个函数写docstring", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "哦对了，再加个5秒冷却", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "我用的是discord.py 2.3版本", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "抱歉刚才问了那些蠢问题", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "麻烦再检查一下物理代码里的数学", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "error: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error\n啊这哪里少了分号", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "好的", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "把网站做成响应式", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "我按方向键没反应，但只有第一次", "lang": "zh", "act": "clarification", "task": "bug_fix"}
+{"text": "node_modules需要写进.gitignore吗？", "lang": "zh", "act": "question", "task": "setup_deploy"}
+{"text": "算了，取消", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "给todo列表加拖拽", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "帮我给一个小的社交app选个技术栈", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "为什么缓存模块里会有个lock？", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "帮我写个好点的commit描述，针对最近3个改动", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "现在变成\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "zh", "act": "correction", "task": "error_paste"}
+{"text": "你不觉得烦吗，我老是给你发这么多字", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "你今天怎么样？", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "把项目里所有的TODO列出来", "lang": "zh", "act": "new_request", "task": "understand_code"}
+{"text": "整个项目你全接手，我只看着", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "我接下来该学什么编程语言", "lang": "zh", "act": "question", "task": "other"}
+{"text": "为什么npm install这么慢", "lang": "zh", "act": "question", "task": "setup_deploy"}
+{"text": "注册之后加邮箱验证", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "use pip not conda", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "行，把改动应用了吧", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "把项目里所有TODO列出来", "lang": "zh", "act": "new_request", "task": "understand_code"}
+{"text": "不对，敌人还是穿墙", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "这个测试不稳定，让它靠谱点", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "撤销", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "做一个完整的作品集网站。别问我用什么颜色，你随便选", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "tcp和udp，信息课讲过但我忘了", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "你花几个小时搞这个，直到游戏完全做完，别问我", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "只看src/api里的文件", "lang": "zh", "act": "clarification", "task": "review"}
+{"text": "你自己把整个东西做完，别找我。谢了", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "文件叫scores.json，在data文件夹里", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "你把游戏搞坏了", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "回到之前那样", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "加一个基于websocket的多人模式", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "给我讲讲这段代码，当我是12岁小孩那样", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "哈哈不错", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "不行，还是坏的", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "我刷新页面就被登出了，应该保持登录", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "行", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "你自己继续做，直到app有readme里写的所有功能", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "嗯嗯", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "bot要在有人发!meme的时候随机发一个meme", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "把所有魔法数字挪到配置文件里", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "可以的", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "把所有地方的player都改名成hero", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "不对停，文件错了", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "太感谢了，你救了我今晚", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "我去吃个饭，一会儿见", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "你能测一下highscore保存是不是正常的吗", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "我会python但不会c++", "lang": "zh", "act": "clarification", "task": "learn_concept"}
+{"text": "点start还是会崩", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "mutex是什么？", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "为什么重启之后分数总是0", "lang": "zh", "act": "question", "task": "bug_fix"}
+{"text": "pip，不要conda", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "不，第二个", "lang": "zh", "act": "clarification", "task": "other"}
+{"text": "good morning", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "你直接全做吧，我去睡了", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "哥们这也太牛了，谢谢你", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "怎么才能免费24/7托管我的discord bot？", "lang": "zh", "act": "question", "task": "setup_deploy"}
+{"text": "帮我写一下我itch.io页面的简介", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "bot的slash commands在哪个文件里？", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "想让它更像discord，用一样的颜色", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "把这个部署到railway", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "等等等等停", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "哥们这真的太离谱了，谢谢", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "用postgres", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "用postgres吧", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "把我们加多人模式需要做的步骤列出来", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "测一下bot是不是会忽略其他bot的消息", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "做成我发的那个截图的样子", "lang": "zh", "act": "clarification", "task": "ui_styling"}
+{"text": "flask加登录的app你会用什么文件夹结构", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "把它改成一个正经的类，带方法", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "你是最棒的", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "做一个设置界面，可以调音量", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "我一整天都不在，把整个网站所有页面都做出来，做好点", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "做一个有邮箱和密码的登录页", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "这个函数线程安全吗？", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "写一个完整的minecraft克隆版，开始", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "存档格式该怎么设计，才能让旧存档继续能用", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "npm install还是报同样的错", "lang": "zh", "act": "correction", "task": "setup_deploy"}
+{"text": "蛇到边上应该从窗口另一边出来，而不是死掉", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "回到刚才的状态", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "????", "lang": "zh", "act": "other", "task": "other"}
+{"text": "test", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "加几个测试用例，测负数和零", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "ok", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "别再碰main.py了，恢复它", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "把这些callback改成async/await", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "我的密码hash这样行还是太弱？", "lang": "zh", "act": "question", "task": "review"}
+{"text": "又是同样的错误\nModuleNotFoundError: No module named 'discord'", "lang": "zh", "act": "correction", "task": "error_paste"}
+{"text": "这是个本地双人游戏，所以不用联网", "lang": "zh", "act": "clarification", "task": "planning_design"}
+{"text": "我老师还要一个类图", "lang": "zh", "act": "other", "task": "other"}
+{"text": "算了，扔掉", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "hud用复古像素字体", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "有时候球速度快的时候会穿过挡板。修一下", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "我用的是discord.py 2.3版本", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "你这个review没用，你只说了命名。看逻辑啊", "lang": "zh", "act": "correction", "task": "review"}
+{"text": "放到main分支上", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "敌人应该是僵尸，2d俯视角", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "API到底是什么，认真讲讲", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "加一个测试，检查bot会忽略其他bot的消息", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "接下来几个小时你觉得项目怎么好就怎么做吧", "lang": "zh", "act": "handoff", "task": "other"}
+{"text": "加一个搜索栏，打字的时候实时过滤列表", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "现在变成\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "zh", "act": "correction", "task": "error_paste"}
+{"text": "撤销", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "token存得安全吗，会不会被人偷走", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "把变量改名撤销，现在全对不上了", "lang": "zh", "act": "stop_undo", "task": "refactor"}
+{"text": "hud用像素字体", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "你能做一个简单的10格背包吗", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "设计模式是什么？observer那个对游戏有用吗？", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "文字没居中，还在左边", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "暂停，我先自己看看", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "padding太大了，减一半", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "gg", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "你能再检查一下物理代码里的数学吗", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "都要", "lang": "zh", "act": "clarification", "task": "other"}
+{"text": "给我写个用pyinstaller打包exe的脚本", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "把你刚做的全部回滚", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "y", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "拜拜", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "三个level文件里重复的代码要去掉", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "继续", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "爽", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "go", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "让敌人追着玩家跑", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "页面加载的时候加一个平滑的淡入动画", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "zh", "act": "other", "task": "error_paste"}
+{"text": "python是编译的还是解释的", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "这个函数里的async关键字在我的代码里是干嘛的", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "记一下，我的项目叫starhopper", "lang": "zh", "act": "other", "task": "other"}
+{"text": "review一下我的代码", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "一个有很多敌人的unity项目怎么组织最好", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "readme里emoji太多了，删掉", "lang": "zh", "act": "correction", "task": "docs_writing"}
+{"text": "等一下，别这么做", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "不对，再检查一下", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "node 20吧我记得", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "这些组件在这里是怎么共享state的？", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "时间显示的时区不对，应该是北京时间", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "我这边不行，总和还是不对", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "现在凌晨2点了我还在写代码，救命", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "布局要在电脑上是2列，手机上是1列", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "我一整天都不在，把整个网站所有页面都做出来，做好点", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "IndexError: list index out of range\n修一下", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "哇", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "把这个函数整理一下，乱死了", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "放回去", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "这要多久", "lang": "zh", "act": "question", "task": "other"}
+{"text": "这个怎么部署到vercel", "lang": "zh", "act": "question", "task": "setup_deploy"}
+{"text": "选项2听起来最好，就这个", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "图书馆app需要什么数据库表结构？先设计一下", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "async await和线程有什么区别", "lang": "zh", "act": "question", "task": "learn_concept"}

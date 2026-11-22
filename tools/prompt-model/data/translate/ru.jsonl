@@ -1,0 +1,250 @@
+{"text": "ну погнали", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "ок теперь сделай кнопку розовой", "lang": "ru", "act": "approval", "task": "ui_styling"}
+{"text": "да давай пиши тесты", "lang": "ru", "act": "approval", "task": "tests"}
+{"text": "да пушь", "lang": "ru", "act": "approval", "task": "setup_deploy"}
+{"text": "збс, теперь добавь хайскор", "lang": "ru", "act": "approval", "task": "feature"}
+{"text": "тебя не бесит что я тебе постоянно пишу?", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "забей, отмена", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "верни цвета обратно, раньше выглядело лучше", "lang": "ru", "act": "stop_undo", "task": "ui_styling"}
+{"text": "откати рефакторинг, старая структура была лучше", "lang": "ru", "act": "stop_undo", "task": "refactor"}
+{"text": "отмени npm install, он сломал мне node_modules", "lang": "ru", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "убери систему инвентаря обратно, это перебор", "lang": "ru", "act": "stop_undo", "task": "feature"}
+{"text": "удали обратно тесты которые ты только что написал", "lang": "ru", "act": "stop_undo", "task": "tests"}
+{"text": "этот фикс только хуже сделал, откати", "lang": "ru", "act": "stop_undo", "task": "bug_fix"}
+{"text": "отмени правку в readme", "lang": "ru", "act": "stop_undo", "task": "docs_writing"}
+{"text": "сделай мне сайт-портфолио с нуля. не спрашивай про цвета, бери любые", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "придумай всё сам, дизайн и сборку целиком, не отвлекай меня", "lang": "ru", "act": "handoff", "task": "planning_design"}
+{"text": "напиши тесты на весь код и почини всё что падает, не останавливайся пока всё не зелёное", "lang": "ru", "act": "handoff", "task": "tests"}
+{"text": "перепиши весь проект на typescript, вопросов не задавай, работай пока не скомпилится", "lang": "ru", "act": "handoff", "task": "refactor"}
+{"text": "мигрируй всё на postgres и подправь весь код, только без вопросов плиз", "lang": "ru", "act": "handoff", "task": "setup_deploy"}
+{"text": "задокументируй весь репозиторий, каждый файл, и меня ни о чём не спрашивай", "lang": "ru", "act": "handoff", "task": "docs_writing"}
+{"text": "сделай редизайн всего фронтенда, все страницы, чтоб выглядело профессионально. не спрашивай моё мнение пока не закончишь", "lang": "ru", "act": "handoff", "task": "ui_styling"}
+{"text": "найди и почини все баги в проекте сам, мне пофиг сколько это займёт", "lang": "ru", "act": "handoff", "task": "bug_fix"}
+{"text": "пройдись по всему репо и исправь всё что считаешь неправильным, спрашивать не надо", "lang": "ru", "act": "handoff", "task": "review"}
+{"text": "следующие пару часов делай то что считаешь лучшим для проекта", "lang": "ru", "act": "handoff", "task": "other"}
+{"text": "а почему тут callback а не promise", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "async await или потоки, в чём разница", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "лучше хранить хайскоры в файле или в базе?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "как это задеплоить на vercel", "lang": "ru", "act": "question", "task": "setup_deploy"}
+{"text": "почему счёт после перезапуска всегда 0", "lang": "ru", "act": "question", "task": "bug_fix"}
+{"text": "как отцентрировать div", "lang": "ru", "act": "question", "task": "ui_styling"}
+{"text": "надо ли тестить приватные функции?", "lang": "ru", "act": "question", "task": "tests"}
+{"text": "этот код защищён от sql инъекций?", "lang": "ru", "act": "question", "task": "review"}
+{"text": "надо комментить каждую строку или только сложные места?", "lang": "ru", "act": "question", "task": "docs_writing"}
+{"text": "это должна быть структура или класс", "lang": "ru", "act": "question", "task": "refactor"}
+{"text": "можно с этой либой сделать чтоб бот заходил в голосовые каналы?", "lang": "ru", "act": "question", "task": "feature"}
+{"text": "в каком часовом поясе сервер", "lang": "ru", "act": "question", "task": "other"}
+{"text": "какая ты модель", "lang": "ru", "act": "other", "task": "other"}
+{"text": "сделай страницу логина с почтой и паролем", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "после перезагрузки пропадают todo", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "используй классы вместо всех этих глобальных переменных", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "заголовок побольше и жирный", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "замокай discord api чтоб мы могли тестить команды", "lang": "ru", "act": "new_request", "task": "tests"}
+{"text": "сделай git init и запушь на мой гитхаб", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "напиши в readme инструкцию по установке", "lang": "ru", "act": "new_request", "task": "docs_writing"}
+{"text": "какую структуру папок ты бы взял для flask приложения с авторизацией", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "найди code smells в моём проекте", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "покажи где хранится хайскор", "lang": "ru", "act": "new_request", "task": "understand_code"}
+{"text": "расскажи как работают алгоритмы сортировки на маленьком примере", "lang": "ru", "act": "new_request", "task": "learn_concept"}
+{"text": "придумай 20 смешных имён для врагов", "lang": "ru", "act": "new_request", "task": "other"}
+{"text": "не тот файл, я сказал player.py а не enemy.py", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "не, счёт всё равно не сохраняется, ты только имя переменной поменял", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "слишком большой padding. уменьши в 2 раза", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "ты добавил базу данных а я говорил json файл", "lang": "ru", "act": "correction", "task": "feature"}
+{"text": "теперь сложнее чем было, зачем столько классов", "lang": "ru", "act": "correction", "task": "refactor"}
+{"text": "ты прошёл тест удалив assert, это читерство", "lang": "ru", "act": "correction", "task": "tests"}
+{"text": "npm install всё так же падает с той же ошибкой", "lang": "ru", "act": "correction", "task": "setup_deploy"}
+{"text": "слишком много эмодзи в readme, убери их", "lang": "ru", "act": "correction", "task": "docs_writing"}
+{"text": "не, архитектура слишком сложная для школьного проекта", "lang": "ru", "act": "correction", "task": "planning_design"}
+{"text": "ты пропустил очевидный баг в строке 40", "lang": "ru", "act": "correction", "task": "review"}
+{"text": "объяснение неверное, цикл идёт в обратную сторону", "lang": "ru", "act": "correction", "task": "understand_code"}
+{"text": "всё равно получаю это после твоей правки:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "ru", "act": "correction", "task": "error_paste"}
+{"text": "это должно работать только для админов", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "тёмная тема конечно", "lang": "ru", "act": "clarification", "task": "ui_styling"}
+{"text": "в firefox. в chrome нормально", "lang": "ru", "act": "clarification", "task": "bug_fix"}
+{"text": "windows", "lang": "ru", "act": "clarification", "task": "setup_deploy"}
+{"text": "через pytest", "lang": "ru", "act": "clarification", "task": "tests"}
+{"text": "трогай только код врагов", "lang": "ru", "act": "clarification", "task": "refactor"}
+{"text": "на английском и оставь места под скриншоты", "lang": "ru", "act": "clarification", "task": "docs_writing"}
+{"text": "это локальная игра на 2 игроков, так что сеть не нужна", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "смотри только файлы в src/api", "lang": "ru", "act": "clarification", "task": "review"}
+{"text": "та что в utils/math.py", "lang": "ru", "act": "clarification", "task": "understand_code"}
+{"text": "питон я знаю а c++ нет", "lang": "ru", "act": "clarification", "task": "learn_concept"}
+{"text": "как проще", "lang": "ru", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "ru", "act": "other", "task": "error_paste"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "че это значит?? error: linker `cc` not found", "lang": "ru", "act": "question", "task": "error_paste"}
+{"text": "почини баг где бот отвечает дважды", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "что такое race condition?", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "????", "lang": "ru", "act": "other", "task": "other"}
+{"text": "хмм не, попробуй что-то другое", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "как проходит обработка когда боту приходит сообщение", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "почему мой персонаж иногда проваливается сквозь пол", "lang": "ru", "act": "question", "task": "bug_fix"}
+{"text": "расскажи анекдот", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "да пожалуйста", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nчё за фигня", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "какой язык мне учить дальше", "lang": "ru", "act": "question", "task": "other"}
+{"text": "гоняй в цикле и улучшай игру бесконечно", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "раздели эту функцию на 300 строк на мелкие", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "избавься от вложенных циклов в генераторе карты", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "делай следующие пару часов всё что считаешь лучшим для проекта", "lang": "ru", "act": "handoff", "task": "other"}
+{"text": "а ещё добавь кулдаун 5 секунд", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "омг оно наконец-то запустилось!!!", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "теперь пишет\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "ru", "act": "correction", "task": "error_paste"}
+{"text": "в main ветку", "lang": "ru", "act": "clarification", "task": "setup_deploy"}
+{"text": "бот должен постить рандомный мем когда кто-то пишет !meme", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "уже 2 ночи а я всё кодю, помогите", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "игровая логика должна быть на сервере или на клиенте", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "вынеси все магические числа в конфиг", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "текст не по центру, всё ещё слева", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "ru", "act": "other", "task": "error_paste"}
+{"text": "тест который ты написал неправильный, он ждёт 5 а должно быть 6", "lang": "ru", "act": "correction", "task": "tests"}
+{"text": "нормально что у меня весь код в одном файле на 2000 строк?", "lang": "ru", "act": "question", "task": "refactor"}
+{"text": "не, отмена", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "файл называется scores.json и лежит в папке data", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "друзья думают что моя игра крутая, и это благодаря тебе", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "цвета плохо читаются, контраст ужасный", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "мы хотим хостить сами, без облака", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "токен должен быть в переменной окружения а не в коде", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "лучше хранить хайскоры в файле или в базе данных?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "сделай билд-скрипт который делает exe через pyinstaller", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "какой у тебя любимый язык программирования?", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "пожалуйста сделай чтоб бот отвечал рандомным мемом когда кто-то пишет !meme", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "как работает поток когда сообщение приходит боту", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "пожалуйста стоп и выкинь все незакоммиченные изменения", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "нормально что код так долго компилится", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "что такое рекурсия", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "нормально что компиляция так долго идёт", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "не, эта архитектура слишком сложная для школьного проекта", "lang": "ru", "act": "correction", "task": "planning_design"}
+{"text": "readme слишком длинный и слишком формальный, сделай коротко и по-простому", "lang": "ru", "act": "correction", "task": "docs_writing"}
+{"text": "почему таймер на моём ноуте идёт быстрее чем на компе друга", "lang": "ru", "act": "question", "task": "bug_fix"}
+{"text": "мой хеш паролей норм или слабоват?", "lang": "ru", "act": "question", "task": "review"}
+{"text": "отмени переименование переменных, теперь ничего не совпадает", "lang": "ru", "act": "stop_undo", "task": "refactor"}
+{"text": "не, враги всё ещё ходят сквозь стены", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "проверь нет ли уязвимостей в коде логина", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "напиши help текст для флага --verbose", "lang": "ru", "act": "new_request", "task": "docs_writing"}
+{"text": "добавь двойной прыжок", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "протестируй что бот игнорит сообщения от других ботов", "lang": "ru", "act": "new_request", "task": "tests"}
+{"text": "ага давай", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "объясни oauth простыми словами", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "пока", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "код соответствует pep8?", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "ты запушил в main а я хотел новую ветку", "lang": "ru", "act": "correction", "task": "setup_deploy"}
+{"text": "сделай целиком android приложение, работай всю ночь", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "а что вообще такое api", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "упрости эту цепочку if else", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "найди и почини все баги в проекте сам, мне пофиг сколько времени", "lang": "ru", "act": "handoff", "task": "bug_fix"}
+{"text": "змейка должна появляться с другой стороны экрана на краю а не умирать", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "центрируй всё и добавь больше padding", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "pip, не conda", "lang": "ru", "act": "clarification", "task": "setup_deploy"}
+{"text": "расскажи анекдот", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "сделай мне калькулятор с gui на tkinter", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "хедер, не футер", "lang": "ru", "act": "clarification", "task": "ui_styling"}
+{"text": "переименуй папку в starhopper", "lang": "ru", "act": "new_request", "task": "other"}
+{"text": "используй pytest", "lang": "ru", "act": "clarification", "task": "tests"}
+{"text": "сделай все оставшиеся задачи и не отписывайся мне", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "что делает docker compose up", "lang": "ru", "act": "question", "task": "setup_deploy"}
+{"text": "разбей проект на маленькие задачи которые я буду делать по очереди", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "спрайт мерцает когда идёт влево, почини", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "сделай страницу логина с почтой и паролем", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "сделай чтоб чатбот помнил последние 5 сообщений", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "привет claude", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "переделай эти callbacks на async/await", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "как роутер решает какую страницу показать", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "бот всё равно отвечает дважды, твой фикс ничего не дал", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "стоп, я сначала сам посмотрю", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "ок го дальше", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "используй pip а не conda", "lang": "ru", "act": "clarification", "task": "setup_deploy"}
+{"text": "ты меня не так понял, начни заново", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "можешь перепроверить математику в физике", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "после твоих изменений всё равно вылезает вот это:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "ru", "act": "correction", "task": "error_paste"}
+{"text": "почему npm install так долго", "lang": "ru", "act": "question", "task": "setup_deploy"}
+{"text": "я имел в виду левый сайдбар", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "да", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "сделай мне код ревью, только честно", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "вынеси работу с базой в отдельный модуль", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "что значит идемпотентный", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "сделай скрипт который через pyinstaller делает exe", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "ctrl z", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "ты поменял весь лэйаут, я хотел только шрифт", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "не. наоборот", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "это сложнее чем раньше, зачем столько классов", "lang": "ru", "act": "correction", "task": "refactor"}
+{"text": "сгенери 20 смешных имён для врагов", "lang": "ru", "act": "new_request", "task": "other"}
+{"text": "сделай код читабельнее, мне его учителю показывать", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "добавь павер-апы: скорость, щит и магнит", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "ru", "act": "other", "task": "error_paste"}
+{"text": "почини утечку памяти, игра тормозит через 10 минут", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "ты поменял весь лэйаут, я хотел только шрифт", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "git reset на последний коммит", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "это для школьного проекта про солнечную систему", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "это для школьного проекта про солнечную систему", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "1", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "давай дальше пжл", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "оставь названия функций как были", "lang": "ru", "act": "clarification", "task": "refactor"}
+{"text": "можно ли сделать мультиплеер или это слишком сложно с таким сетапом", "lang": "ru", "act": "question", "task": "feature"}
+{"text": "короче у меня есть идея", "lang": "ru", "act": "other", "task": "other"}
+{"text": "настрой tailwind", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "кто вызывает update_score()", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "вложенные циклы в генераторе карты надо убрать", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "почему тут hashmap а не vec", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "помоги придумать как хранить уровни, json или в коде", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "в пагинации off by one ошибка", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "сделай из этого нормальный класс с методами", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "спрайт мерцает когда идёт влево, почини", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "не трогай больше main.py, восстанови его", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "проверь нет ли проблем с безопасностью в коде логина", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "мы команда из 3, остальные делают графику", "lang": "ru", "act": "other", "task": "other"}
+{"text": "как дела сегодня?", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "вот задание: реализовать библиотечную систему с книгами и участниками", "lang": "ru", "act": "other", "task": "other"}
+{"text": "тот юзер, не админ", "lang": "ru", "act": "clarification", "task": "other"}
+{"text": "закоммить это с нормальным сообщением", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "используй классы вместо всех глобальных переменных", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "твой ревью бесполезный, ты говорил только про названия. смотри на логику", "lang": "ru", "act": "correction", "task": "review"}
+{"text": "поведение изменилось, вывод теперь другой", "lang": "ru", "act": "correction", "task": "refactor"}
+{"text": "это хорошее решение или есть получше?", "lang": "ru", "act": "question", "task": "review"}
+{"text": "полоска жизни должна краснеть когда меньше 20%", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "не, только главную страницу", "lang": "ru", "act": "clarification", "task": "other"}
+{"text": "да на всё", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "вот текст задания из pdf: реализовать библиотечную систему с книгами и участниками", "lang": "ru", "act": "other", "task": "other"}
+{"text": "игровая логика на сервере или на клиенте?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "хочу переключатель тёмной темы", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "у нас 3 недели и нас только двое", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "смотри только файлы в src/api", "lang": "ru", "act": "clarification", "task": "review"}
+{"text": "что проще", "lang": "ru", "act": "clarification", "task": "other"}
+{"text": "отмени это", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "тесты падают, почини", "lang": "ru", "act": "new_request", "task": "tests"}
+{"text": "текст не по центру, всё ещё слева", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "твой ревью бесполезный, ты говорил только про названия. смотри на логику", "lang": "ru", "act": "correction", "task": "review"}
+{"text": "вариант 2 звучит лучше, бери его", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "я не это имел в виду, давай ещё раз", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "сделай код читабельнее, мне его учителю показывать", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "не та версия питона, у нас 3.11", "lang": "ru", "act": "correction", "task": "setup_deploy"}
+{"text": "как компоненты тут делят стейт?", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "почему моя навбар перекрывает контент", "lang": "ru", "act": "question", "task": "ui_styling"}
+{"text": "план слишком большой, у нас только выходные", "lang": "ru", "act": "correction", "task": "planning_design"}
+{"text": "есть ли тут что-то что может крашнуться? глянь main.rs", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "как захостить дискорд бота 24/7 бесплатно?", "lang": "ru", "act": "question", "task": "setup_deploy"}
+{"text": "не могу выбрать между rest api и graphql, плюсы и минусы для школьного проекта?", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "убери систему инвентаря обратно, это перебор", "lang": "ru", "act": "stop_undo", "task": "feature"}
+{"text": "на десктопе 2 колонки, на телефоне 1", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "объяснение неверное, цикл идёт в обратную сторону", "lang": "ru", "act": "correction", "task": "understand_code"}
+{"text": "ок, классно, следующий шаг", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "давай", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "хей", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "сделай целый клон твиттера с авторизацией и лентой. я на вопросы не отвечаю, так что решай сам", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "стоп", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "лэйаут должен быть в 2 колонки на десктопе и в 1 на телефоне", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "двойной прыжок плиз", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "милый логотип в хедер, простого svg хватит", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "что такое mutex?", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "возьми первый вариант но сохраняй данные в json файл", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "настрой всё для деплоя, ci, docker, хостинг, всё что нужно, я не хочу об этом слышать пока оно не запущено", "lang": "ru", "act": "handoff", "task": "setup_deploy"}
+{"text": "когда обновляю страницу меня разлогинивает, должно оставаться", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "у нас 3 недели и нас только двое", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "забей, выкинь это", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "это безопасно от sql инъекций?", "lang": "ru", "act": "question", "task": "review"}
+{"text": "ок это была бешеная сессия", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "нет это неправильно", "lang": "ru", "act": "correction", "task": "other"}
+{"text": "как мне спроектировать формат сейва чтобы старые сейвы продолжали работать", "lang": "ru", "act": "new_request", "task": "planning_design"}

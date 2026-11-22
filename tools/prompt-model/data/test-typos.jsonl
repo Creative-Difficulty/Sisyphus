@@ -1,0 +1,720 @@
+{"text": "hey", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "hmm wai", "lang": "en", "act": "other", "task": "other"}
+{"text": "my wifi just died loll, one sec", "lang": "en", "act": "other", "task": "other"}
+{"text": "thans!!", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "you're actuall pretty good at thks", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "good morniny, ready to code?", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "add a scord counter to my snake gaame that goes up when the snake eats an apple", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "make a disdod bot with a /roll command thha rolls a diec", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "i nede a login age with email and password, store users un sqlite", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "buld the whlie todo app wit react and a backend, i'j going to sleep, dont ask me anythign", "lang": "en", "act": "handoff", "task": "feature"}
+{"text": "cahnge hte backgground to a dark purple gradient and use a nice font", "lang": "en", "act": "new_request", "task": "ui_styling"}
+{"text": "setup a github actions owrkflow that runs my tests on evrey push", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "how do i depoly thison vercel", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "wite unit tests fo the calculate_damage ufnction", "lang": "en", "act": "new_request", "task": "tests"}
+{"text": "adx tests offr the login routtf, includinb wrong password", "lang": "en", "act": "new_request", "task": "tests"}
+{"text": "write a readme for my projwct with install steps", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "add commndts t main.py sk my teacher underqtands it", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "scn you document the api ennpoints in markdown", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "split game.js into  msaller files, its like 900 lines", "lang": "en", "act": "new_request", "task": "refactor"}
+{"text": "reanme all the variables called x1 adn x2 to something that akme sensse", "lang": "en", "act": "new_request", "task": "refactor"}
+{"text": "remove thf duplicate code iin the enemy flasse", "lang": "en", "act": "new_request", "task": "refactor"}
+{"text": "should i use mongoodb or postgres for a small ofrum? help me deicde", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "we hav a school presentagion tomorrow, my ggrup ants ot make a weather app, no idea how to structure it", "lang": "en", "act": "other", "task": "planning_design"}
+{"text": "an you chck my code for security problems", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "my teacher said the clde is messy and hard to read", "lang": "en", "act": "other", "task": "review"}
+{"text": "the playe fall trough the flor when he jumps near the wall, fix tahtt", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "nav menu doesnt close on mobile after cilckng a ilnk", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "TypeErrr: Canno4 read propetries of udnefined (erading 'map')\n    at ProductList (src/components/ProductList.jsx:14:22)\n    at renderWithHooks (react-dom.development.js:16305:18)", "lang": "en", "act": "new_request", "task": "error_paste"}
+{"text": "error[E0382]: borrwo of moved valu:`name`\n --> src/main.rs:8:20\n  |\n6 |     let name = String::from(\"bob\");\n7 |     greet(name);\n8 |     println!(\"{}\", name);\n  |                    ^^^^ value borrowed here after move", "lang": "en", "act": "new_request", "task": "error_paste"}
+{"text": "n tahts wrong, hte enemy should chase md, n9t run away", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "you brok the save system, now nothing loadw", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "thats not the color i wajted, i qai light blue not dark bule", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "still nocetnered lol", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "no, ttue ump is way too floaty, make it snappy", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "Traceback (most ecent call isat):\n  File \"bot.py\", line 22, in <module>\n    client.run(TOKEN)\nTypeError: run() missing 1 required positional argument: 'token'\nstill getting this", "lang": "en", "act": "correction", "task": "error_paste"}
+{"text": "yes the second one, and also jake iy save to a json file", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "i meant the left sidebar noh thetop bar", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "us flask not django", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "and the score shoulw show in the top right", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "yeah ypetst is fine, just put them in a tests folfer", "lang": "en", "act": "clarification", "task": "tests"}
+{"text": "ok", "lang": "en", "act": "approval", "task": "other"}
+{"text": "yes", "lang": "en", "act": "approval", "task": "other"}
+{"text": "coontinue", "lang": "en", "act": "approval", "task": "other"}
+{"text": "yes install iit", "lang": "en", "act": "approval", "task": "setup_deploy"}
+{"text": "whar does the update_world func4iion do?", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "wher is the plaayer health hhanddled in this project", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "whyy is this loop in app.js usin settimeout like that", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "what the difference between a class and ag objsct", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "what is xn pai, like for real", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "explajb rceursion like im 12", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "why does my game lag when there aer lots of rnemse", "lang": "en", "act": "question", "task": "bug_fix"}
+{"text": "is this code even safe to put on bithub", "lang": "en", "act": "question", "task": "review"}
+{"text": "stop, thats ont what iwanted", "lang": "en", "act": "stop_undo", "task": "other"}
+{"text": "undo htat please", "lang": "en", "act": "stop_undo", "task": "other"}
+{"text": "wait doon' add the sh yet, remov it", "lang": "en", "act": "stop_undo", "task": "feature"}
+{"text": "put the old buttknsfyle bzck", "lang": "en", "act": "stop_undo", "task": "ui_styling"}
+{"text": "build me  fll multiplayer platfomrer game, everything, levels, sounds, mmenu. work on it as lon as you need", "lang": "en", "act": "handoff", "task": "feature"}
+{"text": "just make the enire website for m band, pages, design, contact form, whatever you think is good, i dont care", "lang": "en", "act": "handoff", "task": "feature"}
+{"text": "write th whole bcakfnd for my hcat app, i'll check ack in the morning", "lang": "en", "act": "handoff", "task": "feature"}
+{"text": "do whatever you want to ipmroge the project, dont ask me stuf", "lang": "en", "act": "handoff", "task": "other"}
+{"text": "hi", "lang": "de", "act": "chit_chat", "task": "other"}
+{"text": "hänoment", "lang": "de", "act": "other", "task": "other"}
+{"text": "ey kurze pzuse, mein bruder eill zocken", "lang": "de", "act": "other", "task": "other"}
+{"text": "vielen dwnk, lauft", "lang": "de", "act": "chit_chat", "task": "other"}
+{"text": "boah das siehtt ja richtig geil aus", "lang": "de", "act": "chit_chat", "task": "other"}
+{"text": "guten morge", "lang": "de", "act": "chit_chat", "task": "other"}
+{"text": "cih will in einem tetris klon ein vorschau für den nächstten stein", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "mach einen telegram bot der mir morgeens das wetter für münchen schickt", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "brauche ein formular  fü meine schulhomegpe, das die eingaaben in eine csv schreibt", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "bau mir den ganzen webshop für unser schülerprojekt mit warenkorb nud bezahlseite, ic bin bis abends weg, nix fragen", "lang": "de", "act": "handoff", "task": "feature"}
+{"text": "die büerschritf soll größer sein und die farben isschen wärmer", "lang": "de", "act": "new_request", "task": "ui_styling"}
+{"text": "installer alle pakeete aus der requirments.txt und sarte dej server", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "wie stell ich das wuf github pages", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "schreib pytest tests für die klasze Inventar", "lang": "de", "act": "new_request", "task": "tests"}
+{"text": "test mal ob dre taschenrechner auhc druh null teilt", "lang": "de", "act": "new_request", "task": "tests"}
+{"text": "erstell ne redame auf deutsch und englisch", "lang": "de", "act": "new_request", "task": "docs_writing"}
+{"text": "kommentier die schwiwrigen stellen in physik.py", "lang": "de", "act": "new_request", "task": "docs_writing"}
+{"text": "mach eine kurze dok wie man daas spiel ss6eyert", "lang": "de", "act": "new_request", "task": "docs_writing"}
+{"text": "die funktion lade_level ist riesig, zerlge die mal in kleine funktionen", "lang": "de", "act": "new_request", "task": "refactor"}
+{"text": "alle avriablen heißen irgendwas mit tmp, benenn die bitte ordentlich", "lang": "de", "act": "new_request", "task": "refactor"}
+{"text": "mach aus den drei fas gleichen css regeln eine einzige", "lang": "de", "act": "new_request", "task": "refactor"}
+{"text": "was idt besser fürs backed, node oder python? wi3 sind zu dritt und kennen nur python  bisschen", "lang": "de", "act": "new_request", "task": "planning_design"}
+{"text": "unsere gruppe sll  bis freitag eine uqiz ap bageben, wir haben noch gar keinen paln", "lang": "de", "act": "other", "task": "planning_design"}
+{"text": "guck mal ob da i3gendwo passwörteer im code stehe", "lang": "de", "act": "new_request", "task": "review"}
+{"text": "mein informatiklerher sagt das ist aoles spaghetti", "lang": "de", "act": "other", "task": "review"}
+{"text": "beim doppelpsrnug bleibt die figur manchmall in der luft hngen", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "die bipder auf edr seite sind am handy viel zu breit", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "uncaught referenceerrorr: spielerx iz not defined\n    at draw (game.js:45:12)\n    at loop (game.js:80:5)", "lang": "de", "act": "new_request", "task": "error_paste"}
+{"text": "Compilinf projekt v0.1.0\nerror[E0308]: mismatched types\n --> src/main.rs:12:18\n  |\n12 |     let summe: i32 = werte.iter().sum::<f64>();\n  |                ^^^ expected `i32`, found `f64`", "lang": "de", "act": "new_request", "task": "error_paste"}
+{"text": "nen di kuge soll nach oben fliegen, nicbt nach unten", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "jtezt gehen die highscores gar nicht mehr, vorher gings", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "das grun ist viel zu grell, mach es urhigr", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "der buttn ist immre hoch linnks", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "mach das mit dem timer nocchmal, der läuft do0pet so schnell wie er soll", "lang": "de", "act": "correction", "task": "feature"}
+{"text": "ModuldNotFoundError: No module named 'pygame'\nhab ich doch schon installiert??", "lang": "de", "act": "correction", "task": "error_paste"}
+{"text": "ja mit dem zweiten vorschlag, ud es soll uachh auf dem handy gehen", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "ich mein den roten button unten, bicht den oben", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "nimh sqliet, wir brauchen kkeine grkße datenbank", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "ja und die leben solen als gerzne ng3zeigt werden", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "die tessts sollen auch en fall mit leerwr eingabe peüfen", "lang": "de", "act": "clarification", "task": "tests"}
+{"text": "ja", "lang": "de", "act": "approval", "task": "other"}
+{"text": "asst", "lang": "de", "act": "approval", "task": "other"}
+{"text": "ach e8ter", "lang": "de", "act": "approval", "task": "other"}
+{"text": "aj bitte die abhngigkeiten installieren", "lang": "de", "act": "approval", "task": "setup_deploy"}
+{"text": "was heißt das hier eigentlich mit de lambda in zeile 40", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "in welcher datei wird der ggner gespawbt", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "wieso nutzt du hier async und nicht einfash ne normale funktion", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "was ist eni pointer", "lang": "de", "act": "question", "task": "learn_concept"}
+{"text": "was bedeut6e git rebase, h check das ine", "lang": "de", "act": "question", "task": "learn_concept"}
+{"text": "a2s ist der untercshied zwischen http und https", "lang": "de", "act": "question", "task": "learn_concept"}
+{"text": "warumstrzt ds programm nur manchmal ab, nicht imner", "lang": "de", "act": "question", "task": "bug_fix"}
+{"text": "iet s ok senn mei api key in der conifg datei  steht", "lang": "de", "act": "question", "task": "review"}
+{"text": "ahlt stopp", "lang": "de", "act": "stop_undo", "task": "other"}
+{"text": "mach das letzte bitte rckgängig", "lang": "de", "act": "stop_undo", "task": "other"}
+{"text": "das musikmenu doch nicnt, lsoch ds wieder", "lang": "de", "act": "stop_undo", "task": "feature"}
+{"text": "ide schrfit wieder so wie vorher", "lang": "de", "act": "stop_undo", "task": "ui_styling"}
+{"text": "schreib mir ein komplettes rollenspiel in python, mit karte, kampffsystm und ingena4r. arbeit stundenlang  dran", "lang": "de", "act": "handoff", "task": "feature"}
+{"text": "programmier einfach alles was fur meinen discor server nutzlich ware,  entscheide du", "lang": "de", "act": "handoff", "task": "feature"}
+{"text": "mach die kmopletrd app gertig, ich will erxt die fertige vresion sehen", "lang": "de", "act": "handoff", "task": "feature"}
+{"text": "mach einfach weiter bis alles perfekt ist, ohne mich zu rfagen", "lang": "de", "act": "handoff", "task": "other"}
+{"text": "yo", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "attends 'ai un truc à régler", "lang": "fr", "act": "other", "task": "other"}
+{"text": "mdr mon cha6 vient de marcher sur mon clvier", "lang": "fr", "act": "other", "task": "other"}
+{"text": "merci, ca marche nikel", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "franchement t'es un gene", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "coucoou, on s'y met ?", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "ajotue un système de vies au jeu, le joueur en a 3 et perd une à chaque ennemi touché", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "je veux que mon site de portfolio ait un formulaire qui m'envie un mail", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "cree tnn bot telegram qui repond avec une  blague au hasard quand on tape /blgaus", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "fais tout le jeu de cartew en pythkn avec règles, ia de l'adversairwe et menu, je pras en vacances, ne je demande rien", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "le ti4re doit etre en gras et plux gros, vace dees coins zrrondis sur les images", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "installe s dépendanceq et lance le rojet en locp", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "comment js fais pour mettre mon sitr s6r gitthub pages", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "écris des tedts avec oytest poour  la clases Panieer", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "verifiee que mes tests passent tous", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "fais un redmee em français avvec des captues d'écan", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "comment lse passages compliqués de cmobat.py", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "écris u pettit guide pour expliquer les touches du jeu", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "la fonction chargre_niveau fait 200 lignes, decoupe-la", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "eenome touts les variablws qui s'appellent truc et machin", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "fusionne les trois fonctions qul font presque la meme chose", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "node ou python pour le ackend ? on est deux et on connaît hieux python", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "on a un exposé en nso vendredi, on vejt faire un quiz mai on sait pas par  commencsr", "lang": "fr", "act": "other", "task": "planning_design"}
+{"text": "regarde si j'a laisssé eds mots dde apsse dans le code", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "ma prof d'info dit que mon code est un vrxi plat de spaghettis", "lang": "fr", "act": "other", "task": "review"}
+{"text": "qaund je fais un double saut ie perso reste bloqué en l'air", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "les images debordent de l'ecran sur tele9hone", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "uncaught typeerror: canont set proepdties of nyll (setting 'innerhtml')\n    at afficher (script.js:23:41)\n    at HTMLButtonElement.onclick (index.html:15:30)", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "error[E0308]: jismatchedtypes\n --> src/main.rs:9:18\n  |\n9 |     let n: usize = x.len() as i32;\n  |            -----   ^^^^^^^^^^^^^^ expected `usize`, found `i32`", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "non la ballle doit aller vres le haut pas vers le bas", "lang": "fr", "act": "correction", "task": "bug_fix"}
+{"text": "maintenant les scores ne marcchent pkus alors que ca marchait avant", "lang": "fr", "act": "correction", "task": "bug_fix"}
+{"text": "c vert est trop flsahy, mets quelque ch9se de plus ccalme", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "le bouton wf toujouurs a nauche", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "refis le chrono, il v deux fois trop vite", "lang": "fr", "act": "correction", "task": "feature"}
+{"text": "modullenotfounderror: no omdule ned 'pygame'\nj'ai pourtant déjà installé pygame", "lang": "fr", "act": "correction", "task": "error_paste"}
+{"text": "oui avec ta deuxième dée, et que ça march auss su mobile", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "js larle dubouto rouge en bas, pas celui d haut", "lang": "fr", "act": "clarification", "task": "ui_styling"}
+{"text": "prends sqlit3, pas besoin d'une grlsse base d3 donnese", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "et il faut que ca marche avec oa mandtte aussi", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "les tests doivennt aussi vérifier le cas  d'une saisie vid", "lang": "fr", "act": "clarification", "task": "tests"}
+{"text": "oui", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "parfaut", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "va-y", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "ok installe ce qu'il fzut", "lang": "fr", "act": "approval", "task": "setup_deploy"}
+{"text": "c'est quoi le lambdaa a la ligne 40 ", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "das quel ficjier l'ennemi aoparaît", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "pourqui tu utiilises saync ici et pas une fonction normale", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "c'ets quoi un pointeur", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "git rbase ça veut dire quoi, j'ai jamaicmpris", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "c'est quuoi la différeence entre http et https", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "pourquoi le proobrrammw plante seulemnet parfosi", "lang": "fr", "act": "question", "task": "bug_fix"}
+{"text": "c'est grave si ma cle apiest dans le fishhier de config", "lang": "fr", "act": "question", "task": "review"}
+{"text": "xtoppe", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "annule le ddernier chanegmet stp", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "finalement pas d enu musique, supprime-le", "lang": "fr", "act": "stop_undo", "task": "feature"}
+{"text": "remets la poliive comme avan", "lang": "fr", "act": "stop_undo", "task": "ui_styling"}
+{"text": "fais-moi un rpg complet en lython avsc arte, ocmbats et inventaire. bosse cessus pendant des heures", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "ccode tout ce qui pourrait être utile pour m serveur disscord, tu cohis9s", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "terminee toute 'appli, je veux juste voir la gersion finale", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "continu husqu'a ce qeu ce soit parfait, asns me ddemanderr", "lang": "fr", "act": "handoff", "task": "other"}
+{"text": "holaa", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "esepra un momento", "lang": "es", "act": "other", "task": "other"}
+{"text": "perdona, mi madre m esta llamando para cemar", "lang": "es", "act": "other", "task": "other"}
+{"text": "gracisa tio, funciona perfecto", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "jjaaja qué crack eres", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "buenas, vamos a lrogramar un rato?", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "quiero que el jugadoor pueda recoer monedas en mi juego  de plataformas y que se sumen arriba", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "hazme u bot de whatsapp que responda con un chiste cuando le  escribo \"hicse\"", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "necesito una pagin de contacto para la web del insti con un formulario que nuarde los mensajes", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "hazme toda pa tiedna online para eel rpoyecto de clase, con carrito y pago. me voy a  dormir, no me preguntes nada", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "ponel menú de ariba en begro y lso bbotones con la esquina rexondeada", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "instala las dependenciaas y arranca el servidpr en local", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "como subl esto a internet gratis", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "ssrbie tests paraak funcion calcular_puntos", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "imra a ver si los tests pasan tods, lgunosfallan", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "haz un readme en español con una expilcacion de como se juega", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "pon fomenatrios en el archivo eneemigos.js qus no entiendo nada", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "documrnta que hace cda endpoint de la api", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "el archivo main.py tien 800 lineas, rifideloen oudlox", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "cambia los nombres de als varriable que se llaancosa1 y cosa2", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "quita el codigoo repetido de ias funcionex de dibujo", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "es mejor usar firebase o supabaes para unx app de notas? soos novatos", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "e tecnolgoa nos han mwndado hacer uuna app de recetas para el viernes y no sabemos ni por donde empezar", "lang": "es", "act": "other", "task": "planning_design"}
+{"text": "puedes revisar si mi codigo tienee algnu fallo df sguridad", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "el profe dicce que mi codigo esta muyy despddrenado", "lang": "es", "act": "other", "task": "review"}
+{"text": "cuando e personaje s2 agacha junto a la pared se queda atascado", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "el bboton de enfar no hace nada en el movil", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "yntaxEror: Unexpected token '}' \n    at Module._compile (node:internal/modules/cjs/loader:1378:18)\n    at index.js:34", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "error: cannot find module 'expesss'\nRequire stack:\n- /home/pablo/bot/index.js\n    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "no, so está mal, el enemgio tiene que perseugirme no huri", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "rmopiste el guradado, ahora no farga nada", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "es no es el azul que aureía, te dije azul clro", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "siguf sih esrar centdado", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "no, el satlo es muy lento, hazlo mas rapido", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "IndexError: llist igdex uot of range\n  File \"main.py\", line 31, in mover\n    return mapa[y][x]\nsigue saliendo lo mismo", "lang": "es", "act": "correction", "task": "error_paste"}
+{"text": "si la segunda opcion, y qu se guarde en un rachivo json", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "me refieto a al barr lateral izquierda, no la de agriba", "lang": "es", "act": "clarification", "task": "ui_styling"}
+{"text": "usa sqlite qe es mas facil", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "y que el maracdor salga arriba a la derecha", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "valecon pytest, ponlow en una capreta tests", "lang": "es", "act": "clarification", "task": "tests"}
+{"text": "ok", "lang": "es", "act": "approval", "task": "other"}
+{"text": "sip", "lang": "es", "act": "approval", "task": "other"}
+{"text": "dal", "lang": "es", "act": "approval", "task": "other"}
+{"text": "si, insatlalo", "lang": "es", "act": "approval", "task": "setup_deploy"}
+{"text": "que hace laa funcion actualizar_mundo", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "donde se controla la vdia del jugdaor en este peoyectoo", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "por qeue uass u setInterval aqui", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "cal es  la iferencia entre una clase  un ofjeto", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "que es una api exatcamentee", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "explicame recursividad como si tuvieta 10 años", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "por que se traba el juego cuando hay muchoss enemigos", "lang": "es", "act": "question", "task": "bug_fix"}
+{"text": "es seguro subir eto a github con mi clave dentro", "lang": "es", "act": "question", "task": "review"}
+{"text": "9ara, eso no es lo que queia", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "deshaz wso porfa", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "espera, jo pongasla tienda todavia, quitala", "lang": "es", "act": "stop_undo", "task": "feature"}
+{"text": "pon lx fuente de anted", "lang": "es", "act": "stop_undo", "task": "ui_styling"}
+{"text": "hame u juego de plataformas mult8jugador complleto con niveles, sonido y menu. trabaja en ello todo lo que neecsites", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "programa todo lo que le haga fxlta ami servid0r de discord, tu decides", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "terminna kaap entera, olo qiuero ver la version final", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "sigue emjorando el proyecto sin preguntarme nada", "lang": "es", "act": "handoff", "task": "other"}
+{"text": "oi", "lang": "pt", "act": "chit_chat", "task": "other"}
+{"text": "eraí", "lang": "pt", "act": "other", "task": "other"}
+{"text": "foi mal, minh me em chamou pra jantar", "lang": "pt", "act": "other", "task": "other"}
+{"text": "valeu, funcinou!", "lang": "pt", "act": "chit_chat", "task": "other"}
+{"text": "mano tu e muito fom  hisso", "lang": "pt", "act": "chit_chat", "task": "other"}
+{"text": "bom dia, bora coda?", "lang": "pt", "act": "chit_chat", "task": "other"}
+{"text": "qeuero que o jogador ganhe pogtos quand destriur uma nave no meu jogo de eslaço", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "faz um bot de discord uqe toca música quando eu mando !0lay", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "preciso de uma payina de cadastro com nm e eamil que salvz num banco de daods", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "faaz o site inteiro da minha bxnda com aginas, design e formulaario de contato, to indo pra aula, nao me pergnuta nada", "lang": "pt", "act": "handoff", "task": "feature"}
+{"text": "dixa o fundo do site preto e as letras mais grandes", "lang": "pt", "act": "new_request", "task": "ui_styling"}
+{"text": "instala as edpendencias e rova o projeto", "lang": "pt", "act": "new_request", "task": "setup_deploy"}
+{"text": "como eu coloco ecse  site no ar df grsca", "lang": "pt", "act": "new_request", "task": "setup_deploy"}
+{"text": "escrevetetes pa fucnao calcular_fretee", "lang": "pt", "act": "new_request", "task": "tests"}
+{"text": "rova k testes e ve o quue ta querando", "lang": "pt", "act": "new_request", "task": "tests"}
+{"text": "fa um rreadme explicando como instalar erodar", "lang": "pt", "act": "new_request", "task": "docs_writing"}
+{"text": "coloa cometjarios no arquivo inimigo.py pra eu enetnder", "lang": "pt", "act": "new_request", "task": "docs_writing"}
+{"text": "documentaos endpointts da api", "lang": "pt", "act": "new_request", "task": "docs_writing"}
+{"text": "o aruivo princial ta so 1000 linhas, sepsra em modulos", "lang": "pt", "act": "new_request", "task": "refactor"}
+{"text": "trcoa o gome das variaveis que se chamaj aa e bb 0or nomes melohres", "lang": "pt", "act": "new_request", "task": "refactor"}
+{"text": "tora o codkgo duplicado das funcoes de colisao", "lang": "pt", "act": "new_request", "task": "refactor"}
+{"text": "vale mais apena usar mysql ou mongodb pra mu app df ta3efas? sou iniciajte", "lang": "pt", "act": "new_request", "task": "planning_design"}
+{"text": "a escola pediu uk projeto de feirw de ciencias, queremos fazer um app de erciclaegm mas nao sei por onde cmecar", "lang": "pt", "act": "other", "task": "planning_design"}
+{"text": "da uma olhada se mmeu codigo tem alguma falj de seguranca", "lang": "pt", "act": "new_request", "task": "review"}
+{"text": "meu professor ffalou que meu codigo ta uma baguna", "lang": "pt", "act": "other", "task": "review"}
+{"text": "o personagem ficaa perso na parede quando pula", "lang": "pt", "act": "new_request", "task": "bug_fix"}
+{"text": "o menu no celula5 nao fecha quando clico num link", "lang": "pt", "act": "new_request", "task": "bug_fix"}
+{"text": "ReferebceError: pontoa is not defined\n    at atualizar (game.js:52:9)\n    at gameLoop (game.js:101:3)", "lang": "pt", "act": "new_request", "task": "error_paste"}
+{"text": "Traceback (most recent czll  last):\n  File \"main.py\", line 14, in <module>\n    resultado = soma(1, \"2\")\nTypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "pt", "act": "new_request", "task": "error_paste"}
+{"text": "nao, ta errado, o inimgio tem que me eguir e nao ugi", "lang": "pt", "act": "correction", "task": "bug_fix"}
+{"text": "voce qubrou o save, agora nao carfega nada", "lang": "pt", "act": "correction", "task": "bug_fix"}
+{"text": "essa nao é a co que eu 2ueeeri, eu falei azul clro", "lang": "pt", "act": "correction", "task": "ui_styling"}
+{"text": "continua desalnhado", "lang": "pt", "act": "correction", "task": "ui_styling"}
+{"text": "nao, o pulo ta muito lento, deixa mia rapdo", "lang": "pt", "act": "correction", "task": "feature"}
+{"text": "modluenotfounderror: nomodul named 'discord'\ncontinua dando esse erro mesmo depois de instalar", "lang": "pt", "act": "correction", "task": "error_paste"}
+{"text": "sim  segunda opçao, e salva num arrquivoo json", "lang": "pt", "act": "clarification", "task": "feature"}
+{"text": "eu quis idzer aa barra lateral esauerda, nao a de ma", "lang": "pt", "act": "clarification", "task": "ui_styling"}
+{"text": "sua postgres emsmo", "lang": "pt", "act": "clarification", "task": "planning_design"}
+{"text": "e a ponntuacao tme que ficar no canto de cima", "lang": "pt", "act": "clarification", "task": "feature"}
+{"text": "pode ser pytes, bota numa pasta tests", "lang": "pt", "act": "clarification", "task": "tests"}
+{"text": "blz", "lang": "pt", "act": "approval", "task": "other"}
+{"text": "sim", "lang": "pt", "act": "approval", "task": "other"}
+{"text": "continuz", "lang": "pt", "act": "approval", "task": "other"}
+{"text": "podeintala", "lang": "pt", "act": "approval", "task": "setup_deploy"}
+{"text": " que a ufncao atualizar_mundo afz", "lang": "pt", "act": "question", "task": "understand_code"}
+{"text": "one que  vica do jogador é controlada on pr0jeto", "lang": "pt", "act": "question", "task": "understand_code"}
+{"text": "por que tu ussou setTimeout uqi", "lang": "pt", "act": "question", "task": "understand_code"}
+{"text": "qul a diferença ente classe e objfto", "lang": "pt", "act": "question", "task": "learn_concept"}
+{"text": " que é uma api de verdade", "lang": "pt", "act": "question", "task": "learn_concept"}
+{"text": "me explica ercursao coom se eeu ttivesse 10 anos", "lang": "pt", "act": "question", "task": "learn_concept"}
+{"text": "por que o jogo trava quadno tem muito inimgio", "lang": "pt", "act": "question", "task": "bug_fix"}
+{"text": "e seguro subir iso po gith8b com minha chave de api", "lang": "pt", "act": "question", "task": "review"}
+{"text": "praa, nak era sso", "lang": "pt", "act": "stop_undo", "task": "other"}
+{"text": "desfas isso opr favor", "lang": "pt", "act": "stop_undo", "task": "other"}
+{"text": "espera, nao coloca a loja aida, tira ela", "lang": "pt", "act": "stop_undo", "task": "feature"}
+{"text": "vota o estilo antigo dos botoes", "lang": "pt", "act": "stop_undo", "task": "ui_styling"}
+{"text": "faz m jogo de pltaforma multiplayer complet com fases, sons e jenu. pode trabaalhar o tempo que precisar", "lang": "pt", "act": "handoff", "task": "feature"}
+{"text": "programa tudo qud for util pro emu sevriodr dde discord, voce dceide", "lang": "pt", "act": "handoff", "task": "feature"}
+{"text": "termina o ap todo, so aueroo ver a versao final", "lang": "pt", "act": "handoff", "task": "feature"}
+{"text": "continua melhorando o proje4o sem me perguntar nada", "lang": "pt", "act": "handoff", "task": "other"}
+{"text": "ciaao", "lang": "it", "act": "chit_chat", "task": "other"}
+{"text": "apsetta un atimo", "lang": "it", "act": "other", "task": "other"}
+{"text": "scusa,mia nona mmi chiama per prannzo", "lang": "it", "act": "other", "task": "other"}
+{"text": "grazie millr, perfetto", "lang": "it", "act": "chit_chat", "task": "other"}
+{"text": "sei nu mostro lol", "lang": "it", "act": "chit_chat", "task": "other"}
+{"text": "buongiorno,  inizamo?", "lang": "it", "act": "chit_chat", "task": "other"}
+{"text": "voglio xhe nel mio gioco di calcio i portieer pair i tiri in modo casuale", "lang": "it", "act": "new_request", "task": "feature"}
+{"text": "afmki un bot telegram che mi riorda i cmopiti ogni sera lale 8", "lang": "it", "act": "new_request", "task": "feature"}
+{"text": "mi sdve una pagina per prenotare i campetti della suola cn data e oa, salvs tutto su un file", "lang": "it", "act": "new_request", "task": "feature"}
+{"text": "fai tutt il sito del mio gruppo muiscael, pagine, grafica, form contatti. io vado a allenamento, non chiederim niente", "lang": "it", "act": "handoff", "task": "feature"}
+{"text": "metti l sfodno nero e i titoli piu grandii,  con un font piu carini", "lang": "it", "act": "new_request", "task": "ui_styling"}
+{"text": "installa le dipendenze e aviva il server in locael", "lang": "it", "act": "new_request", "task": "setup_deploy"}
+{"text": "come ol metto onli grstis", "lang": "it", "act": "new_request", "task": "setup_deploy"}
+{"text": "scrivi dei test per la funzioe calvoa_media", "lang": "it", "act": "new_request", "task": "tests"}
+{"text": "lancia i rest e dimmi quali falliscojo", "lang": "it", "act": "new_request", "task": "tests"}
+{"text": "scr7fi un readme in italiah con le istruzionii per giocare", "lang": "it", "act": "new_request", "task": "docs_writing"}
+{"text": "dommneta il file nemici.py perche non lo caisco", "lang": "it", "act": "new_request", "task": "docs_writing"}
+{"text": "documenta ocsa fa ogni endpoint d2l'aapi", "lang": "it", "act": "new_request", "task": "docs_writing"}
+{"text": "main.js e lunog 900 righ, dividilo in file piu piccloi", "lang": "it", "act": "new_request", "task": "refactor"}
+{"text": "cambia i noi delle variabiil che si ciihamano roba1 e roba2", "lang": "it", "act": "new_request", "task": "refactor"}
+{"text": "togli  il codice udplicat9 nelle funzioni di dosegno", "lang": "it", "act": "new_request", "task": "refactor"}
+{"text": "meglio flask o faatpi pr una piccola sspi? siamo in due e sappiamo poco", "lang": "it", "act": "new_request", "task": "planning_design"}
+{"text": "per l'esame di terza meeia dobbiamo fare un progetto di informtaic, volevamo fare un'app per i voti ma onn sappiamo da dove partire", "lang": "it", "act": "other", "task": "planning_design"}
+{"text": "controlla se il mio codic ha falle di sicurezza", "lang": "it", "act": "new_request", "task": "review"}
+{"text": "laprf dice che il mio codce e illeggibile", "lang": "it", "act": "other", "task": "review"}
+{"text": "il persnoaggio rimane bloccato nel muro quando salta", "lang": "it", "act": "new_request", "task": "bug_fix"}
+{"text": "il meu su telefono  non si chude dopo aver liccato un lnik", "lang": "it", "act": "new_request", "task": "bug_fix"}
+{"text": "uncaughht typeerror: canno5 read proper5ies of null (reading 'addevetlistener')\n    at script.js:7:12", "lang": "it", "act": "new_request", "task": "error_paste"}
+{"text": "errr: could not compile `gioco` ude to previuos errro\nerror[E0425]: cannot find value `punti` in this scope\n --> src/main.rs:21:9\n   |\n21 |         punti += 1;\n   |         ^^^^^ not found in this scope", "lang": "it", "act": "new_request", "task": "error_paste"}
+{"text": "no,  sbabliato, il nfjjico deve inseguirmi non scapoare", "lang": "it", "act": "correction", "task": "bug_fix"}
+{"text": "hai rotto il salvatggoi, roa non ca5ca piu niente", "lang": "it", "act": "correction", "task": "bug_fix"}
+{"text": "non e il blu che volevo, ho detto azzzurro", "lang": "it", "act": "correction", "task": "ui_styling"}
+{"text": "ancora nob e centtrato", "lang": "it", "act": "correction", "task": "ui_styling"}
+{"text": "no il salto e troppo lento, reneilo piu veloce", "lang": "it", "act": "correction", "task": "feature"}
+{"text": "traceback (most rceentt call last):\n  File \"bot.py\", line 9, in <module>\n    bot.run(TOKEN)\nAttributeError: 'NoneType' object has no attribute 'strip'\nme lo da ancora", "lang": "it", "act": "correction", "task": "error_paste"}
+{"text": "si la seconda, e salvalo ij u file json", "lang": "it", "act": "clarification", "task": "feature"}
+{"text": "inteendevo la barra a sinisyra, non quellaig alto", "lang": "it", "act": "clarification", "task": "ui_styling"}
+{"text": "usa sqlite ch e pui sepmlice", "lang": "it", "act": "clarification", "task": "planning_design"}
+{"text": "e il punteggio deve stare in lto a destra", "lang": "it", "act": "clarification", "task": "feature"}
+{"text": "va hene pytest, mett8li in una crateela tesst", "lang": "it", "act": "clarification", "task": "tests"}
+{"text": "ok", "lang": "it", "act": "approval", "task": "other"}
+{"text": "si", "lang": "it", "act": "approval", "task": "other"}
+{"text": "vaavanti", "lang": "it", "act": "approval", "task": "other"}
+{"text": "si installalo 9ure", "lang": "it", "act": "approval", "task": "setup_deploy"}
+{"text": "ckss fa la funzione aggiorna_modno", "lang": "it", "act": "question", "task": "understand_code"}
+{"text": "dove ivene ges5iatla vita del giodatorr nel prrogetto", "lang": "it", "act": "question", "task": "understand_code"}
+{"text": "perhce usi un seItntrvlla qui", "lang": "it", "act": "question", "task": "understand_code"}
+{"text": "che wifferenza c'e tra classe e oggeth", "lang": "it", "act": "question", "task": "learn_concept"}
+{"text": "cos'e una api i pratica", "lang": "it", "act": "question", "task": "learn_concept"}
+{"text": "spiegami la rricorsionee ome se avessii 10 anni", "lang": "it", "act": "question", "task": "learn_concept"}
+{"text": "perche il gioco raolenta quando ci sono tatni nemci", "lang": "it", "act": "question", "task": "bug_fix"}
+{"text": "e sicuro mettere ques0 codice su github ocn la mia chhiavee", "lang": "it", "act": "question", "task": "review"}
+{"text": "fermo, non volevo uesto", "lang": "it", "act": "stop_undo", "task": "other"}
+{"text": "annuloa l'ultima modifica per favore", "lang": "it", "act": "stop_undo", "task": "other"}
+{"text": "apetta, non aggiungere ancora il negozio, toglilo", "lang": "it", "act": "stop_undo", "task": "feature"}
+{"text": "rimteti lo stile vecchio edi bottoni", "lang": "it", "act": "stop_undo", "task": "ui_styling"}
+{"text": "famminu gioco platform multiplayer completo con livelli, suoni e menu. lavoraci quanto serve", "lang": "it", "act": "handoff", "task": "feature"}
+{"text": "programma tutto quello che puoservire al moo server discod, dceidi tu", "lang": "it", "act": "handoff", "task": "feature"}
+{"text": "finici tutta l'app, volgi vedere solo la verdione finale", "lang": "it", "act": "handoff", "task": "feature"}
+{"text": "continux a migliorare il proetto senza chledermi niente", "lang": "it", "act": "handoff", "task": "other"}
+{"text": "si2ma", "lang": "pl", "act": "chit_chat", "task": "other"}
+{"text": "sekunda, zaraz wraacm", "lang": "pl", "act": "other", "task": "other"}
+{"text": "soryr, mama woła na obiad", "lang": "pl", "act": "other", "task": "other"}
+{"text": "dzikęi, działa!", "lang": "pl", "act": "chit_chat", "task": "other"}
+{"text": "ale jesteś dobry w tklocki", "lang": "pl", "act": "chit_chat", "task": "other"}
+{"text": "cześć, koudjemy?", "lang": "pl", "act": "chit_chat", "task": "other"}
+{"text": "dodaj do mojej gry w statko licznik traiceń, tóry rośnie po ażdym trafieniu", "lang": "pl", "act": "new_request", "task": "feature"}
+{"text": "zrob bota na discord, kgory odpowiaad losowym memem po kokendzie !mej", "lang": "pl", "act": "new_request", "task": "feature"}
+{"text": "otrzebuję storny z rejestracją na turn9e szkolny, dane mjaą się zapisywać so pliku csv", "lang": "pl", "act": "new_request", "task": "feature"}
+{"text": "zrob cała strone dla nxszej klasy, z galeria, planem lekcij i forumlarzem, ide na trening i nie pisz do mie", "lang": "pl", "act": "handoff", "task": "feature"}
+{"text": "zmie tło na ciemny ganatt i aeób większe pprzyciski", "lang": "pl", "act": "new_request", "task": "ui_styling"}
+{"text": "zainstaluj zalenżośi i odpl prjoekt lokalnie", "lang": "pl", "act": "new_request", "task": "setup_deploy"}
+{"text": "j2k wrzucić to na internt za darmo", "lang": "pl", "act": "new_request", "task": "setup_deploy"}
+{"text": "napisz tesgy d funkcji oblicz_sredniz", "lang": "pl", "act": "new_request", "task": "tests"}
+{"text": "odpal tty i zobaacz co sie sypie", "lang": "pl", "act": "new_request", "task": "tests"}
+{"text": "nqpsiz readme po polsku z instrukcją instalacji", "lang": "pl", "act": "new_request", "task": "docs_writing"}
+{"text": "dodaj komdntrze do ppiku worgowie.py b nic z tgeo nie rozumiem", "lang": "pl", "act": "new_request", "task": "docs_writing"}
+{"text": "opisz co obi każdy enpdoint w api", "lang": "pl", "act": "new_request", "task": "docs_writing"}
+{"text": "plik main.js maponad 900 linii, podxiel go na mniejsze", "lang": "pl", "act": "new_request", "task": "refactor"}
+{"text": "zmień nazwy zmiennych a1 i a2 na jakieś segsowne", "lang": "pl", "act": "new_request", "task": "refactor"}
+{"text": "usun po1tarzajacy sie kod w funkcjach ryeowania", "lang": "pl", "act": "new_request", "task": "refactor"}
+{"text": "lepiej zuyć flaska czy fastapi do małego api? jest na dwóch i znamyy tylko podstawy", "lang": "pl", "act": "new_request", "task": "planning_design"}
+{"text": "mam na informatyce zrobic rjoekt na koniec smestru, chcemy apke do planowania lekcji al nie wiemy od czego zaczc", "lang": "pl", "act": "other", "task": "planning_design"}
+{"text": "s9rwdź czy w moim kodzie są akieś dziury w bezpiieczeństwie", "lang": "pl", "act": "new_request", "task": "review"}
+{"text": "pain od informatyki mwi ze moj kod to jeden wiielki bałagan", "lang": "pl", "act": "other", "task": "review"}
+{"text": "postać zacina się w ścinaie jakk skacze", "lang": "pl", "act": "new_request", "task": "bug_fix"}
+{"text": "menu na tslefonie sie nie zamyka po kliknieciu w link", "lang": "pl", "act": "new_request", "task": "bug_fix"}
+{"text": "Uncaght SyntxErtor: Unexpected token '}' (at main.ms:57:1)", "lang": "pl", "act": "new_request", "task": "error_paste"}
+{"text": "thraed 'main' pannic2d at src/main.rs:14:5:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "pl", "act": "new_request", "task": "error_paste"}
+{"text": "nie, lze, przeciwnik ma za mna isc a nie uciekac", "lang": "pl", "act": "correction", "task": "bug_fix"}
+{"text": "zepsułeś zapis, feraz nic sie nie wszytuje", "lang": "pl", "act": "correction", "task": "bug_fix"}
+{"text": "to nie ten niebieski co chcaiłem, mówiłem jasny", "lang": "pl", "act": "correction", "task": "ui_styling"}
+{"text": "dalej nie jest n środku", "lang": "pl", "act": "correction", "task": "ui_styling"}
+{"text": "nie, skok jest za olny, rób go szybysz", "lang": "pl", "act": "correction", "task": "feature"}
+{"text": "ModuleNotFouEdrro4: No modul4 named 'discord'\nnadal to samo mimo ze zainstalowałem", "lang": "pl", "act": "correction", "task": "error_paste"}
+{"text": "tak, drruga o9ccja, i zalisuj to do pliku json", "lang": "pl", "act": "clarification", "task": "feature"}
+{"text": "ctodziło mi o lewy pasek a niei enna ggze", "lang": "pl", "act": "clarification", "task": "ui_styling"}
+{"text": "użyyj sqlite bo jest prostqzy", "lang": "pl", "act": "clarification", "task": "planning_design"}
+{"text": "i wynik ka bc w prawym gorjym rogu", "lang": "pl", "act": "clarification", "task": "feature"}
+{"text": "niech ębdzie pytest, adaj je do folderu tests", "lang": "pl", "act": "clarification", "task": "tests"}
+{"text": "o", "lang": "pl", "act": "approval", "task": "other"}
+{"text": "twk", "lang": "pl", "act": "approval", "task": "other"}
+{"text": "dawaj dalj", "lang": "pl", "act": "approval", "task": "other"}
+{"text": "takk zainstaluj", "lang": "pl", "act": "approval", "task": "setup_deploy"}
+{"text": "co rob funkcjx aktualizuj_swiat", "lang": "pl", "act": "question", "task": "understand_code"}
+{"text": "gdzie w tym projekcie jest obsłguiiwane żhcie gracza", "lang": "pl", "act": "question", "task": "understand_code"}
+{"text": "czemu tu uzywasz setin4erval", "lang": "pl", "act": "question", "task": "understand_code"}
+{"text": "jaka jest różnoca między klasą a obiektek", "lang": "pl", "act": "question", "task": "learn_concept"}
+{"text": "czym tak naprawdę jest aip", "lang": "pl", "act": "question", "task": "learn_concept"}
+{"text": "wytłumacz mi rekurencje jakvym miał 10 lat", "lang": "pl", "act": "question", "task": "learn_concept"}
+{"text": "czeu gra z2alnia jau jsft dużo wrogów", "lang": "pl", "act": "question", "task": "bug_fix"}
+{"text": "czy mozna wruzcic to na githuba z moim uluczem api", "lang": "pl", "act": "question", "task": "review"}
+{"text": "s5op, nieo to mi chodził", "lang": "pl", "act": "stop_undo", "task": "other"}
+{"text": "cofnji to prosze", "lang": "pl", "act": "stop_undo", "task": "other"}
+{"text": "czekaj, nie dodawaj jeszcze sklepuu, usuń go", "lang": "pl", "act": "stop_undo", "task": "feature"}
+{"text": "przywroc stary styl pzyciskso", "lang": "pl", "act": "stop_undo", "task": "ui_styling"}
+{"text": "zrób mi kompletą gierkę platformow mulltiplaydr z poziomami, dźwikami i menu. pracuj tak dugo jak trzeba", "lang": "pl", "act": "handoff", "task": "feature"}
+{"text": "mapisz wszystko co może się przydać na mój serwer discoed, ty decydjusez", "lang": "pl", "act": "handoff", "task": "feature"}
+{"text": "dokoncz cał plikacje, chc zobaczyc tylko gotoawwerqje", "lang": "pl", "act": "handoff", "task": "feature"}
+{"text": "poprawiaj dalej projekt i o nic mnie ni pytqj", "lang": "pl", "act": "handoff", "task": "other"}
+{"text": "selah", "lang": "tr", "act": "chit_chat", "task": "other"}
+{"text": "bi saniye ekle", "lang": "tr", "act": "other", "task": "other"}
+{"text": "annem yemeğe çağırıgo, hemen geliyorum", "lang": "tr", "act": "other", "task": "other"}
+{"text": "eyvalllahçalışt", "lang": "tr", "act": "chit_chat", "task": "other"}
+{"text": "abi sen çok iyisn ya", "lang": "tr", "act": "chit_chat", "task": "other"}
+{"text": "gnaydın, kodoayalım mı", "lang": "tr", "act": "chit_chat", "task": "other"}
+{"text": "yılan oyunumda yem yedikçe pua rtssın", "lang": "tr", "act": "new_request", "task": "feature"}
+{"text": "discorf için bir bot yap, !zar ywzıcn 1 ile 6 arası sayı atsınn", "lang": "tr", "act": "new_request", "task": "feature"}
+{"text": "okul kulübü için kayıt asyfas lzım, isim ve ssınıf alsın, bi dosyaya kayd4tsin", "lang": "tr", "act": "new_request", "task": "feature"}
+{"text": "bü5ün e-ticaret sitesini yap, sepet ve öddeme sayfası da olsun, ben uyuyorum bana hiçbi şey somra", "lang": "tr", "act": "handoff", "task": "feature"}
+{"text": "arka planı koyu mor yap, butonları da biraz ubyut", "lang": "tr", "act": "new_request", "task": "ui_styling"}
+{"text": "paketleri kur ve projeyi localde çalışı", "lang": "tr", "act": "new_request", "task": "setup_deploy"}
+{"text": "bunu ücretsiz nasıl yauıglarım", "lang": "tr", "act": "new_request", "task": "setup_deploy"}
+{"text": "hesapla_puan fonksiynou için test yaz", "lang": "tr", "act": "new_request", "task": "tests"}
+{"text": "testleri calıstır, hangsi patlıyo bak", "lang": "tr", "act": "new_request", "task": "tests"}
+{"text": "tukrce bi5 readme yza, ansıl kkurulavagı da olsun", "lang": "tr", "act": "new_request", "task": "docs_writing"}
+{"text": "dusman.py dosyasına yorum elks hiiçbir şey anlamıyorum", "lang": "tr", "act": "new_request", "task": "docs_writing"}
+{"text": "padeki her endpoint ne yapıyor onu yaz", "lang": "tr", "act": "new_request", "task": "docs_writing"}
+{"text": "main.js 900 satır olmus, kucum dosyakara bol", "lang": "tr", "act": "new_request", "task": "refactor"}
+{"text": "a1 a2 diye giden eegiskelnerin  adını duzgun yap", "lang": "tr", "act": "new_request", "task": "refactor"}
+{"text": "çizim fonksiyonlarndaki tekrar eden kodu temizle", "lang": "tr", "act": "new_request", "task": "refactor"}
+{"text": "küçük bi no uygulaması için fir3bae mi supabase mi kullanayım? yeniyim", "lang": "tr", "act": "new_request", "task": "planning_design"}
+{"text": "yarıg bipisim dersind proje sunacgız, hava durumy uygulaması yapmak istioruz ama nereden baslayacagımızı bilmiyoruz", "lang": "tr", "act": "other", "task": "planning_design"}
+{"text": "kodumda güvenlik açığı var mı bo bak", "lang": "tr", "act": "new_request", "task": "review"}
+{"text": "hcoa kodu çok dağıınık dedi", "lang": "tr", "act": "other", "task": "review"}
+{"text": "marakter duvara yaklaşınca zıplarken takılıyo", "lang": "tr", "act": "new_request", "task": "bug_fix"}
+{"text": "mobilde menu linke tıkalyınca kapanmıyo", "lang": "tr", "act": "new_request", "task": "bug_fix"}
+{"text": "8ncaught TypeError: Cannot r4ad properties of null (reading 'style')\n    at oyunuBaslat (oyun.js:18:22)\n    at HTMLButtonElement.onclick (index.html:20:5)", "lang": "tr", "act": "new_request", "task": "error_paste"}
+{"text": "traceback (ost recent call lasg):\n  File \"app.py\", line 5, in <module>\n    import flask\nImportError: DLL load failed", "lang": "tr", "act": "new_request", "task": "error_paste"}
+{"text": "yok yanlış oldu, düşman bnei kpvalasın kaçmasın", "lang": "tr", "act": "correction", "task": "bug_fix"}
+{"text": "kayıt sistemini bozdu artık hiçbir şey yüklenniyor", "lang": "tr", "act": "correction", "task": "bug_fix"}
+{"text": "istedigi mavi bu deg7l acık mavi dedim", "lang": "tr", "act": "correction", "task": "ui_styling"}
+{"text": "haaortalanmadı", "lang": "tr", "act": "correction", "task": "ui_styling"}
+{"text": "yok zıplama cok yava, daha hızlı yyap", "lang": "tr", "act": "correction", "task": "feature"}
+{"text": "ModukeNotgoundError: No module named 'pygame'\nyükledim ama hala aynı hata", "lang": "tr", "act": "correction", "task": "error_paste"}
+{"text": "evet ikinci secenek, bdie jossn dosyaasıma kaydetsin", "lang": "tr", "act": "clarification", "task": "feature"}
+{"text": "soladki kenar çubuğunu demiştij üsttekii deil", "lang": "tr", "act": "clarification", "task": "ui_styling"}
+{"text": "sqlit  kullan dahq kolay", "lang": "tr", "act": "clarification", "task": "planning_design"}
+{"text": "skro da sağ üstte görühsün", "lang": "tr", "act": "clarification", "task": "feature"}
+{"text": "petet olun, tests klasörüne koy", "lang": "tr", "act": "clarification", "task": "tests"}
+{"text": "ttamam", "lang": "tr", "act": "approval", "task": "other"}
+{"text": "eevt", "lang": "tr", "act": "approval", "task": "other"}
+{"text": "dexvm", "lang": "tr", "act": "approval", "task": "other"}
+{"text": "evet kru", "lang": "tr", "act": "approval", "task": "setup_deploy"}
+{"text": "guncelle_dunya fonksiyonu m ise yarııyp", "lang": "tr", "act": "question", "task": "understand_code"}
+{"text": "oyuncunkn canı rojede neredde yönnetiliyo", "lang": "tr", "act": "question", "task": "understand_code"}
+{"text": "burda deh settimeout kulalndn", "lang": "tr", "act": "question", "task": "understand_code"}
+{"text": "sınfı llenesne arasındaki fark ne", "lang": "tr", "act": "question", "task": "learn_concept"}
+{"text": "api tam olarak ne yaa", "lang": "tr", "act": "question", "task": "learn_concept"}
+{"text": "ozyinedlmeyi 10 yasındaymısm gibi anlat", "lang": "tr", "act": "question", "task": "learn_concept"}
+{"text": "dusman cok oolunca oun neden jasıyo", "lang": "tr", "act": "question", "task": "bug_fix"}
+{"text": "buyn apianahatrımla githuba aymak güvelni mi", "lang": "tr", "act": "question", "task": "review"}
+{"text": "ddur dur bunu istemedim", "lang": "tr", "act": "stop_undo", "task": "other"}
+{"text": "bunu geri xl lutfen", "lang": "tr", "act": "stop_undo", "task": "other"}
+{"text": "bi dakmia dukkanı simdi ekeme, isl onu", "lang": "tr", "act": "stop_undo", "task": "feature"}
+{"text": "eski buton stilini geri etir", "lang": "tr", "act": "stop_undo", "task": "ui_styling"}
+{"text": "bana seviyeli, sesli, menülü komple multiplayre bi platform oyun6 yap. ne kadar sürerse süsün çalış", "lang": "tr", "act": "handoff", "task": "feature"}
+{"text": "discord uncuuam lazım olan her şeyi yaz, snee karar ve", "lang": "tr", "act": "handoff", "task": "feature"}
+{"text": "uyygulamanın ehlsini bitir, sadece bimis halini gotmek istiyorum", "lang": "tr", "act": "handoff", "task": "feature"}
+{"text": "bana hhiçbir şey sormaadan projeyi geliştirmeye ddevam et", "lang": "tr", "act": "handoff", "task": "other"}
+{"text": "пивет", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "погоди екунду", "lang": "ru", "act": "other", "task": "other"}
+{"text": "ща мама зовёт ужинать, венсь", "lang": "ru", "act": "other", "task": "other"}
+{"text": "спасио, всё заработало", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "т реально крут", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "доброе утро, огнали кодиь", "lang": "ru", "act": "chit_chat", "task": "other"}
+{"text": "добавь в мою змейку сётчик очков, чтоы он рос когда она ест яблоко", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "сдела телеграм бота, котрый по команде /анекдот рисылат случайный анекдотт", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "нжна стрраница регистрации на школьную олимпиаду, имя и класс сохранятть  афйл", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "сделй весь сайт для нашего класса: глерея, расписание, фома обратной связи. я ушёл на тррнеировку, ничго не спрашивай", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "сдела фон тёммно-фиолеовым  и кнопки ппобльше", "lang": "ru", "act": "new_request", "task": "ui_styling"}
+{"text": "установи завиисимосит и запусти проект окально", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "ка выложить это в инернет бесплатно", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "напиши тсеты для функции посчитать_уурон", "lang": "ru", "act": "new_request", "task": "tests"}
+{"text": "зупсти тесты и гляь какие паают", "lang": "ru", "act": "new_request", "task": "tests"}
+{"text": "напиши readme на русском с инструкией по запуску", "lang": "ru", "act": "new_request", "task": "docs_writing"}
+{"text": "добавь комментарии в enemy.py, я там неиг не понмиаю", "lang": "ru", "act": "new_request", "task": "docs_writing"}
+{"text": "опишши что делает каждй эндпоинт pai", "lang": "ru", "act": "new_request", "task": "docs_writing"}
+{"text": "main.js на 900 сстрок, раздели его на файлы поменьше", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "переименуй переменные a1 иa2 во то-о нромальное", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "убери повторяющийсяя код в функцияхх отрииосвки", "lang": "ru", "act": "new_request", "task": "refactor"}
+{"text": "что лучше для маенького форума, mongodbb или postgr3s? мы тлько начианем", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "на инорматике надо дать роект  пятнице, хотим сделать прлиожение с ецептами, но не знаем с чего начать", "lang": "ru", "act": "other", "task": "planning_design"}
+{"text": "проверь, нет ли в моём коде ыдр в безопасности", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "учитель сакзал что у меня в коде бардак", "lang": "ru", "act": "other", "task": "review"}
+{"text": "прсонаж застрвает в стене когда прыагшь", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "меню на телефоне не закрываетя после клика по ыкле", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "filehotfounderror: [errno 2] n such f7le or director: 'data/sva.json'\n  File \"main.py\", line 27, in load", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "tracebxck (most recent call lat):\n  File \"main.py\", line 14, in <module>\n    x = int(input())\nValueError: invalid literal for int() with base 10: 'abc'", "lang": "ru", "act": "new_request", "task": "error_paste"}
+{"text": "ет, неправильно, враг должен гнаться за мной, а не убегать", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "ты сломал соранение, еперь воощб ничео не груится", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "это енто синий, я порси глубой", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "всё ещё не о центру", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "нет, рпыжок лишком медленный, сделай резче", "lang": "ru", "act": "correction", "task": "feature"}
+{"text": "modulenotfounderror: no module named 'ypgame'\nопять эта ошибка, хотя я ставил", "lang": "ru", "act": "correction", "task": "error_paste"}
+{"text": "да второй вариант, и пусть сохраняе в json", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "я иемл в виду левую паенль, а не вехрнюю", "lang": "ru", "act": "clarification", "task": "ui_styling"}
+{"text": "исольуй sqlite, он прооще", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "и  счёт пуст удет  правом верхнем углу", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "ладно pytets, полжи их в папку tests", "lang": "ru", "act": "clarification", "task": "tests"}
+{"text": "ок", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "да", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "двай дальше", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "да стаь", "lang": "ru", "act": "approval", "task": "setup_deploy"}
+{"text": "чт делает функция ообновить_мир", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "гдев проекте обрабатыавется здоровье игрока", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "зачемты тут исолзоьвал setTimeout", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "в чём разница между классом и объеком", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "то такоеapi вообще", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "обясни рекурсию ак будто мне 10 лет", "lang": "ru", "act": "question", "task": "learn_concept"}
+{"text": "почему гира торозит когда много враагов", "lang": "ru", "act": "question", "task": "bug_fix"}
+{"text": "безопасно ли заливать этоо а гитхаб с моим ключчом", "lang": "ru", "act": "question", "task": "review"}
+{"text": "сто, я не это хотел", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "отмени ээт пожалуйста", "lang": "ru", "act": "stop_undo", "task": "other"}
+{"text": "подожди, магазин ак н дообавляй, бери его", "lang": "ru", "act": "stop_undo", "task": "feature"}
+{"text": "вери старый стиьл кноопк", "lang": "ru", "act": "stop_undo", "task": "ui_styling"}
+{"text": "сделай мне плоноценную мултиплеерную платформер игр с уровнями, звумаи именю. рабтай сколько нужно", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "нпиши всё что может пригодисья ммоему дискорд сереру, решай сам", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "доделай прлиожение целиком, хоч увидеть олько готовую версю", "lang": "ru", "act": "handoff", "task": "feature"}
+{"text": "продолай улучшть прооект  ни о чём меня не спрашивай", "lang": "ru", "act": "handoff", "task": "other"}
+{"text": "你好", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "等一下", "lang": "zh", "act": "other", "task": "other"}
+{"text": "我妈我吃饭，马上回来", "lang": "zh", "act": "other", "task": "other"}
+{"text": "谢谢，成了！", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "你也强了吧", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "早上好，开始代写码吧", "lang": "zh", "act": "chit_chat", "task": "other"}
+{"text": "给我的贪蛇吃加一个分数，吃到苹果就加一分", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "帮做一个q群机器人，发“话笑”就复回一个随机笑话", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "我需要个班级报名页面，填姓名和学号，数据存到文件里", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "把我们班级的整个网站做来出，要有相册、课程表和留言板。我去去上上补习班了，别问我问题", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "背景改成深紫色，按钮再一点", "lang": "zh", "act": "new_request", "task": "ui_styling"}
+{"text": "装好依赖然在后本地把项目跑起来", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "这个怎免么费部部署到网上", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "给aclculate_damage函数写单元测试", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "一跑下测试，看看哪个挂了", "lang": "zh", "act": "new_request", "task": "tests"}
+{"text": "写一文个READM，要有安装步骤", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "给enemy.py加点注释，我看不", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "把每接个口是干嘛的写成文档", "lang": "zh", "act": "new_request", "task": "docs_writing"}
+{"text": "main.js有900多了，拆成几个小文件", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "把变量a1和a2改成意有义的名字", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "把绘图函数数里重复的码去掉", "lang": "zh", "act": "new_request", "task": "refactor"}
+{"text": "做个小论坛用mongodb还是postgres好？我们刚入", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "信息技术课周五五要交作业，我们想做个菜谱app，完但全不知道从哪下手", "lang": "zh", "act": "other", "task": "planning_design"}
+{"text": "帮我看看代码码有没有安全漏洞", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "老师我的代码太乱了", "lang": "zh", "act": "other", "task": "review"}
+{"text": "角色跳起来靠墙时候会卡住", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "手机上点了链接菜不会收起来", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "Uncaught ypEerror: Cannot read prlperties of null (reading 'getContext')\n    at init (game.js:5:22)", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "errr: likner `cc` ot found\n  |\n  = note: No such file or directory (os error 2)", "lang": "zh", "act": "new_request", "task": "error_paste"}
+{"text": "不不对，人敌应该追我，不是逃跑", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "你把存档弄坏了，现在么都加载不出来", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "这不是我要的色蓝，我说的是浅蓝", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "还是居中", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "不行，跳得太了慢，快点", "lang": "zh", "act": "correction", "task": "feature"}
+{"text": "modul2notfounderror: no module nnamed 'pygame'\n明明装过了还是报这个错", "lang": "zh", "act": "correction", "task": "error_paste"}
+{"text": "对，第二种，另外存成json文件", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "我说的是左边的侧边边栏，不是上面那个", "lang": "zh", "act": "clarification", "task": "ui_styling"}
+{"text": "s用qlite吧，简单点", "lang": "zh", "act": "clarification", "task": "planning_design"}
+{"text": "分分数要显示在右上角", "lang": "zh", "act": "clarification", "task": "feature"}
+{"text": "行，用pytest，放tests文件里", "lang": "zh", "act": "clarification", "task": "tests"}
+{"text": "好", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "行", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "继续", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "对，装吧", "lang": "zh", "act": "approval", "task": "setup_deploy"}
+{"text": "updat_world这个函数是干什么的", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "这个项目里玩家的血量是在哪儿理处的", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "这里为么什要用setTimeout", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "类和对象有么区别", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "aapi到底是什么意思", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "用我10岁能听懂懂的话讲递归", "lang": "zh", "act": "question", "task": "learn_concept"}
+{"text": "敌一人多游戏就卡，为什么", "lang": "zh", "act": "question", "task": "bug_fix"}
+{"text": "带着我的api key传到gjthub上安全吗", "lang": "zh", "act": "question", "task": "review"}
+{"text": "停，不我是这个意思", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "撤刚才的改动", "lang": "zh", "act": "stop_undo", "task": "other"}
+{"text": "等等，商店先加，删掉", "lang": "zh", "act": "stop_undo", "task": "feature"}
+{"text": "把把按钮改回之前的样式", "lang": "zh", "act": "stop_undo", "task": "ui_styling"}
+{"text": "给我做一个完整的多人平台跳跃游戏，要有关卡、音效和菜单，你需要久多就做多久", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "把我discord服服务器能用到的功能都写了，你来决定", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "把整个应用做完，我只想看最版终本", "lang": "zh", "act": "handoff", "task": "feature"}
+{"text": "你自己继续进这个项目，别再问我了", "lang": "zh", "act": "handoff", "task": "other"}
+{"text": "んこにちは", "lang": "ja", "act": "chit_chat", "task": "other"}
+{"text": "ちっと待って", "lang": "ja", "act": "other", "task": "other"}
+{"text": "ごめん、親にご飯って呼ればた", "lang": "ja", "act": "other", "task": "other"}
+{"text": "ありとう、動いた", "lang": "ja", "act": "chit_chat", "task": "other"}
+{"text": "めっち使えるじん", "lang": "ja", "act": "chit_chat", "task": "other"}
+{"text": "おはうよ、やろっか", "lang": "ja", "act": "chit_chat", "task": "other"}
+{"text": "スネークゲームに、りんごを食べたらスコアが増える機能をつけて", "lang": "ja", "act": "new_request", "task": "feature"}
+{"text": "!おみくじ って打つと運勢を返すDiscodrボットを作って", "lang": "ja", "act": "new_request", "task": "feature"}
+{"text": "文化の祭模擬店の予約ページ欲がしい、名前と人数をれ入たらファイルに存して", "lang": "ja", "act": "new_request", "task": "feature"}
+{"text": "クラスのサイイト全部作といて、写真ギャラリーと時間割とお問い合わせフォーム。部活行くから何も聞かないで", "lang": "ja", "act": "handoff", "task": "feature"}
+{"text": "背を景濃いに紫して、ボンをうも少し大きくして", "lang": "ja", "act": "new_request", "task": "ui_styling"}
+{"text": "存依パッケージを入れてローカルで動かして", "lang": "ja", "act": "new_request", "task": "setup_deploy"}
+{"text": "これ無料で公開るにはどうすれいばい", "lang": "ja", "act": "new_request", "task": "setup_deploy"}
+{"text": "caalfulate_damage関数のテストを書いて", "lang": "ja", "act": "new_request", "task": "tests"}
+{"text": "テスト回して、どれが落ちてる見かて", "lang": "ja", "act": "new_request", "task": "tests"}
+{"text": "日本語のradmeを書いて、インストル方法も入れて", "lang": "ja", "act": "new_request", "task": "docs_writing"}
+{"text": "enemy.pyにメントつけて、全然わからん", "lang": "ja", "act": "new_request", "task": "docs_writing"}
+{"text": "各AlIエンドポイントが何をするかドュキメントにして", "lang": "ja", "act": "new_request", "task": "docs_writing"}
+{"text": "main.jsが900行もあるから小いファイルに分けて", "lang": "ja", "act": "new_request", "task": "refactor"}
+{"text": "z1a2っていう変数をわかりやすく直して", "lang": "ja", "act": "new_request", "task": "refactor"}
+{"text": "描画関数のダブってるコードを消し", "lang": "ja", "act": "new_request", "task": "refactor"}
+{"text": "小さい掲示板なmらongdbととpostgresどっちがいい？初心者です", "lang": "ja", "act": "new_request", "task": "planning_design"}
+{"text": "情報の授業で金曜までに作品出ささなきゃいけなくて、レシピピアプリり作たいけどどこか始らめれいいかわからな", "lang": "ja", "act": "other", "task": "planning_design"}
+{"text": "セキュリティ的に危ないろがないか見てほし", "lang": "ja", "act": "new_request", "task": "review"}
+{"text": "先生にコードが汚いってて言われた", "lang": "ja", "act": "other", "task": "review"}
+{"text": "キャラが壁際でジャンプすると引っかかる", "lang": "ja", "act": "new_request", "task": "bug_fix"}
+{"text": "スマでホリンクしてメもニュー閉がじない", "lang": "ja", "act": "new_request", "task": "bug_fix"}
+{"text": "uncaugh referencerror: playr is not defined\n    at update (main.js:44:9)\n    at loop (main.js:90:5)", "lang": "ja", "act": "new_request", "task": "error_paste"}
+{"text": "ertor[r0599]: no mmethod named `legnht` found for steutc `vec<i32>`\n --> src/main.rs:6:16\n  |\n6 |     println!(\"{}\", v.lenght());", "lang": "ja", "act": "new_request", "task": "error_paste"}
+{"text": "違う、敵逃げるんじゃなくて追いかけてくるず", "lang": "ja", "act": "correction", "task": "bug_fix"}
+{"text": "ーセブ壊れたんだけど、何も読み込まれなくなった", "lang": "ja", "act": "correction", "task": "bug_fix"}
+{"text": "その青じゃなて水色って言っじゃん", "lang": "ja", "act": "correction", "task": "ui_styling"}
+{"text": "まだ真ん中来てない", "lang": "ja", "act": "correction", "task": "ui_styling"}
+{"text": "ちがう、ャンプが遅すぎる、もっとシャキッとさせて", "lang": "ja", "act": "correction", "task": "feature"}
+{"text": "modulenotfounderrpr: no module named 'pygame'\nインストールしたのにまた出る", "lang": "ja", "act": "correction", "task": "error_paste"}
+{"text": "うん2つ目で、あとjsonファイル保保存して", "lang": "ja", "act": "clarification", "task": "feature"}
+{"text": "上じゃくて左のサイドバーのこと", "lang": "ja", "act": "clarification", "task": "ui_styling"}
+{"text": "sqliteでいよ、単だし", "lang": "ja", "act": "clarification", "task": "planning_design"}
+{"text": "スコアは右上に表表示してね", "lang": "ja", "act": "clarification", "task": "feature"}
+{"text": "pytestでいいや、testsフォルダに入れてて", "lang": "ja", "act": "clarification", "task": "tests"}
+{"text": "おk", "lang": "ja", "act": "approval", "task": "other"}
+{"text": "うん", "lang": "ja", "act": "approval", "task": "other"}
+{"text": "続けて", "lang": "ja", "act": "approval", "task": "other"}
+{"text": "う、入れて", "lang": "ja", "act": "approval", "task": "setup_deploy"}
+{"text": "updat2_worldって関数はし何てるの", "lang": "ja", "act": "question", "task": "understand_code"}
+{"text": "のプロジェクトでプレイヤーのhpはどこで管理してる", "lang": "ja", "act": "question", "task": "understand_code"}
+{"text": "こでsettimeout使ってるはのなんで", "lang": "ja", "act": "question", "task": "understand_code"}
+{"text": "クスとオブジェクトの違って", "lang": "ja", "act": "question", "task": "learn_concept"}
+{"text": "そもそもAPIってて何", "lang": "ja", "act": "question", "task": "learn_concept"}
+{"text": "帰再を10歳にもわかるように説明して", "lang": "ja", "act": "question", "task": "learn_concept"}
+{"text": "敵増えるとゲームが重くなるのはなぜ", "lang": "ja", "act": "question", "task": "bug_fix"}
+{"text": "APIキー入れたままGitHubに上げても大", "lang": "ja", "act": "question", "task": "review"}
+{"text": "ストップ、それじゃな", "lang": "ja", "act": "stop_undo", "task": "other"}
+{"text": "っき変更を元に戻して", "lang": "ja", "act": "stop_undo", "task": "other"}
+{"text": "待って、ショップはまだだ入れないで、消して", "lang": "ja", "act": "stop_undo", "task": "feature"}
+{"text": "ボタンのデザインを前の状態にし戻", "lang": "ja", "act": "stop_undo", "task": "ui_styling"}
+{"text": "レベル音もメニューもある本格的なマルプレイのプラットフォーを作って。間はかかっていいらか", "lang": "ja", "act": "handoff", "task": "feature"}
+{"text": "うちのDiscordサバーに役立ちそうなものを部全作って、せ任る", "lang": "ja", "act": "handoff", "task": "feature"}
+{"text": "アプリを最後まで完成させて、完成版だけた見", "lang": "ja", "act": "handoff", "task": "feature"}
+{"text": "何聞もかずにこのプロジェクトをよくし続けて", "lang": "ja", "act": "handoff", "task": "other"}
+{"text": "هلا", "lang": "ar", "act": "chit_chat", "task": "other"}
+{"text": "لظحة بس", "lang": "ar", "act": "other", "task": "other"}
+{"text": "مليش أمي تنادنيي للعشاء", "lang": "ar", "act": "other", "task": "other"}
+{"text": "شكراً، اشتتغل!", "lang": "ar", "act": "chit_chat", "task": "other"}
+{"text": "والله انتت قوي", "lang": "ar", "act": "chit_chat", "task": "other"}
+{"text": "صبباح الخير، بندأ؟", "lang": "ar", "act": "chit_chat", "task": "other"}
+{"text": "ضي داد نقطا للعبة الثعبان بتاعتي يزيد لام الثعبان ياكل التفاحة", "lang": "ar", "act": "new_request", "task": "feature"}
+{"text": "اعملل بوت ديسكود يرد بنكتة عشوئية لما اكتب !نكتة", "lang": "ar", "act": "new_request", "task": "feature"}
+{"text": "أبغى صفة تسجيل لنادي المدسة فيها الاسم والصف وتنفحظ البياناات يف ملف", "lang": "ar", "act": "new_request", "task": "feature"}
+{"text": "اعمل مقع الفصل كامل، معضر صور وجدول حصص ونموذج تواصل. انا راايح التمررين لا تسألني يا شي", "lang": "ar", "act": "handoff", "task": "feature"}
+{"text": "خلي اخلفية بنفسجي غامقوالأزررا أكرب شوي", "lang": "ar", "act": "new_request", "task": "ui_styling"}
+{"text": "نزّل المكتبات وشغل المشروع حلياً", "lang": "ar", "act": "new_request", "task": "setup_deploy"}
+{"text": "كفي أنشر هذا على الإنترنت مجاناً", "lang": "ar", "act": "new_request", "task": "setup_deploy"}
+{"text": "اككتب اختبارا للدالة calculate_damage", "lang": "ar", "act": "new_request", "task": "tests"}
+{"text": "شغل الاختبارا وشوف اشي االل يفش", "lang": "ar", "act": "new_request", "task": "tests"}
+{"text": "اك ملف readme ابلربي مع طريقة التثبيت", "lang": "ar", "act": "new_request", "task": "docs_writing"}
+{"text": "حط تعليقا في ملف neemy.py ما فهمت شي", "lang": "ar", "act": "new_request", "task": "docs_writing"}
+{"text": "وثّق وش يسوي كل enpdoint في الـ api", "lang": "ar", "act": "new_request", "task": "docs_writing"}
+{"text": "مفل mian.js صار فيه 900 سطر، قسّمه لملفا أصغر", "lang": "ar", "act": "new_request", "task": "refactor"}
+{"text": "غيّر ساماء المتغيرات a1 و a2 لأسماء مفهومة", "lang": "ar", "act": "new_request", "task": "refactor"}
+{"text": "شيل اللكود المكرر في دوال الرسم", "lang": "ar", "act": "new_request", "task": "refactor"}
+{"text": "أيمها أفضل لمنتدى صير mongodb ولا postgres؟ أنا مبتدئ", "lang": "ar", "act": "new_request", "task": "planning_design"}
+{"text": "عننا مشروع في مادة الحاسب يوم اخميس ونبي نوي تطبيق وصفات بس ما نعرف  وينننبدأ", "lang": "ar", "act": "other", "task": "planning_design"}
+{"text": "شوف لي لو في ثغرات أمنية  الكود", "lang": "ar", "act": "new_request", "task": "review"}
+{"text": "المعلم قاال إن ودي فوضى", "lang": "ar", "act": "other", "task": "review"}
+{"text": "الشخصصية تعلق بالجدر لما تقفز", "lang": "ar", "act": "new_request", "task": "bug_fix"}
+{"text": "القائمة في الجوال م تقفل بعد ما اضغط على ابط", "lang": "ar", "act": "new_request", "task": "bug_fix"}
+{"text": "SnatxError: Uepxected token '<'\n    at JSON.parse (<anonymous>)\n    at fetchData (api.js:12:20)", "lang": "ar", "act": "new_request", "task": "error_paste"}
+{"text": "npm ERR! code ERESOLEV\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! Found: react@18.2.0", "lang": "ar", "act": "new_request", "task": "error_paste"}
+{"text": "ال غلط، المفروضض العدو يلحقين  مو يهرب", "lang": "ar", "act": "correction", "task": "bug_fix"}
+{"text": "خربت الحففظ، الحي ما يتحمل شي", "lang": "ar", "act": "correction", "task": "bug_fix"}
+{"text": "هذا مو الأزرق اللل ابغاه، قلت لك أرق فاتح", "lang": "ar", "act": "correction", "task": "ui_styling"}
+{"text": "للحين مو فيي النص", "lang": "ar", "act": "correction", "task": "ui_styling"}
+{"text": "لا اقفزة بطيئة مرة، خيهلا أسرع", "lang": "ar", "act": "correction", "task": "feature"}
+{"text": "moudlenotfounderror: no moduleenamed 'pygame'\nنزلتها وللحين نفس الخطأ", "lang": "ar", "act": "correction", "task": "error_paste"}
+{"text": "ايوه الخيار الثاني، وخي يحظ في ملف jsno", "lang": "ar", "act": "clarification", "task": "feature"}
+{"text": "قصدي الشريط الجانبي اللي عى اليسار مو الللي وق", "lang": "ar", "act": "clarification", "task": "ui_styling"}
+{"text": "استخددم sqlite أسهل", "lang": "ar", "act": "clarification", "task": "planning_design"}
+{"text": "والنقاط تظهر فق على اليمين", "lang": "ar", "act": "clarification", "task": "feature"}
+{"text": "ماشي pytest، حطه في مجلد tests", "lang": "ar", "act": "clarification", "task": "tests"}
+{"text": "متام", "lang": "ar", "act": "approval", "task": "other"}
+{"text": "ايهو", "lang": "ar", "act": "approval", "task": "other"}
+{"text": "كمّل", "lang": "ar", "act": "approval", "task": "other"}
+{"text": "ايوه نزّلاه", "lang": "ar", "act": "approval", "task": "setup_deploy"}
+{"text": "ووش تسوي دلاة updte_world", "lang": "ar", "act": "question", "task": "understand_code"}
+{"text": "وين يتم التحكم بصحة اللع في لمممشروع", "lang": "ar", "act": "question", "task": "understand_code"}
+{"text": "ليش استخمت settimeout هنا", "lang": "ar", "act": "question", "task": "understand_code"}
+{"text": "وش الفر بين الكلاس والاوبجكت", "lang": "ar", "act": "question", "task": "learn_concept"}
+{"text": "اي يعني api بالضبط", "lang": "ar", "act": "question", "task": "learn_concept"}
+{"text": "اشرح لي الاستدعا الذاتي كأن عمري 10 سنوا", "lang": "ar", "act": "question", "task": "learn_concept"}
+{"text": "ليش اللع تهنج لمايكثون الاعداء", "lang": "ar", "act": "question", "task": "bug_fix"}
+{"text": "هل آم ارفع ها على github ويه متاح api", "lang": "ar", "act": "question", "task": "review"}
+{"text": "وق، مو هذا اللي ابغاه", "lang": "ar", "act": "stop_undo", "task": "other"}
+{"text": "تراجع عن التغيير الخر", "lang": "ar", "act": "stop_undo", "task": "other"}
+{"text": "لحظةلا ضيف المتج الحين، احذفه", "lang": "ar", "act": "stop_undo", "task": "feature"}
+{"text": "رجّع شكل الأزراار القديم", "lang": "ar", "act": "stop_undo", "task": "ui_styling"}
+{"text": "اعمل لي لبعة منصات كاملة متعددة االلاعبين فها مراححل وصوات وقائمة. اشتغ عليها بقد ما تحتاج", "lang": "ar", "act": "handoff", "task": "feature"}
+{"text": "اكتب كل شي ممكن يفيد سيرفر الدسيكورد حقي، انت قرر", "lang": "ar", "act": "handoff", "task": "feature"}
+{"text": "خلّص التطبيق كله، ابغى ب أشفو نلسخة الهائية", "lang": "ar", "act": "handoff", "task": "feature"}
+{"text": "استمر في تحسين المشروع وما ستألني عن شي", "lang": "ar", "act": "handoff", "task": "other"}

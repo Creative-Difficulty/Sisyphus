@@ -1,0 +1,250 @@
+{"text": "괜찮아 보이네", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "ㅇㅋ 이제 버튼 핑크색으로 바꿔줘", "lang": "ko", "act": "approval", "task": "ui_styling"}
+{"text": "응 진행해, 테스트도 써줘", "lang": "ko", "act": "approval", "task": "tests"}
+{"text": "ㅇㅇ 그거 설치해", "lang": "ko", "act": "approval", "task": "setup_deploy"}
+{"text": "좋아, 이제 하이스코어도 넣어줘", "lang": "ko", "act": "approval", "task": "feature"}
+{"text": "야 거기 있어?", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "아 됐어 취소", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "색 바꾼 거 되돌려줘, 전이 더 나았어", "lang": "ko", "act": "stop_undo", "task": "ui_styling"}
+{"text": "변수 이름 바꾼 거 취소해줘, 이제 다 안 맞아", "lang": "ko", "act": "stop_undo", "task": "refactor"}
+{"text": "npm install 취소해줘, node_modules 망가졌어", "lang": "ko", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "로그인 기능 다시 빼줘", "lang": "ko", "act": "stop_undo", "task": "feature"}
+{"text": "방금 만든 테스트 지워줘", "lang": "ko", "act": "stop_undo", "task": "tests"}
+{"text": "그 수정 때문에 더 심해졌어, 되돌려줘", "lang": "ko", "act": "stop_undo", "task": "bug_fix"}
+{"text": "readme 수정한 거 되돌려줘", "lang": "ko", "act": "stop_undo", "task": "docs_writing"}
+{"text": "게임 엔진 전체 만들어줘, 물리, 렌더링, 입력, 오디오. 시간은 얼마든지 써도 돼", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "다 알아서 해, 설계부터 전부 만들어, 나 귀찮게 하지 말고", "lang": "ko", "act": "handoff", "task": "planning_design"}
+{"text": "코드베이스 전체 테스트 짜고 실패하는 거 다 고쳐, 전부 초록불 될 때까지 멈추지 마", "lang": "ko", "act": "handoff", "task": "tests"}
+{"text": "프로젝트 전체를 typescript로 다시 써줘, 질문하지 말고 컴파일될 때까지 계속해", "lang": "ko", "act": "handoff", "task": "refactor"}
+{"text": "전부 postgres로 옮기고 코드도 다 맞춰서 바꿔줘, 제발 되묻지 말고", "lang": "ko", "act": "handoff", "task": "setup_deploy"}
+{"text": "레포 전체 문서화해줘, 모든 파일, 나한테 아무것도 묻지 말고", "lang": "ko", "act": "handoff", "task": "docs_writing"}
+{"text": "프론트엔드 전체 다시 디자인해줘, 모든 페이지, 전문적으로 보이게. 끝날 때까지 피드백 요청하지 마", "lang": "ko", "act": "handoff", "task": "ui_styling"}
+{"text": "프로젝트에 있는 버그 전부 혼자 찾아서 고쳐, 얼마나 걸리든 상관없어", "lang": "ko", "act": "handoff", "task": "bug_fix"}
+{"text": "레포 전체 훑어보고 네가 보기에 틀린 거 다 고쳐, 나한테 안 물어봐도 돼", "lang": "ko", "act": "handoff", "task": "review"}
+{"text": "앞으로 몇 시간 동안 프로젝트에 제일 좋다고 생각하는 거 알아서 해", "lang": "ko", "act": "handoff", "task": "other"}
+{"text": "내 프로젝트에서 utils.js랑 helpers.js 차이가 뭐야", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "tcp랑 udp 차이 뭐였지 정보 시간에 배웠는데 까먹음", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "하이스코어는 파일에 저장하는 게 나아 아니면 db가 나아?", "lang": "ko", "act": "question", "task": "planning_design"}
+{"text": "node_modules는 .gitignore에 꼭 넣어야 돼?", "lang": "ko", "act": "question", "task": "setup_deploy"}
+{"text": "재시작하면 왜 점수가 항상 0이야", "lang": "ko", "act": "question", "task": "bug_fix"}
+{"text": "왜 내 navbar가 내용을 가려?", "lang": "ko", "act": "question", "task": "ui_styling"}
+{"text": "유닛 테스트가 도대체 어떻게 돌아가는 거야, mock이 뭐야", "lang": "ko", "act": "question", "task": "tests"}
+{"text": "내 비밀번호 해싱 이 정도면 괜찮아 아니면 너무 약해?", "lang": "ko", "act": "question", "task": "review"}
+{"text": "모든 줄에 주석 달아야 돼 아니면 어려운 부분만 달면 돼?", "lang": "ko", "act": "question", "task": "docs_writing"}
+{"text": "이건 struct로 해야 돼 class로 해야 돼", "lang": "ko", "act": "question", "task": "refactor"}
+{"text": "멀티플레이 모드 넣을 수 있어 아니면 이 환경에선 너무 어려워?", "lang": "ko", "act": "question", "task": "feature"}
+{"text": "다음엔 무슨 언어 배우는 게 좋을까", "lang": "ko", "act": "question", "task": "other"}
+{"text": "이게 과제 내용이야: 책이랑 회원이 있는 도서관 시스템 구현하기", "lang": "ko", "act": "other", "task": "other"}
+{"text": "유저가 프로필 사진 올릴 수 있게 해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "적이 가끔 벽 안에서 스폰돼, 고칠 수 있어?", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "문자열 상수들을 enum으로 바꿔줘", "lang": "ko", "act": "new_request", "task": "refactor"}
+{"text": "데스크톱에선 2열, 폰에선 1열로", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "테스트 실패하는데 고쳐줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "pygame 설치해줘", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "--verbose 플래그 도움말 텍스트 써줘", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "프로젝트를 내가 차례대로 할 수 있는 작은 작업들로 쪼개줘", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "시니어 개발자가 이 코드 보면 뭐라고 할까", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "하이스코어 어디에 저장되는지 알려줘", "lang": "ko", "act": "new_request", "task": "understand_code"}
+{"text": "정렬 알고리즘이 어떻게 돌아가는지 작은 예제로 가르쳐줘", "lang": "ko", "act": "new_request", "task": "learn_concept"}
+{"text": "오늘 할 일 목록 만들어줘", "lang": "ko", "act": "new_request", "task": "other"}
+{"text": "아니 아직도 고장났어", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "아니 적이 아직도 벽을 통과해", "lang": "ko", "act": "correction", "task": "bug_fix"}
+{"text": "간격이 너무 커. 반으로 줄여", "lang": "ko", "act": "correction", "task": "ui_styling"}
+{"text": "로그인 시스템 원한 거 아니었어, 빼고 리더보드만 만들어줘", "lang": "ko", "act": "correction", "task": "feature"}
+{"text": "동작이 바뀌었잖아, 지금 출력이 달라", "lang": "ko", "act": "correction", "task": "refactor"}
+{"text": "assert 지워서 테스트 통과시켰네, 그거 반칙이야", "lang": "ko", "act": "correction", "task": "tests"}
+{"text": "python 버전 틀렸어, 우린 3.11 써", "lang": "ko", "act": "correction", "task": "setup_deploy"}
+{"text": "readme가 너무 길고 딱딱해, 짧고 편하게 써줘", "lang": "ko", "act": "correction", "task": "docs_writing"}
+{"text": "그 계획은 너무 커, 우린 주말밖에 없어", "lang": "ko", "act": "correction", "task": "planning_design"}
+{"text": "40번째 줄에 있는 뻔한 버그를 놓쳤네", "lang": "ko", "act": "correction", "task": "review"}
+{"text": "설명이 틀렸어, 루프는 거꾸로 돌아가", "lang": "ko", "act": "correction", "task": "understand_code"}
+{"text": "또 같은 에러\nModuleNotFoundError: No module named 'discord'", "lang": "ko", "act": "correction", "task": "error_paste"}
+{"text": "그리고 오프라인에서도 돼야 해", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "헤더야, 푸터 말고", "lang": "ko", "act": "clarification", "task": "ui_styling"}
+{"text": "play 누르자마자 튕겨, 메뉴 뜨기도 전에", "lang": "ko", "act": "clarification", "task": "bug_fix"}
+{"text": "conda 말고 pip 써", "lang": "ko", "act": "clarification", "task": "setup_deploy"}
+{"text": "pytest 써", "lang": "ko", "act": "clarification", "task": "tests"}
+{"text": "함수 이름은 그대로 둬", "lang": "ko", "act": "clarification", "task": "refactor"}
+{"text": "설치 방법을 기능 소개 앞으로 옮겨줘", "lang": "ko", "act": "clarification", "task": "docs_writing"}
+{"text": "로컬 2인용 게임이라서 네트워크는 없어", "lang": "ko", "act": "clarification", "task": "planning_design"}
+{"text": "특히 성능에 신경 써줘", "lang": "ko", "act": "clarification", "task": "review"}
+{"text": "utils/math.py에 있는 거", "lang": "ko", "act": "clarification", "task": "understand_code"}
+{"text": "게임 예시로 설명해줘", "lang": "ko", "act": "clarification", "task": "learn_concept"}
+{"text": "아니 시작 페이지만", "lang": "ko", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "ko", "act": "other", "task": "error_paste"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "이거 무슨 뜻이야?? error: linker `cc` not found", "lang": "ko", "act": "question", "task": "error_paste"}
+{"text": "main에 push했잖아, 난 새 브랜치 원했는데", "lang": "ko", "act": "correction", "task": "setup_deploy"}
+{"text": "인벤토리 시스템 다시 빼줘, 너무 과해", "lang": "ko", "act": "stop_undo", "task": "feature"}
+{"text": "풀파워로 로드맵에 있는 거 전부 구현해", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "프로젝트에 jest 세팅해줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "제출은 금요일이야", "lang": "ko", "act": "other", "task": "other"}
+{"text": "/clear", "lang": "ko", "act": "other", "task": "other"}
+{"text": "캐시 모듈에 왜 lock이 있는 거야?", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "내 친구들이 이제 내 게임 쩐대, 너 덕분이야", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "내가 맨날 너한테 말 많이 거는 거 안 귀찮아?", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "제목 더 크고 굵게 해줘", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "python", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "설명이 틀렸어, 루프는 거꾸로 돌아가", "lang": "ko", "act": "correction", "task": "understand_code"}
+{"text": "파일 이전 버전으로 복원해줘", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "프로젝트 완전히 맡길게, 나는 구경만 할게", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "이거 얼마나 걸려?", "lang": "ko", "act": "question", "task": "other"}
+{"text": "compact", "lang": "ko", "act": "other", "task": "other"}
+{"text": "나 하루 종일 나가 있을 거야, 모든 페이지 있는 웹사이트 전체 만들어주고 잘 만들어줘", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "지금부터 spaces 말고 tabs 써줘", "lang": "ko", "act": "other", "task": "other"}
+{"text": "맵 생성기의 중첩 루프는 없애야 돼", "lang": "ko", "act": "new_request", "task": "refactor"}
+{"text": "고마워, 오늘은 여기까지", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "postgres 써줘", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "해시 테이블은 대체로 어떻게 돌아가?", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "변경 취소해줘", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "main.py의 게임 루프가 어떻게 돌아가는지 설명해줄 수 있어?", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "게임 로직은 서버에 둬야 돼 클라이언트에 둬야 돼?", "lang": "ko", "act": "question", "task": "planning_design"}
+{"text": "난 windows 11이랑 python 3.12 써", "lang": "ko", "act": "other", "task": "other"}
+{"text": "전부 가운데 정렬하고 패딩 더 줘", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "npm install이 아직도 같은 메시지로 실패해", "lang": "ko", "act": "correction", "task": "setup_deploy"}
+{"text": "아니 난 초록 말고 파랑 원했어", "lang": "ko", "act": "correction", "task": "ui_styling"}
+{"text": "이거 커밋해줘, 메시지 잘 써서", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "헤더에 귀여운 로고 하나 넣어줘, 간단한 svg면 돼", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "왜 내 캐릭터가 가끔 바닥을 뚫고 떨어져", "lang": "ko", "act": "question", "task": "bug_fix"}
+{"text": "진짜 최고야, 완전", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "적은 좀비로 해줘, 2d 탑다운", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "괜찮아, 계속해", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "학교 보고서용으로 내 체스 엔진이 어떻게 작동하는지 짧은 서론 써줘", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "파워업 추가해줘: 속도, 방패, 자석", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "나 15살이니까 그냥 쉽게 해줘", "lang": "ko", "act": "clarification", "task": "other"}
+{"text": "앞으로 몇 시간 동안 프로젝트에 제일 좋다고 생각하는 거 알아서 해", "lang": "ko", "act": "handoff", "task": "other"}
+{"text": "내가 그거 안 썼어, 이 프로젝트는 redis 안 써", "lang": "ko", "act": "correction", "task": "docs_writing"}
+{"text": "우린 3주밖에 없고 둘뿐이야", "lang": "ko", "act": "clarification", "task": "planning_design"}
+{"text": "예전 세이브 파일도 계속 되게 저장 포맷을 어떻게 설계해야 할까", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "점프 추가해줘, 스페이스바", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "아니 잠깐 멈춰, 파일 잘못됐어", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "아 그리고 쿨타임 5초도 넣어줘", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "내 프로젝트 readme 써줘", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "인벤토리 시스템 다시 빼줘, 너무 과해", "lang": "ko", "act": "stop_undo", "task": "feature"}
+{"text": "아까보다 더 나빠졌어", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "moderation, 음악, economy 있는 디스코드 봇 완성본 만들어줘. 난 상관 안 할 거니까 전부 네가 정해", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "멀티플레이에 필요한 단계들 적어줘", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "hud에는 픽셀 폰트 써줘", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "게임 엔진 전체 써줘, 물리, 렌더링, 입력, 오디오. 시간은 무제한이야", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "로그인 흐름 전체 읽고 뭐가 잘못될 수 있는지 말해줘", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "parse_input에서 엣지 케이스 다 처리한 거 맞아?", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "작은 소셜 앱 테크 스택 고르는 거 도와줘", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "게임에 저장 불러오기 시스템 추가해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "todo 리스트에 있는 기능 전부 나한테 확인 안 받고 구현해줘", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "영어로, 그리고 스크린샷 자리 표시도 넣어줘", "lang": "ko", "act": "clarification", "task": "docs_writing"}
+{"text": "j", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "모서리 둥글게, 12px 정도", "lang": "ko", "act": "clarification", "task": "ui_styling"}
+{"text": "기능도 네가 정하고 디자인도 네가 정하고 전부 네가 만들어. 내일 확인할게", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "div 가운데 정렬 어떻게 해", "lang": "ko", "act": "question", "task": "ui_styling"}
+{"text": "아냐 아냐 아냐 되돌려", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "우린 직접 호스팅하고 싶어, 클라우드 말고", "lang": "ko", "act": "clarification", "task": "planning_design"}
+{"text": "넌 내 최애 로봇이야", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "포인터 설명해줘", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "이 코드 형한테 물려받았는데 하나도 모르겠어, bot.on('ready') 이거 뭐 하는 거야", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "O(n log n)이 무슨 뜻이야", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "발표에서 설명할 수 있게 코드에 주석 달아줘", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "파일 이름은 scores.json이고 data 폴더에 있어", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "push할 때마다 테스트 돌리는 github action 설정해줘", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "적이 많은 unity 프로젝트는 어떻게 구조 잡는 게 제일 좋아?", "lang": "ko", "act": "question", "task": "planning_design"}
+{"text": "코딩 전에: 카드 게임에 어떤 클래스가 필요해?", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "async await랑 스레드 차이 설명해줘", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "websocket으로 멀티플레이 추가해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "시간 필요한 만큼 써, 플랫포머 전체만 완성하면 돼", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "내 숙제 확인해줘, 이거 맞아?", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "프로젝트를 vscode로 열어줘", "lang": "ko", "act": "new_request", "task": "other"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.zaehleZeichen(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "너 대박이다", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "완벽해, 계속해", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "네가 최고야", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "고마워, 오늘은 여기까지", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "완전 미친 세션이었다 ㅋㅋ", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "race condition이 뭐야?", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "타임스탬프가 시간대가 틀리게 나와, cet로 나와야 돼", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "뱀이 죽는 대신 화면 가장자리로 넘어가게 해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "ㅇㅋ", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "postgres 써", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "응 그리고 설정도", "lang": "ko", "act": "clarification", "task": "other"}
+{"text": "왜 두 번째 클릭에서만 튕겨?", "lang": "ko", "act": "question", "task": "bug_fix"}
+{"text": "난 discord.py 2.3 버전 써", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "안드로이드 앱 전체 만들어줘, 밤새 해", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "기능이랑 디자인은 네가 정해, 전부 네가 만들어. 나 내일 볼게", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "아까 멍청한 질문해서 미안", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "레벨을 어떻게 저장할지 같이 생각해줘, json으로 할지 코드 안에 둘지", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "인벤토리가 가득 찬 경우에 대한 테스트 추가해줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "응 파란 걸로, 그리고 둥글게도 해줘", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "게임 튜토리얼 텍스트 써줘, 새 플레이어용 짧은 팁 5개", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "첫 번째 옵션으로 하되 데이터는 json 파일에 저장해", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "필드가 비어 있어도 폼이 제출돼", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "전에 있던 상태로 돌아가줘", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "음 나 아이디어가 하나 있는데", "lang": "ko", "act": "other", "task": "other"}
+{"text": "게임 망가뜨렸잖아", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "게임에 일시정지 메뉴 추가해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "conda 말고 pip", "lang": "ko", "act": "clarification", "task": "setup_deploy"}
+{"text": "discord api mock해서 명령어 테스트할 수 있게 해줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "데미지 계산 유닛 테스트 써줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "토큰은 코드에 말고 환경변수에 넣어줘", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "아니 멈춰, 파일 잘못됐어", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "game.py에 있는 모든 함수에 docstring 써줘", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "아니 그거 틀렸어", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "let이랑 const 차이가 뭐야?", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "서버가 어느 시간대야", "lang": "ko", "act": "question", "task": "other"}
+{"text": "페이지네이션에 off by one 에러가 있어", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "음 아니, 다른 방식으로 해봐", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "다크모드 토글 원해", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "ㅇㅋ 자유롭게 해. 쩌는 게임 만들어. 다 되면 와", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in '/home/me/app/src'", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "게임에 일시정지 메뉴 넣어줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "로그인 엔드포인트 테스트 추가해줘", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "내 비밀번호 해싱 괜찮아 아니면 너무 약해", "lang": "ko", "act": "question", "task": "review"}
+{"text": "race condition이 뭐야?", "lang": "ko", "act": "question", "task": "learn_concept"}
+{"text": "내 사진 전부 날짜별로 이름 바꿔주는 스크립트 써줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "왜 내 노트북에서는 타이머가 친구 pc보다 빨리 돌아가?", "lang": "ko", "act": "question", "task": "bug_fix"}
+{"text": "엉뚱한 함수를 테스트했어, 내가 말한 건 calculate_damage야", "lang": "ko", "act": "correction", "task": "tests"}
+{"text": "json 파일에 저장되는 리더보드 추가해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "왼쪽으로 걸을 때 스프라이트가 깜빡여, 고쳐줘", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "둘 다", "lang": "ko", "act": "clarification", "task": "other"}
+{"text": "utils.py용 pytest 테스트 써줘, 엣지 케이스도 포함해서", "lang": "ko", "act": "new_request", "task": "tests"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "ko", "act": "other", "task": "error_paste"}
+{"text": "npc용으로 간단한 a* 경로탐색 구현해줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "프로젝트 완전히 맡길게, 나는 구경만 할게", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "적 코드만 건드려", "lang": "ko", "act": "clarification", "task": "refactor"}
+{"text": "헤이이이", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "도서관 앱에는 어떤 db 스키마가 필요해? 일단 설계만 해줘", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "좋아, 끝내줘", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "좋아, 다음 단계", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "버튼이 이제 너무 커졌어", "lang": "ko", "act": "correction", "task": "ui_styling"}
+{"text": "계속해줘 pls", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "ㅇㅇ", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "응 파란 걸로, 그리고 둥글게도 해줘", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "여기서 vec 대신 hashmap을 쓰는 이유가 뭐야", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "페이지 새로고침하면 로그아웃돼, 로그인 유지돼야 하는데", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "여기 크래시 날 만한 거 있어? main.rs 훑어봐", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "이제 이렇게 떠\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "ko", "act": "correction", "task": "error_paste"}
+{"text": "안드로이드 앱 전체 만들어줘, 밤새 해", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "railway에 배포해줘", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "embed를 초록색 사이드바랑 썸네일로 꾸며줘", "lang": "ko", "act": "new_request", "task": "ui_styling"}
+{"text": "너 무슨 모델이야", "lang": "ko", "act": "other", "task": "other"}
+{"text": "야 이거 진짜 미쳤다, 고마워", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "express랑 fastify 내 프로젝트 기준으로 비교하고 하나 추천해줘", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "음 ㅇㅋ", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "마지막 2개 변경 되돌려줘", "lang": "ko", "act": "stop_undo", "task": "other"}
+{"text": "db 연결이 어디서 닫히긴 해?", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "버튼 코드를 재사용 가능한 컴포넌트로 옮겨줘", "lang": "ko", "act": "new_request", "task": "refactor"}
+{"text": ":)", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "eslint랑 prettier 세팅해줘", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "ㅇㅇ", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "auth랑 피드 있는 트위터 클론 전체 만들어줘. 질문엔 답 안 할 거니까 알아서 정해", "lang": "ko", "act": "handoff", "task": "feature"}
+{"text": "asdfghjkl", "lang": "ko", "act": "other", "task": "other"}
+{"text": "응, 변경사항 적용해줘.", "lang": "ko", "act": "approval", "task": "other"}
+{"text": "ㅋㅋ 굿", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "플레이어 체력은 어디서 처리해", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "아니 그건 틀렸어", "lang": "ko", "act": "correction", "task": "other"}
+{"text": "windows", "lang": "ko", "act": "clarification", "task": "setup_deploy"}
+{"text": "300줄짜리 함수를 더 작은 것들로 쪼개줘", "lang": "ko", "act": "new_request", "task": "refactor"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "ko", "act": "new_request", "task": "error_paste"}
+{"text": "답은 최대 4명이야", "lang": "ko", "act": "clarification", "task": "feature"}
+{"text": "tkinter로 gui 있는 계산기 만들어줘", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "프로젝트에 있는 TODO 전부 나열해줘", "lang": "ko", "act": "new_request", "task": "understand_code"}
+{"text": "하이스코어 어디에 저장되는지 보여줘", "lang": "ko", "act": "new_request", "task": "understand_code"}

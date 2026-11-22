@@ -1,0 +1,250 @@
+{"text": "jepp det funkar", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "ok gör knappen rosa nu", "lang": "sv", "act": "approval", "task": "ui_styling"}
+{"text": "ja kör på och skriv testerna", "lang": "sv", "act": "approval", "task": "tests"}
+{"text": "ja installera det", "lang": "sv", "act": "approval", "task": "setup_deploy"}
+{"text": "funkar, lägg till highscore nu", "lang": "sv", "act": "approval", "task": "feature"}
+{"text": "tack, det var allt för idag", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "återställ allt du nyss gjorde", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "ångra färgändringen, det såg bättre ut förut", "lang": "sv", "act": "stop_undo", "task": "ui_styling"}
+{"text": "ta tillbaka refaktoreringen, jag gillade den gamla strukturen bättre", "lang": "sv", "act": "stop_undo", "task": "refactor"}
+{"text": "git checkout filerna du ändrade, jag vill inte ha något av det", "lang": "sv", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "ta bort inloggningen igen", "lang": "sv", "act": "stop_undo", "task": "feature"}
+{"text": "ta bort testerna igen som du nyss gjorde", "lang": "sv", "act": "stop_undo", "task": "tests"}
+{"text": "fixen gör det värre, ta tillbaka den", "lang": "sv", "act": "stop_undo", "task": "bug_fix"}
+{"text": "ångra readme-ändringen", "lang": "sv", "act": "stop_undo", "task": "docs_writing"}
+{"text": "bygg hela appen, fråga mig ingenting", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "fundera ut allt själv, designa och bygg hela grejen, störa mig inte", "lang": "sv", "act": "handoff", "task": "planning_design"}
+{"text": "få upp testtäckningen till 90% själv, jobba tills du är där", "lang": "sv", "act": "handoff", "task": "tests"}
+{"text": "skriv om hela projektet i typescript, inga frågor, fortsätt tills det kompilerar", "lang": "sv", "act": "handoff", "task": "refactor"}
+{"text": "migrera allt till postgres och uppdatera all kod, stanna inte för frågor", "lang": "sv", "act": "handoff", "task": "setup_deploy"}
+{"text": "dokumentera hela repot, varje fil, och fråga mig ingenting", "lang": "sv", "act": "handoff", "task": "docs_writing"}
+{"text": "designa om hela frontenden, alla sidor, ska se proffsigt ut. fråga inte efter feedback förrän du är klar", "lang": "sv", "act": "handoff", "task": "ui_styling"}
+{"text": "hitta och fixa alla buggar i projektet själv, jag bryr mig inte hur länge det tar", "lang": "sv", "act": "handoff", "task": "bug_fix"}
+{"text": "gå igenom hela repot och fixa allt du tycker är fel, du behöver inte fråga", "lang": "sv", "act": "handoff", "task": "review"}
+{"text": "gör vad du tycker är bäst för projektet de närmaste timmarna", "lang": "sv", "act": "handoff", "task": "other"}
+{"text": "varför finns det ett lock i cache-modulen?", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "vad är lifetimes i rust", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "ska jag ta sqlite eller postgres till en liten discord bot?", "lang": "sv", "act": "question", "task": "planning_design"}
+{"text": "vad gör docker compose up", "lang": "sv", "act": "question", "task": "setup_deploy"}
+{"text": "varför kraschar det bara vid andra klicket?", "lang": "sv", "act": "question", "task": "bug_fix"}
+{"text": "hur centrerar jag en div", "lang": "sv", "act": "question", "task": "ui_styling"}
+{"text": "hur funkar unit tests egentligen, vad är en mock", "lang": "sv", "act": "question", "task": "tests"}
+{"text": "är mitt lösenordshashande okej eller för svagt", "lang": "sv", "act": "question", "task": "review"}
+{"text": "vad ska stå i en bra readme", "lang": "sv", "act": "question", "task": "docs_writing"}
+{"text": "är det illa att all min kod ligger i en fil med 2000 rader?", "lang": "sv", "act": "question", "task": "refactor"}
+{"text": "går det med det här biblioteket att få boten att joina voice channels?", "lang": "sv", "act": "question", "task": "feature"}
+{"text": "vilket programmeringsspråk ska jag lära mig härnäst", "lang": "sv", "act": "question", "task": "other"}
+{"text": "svara alltid med korta meningar tack", "lang": "sv", "act": "other", "task": "other"}
+{"text": "skapa en inloggningssida med email och lösenord", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "appen kraschar när jag trycker på avbryt i fildialogen", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "byt ut sträng-konstanterna mot en enum", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "ska se mer ut som discord, samma färger", "lang": "sv", "act": "new_request", "task": "ui_styling"}
+{"text": "testerna failar, fixa dem", "lang": "sv", "act": "new_request", "task": "tests"}
+{"text": "uppdatera alla dependencies", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "skriv en kort beskrivning till github-repot", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "jämför express och fastify för mitt fall och rekommendera ett", "lang": "sv", "act": "new_request", "task": "planning_design"}
+{"text": "kan nåt krascha här? kolla igenom main.rs", "lang": "sv", "act": "new_request", "task": "review"}
+{"text": "visa mig var highscoret sparas", "lang": "sv", "act": "new_request", "task": "understand_code"}
+{"text": "lär mig hur sorteringsalgoritmer funkar med ett litet exempel", "lang": "sv", "act": "new_request", "task": "learn_concept"}
+{"text": "generera 20 roliga fiendenamn", "lang": "sv", "act": "new_request", "task": "other"}
+{"text": "fortfarande samma problem", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "nä fienderna går fortfarande genom väggar", "lang": "sv", "act": "correction", "task": "bug_fix"}
+{"text": "färgerna är svåra att läsa, kontrasten är kass", "lang": "sv", "act": "correction", "task": "ui_styling"}
+{"text": "kommandot ska vara /kick inte !kick", "lang": "sv", "act": "correction", "task": "feature"}
+{"text": "du ändrade beteendet, outputen är annorlunda nu", "lang": "sv", "act": "correction", "task": "refactor"}
+{"text": "du testade fel funktion, jag menade calculate_damage", "lang": "sv", "act": "correction", "task": "tests"}
+{"text": "npm install failar fortfarande med samma meddelande", "lang": "sv", "act": "correction", "task": "setup_deploy"}
+{"text": "det där har jag aldrig skrivit, projektet använder inte redis", "lang": "sv", "act": "correction", "task": "docs_writing"}
+{"text": "planen är alldeles för stor, vi har bara helgen", "lang": "sv", "act": "correction", "task": "planning_design"}
+{"text": "din review är värdelös, du pratade bara om namn. kolla på logiken", "lang": "sv", "act": "correction", "task": "review"}
+{"text": "förklaringen stämmer inte, loopen går baklänges", "lang": "sv", "act": "correction", "task": "understand_code"}
+{"text": "samma fel igen\nModuleNotFoundError: No module named 'discord'", "lang": "sv", "act": "correction", "task": "error_paste"}
+{"text": "det är till ett skolprojekt om solsystemet", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "rundade hörn, typ 12px", "lang": "sv", "act": "clarification", "task": "ui_styling"}
+{"text": "i firefox. chrome funkar fine", "lang": "sv", "act": "clarification", "task": "bug_fix"}
+{"text": "windows", "lang": "sv", "act": "clarification", "task": "setup_deploy"}
+{"text": "använd de fixtures som redan finns i conftest.py", "lang": "sv", "act": "clarification", "task": "tests"}
+{"text": "rör bara fiendekoden", "lang": "sv", "act": "clarification", "task": "refactor"}
+{"text": "på engelska, och lägg in platshållare för screenshots", "lang": "sv", "act": "clarification", "task": "docs_writing"}
+{"text": "vi har 3 veckor och är bara 2 personer", "lang": "sv", "act": "clarification", "task": "planning_design"}
+{"text": "kolla framför allt på prestanda", "lang": "sv", "act": "clarification", "task": "review"}
+{"text": "den i utils/math.py", "lang": "sv", "act": "clarification", "task": "understand_code"}
+{"text": "förklara med ett spelexempel", "lang": "sv", "act": "clarification", "task": "learn_concept"}
+{"text": "det som är enklast", "lang": "sv", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "sv", "act": "other", "task": "error_paste"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "vad betyder det här?? error: linker `cc` not found", "lang": "sv", "act": "question", "task": "error_paste"}
+{"text": "när jag laddar om sidan blir jag utloggad, ska vara kvar inloggad", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "nä jag menade den ANDRA knappen", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "ta den tid du behöver, bara gör klart hela platformern", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "varför är det här testet flaky, gör det pålitligt", "lang": "sv", "act": "new_request", "task": "tests"}
+{"text": "lägg till dubbelhopp", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "vad är skillnaden mellan utils.js och helpers.js i mitt projekt", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "skriv en kort essä-intro om hur min schackmotor funkar till skolrapporten", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "jag skriver mer snart, vänta lite", "lang": "sv", "act": "other", "task": "other"}
+{"text": "ja pusha det", "lang": "sv", "act": "approval", "task": "setup_deploy"}
+{"text": "kör hårt och fixa allt från roadmapen", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "ska spellogiken köras på servern eller klienten", "lang": "sv", "act": "question", "task": "planning_design"}
+{"text": "ta fixtures som redan finns i conftest.py", "lang": "sv", "act": "clarification", "task": "tests"}
+{"text": "nä, den andra", "lang": "sv", "act": "clarification", "task": "other"}
+{"text": "ReferenceError: document is not defined\n    at Object.<anonymous> (server.js:3:1)", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "fixa stavfelen i readme", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "lägg till ett test som kollar att boten ignorerar meddelanden från andra bots", "lang": "sv", "act": "new_request", "task": "tests"}
+{"text": "testfall för negativa tal och noll", "lang": "sv", "act": "new_request", "task": "tests"}
+{"text": "klockan är 2 på natten och jag kodar fortfarande, hjälp", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "förklara oauth enkelt", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "ok gör knappen rosa nu", "lang": "sv", "act": "approval", "task": "ui_styling"}
+{"text": "vilken mappstruktur skulle du använda till en flask-app med auth", "lang": "sv", "act": "new_request", "task": "planning_design"}
+{"text": "kolla matten i fysikkoden en gång till", "lang": "sv", "act": "new_request", "task": "review"}
+{"text": "är det här en bra lösning eller finns det nåt bättre?", "lang": "sv", "act": "question", "task": "review"}
+{"text": "har jag täckt alla specialfall i parse_input?", "lang": "sv", "act": "new_request", "task": "review"}
+{"text": "dela upp funktionen på 300 rader i mindre", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "dubbelhopp tack", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "koda en komplett minecraft-klon, kör", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "du bytte namn på saker jag inte ville byta namn på", "lang": "sv", "act": "correction", "task": "refactor"}
+{"text": "gör variabelnamnen i physics.py mindre kassa", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "koden har jag ärvt av min bror och fattar ingenting, vad gör bot.on('ready')-grejen", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "deadline är fredag", "lang": "sv", "act": "other", "task": "other"}
+{"text": "fixa allt för deployment, ci, docker, hosting, vad som helst, jag vill inte höra nåt förrän det är live", "lang": "sv", "act": "handoff", "task": "setup_deploy"}
+{"text": ".", "lang": "sv", "act": "other", "task": "other"}
+{"text": "lägg till hopp, mellanslag", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "dela upp main.py i flera filer", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "min lärare vill också ha ett klassdiagram", "lang": "sv", "act": "other", "task": "other"}
+{"text": "committa det med ett bra meddelande", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "använd tabs istället för spaces från och med nu", "lang": "sv", "act": "other", "task": "other"}
+{"text": "hur bestämmer routern vilken sida som visas", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "förlåt för de dumma frågorna förut", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "mörkt tema såklart", "lang": "sv", "act": "clarification", "task": "ui_styling"}
+{"text": "skriv en hjälptext för --verbose-flaggan", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "hallå, är du där?", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "jag ärvde den här koden från min bror och fattar ingenting av vad bot.on('ready')-delen gör", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "byt namn på player till hero överallt", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "visst", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "byt namn på player till hero överallt", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "bygg en miniräknare med gui i tkinter", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "jag kan inte välja mellan ett rest api och graphql, för- och nackdelar för ett skolprojekt?", "lang": "sv", "act": "new_request", "task": "planning_design"}
+{"text": "hur kan jag hosta min discord bot gratis 24/7?", "lang": "sv", "act": "question", "task": "setup_deploy"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "sv", "act": "other", "task": "error_paste"}
+{"text": "varför funkar mina tester lokalt men inte i github actions?", "lang": "sv", "act": "question", "task": "tests"}
+{"text": "du är grym", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "ångra docker-ändringarna", "lang": "sv", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "det kraschar direkt när jag klickar på play, innan menyn ens kommer", "lang": "sv", "act": "clarification", "task": "bug_fix"}
+{"text": "ångra snälla", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "lägg till en licens, mit tror jag", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "jämför express och fastify för mitt grejs och rekommendera ett", "lang": "sv", "act": "new_request", "task": "planning_design"}
+{"text": "kommandot ska heta /kick, inte !kick", "lang": "sv", "act": "correction", "task": "feature"}
+{"text": "kör", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "dokumentera alla bot-kommandon", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "går det att bygga in ett multiplayer-läge eller är det för svårt med den här setupen", "lang": "sv", "act": "question", "task": "feature"}
+{"text": "jag är 15 så håll det enkelt", "lang": "sv", "act": "clarification", "task": "other"}
+{"text": "nu står det\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "sv", "act": "correction", "task": "error_paste"}
+{"text": "migrera allt till postgres och anpassa all kod, utan frågor tack", "lang": "sv", "act": "handoff", "task": "setup_deploy"}
+{"text": "nej nej nej ta tillbaka det", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "ja tack", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "varför tar npm install en evighet", "lang": "sv", "act": "question", "task": "setup_deploy"}
+{"text": "bryt ner projektet i små uppgifter som jag kan göra i ordning", "lang": "sv", "act": "new_request", "task": "planning_design"}
+{"text": "hur lär sig ett neuralt nätverk? jag vill använda ett i min spel-ai", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "ta bort duplicerad kod i de tre level-filerna", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "kom ihåg att mitt projekt heter starhopper", "lang": "sv", "act": "other", "task": "other"}
+{"text": "förklara den här koden för mig som om jag var 12", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "jag menade det vänstra sidofältet", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "det är lugnt, fortsätt", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "när jag laddar om sidan blir jag utloggad, ska vara kvar inloggad", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "lägg till multiplayer över websockets", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "i vilken fil ligger slash-kommandona till boten?", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "skillnaden mellan let och const?", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "och lägg till 5 sekunders cooldown", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "var spawnas fienderna", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "vilken modell är du", "lang": "sv", "act": "other", "task": "other"}
+{"text": "bygg en komplett flappy bird-klon med menyer, ljud, highscores, allt. självständigt tack", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "https://github.com/nagon/coolbot", "lang": "sv", "act": "other", "task": "other"}
+{"text": "gör så att det ser ut som screenshoten jag skickade", "lang": "sv", "act": "clarification", "task": "ui_styling"}
+{"text": "uppdatera alla dependencies", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "sluta med det du håller på med", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "spara och ladda till spelet", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "lägg tillbaka det", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "digga det funkar inte", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "stopp", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "bro det där är helt sjukt, tack", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "jag använder discord.py version 2.3", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "godmorgon", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "layouten ska vara 2 kolumner på desktop och 1 på mobil", "lang": "sv", "act": "new_request", "task": "ui_styling"}
+{"text": "nice, nästa steg", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "på main-branchen", "lang": "sv", "act": "clarification", "task": "setup_deploy"}
+{"text": "kolla igenom pr:en innan jag mergar", "lang": "sv", "act": "new_request", "task": "review"}
+{"text": "var dras spelarens liv", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "ångra readme-ändringen", "lang": "sv", "act": "stop_undo", "task": "docs_writing"}
+{"text": "kolla bara filerna i src/api", "lang": "sv", "act": "clarification", "task": "review"}
+{"text": "j", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "ok det var en vild session", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "ångra docker-grejerna", "lang": "sv", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "varför funkar mina tester lokalt men inte i github actions?", "lang": "sv", "act": "question", "task": "tests"}
+{"text": "flytta alla magiska tal till en config-fil", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "rör inte main.py mer, återställ den", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "lägg till ljudeffekter när man plockar upp en coin", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "paus, jag vill kolla på det själv först", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "lägg till en gullig logga i headern, enkel svg räcker", "lang": "sv", "act": "new_request", "task": "ui_styling"}
+{"text": "är det normalt att det tar så lång tid att kompilera", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "kolla diffen och säg om det ser konstigt ut nånstans", "lang": "sv", "act": "new_request", "task": "review"}
+{"text": "fixa minnesläckan, spelet blir långsammare efter 10 minuter", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "gör en highscorelista som sparas i en json-fil", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "vilken fil hanterar discord slash-kommandona?", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "min sida ser trasig ut på mobilen, menyn öppnas inte", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "bruh det funkar inte", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "samma problem som förut", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "sätt upp en github action som kör testerna vid varje push", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "/compact", "lang": "sv", "act": "other", "task": "other"}
+{"text": "jobba med det här i timmar tills spelet är helt klart, inga frågor", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "gör ett /ban-kommando till min bot", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "du kan göra det", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "lägg till en boss i slutet av level 3", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "för många emojis i readme, ta bort dem", "lang": "sv", "act": "correction", "task": "docs_writing"}
+{"text": "koda en komplett minecraft-klon, kör", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "varför är poängen alltid 0 efter omstart", "lang": "sv", "act": "question", "task": "bug_fix"}
+{"text": "kan du förklara hur spelloopen i main.py funkar", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "var hanteras spelarens liv", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "behåll funktionsnamnen som de är", "lang": "sv", "act": "clarification", "task": "refactor"}
+{"text": "pls hjälp\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "gör alla features på todo-listan, fråga mig inte", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "skriv tester för hela codebasen och fixa allt som failar, sluta inte förrän allt är grönt", "lang": "sv", "act": "handoff", "task": "tests"}
+{"text": "styla embeden med grön list och en thumbnail", "lang": "sv", "act": "new_request", "task": "ui_styling"}
+{"text": "vad betyder O(n log n)", "lang": "sv", "act": "question", "task": "learn_concept"}
+{"text": "kan du gå tillbaka till gårdagens commit", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "Assets/Scripts/PlayerController.cs(23,17): error CS0103: The name 'rb' does not exist in the current context", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "flytta knappkoden till en återanvändbar komponent", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "filen heter scores.json, i data-mappen", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "jag kan python men inte c++", "lang": "sv", "act": "clarification", "task": "learn_concept"}
+{"text": "ty det funkade perfekt", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "svara alltid kort tack", "lang": "sv", "act": "other", "task": "other"}
+{"text": "lägg tillbaka det", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "går det att bygga in ett multiplayer-läge eller är det för svårt med den här setupen", "lang": "sv", "act": "question", "task": "feature"}
+{"text": "installera pygame", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "gör om de här callbacksen till async/await", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "händer bara i level 2", "lang": "sv", "act": "clarification", "task": "bug_fix"}
+{"text": "ta bort inventory-systemet igen, det är för mycket", "lang": "sv", "act": "stop_undo", "task": "feature"}
+{"text": "det här är riktigt kul", "lang": "sv", "act": "chit_chat", "task": "other"}
+{"text": "ok du får fria händer. gör ett coolt spel. kom tillbaka när det är klart", "lang": "sv", "act": "handoff", "task": "feature"}
+{"text": "med pytest", "lang": "sv", "act": "clarification", "task": "tests"}
+{"text": "kommentera koden så att jag kan förklara den i min presentation", "lang": "sv", "act": "new_request", "task": "docs_writing"}
+{"text": "jag använder discord.py version 2.3", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "paus, jag vill kolla på det själv först", "lang": "sv", "act": "stop_undo", "task": "other"}
+{"text": "skapa en inloggningssida med email och lösenord", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "funkar", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "varför överlappar min navbar innehållet", "lang": "sv", "act": "question", "task": "ui_styling"}
+{"text": "vad gör den här funktionen?", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "sv", "act": "new_request", "task": "error_paste"}
+{"text": "skapa en inställningsskärm där man kan ändra volymen", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "spriten flimrar när den går åt vänster, fixa det", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "med pygame, inte tkinter", "lang": "sv", "act": "clarification", "task": "feature"}
+{"text": "det gjorde det värre", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "använd klasser istället för alla de där globala variablerna", "lang": "sv", "act": "new_request", "task": "refactor"}
+{"text": "nu står det\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "sv", "act": "correction", "task": "error_paste"}
+{"text": "konfigurera eslint och prettier", "lang": "sv", "act": "new_request", "task": "setup_deploy"}
+{"text": "gå tillbaka till hur det var förut", "lang": "sv", "act": "stop_undo", "task": "other"}

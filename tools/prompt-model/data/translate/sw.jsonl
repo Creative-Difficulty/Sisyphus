@@ -1,0 +1,250 @@
+{"text": "endelea", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "sawa sasa fanya button iwe pink", "lang": "sw", "act": "approval", "task": "ui_styling"}
+{"text": "ndio andika hizo tests tu", "lang": "sw", "act": "approval", "task": "tests"}
+{"text": "ndio i-install", "lang": "sw", "act": "approval", "task": "setup_deploy"}
+{"text": "inaonekana poa, sasa ongeza ile highscore", "lang": "sw", "act": "approval", "task": "feature"}
+{"text": "niambie utani", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "tafadhali tengua", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "tengua mabadiliko ya rangi, ilikuwa nzuri zaidi mwanzo", "lang": "sw", "act": "stop_undo", "task": "ui_styling"}
+{"text": "tengua kubadilisha majina ya variables, sasa hakuna kinachoendana", "lang": "sw", "act": "stop_undo", "task": "refactor"}
+{"text": "tengua mabadiliko ya docker", "lang": "sw", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "toa ile login feature tena", "lang": "sw", "act": "stop_undo", "task": "feature"}
+{"text": "futa zile tests ulizotengeneza sasa hivi", "lang": "sw", "act": "stop_undo", "task": "tests"}
+{"text": "hiyo fix imeharibu zaidi, itengue", "lang": "sw", "act": "stop_undo", "task": "bug_fix"}
+{"text": "tengua mabadiliko ya readme", "lang": "sw", "act": "stop_undo", "task": "docs_writing"}
+{"text": "tengeneza clone kamili ya minecraft, anza", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "tafuta kila kitu mwenyewe, design na jenga kitu kizima, usinisumbue", "lang": "sw", "act": "handoff", "task": "planning_design"}
+{"text": "andika tests za codebase nzima na fix kila kinachofeli, usisimame mpaka vyote viwe green", "lang": "sw", "act": "handoff", "task": "tests"}
+{"text": "andika upya project nzima kwa typescript, hakuna maswali, endelea mpaka i-compile", "lang": "sw", "act": "handoff", "task": "refactor"}
+{"text": "andaa kila kitu kwa ajili ya deployment, ci, docker, hosting, chochote kinachohitajika, sitaki kusikia chochote mpaka iwe live", "lang": "sw", "act": "handoff", "task": "setup_deploy"}
+{"text": "andika documentation ya repo nzima, kila file, na usiniulize chochote", "lang": "sw", "act": "handoff", "task": "docs_writing"}
+{"text": "design upya frontend nzima, kurasa zote, ionekane professional. usiniulize feedback mpaka umalize", "lang": "sw", "act": "handoff", "task": "ui_styling"}
+{"text": "tafuta na fix bugs zote kwenye project mwenyewe, sijali itachukua muda gani", "lang": "sw", "act": "handoff", "task": "bug_fix"}
+{"text": "pitia repo nzima na fix kila unachofikiri ni kibaya, huna haja ya kuniuliza", "lang": "sw", "act": "handoff", "task": "review"}
+{"text": "fanya chochote unachofikiri ni bora kwa project kwa masaa machache yajayo", "lang": "sw", "act": "handoff", "task": "other"}
+{"text": "kwa nini kuna lock kwenye cache module?", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "neural network inajifunza vipi? nataka kutumia moja kwenye game ai yangu", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "game logic iendeshwe kwenye server au client", "lang": "sw", "act": "question", "task": "planning_design"}
+{"text": "nawezaje kui-deploy hii kwenye vercel", "lang": "sw", "act": "question", "task": "setup_deploy"}
+{"text": "kwa nini score huwa 0 kila baada ya restart", "lang": "sw", "act": "question", "task": "bug_fix"}
+{"text": "kwa nini navbar yangu inafunika content", "lang": "sw", "act": "question", "task": "ui_styling"}
+{"text": "kwa nini tests zangu zinapita locally lakini hazipiti kwenye github actions?", "lang": "sw", "act": "question", "task": "tests"}
+{"text": "password hashing yangu iko sawa au ni dhaifu sana?", "lang": "sw", "act": "question", "task": "review"}
+{"text": "kitu gani kiwe kwenye readme nzuri", "lang": "sw", "act": "question", "task": "docs_writing"}
+{"text": "ni mbaya kwamba code yangu yote iko kwenye file moja ya mistari 2000?", "lang": "sw", "act": "question", "task": "refactor"}
+{"text": "unaweza kuongeza multiplayer mode au ni ngumu sana kwa setup hii", "lang": "sw", "act": "question", "task": "feature"}
+{"text": "hii itachukua muda gani", "lang": "sw", "act": "question", "task": "other"}
+{"text": "nitakuandikia zaidi kidogo, subiri kidogo", "lang": "sw", "act": "other", "task": "other"}
+{"text": "tengeneza login page yenye email na password", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "score haiwi reset game ikiisha. tafadhali fix", "lang": "sw", "act": "new_request", "task": "bug_fix"}
+{"text": "hamisha code ya button kwenye component inayoweza kutumika tena", "lang": "sw", "act": "new_request", "task": "refactor"}
+{"text": "weka kila kitu katikati na ongeza nafasi", "lang": "sw", "act": "new_request", "task": "ui_styling"}
+{"text": "weka jest kwenye project", "lang": "sw", "act": "new_request", "task": "tests"}
+{"text": "commit hii na message nzuri", "lang": "sw", "act": "new_request", "task": "setup_deploy"}
+{"text": "rekebisha typos kwenye readme", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "nibuni vipi save file format ili saves za zamani ziendelee kufanya kazi", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "angalia kama kwenye css yangu kuna vitu ambavyo sivihitaji", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "nionyeshe highscore inahifadhiwa wapi", "lang": "sw", "act": "new_request", "task": "understand_code"}
+{"text": "nifundishe sorting algorithms zinavyofanya kazi, na mfano mdogo", "lang": "sw", "act": "new_request", "task": "learn_concept"}
+{"text": "fungua project kwenye vscode", "lang": "sw", "act": "new_request", "task": "other"}
+{"text": "hapana, nilisema button NYINGINE", "lang": "sw", "act": "correction", "task": "other"}
+{"text": "login inafanya kazi sasa lakini register imeharibika", "lang": "sw", "act": "correction", "task": "bug_fix"}
+{"text": "umebadilisha layout nzima, nilitaka tu kubadilisha font", "lang": "sw", "act": "correction", "task": "ui_styling"}
+{"text": "hapana, shop ifunguke kwa E na sio ukiingia ndani", "lang": "sw", "act": "correction", "task": "feature"}
+{"text": "behavior imebadilika, output ni tofauti sasa", "lang": "sw", "act": "correction", "task": "refactor"}
+{"text": "test uliyoandika ni mbaya, inategemea 5 lakini inapaswa kuwa 6", "lang": "sw", "act": "correction", "task": "tests"}
+{"text": "python version mbaya, tunatumia 3.11", "lang": "sw", "act": "correction", "task": "setup_deploy"}
+{"text": "sikuandika hiyo, project haitumii redis", "lang": "sw", "act": "correction", "task": "docs_writing"}
+{"text": "hapana, architecture hiyo ni ngumu sana kwa school project", "lang": "sw", "act": "correction", "task": "planning_design"}
+{"text": "umekosa bug iliyo wazi kwenye mstari wa 40", "lang": "sw", "act": "correction", "task": "review"}
+{"text": "maelezo hayo si sahihi, loop inaenda kinyume", "lang": "sw", "act": "correction", "task": "understand_code"}
+{"text": "bado napata hii baada ya mabadiliko yako:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "sw", "act": "correction", "task": "error_paste"}
+{"text": "na pygame, si tkinter", "lang": "sw", "act": "clarification", "task": "feature"}
+{"text": "dark theme bila shaka", "lang": "sw", "act": "clarification", "task": "ui_styling"}
+{"text": "inatokea level 2 tu", "lang": "sw", "act": "clarification", "task": "bug_fix"}
+{"text": "repo ni private, username yangu ni coolkid42", "lang": "sw", "act": "clarification", "task": "setup_deploy"}
+{"text": "tumia pytest", "lang": "sw", "act": "clarification", "task": "tests"}
+{"text": "gusa tu code ya adui", "lang": "sw", "act": "clarification", "task": "refactor"}
+{"text": "kwa kiingereza, na weka placeholders za screenshots", "lang": "sw", "act": "clarification", "task": "docs_writing"}
+{"text": "tuna wiki 3 na ni wawili tu", "lang": "sw", "act": "clarification", "task": "planning_design"}
+{"text": "zingatia zaidi performance", "lang": "sw", "act": "clarification", "task": "review"}
+{"text": "ile ya utils/math.py", "lang": "sw", "act": "clarification", "task": "understand_code"}
+{"text": "eleza kwa mfano wa game", "lang": "sw", "act": "clarification", "task": "learn_concept"}
+{"text": "mimi nina miaka 15 kwa hiyo weka rahisi", "lang": "sw", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "sw", "act": "other", "task": "error_paste"}
+{"text": "nikiita api napata 403 Forbidden, hii hapa response: {\"message\":\"Missing Access\",\"code\":50001}", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "inamaanisha nini?? error: linker `cc` not found", "lang": "sw", "act": "question", "task": "error_paste"}
+{"text": "pygame.error: No video device\nhiyo inamaanisha nini na nitaifix vipi", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "tumia fixtures zilizopo tayari kwenye conftest.py", "lang": "sw", "act": "clarification", "task": "tests"}
+{"text": "fanya kazi kwa masaa mpaka game iishe kabisa, hakuna maswali", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "nahitaji school project nzima kesho, fanya yote wewe", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "ndio fanya hivyo", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "git reset kwenye commit ya mwisho", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "ulipush kwenye main, nilitaka branch mpya", "lang": "sw", "act": "correction", "task": "setup_deploy"}
+{"text": "bila shaka", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "endesha tests", "lang": "sw", "act": "new_request", "task": "tests"}
+{"text": "irudishe tena", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "tumia option ya kwanza lakini hifadhi data kwenye json", "lang": "sw", "act": "clarification", "task": "feature"}
+{"text": "nini kinaita update_score()", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "sw", "act": "other", "task": "error_paste"}
+{"text": "kwenye firefox. chrome iko sawa", "lang": "sw", "act": "clarification", "task": "bug_fix"}
+{"text": "sijali, amua wewe", "lang": "sw", "act": "clarification", "task": "other"}
+{"text": "idempotent inamaanisha nini", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "irudishe", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "tengeneza twitter clone nzima na auth na feed. sitajibu maswali kwa hiyo fanya maamuzi yako mwenyewe", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "unaweza kuangalia tena math kwenye physics code", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "wow", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "ndio endelea andika hizo tests", "lang": "sw", "act": "approval", "task": "tests"}
+{"text": "nijifunze programming language gani ijayo", "lang": "sw", "act": "question", "task": "other"}
+{"text": "nawezaje kui-deploy hii kwenye vercel", "lang": "sw", "act": "question", "task": "setup_deploy"}
+{"text": "nibuni vipi save format ili saves za zamani ziendelee kufanya kazi", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.zaehleZeichen(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "bot bado inajibu mara mbili, fix yako haikufanya kitu", "lang": "sw", "act": "correction", "task": "bug_fix"}
+{"text": "sawa una uhuru kamili. tengeneza game kali. rudi ikiisha", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "jenga portfolio website yangu kuanzia a mpaka z. usiulize rangi gani, chagua tu", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "nieleze pointers", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "unaweza kufanya hivyo", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "inaonekana poa", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "kitu gani kiwe kwenye readme nzuri", "lang": "sw", "act": "question", "task": "docs_writing"}
+{"text": "game logic iende kwenye server au client?", "lang": "sw", "act": "question", "task": "planning_design"}
+{"text": "hii iwe struct au class", "lang": "sw", "act": "question", "task": "refactor"}
+{"text": "tengua kubadilisha majina ya variables, sasa hakuna kinachoendana", "lang": "sw", "act": "stop_undo", "task": "refactor"}
+{"text": "nani anaita update_score()", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "inafurahisha sana hapa", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "ungejengaje bot inayoendesha kwenye servers nyingi kwa wakati mmoja?", "lang": "sw", "act": "question", "task": "planning_design"}
+{"text": "lazima nitoe comment kila mstari au sehemu ngumu tu?", "lang": "sw", "act": "question", "task": "docs_writing"}
+{"text": "inaonekana sawa, endelea", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "tafsiri maandishi ya game kwa kispanish", "lang": "sw", "act": "new_request", "task": "other"}
+{"text": "fanya kila kitu kwenye roadmap, kwa nguvu zote", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "react ni kubwa mno kwa site ya kurasa 3?", "lang": "sw", "act": "question", "task": "planning_design"}
+{"text": "niko mbali siku nzima, jenga website nzima na kurasa zote na ifanye nzuri", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "nilimaanisha sidebar ya kushoto", "lang": "sw", "act": "clarification", "task": "feature"}
+{"text": "react ni kubwa mno kwa site yenye kurasa 3?", "lang": "sw", "act": "question", "task": "planning_design"}
+{"text": "weka magic numbers zote kwenye config file", "lang": "sw", "act": "new_request", "task": "refactor"}
+{"text": "kwa nini score huwa 0 kila baada ya restart", "lang": "sw", "act": "question", "task": "bug_fix"}
+{"text": "asdfghjkl", "lang": "sw", "act": "other", "task": "other"}
+{"text": "api key iko kwenye .env, usiichapishe", "lang": "sw", "act": "other", "task": "other"}
+{"text": "fanya kila kitu kwenye roadmap, kwa nguvu zote", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "andika maandishi ya tutorial kwenye game, vidokezo 5 vifupi kwa wachezaji wapya", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "nionyeshe highscore inahifadhiwa wapi", "lang": "sw", "act": "new_request", "task": "understand_code"}
+{"text": "tengeneza requirements.txt", "lang": "sw", "act": "new_request", "task": "setup_deploy"}
+{"text": "endelea peke yako mpaka app iwe na features zote za readme", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "tengeneza login page yenye email na password", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "nyoka apite upande mwingine wa dirisha ukifika ukingoni badala ya kufa", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "drag and drop kwa todo list", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "eleza project structure kwenye CONTRIBUTING.md", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "kuna memory leaks kwenye renderer?", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "ongeza hover effect kwenye cards", "lang": "sw", "act": "new_request", "task": "ui_styling"}
+{"text": "ongeza license, mit nadhani", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "hapana hapana hapana ondoa hiyo", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "background dark blue na maandishi meupe", "lang": "sw", "act": "new_request", "task": "ui_styling"}
+{"text": "race condition ni nini?", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "niaje", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "andika docstrings kwa kila function kwenye game.py", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "chatbot ikumbuke ujumbe 5 wa mwisho", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "python inacompile au inainterpret", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "sauti ya coin ukiokota", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "niaje, uko hapo?", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "mambo hayafanyi kazi bro", "lang": "sw", "act": "correction", "task": "other"}
+{"text": "asante hiyo ilifanya kazi vizuri sana", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "chora tables za database kwa users, posts na likes", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "weka multiplayer kupitia websockets", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "ungetumia folder structure gani kwa flask app yenye auth", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "marafiki zangu wanaona game yangu ni poa sasa shukrani kwako", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "ongeza pause menu kwenye game", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "jenga ukurasa wa cart wenye bei ya jumla", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "andika utangulizi mfupi wa insha kuhusu jinsi chess engine yangu inavyofanya kazi kwa school report", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "kwa nini character yangu huanguka kupitia sakafu mara kwa mara", "lang": "sw", "act": "question", "task": "bug_fix"}
+{"text": "nafasi nyingi sana. gawanya nusu", "lang": "sw", "act": "correction", "task": "ui_styling"}
+{"text": "unaweza kujaribu kama kuhifadhi highscore kunafanya kazi", "lang": "sw", "act": "new_request", "task": "tests"}
+{"text": "mara nyingine mpira unapita kwenye paddle kwa kasi kubwa. fix", "lang": "sw", "act": "new_request", "task": "bug_fix"}
+{"text": "test kwamba bot inapuuza ujumbe kutoka kwa bots zingine", "lang": "sw", "act": "new_request", "task": "tests"}
+{"text": "kwa nini kuna callback na si promise", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "kwangu haifanyi kazi, jumla bado si sahihi", "lang": "sw", "act": "correction", "task": "bug_fix"}
+{"text": "ni mbaya kwamba code yangu yote iko kwenye file moja ya mistari 2000?", "lang": "sw", "act": "question", "task": "refactor"}
+{"text": "O(n log n) inamaanisha nini", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "wewe amua features na design, wewe jenga kila kitu. nitaangalia kesho", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "tengeneza changelog kutoka kwa commits", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "naweza python lakini sio c++", "lang": "sw", "act": "clarification", "task": "learn_concept"}
+{"text": "code review tafadhali, kuwa mkweli", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "acha majina ya functions yabaki kama yalivyo", "lang": "sw", "act": "clarification", "task": "refactor"}
+{"text": "maisha ya mchezaji yanapunguzwa wapi", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "fanya maadui wamfukuze mchezaji", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "jenga tu. kila kitu. hakuna maswali.", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "function hii ni thread safe?", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "sasa kuruka kunafanya kazi lakini mchezaji hawezi kutembea kushoto tena", "lang": "sw", "act": "correction", "task": "bug_fix"}
+{"text": "fix bug ambapo bot inajibu mara mbili", "lang": "sw", "act": "new_request", "task": "bug_fix"}
+{"text": "tengeneza command ya /kura na reactions", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "ghairi, nimebadilisha mawazo", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "uliweka database lakini nilisema json file", "lang": "sw", "act": "correction", "task": "feature"}
+{"text": "rekebisha typos kwenye readme", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "hapana nilitaka blue sio kijani", "lang": "sw", "act": "correction", "task": "ui_styling"}
+{"text": "tunataka kuihost wenyewe, hakuna cloud", "lang": "sw", "act": "clarification", "task": "planning_design"}
+{"text": "tofauti kati ya git merge na rebase ni nini?", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "sawa", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "code inafuata pep8", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "hapana hiyo si sahihi", "lang": "sw", "act": "correction", "task": "other"}
+{"text": "test", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "hapana hiyo si sahihi", "lang": "sw", "act": "correction", "task": "other"}
+{"text": "kitu rahisi zaidi", "lang": "sw", "act": "clarification", "task": "other"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "fanya code isomeke vizuri, lazima nimuonyeshe mwalimu wangu", "lang": "sw", "act": "new_request", "task": "refactor"}
+{"text": "kwa nini inacrash tu kwenye click ya pili?", "lang": "sw", "act": "question", "task": "bug_fix"}
+{"text": "ondoa nested loops kwenye map generator", "lang": "sw", "act": "new_request", "task": "refactor"}
+{"text": "install pygame", "lang": "sw", "act": "new_request", "task": "setup_deploy"}
+{"text": "IndexError: list index out of range\nfix hii", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "inafanyaje kazi ujumbe ukifika kwenye bot", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "nisaidie kufikiria levels zihifadhiwe vipi, json au code", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "fanya buttons ziwe rounded na gradient", "lang": "sw", "act": "new_request", "task": "ui_styling"}
+{"text": "mwalimu wangu anataka pia class diagram", "lang": "sw", "act": "other", "task": "other"}
+{"text": "neural network inajifunza vipi? nataka kutumia moja kwenye game ai yangu", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "ongeza search bar inayochuja list unapoandika", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "nimefunika edge cases zote kwenye parse_input?", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "approved", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "tengua mabadiliko ya readme", "lang": "sw", "act": "stop_undo", "task": "docs_writing"}
+{"text": "tengua hiyo", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "buni state machine ya boss fight", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "hapana, nilitaka blue sio kijani", "lang": "sw", "act": "correction", "task": "ui_styling"}
+{"text": "jibu ni wachezaji 4 kwa kiwango cha juu", "lang": "sw", "act": "clarification", "task": "feature"}
+{"text": "tengeneza leaderboard inayohifadhi kwenye json file", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "badilisha jina player kuwa hero kila mahali", "lang": "sw", "act": "new_request", "task": "refactor"}
+{"text": "subiri subiri subiri simama", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "ongeza ukurasa wa cart wenye bei ya jumla", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "andaa kila kitu kwa ajili ya deployment, ci, docker, hosting, chochote kinachohitajika, sitaki kusikia chochote mpaka iwe live", "lang": "sw", "act": "handoff", "task": "setup_deploy"}
+{"text": "emoji nyingi sana kwenye readme, ziondoe", "lang": "sw", "act": "correction", "task": "docs_writing"}
+{"text": "andika tests za codebase nzima, yote, na fix kinachofeli, usisimame mpaka kila kitu kiwe green", "lang": "sw", "act": "handoff", "task": "tests"}
+{"text": "sasa inasema\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "sw", "act": "correction", "task": "error_paste"}
+{"text": "wewe ni model gani", "lang": "sw", "act": "other", "task": "other"}
+{"text": "sawa endelea", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "fupisha kila file kwenye src inafanya nini", "lang": "sw", "act": "question", "task": "understand_code"}
+{"text": "weka majina ya functions yale yale", "lang": "sw", "act": "clarification", "task": "refactor"}
+{"text": "andika help text kwa --verbose flag", "lang": "sw", "act": "new_request", "task": "docs_writing"}
+{"text": "API ni nini, kwa kweli", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "nitumie fixtures zilizopo tayari kwenye conftest.py", "lang": "sw", "act": "clarification", "task": "tests"}
+{"text": "tafsiri maandishi ya game kwa kispanish", "lang": "sw", "act": "new_request", "task": "other"}
+{"text": "hii ni njia nzuri ya kufanya au kuna kitu bora zaidi?", "lang": "sw", "act": "question", "task": "review"}
+{"text": "tengeneza majina 20 ya kuchekesha ya maadui", "lang": "sw", "act": "new_request", "task": "other"}
+{"text": "weka hatua za installation kabla ya features", "lang": "sw", "act": "clarification", "task": "docs_writing"}
+{"text": "maadui wakati mwingine wanazaliwa kwenye kuta, unaweza kufix hiyo", "lang": "sw", "act": "new_request", "task": "bug_fix"}
+{"text": "design patterns ni nini? observer ni muhimu kwenye games?", "lang": "sw", "act": "question", "task": "learn_concept"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "sw", "act": "new_request", "task": "error_paste"}
+{"text": "fanya kila kitu, naenda kulala", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "maliza kazi zote zilizobaki bila kuniuliza", "lang": "sw", "act": "handoff", "task": "feature"}
+{"text": "sasisha dependencies zote", "lang": "sw", "act": "new_request", "task": "setup_deploy"}
+{"text": "umefanya test ipite kwa kufuta assert, huo ni wizi", "lang": "sw", "act": "correction", "task": "tests"}
+{"text": "ndio, tumia mabadiliko", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "hiyo si fix, inaficha tu tatizo", "lang": "sw", "act": "correction", "task": "bug_fix"}
+{"text": "server iko kwenye time zone gani", "lang": "sw", "act": "question", "task": "other"}
+{"text": "token imehifadhiwa salama au mtu anaweza kuiba", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "yep hiyo inafanya kazi", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "niambie utani", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "ndio hivyo hivyo, fanya hivyo", "lang": "sw", "act": "approval", "task": "other"}
+{"text": "inaonekana mbaya, ifanye rahisi zaidi", "lang": "sw", "act": "correction", "task": "ui_styling"}
+{"text": "rudi kwenye layout ya zamani", "lang": "sw", "act": "stop_undo", "task": "ui_styling"}
+{"text": "lol hiyo ilikuwa ya kuchekesha", "lang": "sw", "act": "chit_chat", "task": "other"}
+{"text": "nataka dark mode switch", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "angalia diff na uniambie kama kuna kitu kinaonekana si sawa", "lang": "sw", "act": "new_request", "task": "review"}
+{"text": "bot ipost meme ya random mtu akiandika !meme", "lang": "sw", "act": "new_request", "task": "feature"}
+{"text": "nisaidie kuchagua tech stack kwa social app ndogo", "lang": "sw", "act": "new_request", "task": "planning_design"}
+{"text": "subiri subiri subiri simama", "lang": "sw", "act": "stop_undo", "task": "other"}
+{"text": "nice", "lang": "sw", "act": "chit_chat", "task": "other"}

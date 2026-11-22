@@ -1,0 +1,250 @@
+{"text": "ok đúng cái t muốn rồi", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "ok giờ đổi cái nút sang màu hồng đi", "lang": "vi", "act": "approval", "task": "ui_styling"}
+{"text": "ừ làm đi, viết test luôn", "lang": "vi", "act": "approval", "task": "tests"}
+{"text": "ừ push đi", "lang": "vi", "act": "approval", "task": "setup_deploy"}
+{"text": "ổn rồi, giờ thêm highscore nữa", "lang": "vi", "act": "approval", "task": "feature"}
+{"text": "ngôn ngữ lập trình yêu thích của m là gì?", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "quay lại như lúc trước đi", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "quay lại layout cũ đi", "lang": "vi", "act": "stop_undo", "task": "ui_styling"}
+{"text": "hoàn tác cái refactor đi, t thích cấu trúc cũ hơn", "lang": "vi", "act": "stop_undo", "task": "refactor"}
+{"text": "undo cái npm install đi, nó làm hỏng node_modules của t rồi", "lang": "vi", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "bỏ cái hệ thống inventory ra lại đi, nhiều quá", "lang": "vi", "act": "stop_undo", "task": "feature"}
+{"text": "xóa mấy cái test m vừa làm đi", "lang": "vi", "act": "stop_undo", "task": "tests"}
+{"text": "cái fix của m làm nó tệ hơn, rút lại đi", "lang": "vi", "act": "stop_undo", "task": "bug_fix"}
+{"text": "hoàn tác cái sửa readme đi", "lang": "vi", "act": "stop_undo", "task": "docs_writing"}
+{"text": "cứ build đi. hết luôn. đừng hỏi gì hết.", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "tự tìm hiểu hết đi, thiết kế rồi build luôn cả cái, đừng làm phiền t", "lang": "vi", "act": "handoff", "task": "planning_design"}
+{"text": "tự nâng test coverage lên 90% đi, làm tới khi nào đạt thì thôi", "lang": "vi", "act": "handoff", "task": "tests"}
+{"text": "viết lại cả project bằng typescript đi, đừng hỏi, làm tiếp tới khi compile được", "lang": "vi", "act": "handoff", "task": "refactor"}
+{"text": "setup hết phần deploy đi, ci, docker, hosting gì cũng được, t chỉ muốn nghe tin khi nó online rồi", "lang": "vi", "act": "handoff", "task": "setup_deploy"}
+{"text": "viết docs cho cả repo đi, từng file một, và đừng hỏi t gì hết", "lang": "vi", "act": "handoff", "task": "docs_writing"}
+{"text": "thiết kế lại toàn bộ frontend đi, tất cả các trang, nhìn cho chuyên nghiệp. đừng xin feedback tới khi xong", "lang": "vi", "act": "handoff", "task": "ui_styling"}
+{"text": "tự tìm và sửa hết bug trong project đi, t không care mất bao lâu", "lang": "vi", "act": "handoff", "task": "bug_fix"}
+{"text": "đọc hết repo rồi sửa mọi thứ m thấy sai đi, khỏi cần hỏi", "lang": "vi", "act": "handoff", "task": "review"}
+{"text": "mấy tiếng tới cứ làm cái gì m thấy tốt nhất cho project đi", "lang": "vi", "act": "handoff", "task": "other"}
+{"text": "code này t thừa kế từ anh t mà t chả hiểu gì, cái bot.on('ready') nó làm gì vậy", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "đệ quy là gì", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "game logic nên chạy ở server hay client", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "làm sao host con bot discord của t 24/7 miễn phí được nhỉ?", "lang": "vi", "act": "question", "task": "setup_deploy"}
+{"text": "sao restart xong điểm lúc nào cũng về 0 vậy", "lang": "vi", "act": "question", "task": "bug_fix"}
+{"text": "sao cái navbar của t đè lên nội dung vậy", "lang": "vi", "act": "question", "task": "ui_styling"}
+{"text": "sao test chạy local được mà trên github actions thì không?", "lang": "vi", "act": "question", "task": "tests"}
+{"text": "hash password kiểu này của t ổn chưa hay yếu quá", "lang": "vi", "act": "question", "task": "review"}
+{"text": "t có phải comment từng dòng không hay chỉ mấy chỗ khó thôi?", "lang": "vi", "act": "question", "task": "docs_writing"}
+{"text": "cả code nằm trong 1 file 2000 dòng có tệ không?", "lang": "vi", "act": "question", "task": "refactor"}
+{"text": "có làm được cho bot vào voice channel bằng thư viện này không?", "lang": "vi", "act": "question", "task": "feature"}
+{"text": "tiếp theo t nên học ngôn ngữ nào", "lang": "vi", "act": "question", "task": "other"}
+{"text": "????", "lang": "vi", "act": "other", "task": "other"}
+{"text": "powerup: tốc độ, khiên và nam châm", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "app bị crash khi t bấm cancel ở hộp thoại chọn file", "lang": "vi", "act": "new_request", "task": "bug_fix"}
+{"text": "dọn cái hàm này đi, nó loạn quá", "lang": "vi", "act": "new_request", "task": "refactor"}
+{"text": "làm tiêu đề to hơn và in đậm đi", "lang": "vi", "act": "new_request", "task": "ui_styling"}
+{"text": "test đang fail, sửa đi", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "deploy cái này lên railway đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "soạn mô tả cho trang itch.io của t đi", "lang": "vi", "act": "new_request", "task": "docs_writing"}
+{"text": "chia project thành mấy việc nhỏ để t làm lần lượt đi", "lang": "vi", "act": "new_request", "task": "planning_design"}
+{"text": "tìm code smell trong project của t đi", "lang": "vi", "act": "new_request", "task": "review"}
+{"text": "liệt kê hết mấy cái TODO trong project đi", "lang": "vi", "act": "new_request", "task": "understand_code"}
+{"text": "dạy t mấy thuật toán sắp xếp hoạt động sao, có ví dụ nhỏ nha", "lang": "vi", "act": "new_request", "task": "learn_concept"}
+{"text": "đổi tên thư mục thành starhopper đi", "lang": "vi", "act": "new_request", "task": "other"}
+{"text": "m làm hỏng game rồi", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "giờ nhảy được rồi nhưng nhân vật không đi sang trái được nữa", "lang": "vi", "act": "correction", "task": "bug_fix"}
+{"text": "chữ chưa được căn giữa, nó vẫn nằm bên trái", "lang": "vi", "act": "correction", "task": "ui_styling"}
+{"text": "không, cái shop phải mở khi bấm E chứ không phải khi đi vào", "lang": "vi", "act": "correction", "task": "feature"}
+{"text": "m đổi tên mấy thứ mà t không muốn đổi", "lang": "vi", "act": "correction", "task": "refactor"}
+{"text": "cái test m viết sai rồi, nó expect 5 mà phải là 6", "lang": "vi", "act": "correction", "task": "tests"}
+{"text": "sai phiên bản python rồi, tụi t dùng 3.11", "lang": "vi", "act": "correction", "task": "setup_deploy"}
+{"text": "readme dài với nghiêm túc quá, làm ngắn và thoải mái hơn đi", "lang": "vi", "act": "correction", "task": "docs_writing"}
+{"text": "không, kiến trúc phức tạp quá so với project trường", "lang": "vi", "act": "correction", "task": "planning_design"}
+{"text": "review của m vô dụng, m chỉ nói về tên thôi. nhìn vô logic đi", "lang": "vi", "act": "correction", "task": "review"}
+{"text": "giải thích sai rồi, vòng lặp chạy ngược", "lang": "vi", "act": "correction", "task": "understand_code"}
+{"text": "sau khi m sửa vẫn bị cái này nè:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "vi", "act": "correction", "task": "error_paste"}
+{"text": "ừ cái màu xanh, với làm nó tròn luôn", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "cái header, không phải footer", "lang": "vi", "act": "clarification", "task": "ui_styling"}
+{"text": "nó crash ngay sau khi t bấm nút play, trước cả khi menu hiện lên", "lang": "vi", "act": "clarification", "task": "bug_fix"}
+{"text": "dùng pip không dùng conda", "lang": "vi", "act": "clarification", "task": "setup_deploy"}
+{"text": "chỉ test backend thôi, frontend kệ", "lang": "vi", "act": "clarification", "task": "tests"}
+{"text": "chỉ đụng vô code của enemy thôi", "lang": "vi", "act": "clarification", "task": "refactor"}
+{"text": "bằng tiếng anh, với thêm chỗ để ảnh chụp màn hình", "lang": "vi", "act": "clarification", "task": "docs_writing"}
+{"text": "tụi t muốn tự host, không dùng cloud", "lang": "vi", "act": "clarification", "task": "planning_design"}
+{"text": "chú ý nhất là performance", "lang": "vi", "act": "clarification", "task": "review"}
+{"text": "cái trong utils/math.py", "lang": "vi", "act": "clarification", "task": "understand_code"}
+{"text": "t biết python nhưng không biết c++", "lang": "vi", "act": "clarification", "task": "learn_concept"}
+{"text": "không, cái thứ hai", "lang": "vi", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "vi", "act": "other", "task": "error_paste"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "cái này nghĩa là gì?? error: linker `cc` not found", "lang": "vi", "act": "question", "task": "error_paste"}
+{"text": "cách tốt nhất để tổ chức project unity có nhiều enemy là gì", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "đổi mấy cái callback sang async/await đi", "lang": "vi", "act": "new_request", "task": "refactor"}
+{"text": "nhớ nha, project của t tên là starhopper", "lang": "vi", "act": "other", "task": "other"}
+{"text": "setup jest cho project đi", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "cái plan đó to quá, tụi t chỉ có cuối tuần thôi", "lang": "vi", "act": "correction", "task": "planning_design"}
+{"text": "ok nhưng sao ở đây dùng callback mà không dùng promise", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "migrate hết sang postgres và sửa toàn bộ code theo, làm ơn đừng hỏi lại", "lang": "vi", "act": "handoff", "task": "setup_deploy"}
+{"text": "không, chỉ trang chính thôi", "lang": "vi", "act": "clarification", "task": "other"}
+{"text": "m test nhầm hàm rồi, t nói calculate_damage", "lang": "vi", "act": "correction", "task": "tests"}
+{"text": "cảm ơn, chạy ngon luôn", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "deploy lên railway đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "IndexError: list index out of range\nsửa đi", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "thêm boss ở cuối level 3", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "gg", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "tụi t có 3 người, mấy bạn kia làm phần art", "lang": "vi", "act": "other", "task": "other"}
+{"text": "đỉnh thật sự luôn á", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "cho nhảy đôi đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "m đổi cả layout rồi, t chỉ muốn đổi font thôi", "lang": "vi", "act": "correction", "task": "ui_styling"}
+{"text": "tách main.py ra nhiều file đi", "lang": "vi", "act": "new_request", "task": "refactor"}
+{"text": "viết unit test cho phần tính damage đi", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "race condition là gì?", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "giải thích oauth đơn giản thôi", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "style cái embed với sidebar màu xanh lá và thumbnail đi", "lang": "vi", "act": "new_request", "task": "ui_styling"}
+{"text": "cài pygame đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "làm a* pathfinding cho npc đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "cái hàm này thực ra làm gì vậy?", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "chắc chắn rồi", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "tên hàm cứ để nguyên giùm t", "lang": "vi", "act": "clarification", "task": "refactor"}
+{"text": "làm changelog từ mấy cái commit đi", "lang": "vi", "act": "new_request", "task": "docs_writing"}
+{"text": "t cần xong cả project trường trước ngày mai, m tự làm hết đi", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "làm xong cả cái này mà không cần t. cảm ơn", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "renderer có bị rò rỉ bộ nhớ không?", "lang": "vi", "act": "new_request", "task": "review"}
+{"text": "đọc hết flow đăng nhập rồi nói t nghe cái gì có thể sai", "lang": "vi", "act": "new_request", "task": "review"}
+{"text": "hàm này làm gì vậy?", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "chỗ này có an toàn trước sql injection không?", "lang": "vi", "act": "question", "task": "review"}
+{"text": "ctrl z", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "ổn đó", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "commit cái này với message cho đàng hoàng đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "ừ", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "đổi player thành hero hết mọi chỗ đi", "lang": "vi", "act": "new_request", "task": "refactor"}
+{"text": "npm install vẫn bị fail với cùng thông báo", "lang": "vi", "act": "correction", "task": "setup_deploy"}
+{"text": "cứ build đi. hết. đừng hỏi.", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "router quyết định hiện trang nào bằng cách nào vậy", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "sai file rồi, t nói player.py chứ không phải enemy.py", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "help\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "neural network học kiểu gì vậy? t muốn dùng cho ai trong game của t", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "ý t là cái thanh bên trái á", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "ừ cài đi", "lang": "vi", "act": "approval", "task": "setup_deploy"}
+{"text": "idempotent nghĩa là gì", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "làm cho nó giống discord hơn, cùng màu luôn", "lang": "vi", "act": "new_request", "task": "ui_styling"}
+{"text": "lên plan làm game tower defense đi, đừng code vội", "lang": "vi", "act": "new_request", "task": "planning_design"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "cái nào gọi update_score()", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "build cả web portfolio của t từ đầu tới cuối đi. đừng hỏi t màu gì, chọn đại đi", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "như cái ảnh chụp màn hình t gửi á", "lang": "vi", "act": "clarification", "task": "ui_styling"}
+{"text": "hey", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "làm cho con rắn đi xuyên qua mép màn hình thay vì chết đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "ok t cho m toàn quyền. làm một game ngầu đi. xong rồi quay lại", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "cái này mất bao lâu", "lang": "vi", "act": "question", "task": "other"}
+{"text": "t đang dùng discord.py bản 2.3", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "enemy được spawn ở đâu", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "ok", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "thx", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "thêm pause menu vào game đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "m push lên main rồi, t muốn branch mới mà", "lang": "vi", "act": "correction", "task": "setup_deploy"}
+{"text": "enemy phải là zombie, 2d nhìn từ trên xuống", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "dùng pygame, không phải tkinter", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "nhớ là project của t tên là starhopper", "lang": "vi", "act": "other", "task": "other"}
+{"text": "đáp án là tối đa 4 người chơi", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "không. ngược lại", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "undo cái đổi tên biến đi, giờ chả khớp gì hết", "lang": "vi", "act": "stop_undo", "task": "refactor"}
+{"text": "quên đi, hủy", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "nghe được đó, làm đi", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.zaehleZeichen(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "tạo git repo rồi push lên github của t đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "cái đó làm nó tệ hơn", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "giải thích cấu trúc project trong file CONTRIBUTING.md đi", "lang": "vi", "act": "new_request", "task": "docs_writing"}
+{"text": "thêm kéo thả vào todo list đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "closure trong javascript là gì", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "animation nhanh quá với bị giật", "lang": "vi", "act": "correction", "task": "ui_styling"}
+{"text": "thêm chế độ multiplayer được không hay setup này khó quá", "lang": "vi", "act": "question", "task": "feature"}
+{"text": "cái regex này trong validate_email làm gì vậy", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "dịch text trong game sang tiếng tây ban nha đi", "lang": "vi", "act": "new_request", "task": "other"}
+{"text": "cái đó t chưa bao giờ viết, project này không dùng redis", "lang": "vi", "act": "correction", "task": "docs_writing"}
+{"text": "cứ từ từ làm, miễn là xong cả cái platformer", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "thêm trang giỏ hàng có tổng giá", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "một senior dev sẽ nói gì về đoạn code này", "lang": "vi", "act": "new_request", "task": "review"}
+{"text": "sao timer chạy nhanh hơn trên laptop t so với pc thằng bạn t vậy", "lang": "vi", "act": "question", "task": "bug_fix"}
+{"text": "luôn trả lời bằng câu ngắn giùm t", "lang": "vi", "act": "other", "task": "other"}
+{"text": "ừ cài đi", "lang": "vi", "act": "approval", "task": "setup_deploy"}
+{"text": "giải thích con trỏ cho t đi", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "implement hết các tính năng trong todo list mà không cần hỏi t xác nhận", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "làm cái máy tính có gui bằng tkinter đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "ReferenceError: window is not defined\n    at Object.<anonymous> (server.js:3:1)", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "tuyệt, làm xong đi", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "sao ở đây là callback mà không phải promise", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "máu của người chơi được xử lý ở đâu", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "wow", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "cái sprite bị nhấp nháy khi đi sang trái, sửa đi", "lang": "vi", "act": "new_request", "task": "bug_fix"}
+{"text": "giải thích code này cho t như t 12 tuổi", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "dark theme là chắc rồi", "lang": "vi", "act": "clarification", "task": "ui_styling"}
+{"text": "design pattern là gì? cái observer có hữu ích cho game không?", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "làm đi", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "t reload trang là bị đăng xuất, mà phải giữ đăng nhập chứ", "lang": "vi", "act": "new_request", "task": "bug_fix"}
+{"text": "hôm nay m sao rồi?", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "hủy, t đổi ý rồi", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "thêm vô readme một phần hướng dẫn chạy bot ở local", "lang": "vi", "act": "new_request", "task": "docs_writing"}
+{"text": "tcp với udp khác nhau chỗ nào, học ở môn tin mà t quên rồi", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "tcp với udp khác nhau chỗ nào, học ở trường mà t quên rồi", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "python", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "git reset về commit cuối đi", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "m là nhất", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "phác thảo mấy bảng database cho users, posts và likes đi", "lang": "vi", "act": "new_request", "task": "planning_design"}
+{"text": "docker compose up làm gì vậy", "lang": "vi", "act": "question", "task": "setup_deploy"}
+{"text": "code compile lâu vậy có bình thường không", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "m test thử xem lưu highscore có chạy không", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "con bot vẫn trả lời 2 lần, fix của m có tác dụng gì đâu", "lang": "vi", "act": "correction", "task": "bug_fix"}
+{"text": "kéo thả cho todo list", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "xác nhận email sau khi đăng ký", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "cách tốt nhất để tổ chức project unity có nhiều enemy là gì", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "repo là private, username t là coolkid42", "lang": "vi", "act": "clarification", "task": "setup_deploy"}
+{"text": "thôi bỏ đi, vứt hết", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "giải thích cho t như t 12 tuổi", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "mutex là gì?", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "viết help text cho cờ --verbose đi", "lang": "vi", "act": "new_request", "task": "docs_writing"}
+{"text": "với lại nó phải chạy được offline", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "sao restart xong điểm lúc nào cũng về 0 vậy", "lang": "vi", "act": "question", "task": "bug_fix"}
+{"text": "lệnh phải tên là /kick chứ không phải !kick", "lang": "vi", "act": "correction", "task": "feature"}
+{"text": "thêm boss ở cuối level 3 đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "cái này phức tạp hơn lúc trước, sao m thêm nhiều class vậy", "lang": "vi", "act": "correction", "task": "refactor"}
+{"text": "ok mà nhanh lên lol", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "api key nằm trong .env, đừng in nó ra", "lang": "vi", "act": "other", "task": "other"}
+{"text": "dùng postgres đi", "lang": "vi", "act": "clarification", "task": "feature"}
+{"text": "chào", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "viết lại cả project bằng typescript đi, đừng hỏi, làm tiếp tới khi compile được", "lang": "vi", "act": "handoff", "task": "refactor"}
+{"text": "đơn giản hóa cái chuỗi if else này đi", "lang": "vi", "act": "new_request", "task": "refactor"}
+{"text": "không phải ý t, làm lại đi", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "sao đoạn code này dùng hashmap mà không dùng vec vậy", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "lifetime trong rust là gì", "lang": "vi", "act": "question", "task": "learn_concept"}
+{"text": "tạo git repo rồi push lên github của t đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "dùng font pixel kiểu retro cho hud đi", "lang": "vi", "act": "new_request", "task": "ui_styling"}
+{"text": "????", "lang": "vi", "act": "other", "task": "other"}
+{"text": "ok nên là t có cái ý tưởng này", "lang": "vi", "act": "other", "task": "other"}
+{"text": "chạy test đi", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "cài pygame đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "không, t nói cái nút KIA mà", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "giờ nó báo\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "vi", "act": "correction", "task": "error_paste"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "vi", "act": "other", "task": "error_paste"}
+{"text": "thêm cái logo dễ thương vô header đi, svg đơn giản là được", "lang": "vi", "act": "new_request", "task": "ui_styling"}
+{"text": "m là nhất luôn, thật đó", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "t nên thiết kế định dạng file save sao để save cũ vẫn chạy được", "lang": "vi", "act": "new_request", "task": "planning_design"}
+{"text": "m làm test pass bằng cách xóa assert, vậy là gian lận", "lang": "vi", "act": "correction", "task": "tests"}
+{"text": "làm tiếp đi pls", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "kết nối database có được đóng ở đâu không?", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "trước khi code: t cần những class nào cho game bài", "lang": "vi", "act": "new_request", "task": "planning_design"}
+{"text": "máy t không chạy được, tổng vẫn sai", "lang": "vi", "act": "correction", "task": "bug_fix"}
+{"text": "readme dài quá với nghiêm túc quá, làm ngắn gọn thoải mái hơn đi", "lang": "vi", "act": "correction", "task": "docs_writing"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "gọi api bị 403: {\"message\":\"Missing Access\",\"code\":50001}", "lang": "vi", "act": "new_request", "task": "error_paste"}
+{"text": "hủy", "lang": "vi", "act": "stop_undo", "task": "other"}
+{"text": "làm cả project đi, t tin m, làm t bất ngờ đi", "lang": "vi", "act": "handoff", "task": "feature"}
+{"text": "vẫn crash khi t bấm start", "lang": "vi", "act": "correction", "task": "bug_fix"}
+{"text": "lgtm", "lang": "vi", "act": "approval", "task": "other"}
+{"text": "user chứ không phải admin", "lang": "vi", "act": "clarification", "task": "other"}
+{"text": "ừ với cả phần settings nữa", "lang": "vi", "act": "clarification", "task": "other"}
+{"text": "vẫn bị y chang vậy", "lang": "vi", "act": "correction", "task": "other"}
+{"text": "t biết python nhưng không biết c++", "lang": "vi", "act": "clarification", "task": "learn_concept"}
+{"text": "setup eslint với prettier đi", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "cho user upload ảnh đại diện đi", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "thêm test case cho số âm với số 0", "lang": "vi", "act": "new_request", "task": "tests"}
+{"text": "code này có an toàn trước sql injection không?", "lang": "vi", "act": "question", "task": "review"}
+{"text": "m vừa làm test pass bằng cách xóa assert, vậy là gian lận", "lang": "vi", "act": "correction", "task": "tests"}
+{"text": "undo cái đó đi", "lang": "vi", "act": "stop_undo", "task": "other"}

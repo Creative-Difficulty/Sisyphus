@@ -1,0 +1,250 @@
+{"text": "го", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "ок тепер зроби кнопку рожевою", "lang": "uk", "act": "approval", "task": "ui_styling"}
+{"text": "так, давай, пиши тести", "lang": "uk", "act": "approval", "task": "tests"}
+{"text": "ага, пуш це", "lang": "uk", "act": "approval", "task": "setup_deploy"}
+{"text": "виглядає норм, тепер додай штуку з рекордами", "lang": "uk", "act": "approval", "task": "feature"}
+{"text": "привіт", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "будь ласка, зупинись і викинь усі незакомічені зміни", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "поверни старий лейаут", "lang": "uk", "act": "stop_undo", "task": "ui_styling"}
+{"text": "відкоти рефакторинг, мені була краща стара структура", "lang": "uk", "act": "stop_undo", "task": "refactor"}
+{"text": "скасуй зміни з докером", "lang": "uk", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "прибери фічу з логіном назад", "lang": "uk", "act": "stop_undo", "task": "feature"}
+{"text": "видали назад тести, які ти щойно зробив", "lang": "uk", "act": "stop_undo", "task": "tests"}
+{"text": "фікс робить гірше, відкоти його", "lang": "uk", "act": "stop_undo", "task": "bug_fix"}
+{"text": "скасуй зміни в рідмі", "lang": "uk", "act": "stop_undo", "task": "docs_writing"}
+{"text": "працюй над цим годинами поки гра не буде повністю готова, без питань", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "розберись з усім сам, спроєктуй і збудуй усе, не відволікай мене", "lang": "uk", "act": "handoff", "task": "planning_design"}
+{"text": "сам доведи покриття тестами до 90%, працюй поки не дійдеш", "lang": "uk", "act": "handoff", "task": "tests"}
+{"text": "перепиши весь проєкт на typescript, без питань, продовжуй поки не скомпілиться", "lang": "uk", "act": "handoff", "task": "refactor"}
+{"text": "мігруй усе на postgres і підправ весь код, будь ласка без питань", "lang": "uk", "act": "handoff", "task": "setup_deploy"}
+{"text": "задокументуй весь репозиторій, кожен файл, і мене нічого не питай", "lang": "uk", "act": "handoff", "task": "docs_writing"}
+{"text": "перероби весь фронтенд, усі сторінки, має виглядати професійно. не питай фідбек поки не закінчиш", "lang": "uk", "act": "handoff", "task": "ui_styling"}
+{"text": "знайди і виправ усі баги в проєкті сам, мені пофіг скільки це займе", "lang": "uk", "act": "handoff", "task": "bug_fix"}
+{"text": "пройдись по всьому репо і виправ усе що вважаєш неправильним, мене питати не треба", "lang": "uk", "act": "handoff", "task": "review"}
+{"text": "роби що вважаєш найкращим для проєкту наступні кілька годин", "lang": "uk", "act": "handoff", "task": "other"}
+{"text": "в якому файлі слеш-команди бота?", "lang": "uk", "act": "question", "task": "understand_code"}
+{"text": "що таке рекурсія", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "мені брати sqlite чи postgres для невеличкого діскорд бота?", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "що робить docker compose up", "lang": "uk", "act": "question", "task": "setup_deploy"}
+{"text": "чому таймер на моєму ноуті йде швидше ніж на компі мого кореша", "lang": "uk", "act": "question", "task": "bug_fix"}
+{"text": "як відцентрувати div", "lang": "uk", "act": "question", "task": "ui_styling"}
+{"text": "як взагалі працюють юніт-тести, що таке мок", "lang": "uk", "act": "question", "task": "tests"}
+{"text": "цей код захищений від sql injection?", "lang": "uk", "act": "question", "task": "review"}
+{"text": "що має бути в гарному рідмі", "lang": "uk", "act": "question", "task": "docs_writing"}
+{"text": "це має бути struct чи class", "lang": "uk", "act": "question", "task": "refactor"}
+{"text": "а з цією бібліотекою можна щоб бот заходив у голосові канали?", "lang": "uk", "act": "question", "task": "feature"}
+{"text": "яку мову мені вчити далі", "lang": "uk", "act": "question", "task": "other"}
+{"text": "зараз напишу ще, секунду", "lang": "uk", "act": "other", "task": "other"}
+{"text": "додай систему збереження і завантаження для гри", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "мій сайт на телефоні зламаний, меню не відкривається", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "вкладені цикли в генераторі мапи треба прибрати", "lang": "uk", "act": "new_request", "task": "refactor"}
+{"text": "лейаут має бути в 2 колонки на десктопі і в 1 на мобілці", "lang": "uk", "act": "new_request", "task": "ui_styling"}
+{"text": "запусти тести", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "онови всі залежності", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "додай ліцензію, mit здається", "lang": "uk", "act": "new_request", "task": "docs_writing"}
+{"text": "яка схема бази мені потрібна для додатка бібліотеки? просто спочатку спроєктуй її", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "перевір моє домашнє, воно так правильно?", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "покажи де зберігається рекорд", "lang": "uk", "act": "new_request", "task": "understand_code"}
+{"text": "поясни як працюють алгоритми сортування на маленькому прикладі", "lang": "uk", "act": "new_request", "task": "learn_concept"}
+{"text": "зроби мені туду-лист на сьогодні", "lang": "uk", "act": "new_request", "task": "other"}
+{"text": "ні це неправильно", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "бот все одно відповідає двічі, твій фікс нічого не дав", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "ні я хотів синій а не зелений", "lang": "uk", "act": "correction", "task": "ui_styling"}
+{"text": "ні, магазин має відкриватись на E а не коли заходиш в нього", "lang": "uk", "act": "correction", "task": "feature"}
+{"text": "тепер це складніше ніж було, нащо стільки класів", "lang": "uk", "act": "correction", "task": "refactor"}
+{"text": "ти тестував не ту функцію, я мав на увазі calculate_damage", "lang": "uk", "act": "correction", "task": "tests"}
+{"text": "npm install все ще падає з тим самим повідомленням", "lang": "uk", "act": "correction", "task": "setup_deploy"}
+{"text": "забагато емодзі в рідмі, прибери їх", "lang": "uk", "act": "correction", "task": "docs_writing"}
+{"text": "ні, ця архітектура задовга для шкільного проєкту", "lang": "uk", "act": "correction", "task": "planning_design"}
+{"text": "твій рев'ю нікудишній, ти говорив тільки про назви. дивись на логіку", "lang": "uk", "act": "correction", "task": "review"}
+{"text": "це пояснення неправильне, цикл іде назад", "lang": "uk", "act": "correction", "task": "understand_code"}
+{"text": "після твоєї зміни все ще маю оце:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "uk", "act": "correction", "task": "error_paste"}
+{"text": "вороги мають бути зомбі, 2d вид зверху", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "заокруглені кути, десь 12px", "lang": "uk", "act": "clarification", "task": "ui_styling"}
+{"text": "я натискаю стрілки і нічого не відбувається, але тільки перший раз", "lang": "uk", "act": "clarification", "task": "bug_fix"}
+{"text": "windows", "lang": "uk", "act": "clarification", "task": "setup_deploy"}
+{"text": "візьми фікстури що вже є в conftest.py", "lang": "uk", "act": "clarification", "task": "tests"}
+{"text": "чіпай тільки код ворогів", "lang": "uk", "act": "clarification", "task": "refactor"}
+{"text": "англійською, і місце для скріншотів", "lang": "uk", "act": "clarification", "task": "docs_writing"}
+{"text": "це гра на двох локально, тому мережа не потрібна", "lang": "uk", "act": "clarification", "task": "planning_design"}
+{"text": "дивись тільки файли в src/api", "lang": "uk", "act": "clarification", "task": "review"}
+{"text": "ту що з utils/math.py", "lang": "uk", "act": "clarification", "task": "understand_code"}
+{"text": "я знаю python але не c++", "lang": "uk", "act": "clarification", "task": "learn_concept"}
+{"text": "мені 15, тому роби просто", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "uk", "act": "other", "task": "error_paste"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5\nчому", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "що це значить?? error: linker `cc` not found", "lang": "uk", "act": "question", "task": "error_paste"}
+{"text": "зроби простий a* пошук шляху для нпс", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "пауза, я хочу спочатку сам глянути", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "не, тільки головну сторінку", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "ага це я і хотів", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "мій вчитель каже що ші це шахрайство лол", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "ок але давай швидше лол", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "можеш пояснити як працює ігровий цикл у main.py", "lang": "uk", "act": "question", "task": "understand_code"}
+{"text": "візьми перший варіант але зберігай дані в json", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "бери стільки часу скільки треба, головне щоб весь платформер був готовий", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "тепер стрибок працює але гравець не може йти вліво", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "рахунок не скидається при game over. пофікси плз", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "ні рахунок все ще не зберігається, ти тільки змінив назву змінної", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "скільки це ще буде", "lang": "uk", "act": "question", "task": "other"}
+{"text": "ти зламав гру", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "api ключ в файлі .env, не виводь його", "lang": "uk", "act": "other", "task": "other"}
+{"text": "як би ти спроєктував бота що працює на багатьох серверах одночасно?", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "логіка гри має бігти на сервері чи на клієнті", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "скасуй рефакторинг, стара структура була кращою", "lang": "uk", "act": "stop_undo", "task": "refactor"}
+{"text": "дай волю і реалізуй усе з роадмапи", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "це неправильно, перевір ще раз", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "пофікси це: IndexError: list index out of range", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "так, синю, і зроби її ще круглою", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "забудь, скасовуй", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "ок ти маєш вільні руки. зроби круту гру. повертайся коли буде готово", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "почисть цю функцію, там бардак", "lang": "uk", "act": "new_request", "task": "refactor"}
+{"text": "замокай discord api щоб ми могли тестити команди", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "tcp vs udp, ми проходили на інформатиці але я забув", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "доброго ранку", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "супер, продовжуй", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "напиши dockerfile для бота", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "коли я перезавантажую сторінку мене розлогінює, а має залишатись залогіненим", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "додай подвійний стрибок", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "налаштуй github action що запускає тести на кожен пуш", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "сформулюй мені гарний опис коміту для останніх 3 змін", "lang": "uk", "act": "new_request", "task": "docs_writing"}
+{"text": "як вчиться нейромережа? хочу використати її в ші для своєї гри", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "можеш відкотитись до вчорашнього коміту", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "ні рахунок досі не зберігається, ти змінив тільки назву змінної", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "я такого взагалі не просив", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "будь ласка скасуй", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "напиши docstring для кожної функції в game.py", "lang": "uk", "act": "new_request", "task": "docs_writing"}
+{"text": "ок", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "напиши мені вступ для шкільного звіту про те як працює мій шаховий рушій", "lang": "uk", "act": "new_request", "task": "docs_writing"}
+{"text": "я мав на увазі ліву бічну панель", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "скасуй npm install, воно зіпсувало мій node_modules", "lang": "uk", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "створи цілий клон твіттера з авторизацією і стрічкою. я не відповідатиму на питання тому приймай рішення сам", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "розкажи анекдот", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "так на все", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "окей так, продовжуй", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "не. навпаки", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "як би ти побудував бота що працює на дуже багатьох серверах одночасно?", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "скасуй будь ласка", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "створи git репо і запуш на мій github", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "накидай таблиці бази для юзерів, постів і лайків", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "nvm скасуй це", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "rest api чи graphql, можеш сказати плюси і мінуси для шкільного проєкту?", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "зроби кнопки заокругленими з градієнтом", "lang": "uk", "act": "new_request", "task": "ui_styling"}
+{"text": "заокруглені кути, десь 12px", "lang": "uk", "act": "clarification", "task": "ui_styling"}
+{"text": "я використовую discord.py версії 2.3", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "git reset на останній коміт", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "ей", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "чому мої тести проходять локально а в github actions ні?", "lang": "uk", "act": "question", "task": "tests"}
+{"text": "як краще структурувати unity проєкт з купою ворогів", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "автопілот: доведи бекенд, фронтенд і базу. розбуди мене коли запрацює", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "додай стрибок, пробіл", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "ця функція thread safe?", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "напиши docstring для кожної функції в game.py", "lang": "uk", "act": "new_request", "task": "docs_writing"}
+{"text": "можеш зробити простий інвентар на 10 слотів", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "як мені спроєктувати формат збереження щоб старі сейви працювали далі", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "напиши юніт-тести для розрахунку шкоди", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "зроби таблицю лідерів що зберігається в json файл", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "зроби рев'ю мого коду", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "що має бути в гарному рідмі", "lang": "uk", "act": "question", "task": "docs_writing"}
+{"text": "крути в циклі і покращуй гру вічно", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "що значить ідемпотентний", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "просто зроби. усе. без питань.", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "круто, наступний крок", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "ей", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "пофіг, вирішуй ти", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "python", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "що значить O(n log n)", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "тепер пише\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "uk", "act": "correction", "task": "error_paste"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "можна вставити мультиплеєр чи це надто складно з цим сетапом", "lang": "uk", "act": "question", "task": "feature"}
+{"text": "окей це те що я хотів", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "node 20, здається", "lang": "uk", "act": "clarification", "task": "setup_deploy"}
+{"text": "ми хочемо хостити самі, без клауду", "lang": "uk", "act": "clarification", "task": "planning_design"}
+{"text": "продовжуй сам поки в апці не буде всіх фіч з рідмі", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "зроби з цього нормальний клас з методами", "lang": "uk", "act": "new_request", "task": "refactor"}
+{"text": "pygame.error: No video device\nщо це значить і як пофіксити", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "забий, я передумав", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "що таке lifetimes в rust", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "тест на випадок коли інвентар повний", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "мене не буде весь день, збудуй весь сайт з усіма сторінками і зроби добре", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "відкоти докер штуки", "lang": "uk", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "ти змінив поведінку, тепер інший вивід", "lang": "uk", "act": "correction", "task": "refactor"}
+{"text": "все ще маю оце після твоєї зміни:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "uk", "act": "correction", "task": "error_paste"}
+{"text": "зроби решту задач не питаючи мене", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "мені 15 тому роби просто", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "продовжуй плз", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "чому всі кажуть що ніколи не можна глобальні змінні", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "вороги іноді спавняться в стінах, можеш пофіксити", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "що таке замикання в javascript", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "відкоти npm install, тепер мій node_modules зламаний", "lang": "uk", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "розкажи якийсь жарт", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "можеш перепровірити математику у фізичному коді", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "мій вчитель каже що ші це шахрайство лол", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "задеплой це на railway", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "іноді м'яч пролітає крізь ракетку на великій швидкості. пофікси", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "додай тест-кейси для від'ємних чисел і нуля", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "ти пофіксив логін але тепер реєстрація зламана", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "не той файл, я казав player.py а не enemy.py", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "бери скільки треба часу, головне доробити весь платформер", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "спроєктуй стейт-машину для бою з босом", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "я не це мав на увазі, переробляй", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "тебе це не бісить що я постійно тебе засипаю повідомленнями?", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "зроби скрипт що робить exe через pyinstaller", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "зроби щоб виглядало як на скріншоті що я скинув", "lang": "uk", "act": "clarification", "task": "ui_styling"}
+{"text": "розбий проєкт на маленькі задачі які я зроблю по черзі", "lang": "uk", "act": "new_request", "task": "planning_design"}
+{"text": "навчи мене як працюють алгоритми сортування, з маленьким прикладом", "lang": "uk", "act": "new_request", "task": "learn_concept"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in 'C:\\\\Users\\\\Jonas\\\\app\\\\src'", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "токен зберігається безпечно чи його можна вкрасти", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "так", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "налаштуй github action що запускає тести на кожен пуш", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "ти перейменував речі які я не просив перейменовувати", "lang": "uk", "act": "correction", "task": "refactor"}
+{"text": "lgtm", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "стоп", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "оформи embed із зеленою смужкою збоку і мініатюрою", "lang": "uk", "act": "new_request", "task": "ui_styling"}
+{"text": "перейменуй папку в starhopper", "lang": "uk", "act": "new_request", "task": "other"}
+{"text": "https://github.com/irgendwer/cooler-bot", "lang": "uk", "act": "other", "task": "other"}
+{"text": "павер-апи: швидкість, щит і магніт", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "винеси всі магічні числа в конфіг-файл", "lang": "uk", "act": "new_request", "task": "refactor"}
+{"text": "скільки це займе", "lang": "uk", "act": "question", "task": "other"}
+{"text": "так пушуй", "lang": "uk", "act": "approval", "task": "setup_deploy"}
+{"text": "скасуй перейменування змінних, тепер нічого не збігається", "lang": "uk", "act": "stop_undo", "task": "refactor"}
+{"text": "хм ні, спробуй інший підхід", "lang": "uk", "act": "correction", "task": "other"}
+{"text": "напиши тест що відтворює краш, потім пофікси", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "більше не чіпай main.py, відновлюй його", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in '/home/me/app/src'", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "яка різниця між git merge і rebase?", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "можеш зробити простенький інвентар на 10 слотів", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "закоміть це з нормальним повідомленням", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "глянь чи в моєму css є штуки які мені не треба", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "це хороше рішення чи є краще?", "lang": "uk", "act": "question", "task": "review"}
+{"text": "тест", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "як найпростіше", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "чому цей тест флакі, зроби його надійним", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "перевір залежності на відомі вразливості", "lang": "uk", "act": "new_request", "task": "review"}
+{"text": "це нормально що компіляція так довго йде", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "хедер, не футер", "lang": "uk", "act": "clarification", "task": "ui_styling"}
+{"text": "дивись тільки файли в src/api", "lang": "uk", "act": "clarification", "task": "review"}
+{"text": "встанови pygame", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "зроби щоб виглядало більше як діскорд, ті самі кольори", "lang": "uk", "act": "new_request", "task": "ui_styling"}
+{"text": "тест що ти написав неправильний, він чекає 5 а має бути 6", "lang": "uk", "act": "correction", "task": "tests"}
+{"text": "як вчиться нейромережа? хочу одну для ші в моїй грі", "lang": "uk", "act": "question", "task": "learn_concept"}
+{"text": "тест флакі, зроби його надійним", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "uk", "act": "new_request", "task": "error_paste"}
+{"text": "чому мій navbar налізає на контент", "lang": "uk", "act": "question", "task": "ui_styling"}
+{"text": "обидва", "lang": "uk", "act": "clarification", "task": "other"}
+{"text": "зроби повний андроїд апп, працюй усю ніч", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "туду-айтеми зникають після перезавантаження", "lang": "uk", "act": "new_request", "task": "bug_fix"}
+{"text": "pytest тести для utils.py, і крайові випадки теж", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "англійською, і додай місця для скріншотів", "lang": "uk", "act": "clarification", "task": "docs_writing"}
+{"text": "інтеграційні тести що запускають сервер і викликають /health", "lang": "uk", "act": "new_request", "task": "tests"}
+{"text": "напиши скрипт що перейменовує всі мої фото за датою", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "дай юзерам завантажувати аватарку", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "ок даю повну свободу. зроби круту гру. повертайся коли буде готово", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "кнопки заокруглені і з градієнтом", "lang": "uk", "act": "new_request", "task": "ui_styling"}
+{"text": "ага роби", "lang": "uk", "act": "approval", "task": "other"}
+{"text": "візьми проєкт повністю, я тільки дивлюсь", "lang": "uk", "act": "handoff", "task": "feature"}
+{"text": "напиши повний клон майнкрафта, поїхали", "lang": "uk", "act": "handoff", "task": "feature"}

@@ -1,0 +1,250 @@
+{"text": "da, rulează-l", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "ok acum fă butonul roz", "lang": "ro", "act": "approval", "task": "ui_styling"}
+{"text": "da, hai scrie testele", "lang": "ro", "act": "approval", "task": "tests"}
+{"text": "da, instalează-l", "lang": "ro", "act": "approval", "task": "setup_deploy"}
+{"text": "arată bine, acum adaugă chestia aia cu highscore", "lang": "ro", "act": "approval", "task": "feature"}
+{"text": "ce faci azi?", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "stai, nu face asta", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "înapoi la layout-ul vechi", "lang": "ro", "act": "stop_undo", "task": "ui_styling"}
+{"text": "dă înapoi refactorizarea, îmi plăcea structura veche", "lang": "ro", "act": "stop_undo", "task": "refactor"}
+{"text": "anulează npm install, mi-a stricat node_modules", "lang": "ro", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "scoate iar feature-ul de login", "lang": "ro", "act": "stop_undo", "task": "feature"}
+{"text": "șterge testele pe care tocmai le-ai făcut", "lang": "ro", "act": "stop_undo", "task": "tests"}
+{"text": "fixul înrăutățește lucrurile, dă-l înapoi", "lang": "ro", "act": "stop_undo", "task": "bug_fix"}
+{"text": "anulează modificarea din readme", "lang": "ro", "act": "stop_undo", "task": "docs_writing"}
+{"text": "fă un clonă de minecraft completă, hai", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "descurcă-te singur cu tot, proiectează și construiește chestia întreagă, nu mă deranja", "lang": "ro", "act": "handoff", "task": "planning_design"}
+{"text": "scrie teste pentru tot codul, tot, și repară ce pică, nu te opri până nu e totul verde", "lang": "ro", "act": "handoff", "task": "tests"}
+{"text": "rescrie tot proiectul în typescript, fără întrebări, continuă până compilează", "lang": "ro", "act": "handoff", "task": "refactor"}
+{"text": "pregătește tot pentru deploy, ci, docker, hosting, orice trebuie, nu vreau să aud nimic până nu e live", "lang": "ro", "act": "handoff", "task": "setup_deploy"}
+{"text": "documentează tot repo-ul, fiecare fișier, și nu mă întreba nimic", "lang": "ro", "act": "handoff", "task": "docs_writing"}
+{"text": "refă tot frontend-ul, toate paginile, să arate profi. nu-mi cere feedback până nu termini", "lang": "ro", "act": "handoff", "task": "ui_styling"}
+{"text": "găsește și repară toate bug-urile din proiect singur, nu-mi pasă cât durează", "lang": "ro", "act": "handoff", "task": "bug_fix"}
+{"text": "parcurge tot repo-ul și repară tot ce crezi tu că e greșit, nu trebuie să mă întrebi", "lang": "ro", "act": "handoff", "task": "review"}
+{"text": "fă în orele următoare ce crezi tu că e cel mai bine pentru proiect", "lang": "ro", "act": "handoff", "task": "other"}
+{"text": "care e fluxul când vine un mesaj la bot", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "ce e de fapt un api", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "e react overkill pentru un site cu 3 pagini?", "lang": "ro", "act": "question", "task": "planning_design"}
+{"text": "îmi trebuie .gitignore pentru node_modules?", "lang": "ro", "act": "question", "task": "setup_deploy"}
+{"text": "de ce e scorul mereu 0 după restart", "lang": "ro", "act": "question", "task": "bug_fix"}
+{"text": "cum centrez un div", "lang": "ro", "act": "question", "task": "ui_styling"}
+{"text": "cum funcționează de fapt testele unitare, ce e un mock", "lang": "ro", "act": "question", "task": "tests"}
+{"text": "e asta o soluție bună sau există ceva mai bun?", "lang": "ro", "act": "question", "task": "review"}
+{"text": "trebuie să comentez fiecare linie sau doar părțile mai grele?", "lang": "ro", "act": "question", "task": "docs_writing"}
+{"text": "ar trebui să fie struct sau class", "lang": "ro", "act": "question", "task": "refactor"}
+{"text": "se poate face ca botul să intre pe canale de voce cu biblioteca asta?", "lang": "ro", "act": "question", "task": "feature"}
+{"text": "ce limbaj ar trebui să învăț mai departe", "lang": "ro", "act": "question", "task": "other"}
+{"text": "https://github.com/someuser/cool-bot", "lang": "ro", "act": "other", "task": "other"}
+{"text": "scrie un script care redenumește toate pozele mele după dată", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "site-ul meu arată stricat pe telefon, meniul nu se deschide", "lang": "ro", "act": "new_request", "task": "bug_fix"}
+{"text": "pune toate magic numbers într-un fișier de config", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "adaugă un efect de hover pe carduri", "lang": "ro", "act": "new_request", "task": "ui_styling"}
+{"text": "adaugă un test pentru cazul când inventarul e plin", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "setează o github action care rulează testele la fiecare push", "lang": "ro", "act": "new_request", "task": "setup_deploy"}
+{"text": "adaugă o secțiune în readme despre cum rulez botul local", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "ajută-mă să mă gândesc cum să salvez nivelurile, json sau în cod", "lang": "ro", "act": "new_request", "task": "planning_design"}
+{"text": "poți să faci un code review te rog, fii sincer", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "arată-mi unde se salvează highscore-ul", "lang": "ro", "act": "new_request", "task": "understand_code"}
+{"text": "învață-mă cum merg algoritmii de sortare, cu un exemplu mic", "lang": "ro", "act": "new_request", "task": "learn_concept"}
+{"text": "redenumește folderul în starhopper", "lang": "ro", "act": "new_request", "task": "other"}
+{"text": "nu. invers", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "login merge acum dar înregistrarea e stricată", "lang": "ro", "act": "correction", "task": "bug_fix"}
+{"text": "animația e prea rapidă și se sacadează", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "comanda trebuie să se cheme /kick nu !kick", "lang": "ro", "act": "correction", "task": "feature"}
+{"text": "e mai complicat decât înainte, de ce ai adăugat atâtea clase", "lang": "ro", "act": "correction", "task": "refactor"}
+{"text": "ai testat funcția greșită, mă refeream la calculate_damage", "lang": "ro", "act": "correction", "task": "tests"}
+{"text": "versiune de python greșită, noi folosim 3.11", "lang": "ro", "act": "correction", "task": "setup_deploy"}
+{"text": "readme-ul e prea lung și prea formal, fă-l scurt și relaxat", "lang": "ro", "act": "correction", "task": "docs_writing"}
+{"text": "nu, arhitectura e mult prea complicată pentru un proiect de școală", "lang": "ro", "act": "correction", "task": "planning_design"}
+{"text": "ai ratat bug-ul evident de la linia 40", "lang": "ro", "act": "correction", "task": "review"}
+{"text": "explicația aia e greșită, bucla merge invers", "lang": "ro", "act": "correction", "task": "understand_code"}
+{"text": "tot primesc asta după modificarea ta:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "ro", "act": "correction", "task": "error_paste"}
+{"text": "ia postgres", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "ca în screenshot-ul pe care l-am trimis", "lang": "ro", "act": "clarification", "task": "ui_styling"}
+{"text": "crapă imediat după ce apas pe butonul play, înainte să apară meniul", "lang": "ro", "act": "clarification", "task": "bug_fix"}
+{"text": "pip, nu conda", "lang": "ro", "act": "clarification", "task": "setup_deploy"}
+{"text": "folosește fixture-urile care există deja în conftest.py", "lang": "ro", "act": "clarification", "task": "tests"}
+{"text": "lasă numele funcțiilor cum sunt te rog", "lang": "ro", "act": "clarification", "task": "refactor"}
+{"text": "pune pașii de setup înaintea feature-urilor", "lang": "ro", "act": "clarification", "task": "docs_writing"}
+{"text": "e un joc local pentru 2 jucători, deci fără rețea", "lang": "ro", "act": "clarification", "task": "planning_design"}
+{"text": "uită-te doar la fișierele din src/api", "lang": "ro", "act": "clarification", "task": "review"}
+{"text": "cel din utils/math.py", "lang": "ro", "act": "clarification", "task": "understand_code"}
+{"text": "explică-mi cu un exemplu din joc", "lang": "ro", "act": "clarification", "task": "learn_concept"}
+{"text": "nu, al doilea", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "ro", "act": "other", "task": "error_paste"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "ce înseamnă asta?? error: linker `cc` not found", "lang": "ro", "act": "question", "task": "error_paste"}
+{"text": "avem 3 săptămâni și doar 2 oameni", "lang": "ro", "act": "clarification", "task": "planning_design"}
+{"text": "explică cu un exemplu de joc", "lang": "ro", "act": "clarification", "task": "learn_concept"}
+{"text": "anulează modificarea", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "pune-l la loc", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "orele se afișează în fusul orar greșit, trebuie să fie ora României", "lang": "ro", "act": "new_request", "task": "bug_fix"}
+{"text": "stai, nu face asta", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "te rog uită-te pe pr înainte să dau merge", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "pe mâine atunci", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "ro", "act": "other", "task": "error_paste"}
+{"text": "ajută-mă să aleg un tech stack pentru o aplicație socială mică", "lang": "ro", "act": "new_request", "task": "planning_design"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5\nde ce", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "anulează schimbarea de culoare, arăta mai bine înainte", "lang": "ro", "act": "stop_undo", "task": "ui_styling"}
+{"text": "adaugă un sistem de salvare și încărcare pentru joc", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "comanda trebuie să fie /kick nu !kick", "lang": "ro", "act": "correction", "task": "feature"}
+{"text": "crapă imediat după click pe play, înainte să apară meniul", "lang": "ro", "act": "clarification", "task": "bug_fix"}
+{"text": "simplifică lanțul ăsta de if else", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "scrie instrucțiunile de instalare în readme", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "prin 'level' mă refer la etapa din joc, nu la nivelul jucătorului", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "ok dar mai repede te rog", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "termină toate task-urile rămase fără să mă mai întrebi", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "dă înapoi refactorizarea, îmi plăcea mai mult structura veche", "lang": "ro", "act": "stop_undo", "task": "refactor"}
+{"text": "ce e dependency injection", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "fă un repo git și dă-l push pe github-ul meu", "lang": "ro", "act": "new_request", "task": "setup_deploy"}
+{"text": "adaugă un logo drăguț în header, un svg simplu e ok", "lang": "ro", "act": "new_request", "task": "ui_styling"}
+{"text": "aplicația crapă când apas pe anulare în dialogul de fișier", "lang": "ro", "act": "new_request", "task": "bug_fix"}
+{"text": "avem hackathon în weekend, ce am putea construi", "lang": "ro", "act": "other", "task": "other"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "e ok așa, continuă", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "continuă pls", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "planul e mult prea mare, avem doar weekendul", "lang": "ro", "act": "correction", "task": "planning_design"}
+{"text": "lol a fost haios", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "help\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "fă-o", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "înainte să codăm: ce clase îmi trebuie pentru un joc de cărți", "lang": "ro", "act": "new_request", "task": "planning_design"}
+{"text": "review-ul tău e inutil, ai vorbit doar de nume. uită-te la logică", "lang": "ro", "act": "correction", "task": "review"}
+{"text": "git checkout pe fișierele pe care le-ai modificat, nu vreau nimic din ele", "lang": "ro", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "scoate codul duplicat din cele trei fișiere de nivel", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "asta n-am scris-o eu, proiectul nu folosește redis", "lang": "ro", "act": "correction", "task": "docs_writing"}
+{"text": "ai dat push pe main, eu voiam un branch nou", "lang": "ro", "act": "correction", "task": "setup_deploy"}
+{"text": "adaugă săritură, bara de spațiu", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "unde apar inamicii", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "cum se structurează cel mai bine un proiect unity cu mulți inamici", "lang": "ro", "act": "question", "task": "planning_design"}
+{"text": "ok deci am ideea asta", "lang": "ro", "act": "other", "task": "other"}
+{"text": "prin level mă refer la etapa din joc, nu la nivelul jucătorului", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "continuă pls", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "mută toate magic numbers într-un fișier de config", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "da, cel albastru, și fă-l și rotund", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "rulează testele", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "pune un countdown de 60 de secunde în quiz", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "uită de asta, anulează", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "nu asta am vrut să zic, încă o dată", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "am hackathon weekendul ăsta, ce ar trebui să construim", "lang": "ro", "act": "other", "task": "other"}
+{"text": "da și setările", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "e grav că tot codul meu e într-un singur fișier de 2000 de linii?", "lang": "ro", "act": "question", "task": "refactor"}
+{"text": "testează doar backend-ul, sari peste frontend", "lang": "ro", "act": "clarification", "task": "tests"}
+{"text": "te rog fă botul să răspundă cu un meme random când cineva scrie !meme", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "se închide conexiunea la baza de date undeva?", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "fă-mi un bot de discord complet cu moderare, muzică și economie. nu vreau să am treabă cu el, decide tu tot", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "am 15 ani, deci fă-l simplu", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "e un joc local pentru 2 jucători, deci fără rețea", "lang": "ro", "act": "clarification", "task": "planning_design"}
+{"text": "anulează redenumirea variabilelor, acum nimic nu se mai potrivește", "lang": "ro", "act": "stop_undo", "task": "refactor"}
+{"text": "ai schimbat tot layout-ul, eu voiam doar fontul schimbat", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "când dau refresh la pagină sunt delogat, ar trebui să rămân logat", "lang": "ro", "act": "new_request", "task": "bug_fix"}
+{"text": "ce face docker compose up", "lang": "ro", "act": "question", "task": "setup_deploy"}
+{"text": "stai, îmi ștergi fișierele!!", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "ia prima opțiune dar salvează datele într-un json", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "continuă singur până când aplicația are toate feature-urile din readme", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "testele pică, repară-le", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "fă o pagină de login cu email și parolă", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "da, asta voiam", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "test ca botul să ignore mesajele de la alți boți", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "care e diferența dintre let și const?", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "atinge doar codul inamicilor", "lang": "ro", "act": "clarification", "task": "refactor"}
+{"text": "ce face funcția asta?", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "schimbă callback-urile pe async/await", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "prietenii mei zic că jocul meu e misto acum, mulțumesc ție", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": ".", "lang": "ro", "act": "other", "task": "other"}
+{"text": "butonul e acum mult prea mare", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "bă nu merge", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "teste pytest pentru utils.py, și cazuri limită", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "de ce crapă doar la al doilea click?", "lang": "ro", "act": "question", "task": "bug_fix"}
+{"text": "opțiunea 2 sună cel mai bine, fă-o", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "fă-mi site-ul de portofoliu de la A la Z. nu mă întreba ce culori, alege orice", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "salut claude", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "parcurge tot repo-ul și repară tot ce crezi că e greșit, nu trebuie să mă întrebi", "lang": "ro", "act": "handoff", "task": "review"}
+{"text": "sigur că da", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "în ce fus orar e serverul", "lang": "ro", "act": "question", "task": "other"}
+{"text": "fă un requirements.txt", "lang": "ro", "act": "new_request", "task": "setup_deploy"}
+{"text": "adaugă un meniu de pauză în joc", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "botul tot răspunde de două ori, fixul tău n-a făcut nimic", "lang": "ro", "act": "correction", "task": "bug_fix"}
+{"text": "lasă userii să urce o poză de profil", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "ce sunt lifetimes în rust", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "code review te rog, fii sincer", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "m-ai înțeles greșit, ia-o de la capăt", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "de ce mi-ai șters comentariile?? pune-le înapoi", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "dă-i drumul și implementează tot de pe roadmap", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "folosesc windows 11 și python 3.12", "lang": "ro", "act": "other", "task": "other"}
+{"text": "răspunsul e maxim 4 jucători", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "pe firefox. pe chrome merge", "lang": "ro", "act": "clarification", "task": "bug_fix"}
+{"text": "anulează schimbarea de culoare, arăta mai bine înainte", "lang": "ro", "act": "stop_undo", "task": "ui_styling"}
+{"text": "fă un clonă completă de flappy bird cu meniuri, sunet, highscore-uri, tot. autonom te rog", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "asta trebuie să meargă doar pentru admini", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "prea mult padding. fă-l pe jumătate", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "ro", "act": "other", "task": "error_paste"}
+{"text": "ce e un API, dar pe bune", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "actualizează toate dependențele", "lang": "ro", "act": "new_request", "task": "setup_deploy"}
+{"text": "adaugă în readme o secțiune despre cum pornesc botul local", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "uită-te la diff și zi-mi dacă arată ceva ciudat pe undeva", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "stop", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "ce face de fapt funcția asta de aici?", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "Assets/Scripts/PlayerController.cs(23,17): error CS0103: The name 'rb' does not exist in the current context", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "folosește pytest", "lang": "ro", "act": "clarification", "task": "tests"}
+{"text": "profa vrea și o diagramă de clase", "lang": "ro", "act": "other", "task": "other"}
+{"text": "fă un changelog din commit-uri", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "scrie docstring-uri pentru fiecare funcție din game.py", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "se poate face ca botul să intre pe canale de voce cu biblioteca asta?", "lang": "ro", "act": "question", "task": "feature"}
+{"text": "nu nu nu scoate chestia aia", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "respectă codul pep8?", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "de ce se suprapune navbar-ul peste conținut", "lang": "ro", "act": "question", "task": "ui_styling"}
+{"text": "nu contează, decide tu", "lang": "ro", "act": "clarification", "task": "other"}
+{"text": "muzica reîncepe la fiecare schimbare de scenă", "lang": "ro", "act": "new_request", "task": "bug_fix"}
+{"text": "de ce e acolo un callback și nu un promise", "lang": "ro", "act": "question", "task": "understand_code"}
+{"text": "fă din asta o clasă adevărată cu metode", "lang": "ro", "act": "new_request", "task": "refactor"}
+{"text": "mersi!", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "fă o clonă completă de flappy bird cu meniuri, sunete, highscore-uri, tot. mod autonom te rog", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "lucrează la asta ore în șir până jocul e complet gata, fără întrebări", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "bravo", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "e funcția asta thread safe?", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "proiectează state machine-ul pentru lupta cu boss-ul", "lang": "ro", "act": "new_request", "task": "planning_design"}
+{"text": "de ce cade personajul meu uneori prin podea", "lang": "ro", "act": "question", "task": "bug_fix"}
+{"text": "nu e corect, verifică din nou", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "fă din commit-uri un changelog", "lang": "ro", "act": "new_request", "task": "docs_writing"}
+{"text": "culorile se citesc greu, contrastul e prost", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "anulează npm install, acum mi-e stricat node_modules", "lang": "ro", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "cum învață o rețea neuronală? vreau una pentru ai-ul din jocul meu", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "verifică te rog încă o dată matematica din codul de fizică", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "adaugă o animație fade-in lină când se încarcă pagina", "lang": "ro", "act": "new_request", "task": "ui_styling"}
+{"text": "salvare și încărcare pentru joc", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "omg merge în sfârșit!!!", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "cum fac deploy la asta pe vercel", "lang": "ro", "act": "question", "task": "setup_deploy"}
+{"text": "ok îți dau libertate totală. fă un joc misto. întoarce-te când e gata", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "ok misto", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "ce înseamnă REST", "lang": "ro", "act": "question", "task": "learn_concept"}
+{"text": "ești cel mai tare, serios", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "python", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "profa mea vrea și o diagramă de clase", "lang": "ro", "act": "other", "task": "other"}
+{"text": "fă un requirements.txt", "lang": "ro", "act": "new_request", "task": "setup_deploy"}
+{"text": "stilizează embed-ul cu o bară verde pe lateral și un thumbnail", "lang": "ro", "act": "new_request", "task": "ui_styling"}
+{"text": "testul e flaky, fă-l fiabil", "lang": "ro", "act": "new_request", "task": "tests"}
+{"text": "adaugă o bară de căutare care filtrează lista cât scrii", "lang": "ro", "act": "new_request", "task": "feature"}
+{"text": "răspunsul e maxim 4 jucători", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "bă nu merge", "lang": "ro", "act": "correction", "task": "other"}
+{"text": "sună bine, continuă", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "logica jocului ar trebui să ruleze pe server sau pe client", "lang": "ro", "act": "question", "task": "planning_design"}
+{"text": "colțuri rotunjite, cam 12px", "lang": "ro", "act": "clarification", "task": "ui_styling"}
+{"text": "verifică dacă sunt vulnerabilități de securitate în codul de login", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "folosește postgres", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "da, hai scrie testele", "lang": "ro", "act": "approval", "task": "tests"}
+{"text": "asta nu e un fix, doar ascunde problema", "lang": "ro", "act": "correction", "task": "bug_fix"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "ro", "act": "other", "task": "error_paste"}
+{"text": "roz și mov te rog", "lang": "ro", "act": "clarification", "task": "ui_styling"}
+{"text": "cum pot să țin botul meu de discord 24/7 gratis?", "lang": "ro", "act": "question", "task": "setup_deploy"}
+{"text": "hei", "lang": "ro", "act": "chit_chat", "task": "other"}
+{"text": "merge", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "repară asta: IndexError: list index out of range", "lang": "ro", "act": "new_request", "task": "error_paste"}
+{"text": "caută code smells în proiectul meu", "lang": "ro", "act": "new_request", "task": "review"}
+{"text": "tu decizi feature-urile și designul, tu construiești tot. mă uit mâine", "lang": "ro", "act": "handoff", "task": "feature"}
+{"text": "schițează tabelele din baza de date pentru useri, postări și like-uri", "lang": "ro", "act": "new_request", "task": "planning_design"}
+{"text": "1", "lang": "ro", "act": "approval", "task": "other"}
+{"text": "anulează asta", "lang": "ro", "act": "stop_undo", "task": "other"}
+{"text": "lucrează la asta ore în șir până jocul e complet gata, fără întrebări", "lang": "ro", "act": "handoff", "task": "feature"}

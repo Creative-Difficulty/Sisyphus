@@ -1,0 +1,250 @@
+{"text": "jo jasně", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "ok teď udělej to tlačítko růžový", "lang": "cs", "act": "approval", "task": "ui_styling"}
+{"text": "jo klidně napiš ty testy", "lang": "cs", "act": "approval", "task": "tests"}
+{"text": "jo pushni to", "lang": "cs", "act": "approval", "task": "setup_deploy"}
+{"text": "sedí, teď ještě přidej ten highscore", "lang": "cs", "act": "approval", "task": "feature"}
+{"text": "čau", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "zruš to, rozmyslel jsem si to", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "zpátky na starý layout", "lang": "cs", "act": "stop_undo", "task": "ui_styling"}
+{"text": "vrať přejmenování těch proměnnejch, teď nic nesedí", "lang": "cs", "act": "stop_undo", "task": "refactor"}
+{"text": "vrať npm install, rozbil se mi node_modules", "lang": "cs", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "to login feature zase pryč", "lang": "cs", "act": "stop_undo", "task": "feature"}
+{"text": "smaž ty testy co jsi právě udělal", "lang": "cs", "act": "stop_undo", "task": "tests"}
+{"text": "ten fix to zhoršuje, vrať ho", "lang": "cs", "act": "stop_undo", "task": "bug_fix"}
+{"text": "vrať změnu v readme", "lang": "cs", "act": "stop_undo", "task": "docs_writing"}
+{"text": "udělej kompletní klon flappy birda s menu, zvukem, highscore, všechno. samo prosím", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "vymysli si všechno sám, navrhni a postav celou věc, neotravuj mě", "lang": "cs", "act": "handoff", "task": "planning_design"}
+{"text": "napiš testy na celej kód, všechno, a oprav co spadne, nepřestávej dokud nebude všechno zelený", "lang": "cs", "act": "handoff", "task": "tests"}
+{"text": "přepiš celej projekt do typescriptu, žádný otázky, jeď dál dokud se to nezkompiluje", "lang": "cs", "act": "handoff", "task": "refactor"}
+{"text": "nastav všechno pro deployment, ci, docker, hosting, cokoliv, chci zas něco slyšet až to bude online", "lang": "cs", "act": "handoff", "task": "setup_deploy"}
+{"text": "zdokumentuj celý repo, každej soubor, a na nic se mě neptej", "lang": "cs", "act": "handoff", "task": "docs_writing"}
+{"text": "předělej celej frontend, všechny stránky, ať to vypadá profesionálně. neptej se mě na feedback dokud nebudeš hotovej", "lang": "cs", "act": "handoff", "task": "ui_styling"}
+{"text": "najdi a oprav všechny bugy v projektu sám, je mi jedno jak dlouho to bude trvat", "lang": "cs", "act": "handoff", "task": "bug_fix"}
+{"text": "projdi celý repo a oprav všechno co si myslíš že je blbě, nemusíš se ptát", "lang": "cs", "act": "handoff", "task": "review"}
+{"text": "dělej co myslíš že je pro projekt nejlepší příštích pár hodin", "lang": "cs", "act": "handoff", "task": "other"}
+{"text": "kde se řeší život hráče", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "co jsou lifetimes v rustu", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "mám použít sqlite nebo postgres pro malýho discord bota?", "lang": "cs", "act": "question", "task": "planning_design"}
+{"text": "co dělá docker compose up", "lang": "cs", "act": "question", "task": "setup_deploy"}
+{"text": "proč to spadne až při druhým kliknutí?", "lang": "cs", "act": "question", "task": "bug_fix"}
+{"text": "jak vycentruju div", "lang": "cs", "act": "question", "task": "ui_styling"}
+{"text": "jak vlastně fungujou unit testy, co je mock", "lang": "cs", "act": "question", "task": "tests"}
+{"text": "je tohle dobrej způsob nebo existuje něco lepšího?", "lang": "cs", "act": "question", "task": "review"}
+{"text": "co by mělo být v dobrým readme", "lang": "cs", "act": "question", "task": "docs_writing"}
+{"text": "vadí že mám celej kód v jednom souboru na 2000 řádků?", "lang": "cs", "act": "question", "task": "refactor"}
+{"text": "dá se přidat multiplayer nebo je to pro tohle moc těžký", "lang": "cs", "act": "question", "task": "feature"}
+{"text": "jakej jazyk se mám učit dál", "lang": "cs", "act": "question", "task": "other"}
+{"text": "/clear", "lang": "cs", "act": "other", "task": "other"}
+{"text": "drag and drop pro todo list", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "když obnovím stránku tak se odhlásím, mělo by to zůstat přihlášený", "lang": "cs", "act": "new_request", "task": "bug_fix"}
+{"text": "nahraď ty string konstanty enumem", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "změň pozadí na tmavě modrou a text na bílou", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "můžeš otestovat jestli funguje ukládání highscore", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "commitni to s nějakou dobrou zprávou", "lang": "cs", "act": "new_request", "task": "setup_deploy"}
+{"text": "oprav překlepy v readme", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "jak bych měl navrhnout formát save souboru aby staré savy dál fungovaly", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "zkontroluj mi css jestli tam nejsou věci co nepotřebuju", "lang": "cs", "act": "new_request", "task": "review"}
+{"text": "ukaž mi kde se ukládá highscore", "lang": "cs", "act": "new_request", "task": "understand_code"}
+{"text": "nauč mě jak fungujou řadící algoritmy na malým příkladu", "lang": "cs", "act": "new_request", "task": "learn_concept"}
+{"text": "přelož texty ve hře do španělštiny", "lang": "cs", "act": "new_request", "task": "other"}
+{"text": "to jsem vůbec nechtěl", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "teď skok funguje ale hráč už nemůže jít doleva", "lang": "cs", "act": "correction", "task": "bug_fix"}
+{"text": "ne, chtěl jsem modrou ne zelenou", "lang": "cs", "act": "correction", "task": "ui_styling"}
+{"text": "takhle inventář fungovat nemá, věci se mají stackovat", "lang": "cs", "act": "correction", "task": "feature"}
+{"text": "změnil jsi chování, výstup je teď jinej", "lang": "cs", "act": "correction", "task": "refactor"}
+{"text": "testoval jsi špatnou funkci, myslel jsem calculate_damage", "lang": "cs", "act": "correction", "task": "tests"}
+{"text": "pushnul jsi do mainu, chtěl jsem novou větev", "lang": "cs", "act": "correction", "task": "setup_deploy"}
+{"text": "moc emoji v readme, dej je pryč", "lang": "cs", "act": "correction", "task": "docs_writing"}
+{"text": "ten plán je moc velkej, máme jen víkend", "lang": "cs", "act": "correction", "task": "planning_design"}
+{"text": "tvoje review je k ničemu, mluvil jsi jen o jménech. koukni na logiku", "lang": "cs", "act": "correction", "task": "review"}
+{"text": "to vysvětlení je špatně, ten cyklus běží pozpátku", "lang": "cs", "act": "correction", "task": "understand_code"}
+{"text": "zase ta samá chyba\nModuleNotFoundError: No module named 'discord'", "lang": "cs", "act": "correction", "task": "error_paste"}
+{"text": "jo a přidej ještě 5 sekund cooldown", "lang": "cs", "act": "clarification", "task": "feature"}
+{"text": "tmavej theme samozřejmě", "lang": "cs", "act": "clarification", "task": "ui_styling"}
+{"text": "ve firefoxu. v chromu to jde", "lang": "cs", "act": "clarification", "task": "bug_fix"}
+{"text": "node 20 myslím", "lang": "cs", "act": "clarification", "task": "setup_deploy"}
+{"text": "použij ty fixtures co už jsou v conftest.py", "lang": "cs", "act": "clarification", "task": "tests"}
+{"text": "nech ty názvy funkcí stejný", "lang": "cs", "act": "clarification", "task": "refactor"}
+{"text": "dej instalační kroky před features", "lang": "cs", "act": "clarification", "task": "docs_writing"}
+{"text": "je to lokální hra pro 2, takže žádná síť", "lang": "cs", "act": "clarification", "task": "planning_design"}
+{"text": "koukej jen na soubory v src/api", "lang": "cs", "act": "clarification", "task": "review"}
+{"text": "ten z utils/math.py", "lang": "cs", "act": "clarification", "task": "understand_code"}
+{"text": "vysvětli to na příkladu ze hry", "lang": "cs", "act": "clarification", "task": "learn_concept"}
+{"text": "ne, ten druhej", "lang": "cs", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "cs", "act": "other", "task": "error_paste"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5\nproč", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "co to znamená?? error: linker `cc` not found", "lang": "cs", "act": "question", "task": "error_paste"}
+{"text": "jeď naplno a udělej všechno z roadmapy", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "'level' myslím stage ve hře, ne level hráče", "lang": "cs", "act": "clarification", "task": "other"}
+{"text": "fakt super, vážně", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "testy padaj, oprav je", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "barvy se špatně čtou, kontrast je mizernej", "lang": "cs", "act": "correction", "task": "ui_styling"}
+{"text": ".", "lang": "cs", "act": "other", "task": "other"}
+{"text": "vrať to zpátky", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "stop", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "jo nainstaluj to", "lang": "cs", "act": "approval", "task": "setup_deploy"}
+{"text": "kde se spawnujou nepřátelé", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "hlavička, ne patička", "lang": "cs", "act": "clarification", "task": "ui_styling"}
+{"text": "chci přepínač dark mode", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "jak můžu hostovat svýho discord bota zadarmo 24/7?", "lang": "cs", "act": "question", "task": "setup_deploy"}
+{"text": "moc paddingu. dej poloviční", "lang": "cs", "act": "correction", "task": "ui_styling"}
+{"text": "vrať všechno co jsi právě udělal", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "ty rozhodneš o funkcích, ty o designu, ty to postavíš celý. zítra se podívám", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "měl by to bejt struct nebo třída", "lang": "cs", "act": "question", "task": "refactor"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "než začneme kódit: jaký třídy potřebuju na karetní hru", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "tím se to zhoršilo", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "proč je ten test flaky, udělej ho spolehlivej", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "proč mi běží timer na notasu rychleji než na pc od kámoše", "lang": "cs", "act": "question", "task": "bug_fix"}
+{"text": "ne to je špatně", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "je to teď složitější než předtím, proč tolik tříd", "lang": "cs", "act": "correction", "task": "refactor"}
+{"text": "jo prosím", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "spusť testy", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "bot pořád odpovídá dvakrát, tvůj fix nic nezměnil", "lang": "cs", "act": "correction", "task": "bug_fix"}
+{"text": "dej instalační kroky před features", "lang": "cs", "act": "clarification", "task": "docs_writing"}
+{"text": "počkej počkej počkej stop", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "barvy se špatně čtou, kontrast je mizernej", "lang": "cs", "act": "correction", "task": "ui_styling"}
+{"text": "udělej příkaz /poll s reakcema", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "umím python ale ne c++", "lang": "cs", "act": "clarification", "task": "learn_concept"}
+{"text": "můžeš vysvětlit jak funguje herní smyčka v main.py", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "udělej jemnou fade-in animaci při načtení stránky", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "udělej z toho pořádnou třídu s metodama", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "přidej skákání, mezerník", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "jak router rozhoduje kterou stránku ukázat", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "seš nejlepší, vážně", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "napiš nejdřív test co reprodukuje ten crash, pak to oprav", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "vrať ten refactoring, líbila se mi stará struktura", "lang": "cs", "act": "stop_undo", "task": "refactor"}
+{"text": "ať názvy proměnnejch v physics.py nejsou na prd", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "doplň testy pro login endpoint", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "ne, pořád rozbitý", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "špatná verze pythonu, používáme 3.11", "lang": "cs", "act": "correction", "task": "setup_deploy"}
+{"text": "unity nebo godot na 2d hru, co myslíš", "lang": "cs", "act": "question", "task": "planning_design"}
+{"text": "použij pytest", "lang": "cs", "act": "clarification", "task": "tests"}
+{"text": "který soubor řeší discord slash příkazy?", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "musí to fungovat i offline", "lang": "cs", "act": "clarification", "task": "feature"}
+{"text": "nastav github action která při každým pushi pustí testy", "lang": "cs", "act": "new_request", "task": "setup_deploy"}
+{"text": "jde s touhle knihovnou udělat aby bot vlezl do voice kanálů?", "lang": "cs", "act": "question", "task": "feature"}
+{"text": "chování se změnilo, výstup je teď jinej", "lang": "cs", "act": "correction", "task": "refactor"}
+{"text": "přehlídl jsi tu zjevnou chybu na řádku 40", "lang": "cs", "act": "correction", "task": "review"}
+{"text": "nauč mě jak fungujou řadící algoritmy, na malým příkladu", "lang": "cs", "act": "new_request", "task": "learn_concept"}
+{"text": "koukej jen na soubory v src/api", "lang": "cs", "act": "clarification", "task": "review"}
+{"text": "udělej celou android appku, pracuj přes noc", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "ten test co jsi napsal je špatně, čeká 5 ale má to bejt 6", "lang": "cs", "act": "correction", "task": "tests"}
+{"text": "všechno vycentrovat a víc místa mezi tím", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "přelož texty ve hře do španělštiny", "lang": "cs", "act": "new_request", "task": "other"}
+{"text": "jo udělej to", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "ne stop, špatnej soubor", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "špatnej soubor, myslel jsem player.py ne enemy.py", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "nastav eslint a prettier", "lang": "cs", "act": "new_request", "task": "setup_deploy"}
+{"text": "vyrob přihlašovací stránku s emailem a heslem", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "to vypadá hnusně, udělej to jednodušší", "lang": "cs", "act": "correction", "task": "ui_styling"}
+{"text": "zdědil jsem tenhle kód po bráchovi a nemám ponětí co dělá to bot.on('ready')", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "převezmi projekt úplně, já se jen dívám", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "drží se ten kód pep8", "lang": "cs", "act": "new_request", "task": "review"}
+{"text": "prostě to postav. všechno. žádný otázky.", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "předělej celej frontend, všechny stránky, ať to vypadá profesionálně. neptej se na feedback dokud nebudeš hotovej", "lang": "cs", "act": "handoff", "task": "ui_styling"}
+{"text": "vysvětli async await vs vlákna", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "to login feature zase pryč", "lang": "cs", "act": "stop_undo", "task": "feature"}
+{"text": "mačkám šipky a nic se neděje, ale jen poprvé", "lang": "cs", "act": "clarification", "task": "bug_fix"}
+{"text": "udělej dokumentaci ke všem příkazům bota", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "potřebuju mít celej školní projekt hotovej do zítřka, udělej to všechno sám", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "popřemýšlej jak udělat aby AI nepřátel nebyla tak blbá, jen možnosti", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "ten z utils/math.py", "lang": "cs", "act": "clarification", "task": "understand_code"}
+{"text": "sepiš kroky co budeme potřebovat pro multiplayer", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "test", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "jak vycentruju div", "lang": "cs", "act": "question", "task": "ui_styling"}
+{"text": "nadpis větší a tučně", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "proč je skóre po restartu pořád 0", "lang": "cs", "act": "question", "task": "bug_fix"}
+{"text": "deadline je v pátek", "lang": "cs", "act": "other", "task": "other"}
+{"text": "je tahle funkce thread safe?", "lang": "cs", "act": "new_request", "task": "review"}
+{"text": "vypadá to dobře, pokračuj", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "udělej stránku responzivní", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "tvoje review je k ničemu, mluvil jsi jen o jménech. koukni na logiku", "lang": "cs", "act": "correction", "task": "review"}
+{"text": "mají se testovat privátní funkce?", "lang": "cs", "act": "question", "task": "tests"}
+{"text": "ne já myslel ten JINEJ button", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "najdi a oprav všechny bugy v projektu sám, je mi jedno jak dlouho to bude trvat", "lang": "cs", "act": "handoff", "task": "bug_fix"}
+{"text": "není react overkill na web se 3 stránkama?", "lang": "cs", "act": "question", "task": "planning_design"}
+{"text": "předělej ty callbacky na async/await", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "napiš hezkej popis commitu pro poslední 3 změny", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "y", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "přepiš celej projekt do typescriptu, žádný otázky, jeď dál dokud se to nezkompiluje", "lang": "cs", "act": "handoff", "task": "refactor"}
+{"text": "jak dlouho to ještě bude trvat", "lang": "cs", "act": "question", "task": "other"}
+{"text": "vrať tu změnu barev, předtím to vypadalo líp", "lang": "cs", "act": "stop_undo", "task": "ui_styling"}
+{"text": "jdu si dát něco k jídlu, hned jsem zpátky", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "jak funguje moje detekce kolizí, nechápu tu matiku", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "udělej z těch commitů changelog", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "autopilot: dodělej backend, frontend a databázi. vzbuď mě až to bude fungovat", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "přejmenuj player na hero všude", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "dokonči všechny zbývající úkoly a neptej se mě", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "vrať to jak to bylo předtím", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "co dělá tahle funkce?", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "hmm ne, zkus jinej přístup", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "pořád to padá když kliknu na start", "lang": "cs", "act": "correction", "task": "bug_fix"}
+{"text": "ahoj claude", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "implementuj všechny featury z todo listu a nežádej mě o potvrzení", "lang": "cs", "act": "handoff", "task": "feature"}
+{"text": "přidej testy pro záporný čísla a nulu", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "jak tady komponenty sdílej svůj state?", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "cs", "act": "other", "task": "error_paste"}
+{"text": "sprite bliká když jde doleva, oprav to", "lang": "cs", "act": "new_request", "task": "bug_fix"}
+{"text": "máme 3 týdny a jenom 2 lidi", "lang": "cs", "act": "clarification", "task": "planning_design"}
+{"text": "napiš unit testy na výpočet damage", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "pozadí tmavě modrý a text bílej", "lang": "cs", "act": "new_request", "task": "ui_styling"}
+{"text": "navrhni popis pro mou itch.io stránku", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "díky, to je dnes všechno", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "proč trvá npm install věčnost", "lang": "cs", "act": "question", "task": "setup_deploy"}
+{"text": "vole nejde to", "lang": "cs", "act": "correction", "task": "other"}
+{"text": "přidej do kvízu 60 sekundovej odpočet", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "napiš tutoriálový texty do hry, 5 krátkých tipů pro nový hráče", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "stop, mažeš mi soubory!!", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "pytest testy pro utils.py, i okrajový případy", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "fajn, commitni to", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "cs", "act": "other", "task": "error_paste"}
+{"text": "co je closure v javascriptu", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "proč mi postava občas propadne podlahou", "lang": "cs", "act": "question", "task": "bug_fix"}
+{"text": "co je dependency injection", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "použij třídy místo všech těch globálních proměnnejch", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "ok ale trochu rychle prosím", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "proč mi testy běží lokálně ale ne v github actions?", "lang": "cs", "act": "question", "task": "tests"}
+{"text": "můj učitel říká že AI je podvádění lol", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "git checkout na soubory co jsi změnil, nechci z toho nic", "lang": "cs", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "jo a taky ta nastavení", "lang": "cs", "act": "clarification", "task": "other"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "rozhodně", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "co je mutex?", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "mělo by to fungovat jen pro adminy", "lang": "cs", "act": "clarification", "task": "feature"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "cs", "act": "new_request", "task": "error_paste"}
+{"text": "jsme tři, ostatní dělaj grafiku", "lang": "cs", "act": "other", "task": "other"}
+{"text": "test že bot ignoruje zprávy od jinejch botů", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "ne ta architektura je moc složitá na školní projekt", "lang": "cs", "act": "correction", "task": "planning_design"}
+{"text": "udělej z commitů changelog", "lang": "cs", "act": "new_request", "task": "docs_writing"}
+{"text": "jde s tou knihovnou udělat aby bot vlezl do voice kanálů?", "lang": "cs", "act": "question", "task": "feature"}
+{"text": "co vlastně je api", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "naplánuj jak postavit tower defense hru, zatím nekóduj", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "a taky to musí fungovat offline", "lang": "cs", "act": "clarification", "task": "feature"}
+{"text": "ukládání a načítání do hry", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "co jsou design patterns? je ta observer věc užitečná pro hry?", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "hlavně dávej pozor na výkon", "lang": "cs", "act": "clarification", "task": "review"}
+{"text": "prosím stopni a zahoď všechny necommitnutý změny", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "přidej multiplayer přes websockety", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "implementuj a* pathfinding pro npc", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "????", "lang": "cs", "act": "other", "task": "other"}
+{"text": "super", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "jup", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "cokoliv je nejjednodušší", "lang": "cs", "act": "clarification", "task": "other"}
+{"text": "díky, to je dnes všechno", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "nemůžu se rozhodnout mezi rest api a graphql, plusy a mínusy pro školní projekt?", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "porovnej express a fastify pro můj případ a doporuč jeden", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "přidej na konec levelu 3 bosse", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "přidej test co kontroluje že bot ignoruje zprávy od jinejch botů", "lang": "cs", "act": "new_request", "task": "tests"}
+{"text": "co znamená O(n log n)", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "udělej plán architektury než začneme", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "co je mutex?", "lang": "cs", "act": "question", "task": "learn_concept"}
+{"text": "udělej kód čitelnější, musím ho ukázat učiteli", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "počkej, tohle nedělej", "lang": "cs", "act": "stop_undo", "task": "other"}
+{"text": "updatni všechny dependencies", "lang": "cs", "act": "new_request", "task": "setup_deploy"}
+{"text": "dej všechny magický čísla do config souboru", "lang": "cs", "act": "new_request", "task": "refactor"}
+{"text": "vypadá dobře", "lang": "cs", "act": "approval", "task": "other"}
+{"text": "je to jedno, rozhodni ty", "lang": "cs", "act": "clarification", "task": "other"}

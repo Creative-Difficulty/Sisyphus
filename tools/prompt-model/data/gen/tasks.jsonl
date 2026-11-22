@@ -1,0 +1,300 @@
+{"text": "the jump is broken, sometimes my player falls through the floor when i land on the moving platform", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "why does my score reset to 0 every time i restart the level? i thought i saved it", "lang": "en", "act": "question", "task": "bug_fix"}
+{"text": "no thats still wrong, the enemies spawn inside the wall now. it worked yesterday", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "login button does nothing when i click it on mobile, works fine on desktop", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "its only on firefox btw, chrome is fine", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "the discord bot replies twice to every command since i added the logging thing", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "how come the timer goes negative after pausing? is it my math or the pause logic", "lang": "en", "act": "question", "task": "bug_fix"}
+{"text": "items disappear from the cart when you refresh the page, they should stay", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "fix the bug where the high score doesnt update until you close the game", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "you didnt fix it, the sprite still flickers on the second frame", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the dark mode toggle flips back to light after a reload, why does it forget", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "my java swing window freezes when i click save with a big file, the ui just stops", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "warum spielt die Shuffle Funktion manchmal zwei mal hintereinander denselben Song, ist das random oder ein Bug?", "lang": "de", "act": "question", "task": "bug_fix"}
+{"text": "wenn die Schlange Futter frisst wächst der Schwanz erst beim nächsten Zug, bitte das fixen", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "the bug happens only with more than 3 players, not with 2", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "coins are counted double when you walk over them and jump at the same time", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "the search box ignores spaces so 'hello world' finds nothing", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "that didnt solve it. the todo list still eats the last item when i delete", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "das Datum im Kalender ist für User in anderen Zeitzonen immer einen Tag falsch", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "my c# console app prints the menu again after every keypress even when i press an invalid key", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "beim Speichern verschwinden die letzten Zeilen meiner Notizen, keine Ahnung warum", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "warum springt mein Charakter manchmal zwei mal wenn ich nur einmal Leertaste drücke?", "lang": "de", "act": "question", "task": "bug_fix"}
+{"text": "der Button zum Löschen funktioniert nur beim zweiten Klick, das nervt, bitte fixen", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "nein, die Punkte werden immer noch falsch gezählt wenn man stirbt", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "auf dem Handy wird die Seite abgeschnitten, rechts fehlt immer ein Stück vom Text", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "das Problem tritt nur auf wenn die Datei größer als 1 MB ist", "lang": "de", "act": "clarification", "task": "bug_fix"}
+{"text": "mein Discord Bot antwortet manchmal gar nicht auf !help, obwohl er online ist", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "wieso wird mein Array beim Sortieren in Python kaputt wenn ich es zweimal sortiere?", "lang": "de", "act": "question", "task": "bug_fix"}
+{"text": "der Timer im Quiz läuft nach Ablauf weiter und zählt ins Minus", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "Die Suche findet Groß- und Kleinschreibung nicht, Müller und müller sollten gleich sein", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "tic tac toe says player 2 won even when nobody has 3 in a row", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "le bouton pause ne marche plus après avoir relancé le jeu, il faut le recliquer deux fois", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "cuando subo una foto el perfil se queda con la imagen anterior hasta que refresco", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "por que o meu app de lista de compras apaga tudo quando eu fecho e abro de novo?", "lang": "pt", "act": "question", "task": "bug_fix"}
+{"text": "il pulsante di iscrizione non salva l'email se c'è uno spazio alla fine", "lang": "it", "act": "new_request", "task": "bug_fix"}
+{"text": "de score telt niet mee als je de vijand raakt met je zwaard, alleen met de pijl", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "при нажатии кнопки сохранить программа падает без ошибки, просто закрывается", "lang": "ru", "act": "new_request", "task": "bug_fix"}
+{"text": "чому після повороту телефону таймер скидається на початок?", "lang": "uk", "act": "question", "task": "bug_fix"}
+{"text": "我的游戏角色穿过墙壁的问题又出现了，只有向左走的时候才会这样", "lang": "zh", "act": "new_request", "task": "bug_fix"}
+{"text": "채팅에서 이모지를 보내면 메시지가 두 번 나와요. 고쳐주세요", "lang": "ko", "act": "new_request", "task": "bug_fix"}
+{"text": "मेरे गेम में स्कोर बढ़ता ही नहीं जब मैं दुश्मन को मारता हूँ, क्यों?", "lang": "hi", "act": "question", "task": "bug_fix"}
+{"text": "fitur hapus akun tidak jalan, tombolnya ada tapi setelah diklik tidak terjadi apa-apa", "lang": "id", "act": "new_request", "task": "bug_fix"}
+{"text": "trang đăng nhập bị trắng khi mình nhập mật khẩu có dấu tiếng Việt", "lang": "vi", "act": "new_request", "task": "bug_fix"}
+{"text": "när jag klickar på kategorin filtreras inte produkterna, listan blir tom", "lang": "sv", "act": "new_request", "task": "bug_fix"}
+{"text": "proč se mi po kliknutí na tlačítko přidat úkol nic neuloží?", "lang": "cs", "act": "question", "task": "bug_fix"}
+{"text": "כשאני לוחץ על שמור במשחק, ההתקדמות לא נשמרת ומתחילים מההתחלה", "lang": "he", "act": "new_request", "task": "bug_fix"}
+{"text": "وقتی بازی رو ببندم و دوباره باز کنم امتیازم صفر میشه، باید ذخیره بشه", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "the mobile app crashes when you open the settings page with dark mode on, happens every time", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "beim Hochladen von Bildern kommt der Upload zweimal, bitte den Fehler im Formular beheben", "lang": "de", "act": "new_request", "task": "bug_fix"}
+{"text": "still broken. now the ghost moves but the collision is off by one tile", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "how do i deploy this flask app to render, it needs a postgres db", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "why does pip install fail with 'error: metadata-generation-failed' on my windows laptop?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "set up a github action that runs cargo test on every push", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "write me a dockerfile for my node express server, i dont know docker at all", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "its for a school project so free hosting is enough, no custom domain", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "do i need to git init before i can push to github or does the website do it", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "install godot 4 on my arch machine and make the template project run", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "where do i put the DISCORD_TOKEN env variable so the bot can read it locally", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "leg mir eine .gitignore für Unity an, damit der Library Ordner nicht hochgeladen wird", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "you put the secret in the repo, remove it from the commit history please. no not just the file", "lang": "en", "act": "correction", "task": "setup_deploy"}
+{"text": "configure vite to build into the dist folder and set the base path for github pages", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "was ist der Unterschied zwischen npm ci und npm install, welches soll der Server benutzen?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "richte die Postgres Datenbank in Docker Compose ein, mit Volume damit die Daten nach Neustart bleiben", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "make the java project build with maven, its failing because the jdk version is wrong", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "push my project to a new repo called sisyphus-game and set main as default branch", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "yes use netlify, and it should auto deploy when i push to main", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "how do i host my minecraft plugin server for my friends without paying", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "installier mir Rust auf dem Mac und sorg dafür dass cargo im neuen Terminal geht", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "is it safe to put my openai key in the frontend code if the site is only for me?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "fix the cors error by setting up the proxy in the dev config, i think its vite.config", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "wie bekomme ich meine Website auf einen eigenen Server, Hetzner oder so?", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "warum funktioniert npm install bei mir nicht, da steht was von peer dependencies?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "richte bitte eine GitHub Action ein, die bei jedem Push die Tests laufen lässt", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "ja, Docker Compose, und die Datenbank soll nur intern erreichbar sein", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "mach mir ein Setup-Skript für Python, das die venv anlegt und die requirements installiert", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "muss ich für GitHub Pages einen eigenen Branch anlegen oder geht das mit main?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "installier mir bitte die Abhängigkeiten für das Projekt, ich hab nur Node 16", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "set up eslint and prettier with a pre-commit hook so i stop committing messy code", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "comment je mets mon site en ligne avec un nom de domaine ? je suis sur un hébergement gratuit", "lang": "fr", "act": "question", "task": "setup_deploy"}
+{"text": "cómo configuro las variables de entorno en Railway para que mi bot de discord las lea?", "lang": "es", "act": "question", "task": "setup_deploy"}
+{"text": "preciso instalar o python 3.12 no ubuntu e deixar o venv pronto pro projeto", "lang": "pt", "act": "new_request", "task": "setup_deploy"}
+{"text": "configura il build di unity per android, mi esce errore sul keystore", "lang": "it", "act": "new_request", "task": "setup_deploy"}
+{"text": "kun je de CI zo instellen dat de tests draaien op elke pull request", "lang": "nl", "act": "new_request", "task": "setup_deploy"}
+{"text": "настрой деплой этого бота на сервер, чтобы он работал круглосуточно", "lang": "ru", "act": "new_request", "task": "setup_deploy"}
+{"text": "як правильно налаштувати змінні середовища для мого телеграм бота на хостингу?", "lang": "uk", "act": "question", "task": "setup_deploy"}
+{"text": "帮我配置一下 GitHub Actions，每次推送到 main 的时候自动打包发布", "lang": "zh", "act": "new_request", "task": "setup_deploy"}
+{"text": "깃허브 페이지에 리액트 앱을 배포하고 싶어요. 설정 좀 도와주세요", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "Docker कैसे इंस्टॉल करूँ Ubuntu पर? permission denied error आ रहा है", "lang": "hi", "act": "question", "task": "setup_deploy"}
+{"text": "tolong bikinin file docker buat aplikasi python flask saya biar bisa jalan di server", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "cài giúp mình Node.js và npm trên máy Windows rồi chạy được project React", "lang": "vi", "act": "new_request", "task": "setup_deploy"}
+{"text": "nej, det funkar inte, boten startar inte om efter restart. du satte upp tjänsten fel", "lang": "sv", "act": "correction", "task": "setup_deploy"}
+{"text": "nastav mi prosím git hooks, ať se před commitem spustí formátovač", "lang": "cs", "act": "new_request", "task": "setup_deploy"}
+{"text": "תעזור לי להעלות את האתר לאינטרנט, יש לי דומיין אבל לא יודע איך לחבר אותו", "lang": "he", "act": "new_request", "task": "setup_deploy"}
+{"text": "لطفا یه فایل docker-compose بساز که دیتابیس postgres رو هم بالا بیاره", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "install the dependencies for this three.js project and get the dev server running", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "should i use sqlite or postgres for hosting on a free tier, which one is less hassle", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "stell bitte den Server so ein, dass er nach einem Neustart automatisch startet", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "that didnt work, still permission denied after the ssh key step. check the remote url too", "lang": "en", "act": "correction", "task": "setup_deploy"}
+{"text": "what does the 'build' step in the pipeline actually do, why is it slow", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "faut-il un fichier .env sur le serveur ou je peux tout mettre dans le code ?", "lang": "fr", "act": "question", "task": "setup_deploy"}
+{"text": "what does the update function in player.rs actually do, the comments dont make sense to me", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "wo wird das JWT Token in dieser Express App geprüft?", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "explain what this reducer does, why does it return a new array every time", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "welche Datei macht die Registrierung der Discord Slash Commands? ich finde die nicht", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "what's the difference between the two spawn functions in enemies.cs", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "walk me through the game loop in main.py so i understand the order things run in", "lang": "en", "act": "new_request", "task": "understand_code"}
+{"text": "where does the score get added? i search for score but there are like 20 hits", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "i mean the one in the server folder, not the client one", "lang": "en", "act": "clarification", "task": "understand_code"}
+{"text": "warum gibt es hier einen Mutex um die Queue, was wird damit geschützt?", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "how does the chunk loading decide which tiles to unload", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "is the save logic in SaveManager or in the Player class? where do i look", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "was macht die Funktion calculateDamage in combat.js genau? ich blick da nicht durch", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "wo wird in diesem Projekt die Authentifizierung gemacht? Ich finde nichts im Router", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "erklär mir bitte den Code in der Datei utils.ts Zeile für Zeile, ich verstehe das nicht", "lang": "de", "act": "new_request", "task": "understand_code"}
+{"text": "wie funktioniert das Routing hier, welche Datei lädt die Seite /profile?", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "ich meine die Funktion im Ordner services, nicht die im Controller", "lang": "de", "act": "clarification", "task": "understand_code"}
+{"text": "à quoi sert cette fonction render dans mon fichier App.js ? elle est appelée où ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "où est-ce que le bot gère la commande /ban dans mon code ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "qué hace este bloque de código de la línea 40 en adelante? no entiendo el reduce", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "dónde se guarda el estado del juego cuando cambio de nivel?", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "onde o app salva as mensagens no banco? quero entender o fluxo", "lang": "pt", "act": "question", "task": "understand_code"}
+{"text": "cosa fa esattamente questo hook useEffect? parte due volte", "lang": "it", "act": "question", "task": "understand_code"}
+{"text": "waar wordt de collision check tussen de bal en de paddle gedaan?", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "что делает эта функция parseConfig? почему она вызывается дважды?", "lang": "ru", "act": "question", "task": "understand_code"}
+{"text": "де в проєкті лежить логіка підрахунку очок? я шукаю але не знаходжу", "lang": "uk", "act": "question", "task": "understand_code"}
+{"text": "这个 Redux 的 middleware 是干什么用的？我看不懂它为什么要 dispatch 两次", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "이 함수는 왜 비동기로 되어 있어요? await를 빼면 안 되는 이유가 뭔가요?", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "इस फ़ाइल में inventory कहाँ update होती है? मुझे समझ नहीं आ रहा", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "fungsi ini ngapain sih? aku bingung kenapa dipanggil dua kali di main loop", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "đoạn code xử lý va chạm nằm ở file nào vậy bạn? mình tìm không ra", "lang": "vi", "act": "question", "task": "understand_code"}
+{"text": "vad gör den här koden i Program.cs? varför finns det två Main-metoder?", "lang": "sv", "act": "question", "task": "understand_code"}
+{"text": "kde se v tom projektu načítá konfigurace z .env? nějak tomu nerozumím", "lang": "cs", "act": "question", "task": "understand_code"}
+{"text": "איפה בקוד נבדק אם המשתמש מחובר? אני לא מוצא את זה", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "این تابع update داخل بازی دقیقا چیکار میکنه؟ نمیفهمم چرا دو بار صدا زده میشه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "does the app ever call the db directly or always through the repository class?", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "which component renders the leaderboard, i need to change its layout", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "trace what happens when a user clicks the buy button, from the click to the database", "lang": "en", "act": "new_request", "task": "understand_code"}
+{"text": "what does this regex in validate.js match? it looks like gibberish", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "does the physics engine code live in my project or is it from the library", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "in this codebase, what's the entry point for the discord bot, index.js or bot.js?", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "was bedeutet dieser Teil mit den yield Statements im Python Generator hier?", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "how is the inventory serialized? i need to know the format before I touch it", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "explícame cómo funciona el sistema de eventos de este juego, quiero entenderlo antes de tocarlo", "lang": "es", "act": "new_request", "task": "understand_code"}
+{"text": "explique-moi comment fonctionne le système de score dans ce projet, je dois le modifier", "lang": "fr", "act": "new_request", "task": "understand_code"}
+{"text": "o que esse middleware faz antes de chegar na rota de login?", "lang": "pt", "act": "question", "task": "understand_code"}
+{"text": "where are the level files loaded from and in what format are they stored", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "这个项目的入口文件是哪个？我想从头看一遍代码结构", "lang": "zh", "act": "question", "task": "understand_code"}
+{"text": "이 프로젝트에서 설정 파일은 어디서 읽나요? 찾기가 어려워요", "lang": "ko", "act": "question", "task": "understand_code"}
+{"text": "welche Klasse ist für das Rendern der Map zuständig? ich will sie verstehen, bevor ich weitermache", "lang": "de", "act": "question", "task": "understand_code"}
+{"text": "yeah the one in the Player class, the second function with the same name", "lang": "en", "act": "clarification", "task": "understand_code"}
+{"text": "review my pull request, i want to know if the database queries are safe from injection", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "überprüf den Code auf Speicherlecks, die Simulation wird nach ner Stunde langsam", "lang": "de", "act": "new_request", "task": "review"}
+{"text": "check my rust code for any panics or unwrap calls that could crash the server", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "does this code handle the case where the api returns 500? is the error handling ok", "lang": "en", "act": "question", "task": "review"}
+{"text": "focus on the auth part only, i dont need style comments", "lang": "en", "act": "clarification", "task": "review"}
+{"text": "audit the discord bot for permission issues, i dont want it to be able to ban everyone by accident", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "rendert meine React Komponente zu oft neu? wirkt auf dich langsam?", "lang": "de", "act": "question", "task": "review"}
+{"text": "look over my game's save file code, is there any way players can cheat by editing the file", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "you missed the race condition in the score update. look again at the lock", "lang": "en", "act": "correction", "task": "review"}
+{"text": "ist mein Code sicher? Ich speichere die API Keys direkt im Frontend, ist das schlimm?", "lang": "de", "act": "question", "task": "review"}
+{"text": "schau dir mal meinen Code an und sag mir ob da Fehler drin sind, bevor ich abgebe", "lang": "de", "act": "new_request", "task": "review"}
+{"text": "ist diese SQL Abfrage performant genug für 100.000 Zeilen oder sollte ich was ändern?", "lang": "de", "act": "question", "task": "review"}
+{"text": "prüf bitte ob die Passwort Prüfung im Login richtig funktioniert", "lang": "de", "act": "new_request", "task": "review"}
+{"text": "nur die Backend Dateien bitte, das Frontend ist mir egal", "lang": "de", "act": "clarification", "task": "review"}
+{"text": "est-ce que mon code est propre ? je trouve que les fonctions sont trop longues", "lang": "fr", "act": "question", "task": "review"}
+{"text": "vérifie si mon formulaire d'inscription est sécurisé contre les attaques XSS", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "¿este código tiene algún fallo de seguridad? lo hice para mi proyecto del insti", "lang": "es", "act": "question", "task": "review"}
+{"text": "revisa si la lógica de puntos está bien, creo que suma mal en las rondas largas", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "esse código é eficiente? acho que tem um loop desnecessário mas não sei", "lang": "pt", "act": "question", "task": "review"}
+{"text": "faz uma revisão geral do meu app antes de eu mostrar pro professor", "lang": "pt", "act": "new_request", "task": "review"}
+{"text": "il mio codice è leggibile? un amico dice che è un disastro", "lang": "it", "act": "question", "task": "review"}
+{"text": "controlla se il sistema di pagamento del mio sito ha dei buchi di sicurezza", "lang": "it", "act": "new_request", "task": "review"}
+{"text": "is dit wel goed geschreven of kan het beter? ik twijfel over de structuur", "lang": "nl", "act": "question", "task": "review"}
+{"text": "этот код безопасный? я сохраняю токены в localStorage, это плохо?", "lang": "ru", "act": "question", "task": "review"}
+{"text": "проверь мой код на ошибки и скажи, что стоит поправить", "lang": "ru", "act": "new_request", "task": "review"}
+{"text": "чи нормально я обробляю помилки в цьому файлі? здається, я щось пропустив", "lang": "uk", "act": "question", "task": "review"}
+{"text": "帮我看看这段代码有没有安全问题，特别是用户输入的部分", "lang": "zh", "act": "question", "task": "review"}
+{"text": "检查一下我的爬虫代码，有没有可能被网站封掉的写法", "lang": "zh", "act": "new_request", "task": "review"}
+{"text": "이 코드 성능 괜찮아요? 리스트를 매번 새로 만드는 게 문제인가요?", "lang": "ko", "act": "question", "task": "review"}
+{"text": "제 게임 코드에 메모리 누수가 있는지 확인해 주세요", "lang": "ko", "act": "new_request", "task": "review"}
+{"text": "क्या मेरा कोड सुरक्षित है? मैं बिना validation के फ़ॉर्म डेटा सीधे database में डाल रहा हूँ", "lang": "hi", "act": "question", "task": "review"}
+{"text": "tolong cek kode login saya, apakah sudah aman dari sql injection?", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "code này có ổn không? mình thấy hàm này dài quá nhưng không biết tách sao", "lang": "vi", "act": "question", "task": "review"}
+{"text": "är min kod för api-anropet bra? jag vet inte om jag hanterar fel rätt", "lang": "sv", "act": "question", "task": "review"}
+{"text": "zkontroluj můj kód před odevzdáním, hlavně jestli nemám chyby v logice", "lang": "cs", "act": "new_request", "task": "review"}
+{"text": "הקוד הזה מספיק מהיר? יש לי לולאה בתוך לולאה ואני לא בטוח", "lang": "he", "act": "question", "task": "review"}
+{"text": "این کد امنیت داره؟ پسورد کاربر رو بدون هش ذخیره میکنم", "lang": "fa", "act": "question", "task": "review"}
+{"text": "is it bad that my component fetches data inside the render function? does this need fixing", "lang": "en", "act": "question", "task": "review"}
+{"text": "review the pull request from my friend and tell me if anything looks off before i merge", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "any obvious problems with how i handle file uploads? i just save whatever the user sends", "lang": "en", "act": "question", "task": "review"}
+{"text": "könnte dieser API Key in den Logs landen? ich gebe das ganze Request Objekt aus", "lang": "de", "act": "question", "task": "review"}
+{"text": "revisa mi código de la calculadora y dime si hay errores que no vea", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "só olha a parte da API, o front já tá ok", "lang": "pt", "act": "clarification", "task": "review"}
+{"text": "relis mon script de sauvegarde et dis-moi s'il peut supprimer des fichiers par erreur", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "you said the code is fine but it still leaks memory. look at the event listeners again", "lang": "en", "act": "correction", "task": "review"}
+{"text": "is this recursion going to overflow the stack with big inputs? should i rewrite it", "lang": "en", "act": "question", "task": "review"}
+{"text": "ist mein Ansatz mit dem Cache gut oder brauche ich das überhaupt?", "lang": "de", "act": "question", "task": "review"}
+{"text": "go through the whole app and tell me everything that would break in production", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "should i use unity or godot for a 2d platformer i want to make for school?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "plan out the architecture for a discord bot that handles tickets, dont code yet", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "welche Datenbank passt besser zu einer Social App mit Freunden und Posts, Postgres oder MongoDB?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "how many hours do you think it takes to make a basic multiplayer snake game in godot?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "before writing anything, outline the data model for a recipe app with ingredients and users", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "ist React oder Svelte besser für ein kleines Dashboard für meinen Verein?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "yes it's for android and ios both, so flutter maybe?", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "design the folder structure for a rust cli that syncs files, i want it to scale later", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "sind Websockets oder Polling besser für einen Live Chat im Schulprojekt?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "what framework should i choose for a web shop, i dont want to learn too much", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "welche Datenbank passt für meine Lern-App, SQLite oder doch was größeres?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "plane bitte die Struktur für ein Spiel mit Level, Gegnern und Items, noch kein Code", "lang": "de", "act": "new_request", "task": "planning_design"}
+{"text": "lohnt sich Rust für ein Multiplayer Spiel oder soll ich lieber C# nehmen?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "entwirf die Architektur für einen Chat Server mit Räumen, ich will erst den Plan", "lang": "de", "act": "new_request", "task": "planning_design"}
+{"text": "wie viel Aufwand ist so eine Website mit Login und Profilen ungefähr?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "quelle technologie choisir pour une appli mobile simple : flutter ou react native ?", "lang": "fr", "act": "question", "task": "planning_design"}
+{"text": "fais-moi un plan pour mon projet de jeu avant de coder quoi que ce soit", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "¿qué framework me conviene para una web de reservas de canchas de fútbol?", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "diseña la base de datos para mi app de tareas con grupos y permisos, solo el diseño", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "vale a pena usar microserviços pra um app de escola ou é exagero?", "lang": "pt", "act": "question", "task": "planning_design"}
+{"text": "monta um plano de arquitetura pro meu bot de música, sem código ainda", "lang": "pt", "act": "new_request", "task": "planning_design"}
+{"text": "meglio usare Firebase o un server mio per un'app di chat tra amici?", "lang": "it", "act": "question", "task": "planning_design"}
+{"text": "pianifica le schermate di un gioco mobile prima di iniziare a programmare", "lang": "it", "act": "new_request", "task": "planning_design"}
+{"text": "welke taal moet ik kiezen voor een spelletje met AI tegenstanders, python of c++?", "lang": "nl", "act": "question", "task": "planning_design"}
+{"text": "какую базу данных выбрать для сайта с рецептами, если нужен поиск по ингредиентам?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "набросай архитектуру для игры с онлайн-рейтингом, сначала план, без кода", "lang": "ru", "act": "new_request", "task": "planning_design"}
+{"text": "що краще для мого проєкту: один великий сервер чи кілька маленьких?", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "做一个校园二手交易网站，用 Vue 还是 React 比较好？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "帮我规划一下这个 App 的数据结构，先别写代码", "lang": "zh", "act": "new_request", "task": "planning_design"}
+{"text": "채팅 앱을 만들 때 서버는 Node로 할까요 Go로 할까요?", "lang": "ko", "act": "question", "task": "planning_design"}
+{"text": "우리 동아리 출석 앱의 전체 구조를 먼저 설계해 주세요", "lang": "ko", "act": "new_request", "task": "planning_design"}
+{"text": "मेरे school project के लिए कौन सा framework सही रहेगा, Flask या Django?", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "lebih bagus pakai Unity atau Godot buat game 2D untuk tugas sekolah?", "lang": "id", "act": "question", "task": "planning_design"}
+{"text": "nên dùng Firebase hay tự viết backend cho app quản lý thư viện trường?", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "vilken databas ska jag välja för en hemsida med kommentarer och betyg?", "lang": "sv", "act": "question", "task": "planning_design"}
+{"text": "navrhni strukturu aplikace na sledování úkolů, než začneš psát kód", "lang": "cs", "act": "new_request", "task": "planning_design"}
+{"text": "מה עדיף לאפליקציה לשיתוף מתכונים, אתר או אפליקציה לנייד?", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "برای یه بازی تو گوشی بهتره با یونیتی بسازم یا با کاتلین؟", "lang": "fa", "act": "question", "task": "planning_design"}
+{"text": "what would be the cleanest way to split my game into modules before i add multiplayer", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "ok but it needs to run offline too, so no server-only approach", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "is it worth making my own engine or should i just use an existing one for this project", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "soll ich für mein Projekt erst ein Konzept schreiben oder direkt anfangen zu coden?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "plan the milestones for my hackathon project, we have 3 weeks, what do we build first", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "which auth approach should i pick for a small app: magic links, passwords or oauth", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "how would you structure the state for a multi-page app, global store or local?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "non, pas de base de données, je veux que tout tourne en local", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "sí, pero que funcione sin internet también", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "what's a sensible way to version my save files so old saves still load later?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "design the API endpoints for a quiz app, just list them, dont build yet", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "should the score be calculated on the client or the server in my multiplayer game?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "add a leaderboard screen that shows the top 10 scores from the server", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "can you add a dark mode toggle to the settings page", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "make a command that lets users roll a dice with custom sides, like /roll 20", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "add multiplayer to my snake game so two people can play on the same board", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "könnte man meine Notizen als PDF exportieren? ist das schwer umzusetzen?", "lang": "de", "act": "question", "task": "feature"}
+{"text": "implement a pause menu that opens when you press escape", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "create a page where users can upload a profile picture and crop it", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "yes add that, and also let people sort the list by date", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "add a shop where you can buy skins with coins, prices in a json file", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "bau einen Login mit Google ein, damit Kinder kein Passwort erfinden müssen", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "can we add push notifications when a friend sends a message?", "lang": "en", "act": "question", "task": "feature"}
+{"text": "make the bot send a daily quiz at 8am to every channel that opted in", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "füg bitte eine Funktion hinzu, mit der man Notizen in Ordnern sortieren kann", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "bau ein Achievement-System ein, das Erfolge speichert und anzeigt", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "kann man einen Chat mit Emojis und Bildern einbauen? wie aufwendig wäre das?", "lang": "de", "act": "question", "task": "feature"}
+{"text": "ja, und bitte mit einem Button zum Teilen der Ergebnisse", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "ajoute un mode multijoueur local avec deux manettes sur le même écran", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "je veux un système de niveaux qui augmente la difficulté toutes les 5 vagues", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "est-ce qu'on peut ajouter un historique des commandes dans la boutique ?", "lang": "fr", "act": "question", "task": "feature"}
+{"text": "agrega un botón para compartir mi puntaje en whatsapp y twitter", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "crea un formulario de contacto que me mande un correo cuando alguien escribe", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "se puede agregar un modo oscuro automático según la hora del día?", "lang": "es", "act": "question", "task": "feature"}
+{"text": "adiciona um sistema de amigos onde dá pra ver quem tá online", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "quero uma tela de estatísticas com gráfico de quanto tempo cada jogador ficou jogando", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "aggiungi la possibilità di caricare file CSV per importare le spese", "lang": "it", "act": "new_request", "task": "feature"}
+{"text": "crea una modalità sfida giornaliera con una parola nuova ogni giorno", "lang": "it", "act": "new_request", "task": "feature"}
+{"text": "voeg een knop toe waarmee je je lijst als tekst kunt kopiëren", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "kan ik een timer toevoegen die bij elke ronde telt hoe lang het duurt?", "lang": "nl", "act": "question", "task": "feature"}
+{"text": "добавь возможность создавать свои уровни в редакторе прямо в игре", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "сделай страницу профиля, где видно все мои достижения и время в игре", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "додай можливість ділитися рецептом посиланням з друзями", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "чи можна зробити так, щоб гравці могли писати коментарі до карти?", "lang": "uk", "act": "question", "task": "feature"}
+{"text": "加一个排行榜功能，按周统计积分，每周一清零", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "给这个待办应用加上提醒功能，到时间了弹出通知", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "채팅방에 파일 첨부 기능을 추가해 주세요, 이미지랑 pdf 둘 다요", "lang": "ko", "act": "new_request", "task": "feature"}
+{"text": "게임에 다크 모드 말고 색맹 모드도 넣을 수 있을까요?", "lang": "ko", "act": "question", "task": "feature"}
+{"text": "मेरे quiz app में timer जोड़ो, हर सवाल पर 15 सेकंड का", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "tambahin fitur untuk nyimpen favorit resep biar bisa dibuka lagi nanti", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "thêm chức năng đặt lại mật khẩu qua email cho app của mình", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "lägg till en knapp som skickar mitt resultat till discord-kanalen", "lang": "sv", "act": "new_request", "task": "feature"}
+{"text": "přidej do hry možnost uložit si rozehranou hru a pokračovat později", "lang": "cs", "act": "new_request", "task": "feature"}
+{"text": "תוסיף אפשרות לשחק נגד המחשב ברמות קושי שונות", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "یه قابلیت اضافه کن که کاربرا بتونن امتیاز هفتگی رو ببینن", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "add a timer to each question in the quiz and show a bonus for fast answers", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "implement drag and drop for the kanban cards", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "ist es schwer, dem Discord Bot Voice Chat beizubringen, oder ist das außerhalb des Rahmens?", "lang": "de", "act": "question", "task": "feature"}
+{"text": "make a feature that lets two users share a shopping list in real time", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "build a notification bell in the navbar that shows unread messages", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "füg auf der Statistik Seite einen Button hinzu, der die Daten als CSV exportiert", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "implement offline mode so the todo app works without internet and syncs later", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "check my jwt secret handling before i push this to github, is it ok to hardcode it for now?", "lang": "en", "act": "question", "task": "review"}
+{"text": "prüf bitte mal ob mein Code nach dem Umbau noch sauber und lesbar ist, das wird wieder unübersichtlich", "lang": "de", "act": "new_request", "task": "review"}

@@ -1,0 +1,250 @@
+{"text": "โอเคเลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "โอเค ทีนี้ทำปุ่มให้เป็นสีชมพู", "lang": "th", "act": "approval", "task": "ui_styling"}
+{"text": "เออ เขียน test ไปเลย", "lang": "th", "act": "approval", "task": "tests"}
+{"text": "ใช่ push เลย", "lang": "th", "act": "approval", "task": "setup_deploy"}
+{"text": "ดูดีละ ทีนี้เพิ่ม highscore เข้าไปด้วย", "lang": "th", "act": "approval", "task": "feature"}
+{"text": ":)", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "เอาไฟล์เวอร์ชันก่อนหน้ากลับมา", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "กลับไป layout เก่า", "lang": "th", "act": "stop_undo", "task": "ui_styling"}
+{"text": "revert refactoring เลย ชอบโครงสร้างเก่ามากกว่า", "lang": "th", "act": "stop_undo", "task": "refactor"}
+{"text": "undo npm install เลย node_modules พังหมดแล้ว", "lang": "th", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "เอาระบบ inventory ออกอีกที มันเยอะไป", "lang": "th", "act": "stop_undo", "task": "feature"}
+{"text": "ลบ test ที่เพิ่งทำเมื่อกี้ทิ้ง", "lang": "th", "act": "stop_undo", "task": "tests"}
+{"text": "fix นั้นทำให้แย่ลงอะ undo เลย", "lang": "th", "act": "stop_undo", "task": "bug_fix"}
+{"text": "ยกเลิกการแก้ readme", "lang": "th", "act": "stop_undo", "task": "docs_writing"}
+{"text": "ใช้เวลาเท่าที่ต้องการเลย ขอแค่ทำ platformer ทั้งเกมให้เสร็จ", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "คิดเองให้หมด ออกแบบแล้วสร้างทั้งหมดเลย อย่ามากวนนะ", "lang": "th", "act": "handoff", "task": "planning_design"}
+{"text": "เขียน test ให้ทั้ง codebase เลย ทั้งหมด แล้วแก้อันที่ fail ด้วย อย่าหยุดจนกว่าจะเขียวหมด", "lang": "th", "act": "handoff", "task": "tests"}
+{"text": "เขียนโปรเจกต์ทั้งหมดใหม่ด้วย typescript ไม่ต้องถามอะไร ทำต่อไปจนกว่าจะ compile ผ่าน", "lang": "th", "act": "handoff", "task": "refactor"}
+{"text": "ย้ายทุกอย่างไป postgres แล้วแก้โค้ดทั้งหมดให้เข้ากัน ไม่ต้องถามกลับนะ", "lang": "th", "act": "handoff", "task": "setup_deploy"}
+{"text": "ทำ docs ให้ทั้ง repo ทุกไฟล์เลย แล้วไม่ต้องถามอะไรฉัน", "lang": "th", "act": "handoff", "task": "docs_writing"}
+{"text": "ออกแบบ frontend ใหม่ทั้งหมด ทุกหน้า ให้ดูโปรๆ อย่าขอ feedback จนกว่าจะเสร็จ", "lang": "th", "act": "handoff", "task": "ui_styling"}
+{"text": "หาแล้วแก้บั๊กทั้งหมดในโปรเจกต์เองเลย ไม่สนว่าจะนานแค่ไหน", "lang": "th", "act": "handoff", "task": "bug_fix"}
+{"text": "ไล่ดูทั้ง repo แล้วแก้ทุกอย่างที่คิดว่าผิด ไม่ต้องถามฉัน", "lang": "th", "act": "handoff", "task": "review"}
+{"text": "ช่วงสองสามชั่วโมงนี้ทำอะไรก็ได้ที่คิดว่าดีที่สุดสำหรับโปรเจกต์", "lang": "th", "act": "handoff", "task": "other"}
+{"text": "router มันตัดสินยังไงว่าจะโชว์หน้าไหน", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "O(n log n) คืออะไร", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ถ้าจะทำบอทที่รันพร้อมกันหลายๆ เซิร์ฟเวอร์ จะทำยังไงดี?", "lang": "th", "act": "question", "task": "planning_design"}
+{"text": "deploy ขึ้น vercel ยังไง", "lang": "th", "act": "question", "task": "setup_deploy"}
+{"text": "ทำไม score ถึงเป็น 0 ตลอดหลังรีสตาร์ท", "lang": "th", "act": "question", "task": "bug_fix"}
+{"text": "ทำไม navbar ของฉันทับ content", "lang": "th", "act": "question", "task": "ui_styling"}
+{"text": "unit test มันทำงานยังไงอะ mock คืออะไร", "lang": "th", "act": "question", "task": "tests"}
+{"text": "โค้ดนี้ปลอดภัยจาก sql injection ไหม?", "lang": "th", "act": "question", "task": "review"}
+{"text": "readme ที่ดีควรมีอะไรบ้าง", "lang": "th", "act": "question", "task": "docs_writing"}
+{"text": "อันนี้ควรเป็น struct หรือ class ดี", "lang": "th", "act": "question", "task": "refactor"}
+{"text": "ใช้ lib นี้ทำให้บอทเข้า voice channel ได้ไหม?", "lang": "th", "act": "question", "task": "feature"}
+{"text": "อีกนานไหม", "lang": "th", "act": "question", "task": "other"}
+{"text": ".", "lang": "th", "act": "other", "task": "other"}
+{"text": "ทำหน้า login ที่ใช้อีเมลกับรหัสผ่าน", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "แก้ off by one error ใน pagination", "lang": "th", "act": "new_request", "task": "bug_fix"}
+{"text": "เอา magic number ทั้งหมดไปไว้ในไฟล์ config", "lang": "th", "act": "new_request", "task": "refactor"}
+{"text": "ตกแต่ง embed ให้มี sidebar สีเขียวกับ thumbnail", "lang": "th", "act": "new_request", "task": "ui_styling"}
+{"text": "เขียน pytest สำหรับ utils.py ด้วย รวมถึง edge case", "lang": "th", "act": "new_request", "task": "tests"}
+{"text": "สร้าง requirements.txt", "lang": "th", "act": "new_request", "task": "setup_deploy"}
+{"text": "เขียนข้อความ tutorial ของเกม สั้นๆ 5 ทิปสำหรับผู้เล่นใหม่", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "เขียนขั้นตอนที่ต้องทำสำหรับ multiplayer", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "ฟังก์ชันนี้ thread safe ไหม?", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "ชี้หน่อยว่า highscore เซฟอยู่ตรงไหน", "lang": "th", "act": "new_request", "task": "understand_code"}
+{"text": "สอนหน่อยว่า sorting algorithm ทำงานยังไง ขอตัวอย่างเล็กๆ", "lang": "th", "act": "new_request", "task": "learn_concept"}
+{"text": "ทำ todo list ของวันนี้ให้หน่อย", "lang": "th", "act": "new_request", "task": "other"}
+{"text": "ไม่ใช่ ผิดอะ", "lang": "th", "act": "correction", "task": "other"}
+{"text": "แก้ login ได้แล้ว แต่ signup พังแทน", "lang": "th", "act": "correction", "task": "bug_fix"}
+{"text": "animation มันเร็วไปแล้วกระตุก", "lang": "th", "act": "correction", "task": "ui_styling"}
+{"text": "คำสั่งต้องเป็น /kick ไม่ใช่ !kick", "lang": "th", "act": "correction", "task": "feature"}
+{"text": "พฤติกรรมมันเปลี่ยนไป output ไม่เหมือนเดิมแล้ว", "lang": "th", "act": "correction", "task": "refactor"}
+{"text": "ทำให้ test ผ่านด้วยการลบ assert ทิ้งอะ นั่นมันโกง", "lang": "th", "act": "correction", "task": "tests"}
+{"text": "python เวอร์ชันนี้ผิด เราใช้ 3.11", "lang": "th", "act": "correction", "task": "setup_deploy"}
+{"text": "ไม่ได้เขียนอันนี้นะ โปรเจกต์ไม่ได้ใช้ redis", "lang": "th", "act": "correction", "task": "docs_writing"}
+{"text": "แผนนี้ใหญ่ไป เรามีแค่วันเสาร์อาทิตย์", "lang": "th", "act": "correction", "task": "planning_design"}
+{"text": "พลาดบั๊กที่เห็นชัดๆ ในบรรทัด 40", "lang": "th", "act": "correction", "task": "review"}
+{"text": "คำอธิบายนั้นผิด loop มันวิ่งย้อนกลับ", "lang": "th", "act": "correction", "task": "understand_code"}
+{"text": "error เดิมอีกแล้ว\nModuleNotFoundError: No module named 'discord'", "lang": "th", "act": "correction", "task": "error_paste"}
+{"text": "แล้วต้องใช้ offline ได้ด้วย", "lang": "th", "act": "clarification", "task": "feature"}
+{"text": "ให้เหมือนใน screenshot ที่ส่งไป", "lang": "th", "act": "clarification", "task": "ui_styling"}
+{"text": "เกิดแค่ใน level 2", "lang": "th", "act": "clarification", "task": "bug_fix"}
+{"text": "node 20 มั้ง", "lang": "th", "act": "clarification", "task": "setup_deploy"}
+{"text": "test แค่ backend พอ frontend ช่างมัน", "lang": "th", "act": "clarification", "task": "tests"}
+{"text": "ชื่อฟังก์ชันขอเหมือนเดิมนะ", "lang": "th", "act": "clarification", "task": "refactor"}
+{"text": "เอาขั้นตอน setup ไว้ก่อน features", "lang": "th", "act": "clarification", "task": "docs_writing"}
+{"text": "เป็นเกมผู้เล่น 2 คนในเครื่องเดียว เลยไม่ต้องมี network", "lang": "th", "act": "clarification", "task": "planning_design"}
+{"text": "ดูแค่ไฟล์ใน src/api", "lang": "th", "act": "clarification", "task": "review"}
+{"text": "อันที่อยู่ใน utils/math.py", "lang": "th", "act": "clarification", "task": "understand_code"}
+{"text": "ฉันรู้ python แต่ไม่รู้ c++", "lang": "th", "act": "clarification", "task": "learn_concept"}
+{"text": "user ไม่ใช่ admin", "lang": "th", "act": "clarification", "task": "other"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "th", "act": "other", "task": "error_paste"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "อันนี้แปลว่าอะไร?? error: linker `cc` not found", "lang": "th", "act": "question", "task": "error_paste"}
+{"text": "ครูบอกว่าใช้ ai คือโกง 555", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "todo หายหมดหลัง reload", "lang": "th", "act": "new_request", "task": "bug_fix"}
+{"text": "ครูยังอยากได้ class diagram ด้วยอะ", "lang": "th", "act": "other", "task": "other"}
+{"text": "555 ดีเลย", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "ใส่ countdown 60 วินาทีในควิซหน่อย", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "เขียน test ว่าบอทไม่สนข้อความจากบอทตัวอื่น", "lang": "th", "act": "new_request", "task": "tests"}
+{"text": "ใช่", "lang": "th", "act": "approval", "task": "other"}
+{"text": "เกิดอะไรขึ้นตอนที่ user กดปุ่ม login อธิบายทีละขั้นหน่อย", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "เปลี่ยน string constants เป็น enum", "lang": "th", "act": "new_request", "task": "refactor"}
+{"text": "แปลเป็นอังกฤษให้หน่อย: ตัวละครกระโดดข้ามสิ่งกีดขวาง", "lang": "th", "act": "other", "task": "other"}
+{"text": "compact", "lang": "th", "act": "other", "task": "other"}
+{"text": "ไฟล์ชื่อ scores.json อยู่ในโฟลเดอร์ data", "lang": "th", "act": "clarification", "task": "feature"}
+{"text": "ย้ายโค้ดปุ่มไปเป็น component ที่ใช้ซ้ำได้", "lang": "th", "act": "new_request", "task": "refactor"}
+{"text": "เพิ่ม test coverage ให้ถึง 90% เอง ทำต่อไปจนถึง", "lang": "th", "act": "handoff", "task": "tests"}
+{"text": "โอเค อันนี้แหละที่ต้องการ", "lang": "th", "act": "approval", "task": "other"}
+{"text": "แตกโปรเจกต์เป็น task เล็กๆ ที่ฉันทำตามลำดับได้", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "ทำไมทุกคนบอกว่าห้ามใช้ตัวแปร global", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "กลับไปสถานะก่อนหน้าด้วย pls", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "เป็นโปรเจกต์โรงเรียนเรื่องระบบสุริยะ", "lang": "th", "act": "clarification", "task": "feature"}
+{"text": "เข้าใจผิดแล้ว เริ่มใหม่เลย", "lang": "th", "act": "correction", "task": "other"}
+{"text": "ใช้ lib นี้ให้บอทเข้า voice channel ได้ป่าว?", "lang": "th", "act": "question", "task": "feature"}
+{"text": "ระยะห่างเยอะไป ลดลงครึ่งนึง", "lang": "th", "act": "correction", "task": "ui_styling"}
+{"text": "เพิ่ม test ที่เช็คว่าบอทไม่สนข้อความจากบอทอื่น", "lang": "th", "act": "new_request", "task": "tests"}
+{"text": "การ hash รหัสผ่านของฉันโอเคไหมหรืออ่อนไป", "lang": "th", "act": "question", "task": "review"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "undo npm install ที เล่นเอา node_modules พังหมด", "lang": "th", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "hash table ทำงานยังไงแบบทั่วไป?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "เช็คหน่อยว่าโค้ด login มีปัญหาด้านความปลอดภัยไหม", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "ช่างมัน ทิ้งหมดเลย", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "ทำให้เสร็จทั้งหมดโดยไม่ต้องมีฉัน ขอบคุณ", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "undo อันนั้น", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "อืม โอเค", "lang": "th", "act": "approval", "task": "other"}
+{"text": "เขียนข้อความ tutorial ในเกม 5 ทิปสั้นๆ สำหรับผู้เล่นใหม่", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "การ compile ช้ามากแบบนี้ปกติไหม", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "design pattern คืออะไร? observer มีประโยชน์กับเกมไหม?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "เก่งที่สุดเลย จริงๆ", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "level ที่ฉันหมายถึงคือด่านในเกม ไม่ใช่เลเวลผู้เล่น", "lang": "th", "act": "clarification", "task": "other"}
+{"text": "ร่างตาราง database สำหรับ user, posts และ likes", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "อธิบายโค้ดนี้ให้ฟังเหมือนฉันอายุ 12", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "ทำเกมพังแล้ว", "lang": "th", "act": "correction", "task": "other"}
+{"text": "ดีเลย ขั้นต่อไป", "lang": "th", "act": "approval", "task": "other"}
+{"text": "ทำหน้า login ที่ใช้อีเมลกับรหัสผ่าน", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "test แค่ backend พอ ข้าม frontend", "lang": "th", "act": "clarification", "task": "tests"}
+{"text": "revert refactoring ที ชอบโครงสร้างเก่ามากกว่า", "lang": "th", "act": "stop_undo", "task": "refactor"}
+{"text": "ได้เลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "บอทยังตอบซ้ำสองรอบอยู่ fix ของแกไม่ได้ช่วยอะไรเลย", "lang": "th", "act": "correction", "task": "bug_fix"}
+{"text": "เอาโปรเจกต์ไปทำเลย ฉันจะนั่งดูเฉยๆ", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "เปลี่ยนชื่อโฟลเดอร์เป็น starhopper", "lang": "th", "act": "new_request", "task": "other"}
+{"text": "REST แปลว่าอะไร", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ทำไม npm install นานมาก", "lang": "th", "act": "question", "task": "setup_deploy"}
+{"text": "ตีสองแล้วยังโค้ดอยู่เลย ช่วยด้วย", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "เขียน commit description ดีๆ สำหรับ 3 การเปลี่ยนล่าสุด", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "ศัตรู spawn ที่ไหน", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "เว็บฉันดูพังในมือถือ เมนูเปิดไม่ได้", "lang": "th", "act": "new_request", "task": "bug_fix"}
+{"text": "let กับ const ต่างกันยังไง", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ลิสต์ TODO ทั้งหมดในโปรเจกต์ให้หน่อย", "lang": "th", "act": "new_request", "task": "understand_code"}
+{"text": "เซิร์ฟเวอร์อยู่ timezone ไหน", "lang": "th", "act": "question", "task": "other"}
+{"text": "ในเครื่องฉันไม่ได้ ผลรวมยังไม่ถูกอยู่ดี", "lang": "th", "act": "correction", "task": "bug_fix"}
+{"text": "ไม่ใช่ ร้านค้าต้องเปิดตอนกด E ไม่ใช่ตอนเดินเข้าไป", "lang": "th", "act": "correction", "task": "feature"}
+{"text": "เรามี 3 สัปดาห์ แล้วมีกันแค่สองคน", "lang": "th", "act": "clarification", "task": "planning_design"}
+{"text": "เพิ่ม dockerfile ให้บอท", "lang": "th", "act": "new_request", "task": "setup_deploy"}
+{"text": "ช่วยเทสว่าการเซฟ highscore ทำงานไหม", "lang": "th", "act": "new_request", "task": "tests"}
+{"text": "ลบโค้ดซ้ำในไฟล์ level ทั้งสามไฟล์", "lang": "th", "act": "new_request", "task": "refactor"}
+{"text": "ได้ 403 ตอนเรียก api: {\"message\":\"Missing Access\",\"code\":50001}", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "mutex คืออะไร?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "เขียนฟังก์ชันเช็คว่าตัวเลขเป็นจำนวนเฉพาะไหม", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "ใช่ๆ ทำแบบนั้นเลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "review ของแกไม่มีประโยชน์เลย พูดแต่เรื่องชื่อ ดูที่ logic ดิ", "lang": "th", "act": "correction", "task": "review"}
+{"text": "โอเค ให้อิสระเต็มที่เลย ทำเกมเจ๋งๆ มา เสร็จแล้วค่อยกลับมา", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "lifetime ใน rust คืออะไร", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ใน parse_input ฉันครอบคลุมทุก edge case แล้วหรือยัง?", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "อ่านสีไม่ค่อยออกเลย contrast แย่", "lang": "th", "act": "correction", "task": "ui_styling"}
+{"text": "เพิ่ม leaderboard ที่เซฟลงไฟล์ json", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "ใน renderer มี memory leak ไหม?", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "logic ของเกมควรอยู่ที่ server หรือ client?", "lang": "th", "act": "question", "task": "planning_design"}
+{"text": "เขียน game engine ทั้งหมดเลย physics, rendering, input, audio มีเวลาเหลือเฟือ", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "หยุด! แกกำลังลบไฟล์ฉัน!!", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "ลิสต์ TODO ทั้งหมดในโปรเจกต์", "lang": "th", "act": "new_request", "task": "understand_code"}
+{"text": "ฉันหมายถึง sidebar ด้านซ้าย", "lang": "th", "act": "clarification", "task": "feature"}
+{"text": "ทำให้ test เขียวด้วยการลบ assert ทิ้ง นั่นมันโกงนะ", "lang": "th", "act": "correction", "task": "tests"}
+{"text": "ไม่ใช่แบบนั้น ทำใหม่", "lang": "th", "act": "correction", "task": "other"}
+{"text": "แก้คำผิดใน readme", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "เอา login ออกอีกที", "lang": "th", "act": "stop_undo", "task": "feature"}
+{"text": "ทำหน้าตะกร้าสินค้าที่มีราคารวม", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "เขียน script ที่เปลี่ยนชื่อรูปทั้งหมดของฉันตามวันที่", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "race condition คืออะไร?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "windows", "lang": "th", "act": "clarification", "task": "setup_deploy"}
+{"text": "มีตรงไหนในนี้ที่อาจ crash ได้ไหม? ดู main.rs ให้หน่อย", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "ทำให้แชทบอทจำ 5 ข้อความล่าสุดได้", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "เขียนคำนำให้รายงานโรงเรียนว่า chess engine ของฉันทำงานยังไง", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "https://github.com/irgendwer/cooler-bot", "lang": "th", "act": "other", "task": "other"}
+{"text": "กลับไป layout เก่า", "lang": "th", "act": "stop_undo", "task": "ui_styling"}
+{"text": "เกิดอะไรขึ้นเป๊ะๆ ตอนกด login? ไล่ให้ดูหน่อย", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "closure ใน javascript คืออะไร", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "โปรเจกต์ unity ที่มีศัตรูเยอะๆ ควรจัดโครงสร้างยังไงดีสุด", "lang": "th", "act": "question", "task": "planning_design"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "เพิ่มไฟล์ license เอา mit ก็ได้มั้ง", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "error เดิมอีกแล้ว\nModuleNotFoundError: No module named 'discord'", "lang": "th", "act": "correction", "task": "error_paste"}
+{"text": "ใส่ไว้ใน main branch", "lang": "th", "act": "clarification", "task": "setup_deploy"}
+{"text": "ขอโทษที่ถามโง่ๆ ก่อนหน้านี้นะ", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "1", "lang": "th", "act": "approval", "task": "other"}
+{"text": "ตอบสั้นๆ เสมอนะ", "lang": "th", "act": "other", "task": "other"}
+{"text": "ตั้งค่า eslint กับ prettier", "lang": "th", "act": "new_request", "task": "setup_deploy"}
+{"text": "กลับไปสถานะก่อนหน้าด้วย pls", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "IndexError: list index out of range\nแก้ให้ที", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "แกเปลี่ยนพฤติกรรมไปแล้ว output ไม่เหมือนเดิม", "lang": "th", "act": "correction", "task": "refactor"}
+{"text": "เขียนขั้นตอนที่ต้องทำเพื่อเพิ่ม multiplayer", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "อ่านไฟล์ notes.txt", "lang": "th", "act": "other", "task": "other"}
+{"text": "ดูถูกแล้ว ทำต่อเลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "โอเค ให้อิสระเต็มที่ ทำเกมเจ๋งๆ มาเลย เสร็จแล้วค่อยกลับมา", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "เพิ่มหัวข้อใน readme ว่ารันบอทในเครื่องยังไง", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "ออกแบบ state machine สำหรับบอสไฟต์", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "เพิ่ม double jump", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "ทำเกมพังหมดเลย", "lang": "th", "act": "correction", "task": "other"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "เน้น performance เป็นหลักนะ", "lang": "th", "act": "clarification", "task": "review"}
+{"text": "ดูดีละ ทีนี้เพิ่ม highscore เข้าไปด้วย", "lang": "th", "act": "approval", "task": "feature"}
+{"text": "python เวอร์ชันผิด เราใช้ 3.11", "lang": "th", "act": "correction", "task": "setup_deploy"}
+{"text": "จัดทุกอย่างให้อยู่กลางแล้วเพิ่ม padding", "lang": "th", "act": "new_request", "task": "ui_styling"}
+{"text": "git merge กับ rebase ต่างกันยังไง?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "อธิบาย oauth แบบง่ายๆ หน่อย", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "โฟกัสที่ performance", "lang": "th", "act": "clarification", "task": "review"}
+{"text": "บางทีลูกบอลทะลุไม้ตีตอนความเร็วสูง แก้ที", "lang": "th", "act": "new_request", "task": "bug_fix"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "th", "act": "new_request", "task": "error_paste"}
+{"text": "จัดเต็มเลย implement ทุกอย่างใน roadmap", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "oauth ทำงานยังไง ขอแบบง่ายๆ", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ทำงานที่เหลือทั้งหมดให้เสร็จโดยไม่ต้องมาเช็คกับฉัน", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "ตรวจ dependencies ว่ามีช่องโหว่ที่รู้จักไหม", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "ทำ changelog จาก commits", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "เอาเลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "ไม่ได้หมายถึงแบบนั้น ทำใหม่", "lang": "th", "act": "correction", "task": "other"}
+{"text": "ทำ database schema แบบไหนสำหรับแอปห้องสมุด? ออกแบบก่อนอย่างเดียวนะ", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "ใช้ windows 11 กับ python 3.12", "lang": "th", "act": "other", "task": "other"}
+{"text": "ไฟล์ไหนจัดการ slash commands ของ discord?", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "ช่วยดู pr นี้ให้หน่อยก่อนที่ฉันจะ merge", "lang": "th", "act": "new_request", "task": "review"}
+{"text": "ศัตรู spawn ที่ไหน", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "โห", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "ยกเลิก", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "เฮ้ยยย", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "components ตรงนี้แชร์ state กันยังไง?", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "ย้าย magic number ทั้งหมดไปไว้ในไฟล์ config", "lang": "th", "act": "new_request", "task": "refactor"}
+{"text": "utils.js กับ helpers.js ในโปรเจกต์ฉันต่างกันยังไง", "lang": "th", "act": "question", "task": "understand_code"}
+{"text": "ยกเลิกการแก้ readme", "lang": "th", "act": "stop_undo", "task": "docs_writing"}
+{"text": "วิธีจัดโครงสร้างโปรเจกต์ unity ที่มีศัตรูเยอะๆ ที่ดีที่สุดคืออะไร", "lang": "th", "act": "question", "task": "planning_design"}
+{"text": "ทำ docs ให้คำสั่งบอททั้งหมด", "lang": "th", "act": "new_request", "task": "docs_writing"}
+{"text": "เฮ้ อยู่ป่าว?", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "ไม่ถูกนะ เช็คอีกที", "lang": "th", "act": "correction", "task": "other"}
+{"text": "level ที่หมายถึงคือด่านในเกม ไม่ใช่เลเวลผู้เล่น", "lang": "th", "act": "clarification", "task": "other"}
+{"text": "เขียน test ที่ทำให้ crash เกิดซ้ำก่อน แล้วค่อยแก้", "lang": "th", "act": "new_request", "task": "tests"}
+{"text": "แค่สร้างมันขึ้นมา ทั้งหมดเลย ไม่ต้องถาม", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "node 20 มั้ง", "lang": "th", "act": "clarification", "task": "setup_deploy"}
+{"text": "ใส่ hover effect ให้การ์ด", "lang": "th", "act": "new_request", "task": "ui_styling"}
+{"text": "pause ก่อน อยากดูเองก่อน", "lang": "th", "act": "stop_undo", "task": "other"}
+{"text": "ทำหน้า settings ที่ปรับเสียงได้", "lang": "th", "act": "new_request", "task": "feature"}
+{"text": "emoji ใน readme เยอะไป เอาออก", "lang": "th", "act": "correction", "task": "docs_writing"}
+{"text": "ไม่ใช่ score ยังไม่เซฟ แกแค่เปลี่ยนชื่อตัวแปร", "lang": "th", "act": "correction", "task": "bug_fix"}
+{"text": "option 2 ดูดีกว่า เอาอันนั้น", "lang": "th", "act": "approval", "task": "other"}
+{"text": "ไม่ใช่ ผิด", "lang": "th", "act": "correction", "task": "other"}
+{"text": "ใส่โหมด multiplayer ได้ไหม หรือมันยากเกินสำหรับ setup นี้", "lang": "th", "act": "question", "task": "feature"}
+{"text": "ใช้ฟอนต์ retro pixel สำหรับ hud", "lang": "th", "act": "new_request", "task": "ui_styling"}
+{"text": "หวัดดี claude", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "git merge กับ rebase ต่างกันยังไง?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "ใช่ ติดตั้งเลย", "lang": "th", "act": "approval", "task": "setup_deploy"}
+{"text": "วันนี้เป็นไงบ้าง?", "lang": "th", "act": "chit_chat", "task": "other"}
+{"text": "ทำให้เสร็จทั้งหมดโดยไม่ต้องมีฉัน ขอบคุณ", "lang": "th", "act": "handoff", "task": "feature"}
+{"text": "เทียบ express กับ fastify สำหรับกรณีของฉัน แล้วแนะนำมาหนึ่งอัน", "lang": "th", "act": "new_request", "task": "planning_design"}
+{"text": "ตอนนี้กระโดดได้แล้ว แต่ผู้เล่นเดินไปทางซ้ายไม่ได้แล้ว", "lang": "th", "act": "correction", "task": "bug_fix"}
+{"text": "ทั้งสองอัน", "lang": "th", "act": "clarification", "task": "other"}
+{"text": "เยี่ยม ทำให้เสร็จเลย", "lang": "th", "act": "approval", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "th", "act": "other", "task": "error_paste"}
+{"text": "ใช่", "lang": "th", "act": "approval", "task": "other"}
+{"text": "ไม่ ยังพังอยู่", "lang": "th", "act": "correction", "task": "other"}
+{"text": "mutex คืออะไร?", "lang": "th", "act": "question", "task": "learn_concept"}
+{"text": "drag and drop สำหรับ todo list", "lang": "th", "act": "new_request", "task": "feature"}

@@ -1,0 +1,250 @@
+{"text": "অবশ্যই", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "ok এবার button টা pink কর", "lang": "bn", "act": "approval", "task": "ui_styling"}
+{"text": "হ্যাঁ test গুলো লিখে ফেল", "lang": "bn", "act": "approval", "task": "tests"}
+{"text": "হ্যাঁ push কর", "lang": "bn", "act": "approval", "task": "setup_deploy"}
+{"text": "ঠিক আছে, এবার highscore টাও যোগ কর", "lang": "bn", "act": "approval", "task": "feature"}
+{"text": "হেই", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "দাঁড়া, আগে আমি একটু দেখি", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "color এর change টা undo কর, আগেরটাই ভালো লাগছিল", "lang": "bn", "act": "stop_undo", "task": "ui_styling"}
+{"text": "refactoring টা undo কর, আগের structure টাই আমার ভালো ছিল", "lang": "bn", "act": "stop_undo", "task": "refactor"}
+{"text": "তুই যে file গুলো change করেছিস সেগুলোতে git checkout কর, আমার ওসব কিছু লাগবে না", "lang": "bn", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "inventory system টা আবার সরিয়ে দে, বেশি হয়ে যাচ্ছে", "lang": "bn", "act": "stop_undo", "task": "feature"}
+{"text": "এইমাত্র যে test গুলো বানালি সেগুলো delete কর", "lang": "bn", "act": "stop_undo", "task": "tests"}
+{"text": "ওই fix এ আরও খারাপ হয়ে গেল, undo কর", "lang": "bn", "act": "stop_undo", "task": "bug_fix"}
+{"text": "readme এর edit টা undo কর", "lang": "bn", "act": "stop_undo", "task": "docs_writing"}
+{"text": "ok আমি তোকে পুরো freedom দিলাম। একটা জোস game বানা। শেষ হলে ফিরে আসিস", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "সব নিজে বের কর, design কর আর পুরোটা বানা, আমাকে disturb করিস না", "lang": "bn", "act": "handoff", "task": "planning_design"}
+{"text": "পুরো codebase এর test লেখ আর যা fail করে সব fix কর, সব green না হওয়া পর্যন্ত থামবি না", "lang": "bn", "act": "handoff", "task": "tests"}
+{"text": "পুরো project টা typescript এ rewrite কর, কোনো প্রশ্ন না, compile না হওয়া পর্যন্ত চালিয়ে যা", "lang": "bn", "act": "handoff", "task": "refactor"}
+{"text": "deployment এর জন্য সব set up কর, ci, docker, hosting, যা লাগে, live না হওয়া পর্যন্ত আমি এ নিয়ে কিছু শুনতে চাই না", "lang": "bn", "act": "handoff", "task": "setup_deploy"}
+{"text": "পুরো repo টা document কর, প্রতিটা file, আর আমাকে কিছু জিজ্ঞেস করিস না", "lang": "bn", "act": "handoff", "task": "docs_writing"}
+{"text": "পুরো frontend টা নতুন করে design কর, সব page, professional দেখাতে হবে। শেষ না হওয়া পর্যন্ত feedback চাইবি না", "lang": "bn", "act": "handoff", "task": "ui_styling"}
+{"text": "project এর সব bug নিজে খুঁজে fix কর, কতক্ষণ লাগে আমার কিছু যায় আসে না", "lang": "bn", "act": "handoff", "task": "bug_fix"}
+{"text": "পুরো repo টা ঘেঁটে দেখ আর যা তোর কাছে ভুল মনে হয় সব fix কর, আমাকে জিজ্ঞেস করতে হবে না", "lang": "bn", "act": "handoff", "task": "review"}
+{"text": "পরের কয়েক ঘণ্টা project এর জন্য যেটা সবচেয়ে ভালো মনে হয় সেটাই কর", "lang": "bn", "act": "handoff", "task": "other"}
+{"text": "src এর প্রতিটা file কী করে একটু summary করে দিবি?", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "tcp আর udp এর মধ্যে difference কী, school এ পড়েছিলাম ভুলে গেছি", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "2d game এর জন্য unity নাকি godot, তোর কী মনে হয়", "lang": "bn", "act": "question", "task": "planning_design"}
+{"text": "node_modules এর জন্য কি .gitignore লাগবে?", "lang": "bn", "act": "question", "task": "setup_deploy"}
+{"text": "আমার character মাঝে মাঝে মাটির ভেতর দিয়ে পড়ে যায় কেন", "lang": "bn", "act": "question", "task": "bug_fix"}
+{"text": "কিভাবে একটা div center করব", "lang": "bn", "act": "question", "task": "ui_styling"}
+{"text": "আমার test গুলো locally pass করছে কিন্তু github actions এ করছে না কেন?", "lang": "bn", "act": "question", "task": "tests"}
+{"text": "এটা কি ভালো solution নাকি এর চেয়ে ভালো কিছু আছে?", "lang": "bn", "act": "question", "task": "review"}
+{"text": "একটা ভালো readme তে কী কী থাকা উচিত", "lang": "bn", "act": "question", "task": "docs_writing"}
+{"text": "এটা struct হবে নাকি class?", "lang": "bn", "act": "question", "task": "refactor"}
+{"text": "এই library দিয়ে কি bot কে voice channel এ join করানো সম্ভব?", "lang": "bn", "act": "question", "task": "feature"}
+{"text": "hetzner এ একটা server এর দাম মোটামুটি কত", "lang": "bn", "act": "question", "task": "other"}
+{"text": "api key টা .env file এ আছে, print করিস না", "lang": "bn", "act": "other", "task": "other"}
+{"text": "coin তুললে একটা sound effect দে", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "page reload করলে আমি logout হয়ে যাই, কিন্তু logged in থাকা উচিত", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "এই function টা clean up কর, একেবারে জঘন্য অবস্থা", "lang": "bn", "act": "new_request", "task": "refactor"}
+{"text": "health bar 20% এর নিচে গেলে red কর", "lang": "bn", "act": "new_request", "task": "ui_styling"}
+{"text": "project এ jest set up কর", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "bot এর জন্য একটা dockerfile লেখ", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "একটা license file যোগ কর, মনে হয় mit", "lang": "bn", "act": "new_request", "task": "docs_writing"}
+{"text": "library app এর জন্য কোন database schema লাগবে? এখন শুধু design কর, code করিস না", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "এটার ভেতরে কিছু আছে যেটা crash করতে পারে? main.rs টা দেখ", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "project এর সব TODO list করে দে", "lang": "bn", "act": "new_request", "task": "understand_code"}
+{"text": "sorting algorithm কিভাবে কাজ করে ছোট একটা example দিয়ে শেখা", "lang": "bn", "act": "new_request", "task": "learn_concept"}
+{"text": "folder টার নাম starhopper করে দে", "lang": "bn", "act": "new_request", "task": "other"}
+{"text": "আমি এটা বলিনি, আবার কর", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "না score এখনও save হচ্ছে না, তুই শুধু variable এর নাম change করেছিস", "lang": "bn", "act": "correction", "task": "bug_fix"}
+{"text": "padding অনেক বেশি। অর্ধেক কর", "lang": "bn", "act": "correction", "task": "ui_styling"}
+{"text": "না, shop টা E চাপলে খুলবে, তার ভেতরে হেঁটে ঢুকলে না", "lang": "bn", "act": "correction", "task": "feature"}
+{"text": "তুই যে জিনিসের নাম change করেছিস সেগুলো আমি করতে বলিনি", "lang": "bn", "act": "correction", "task": "refactor"}
+{"text": "তুই assert টা delete করে test green করেছিস, এটা cheating", "lang": "bn", "act": "correction", "task": "tests"}
+{"text": "npm install এখনও একই message দিয়ে fail করছে", "lang": "bn", "act": "correction", "task": "setup_deploy"}
+{"text": "আমি ওটা লিখিনি, project এ redis use হয় না", "lang": "bn", "act": "correction", "task": "docs_writing"}
+{"text": "না, school project এর জন্য ওই architecture টা বেশি জটিল", "lang": "bn", "act": "correction", "task": "planning_design"}
+{"text": "তোর review কোনো কাজের না, শুধু naming নিয়ে বললি। logic টা দেখ", "lang": "bn", "act": "correction", "task": "review"}
+{"text": "explanation টা ভুল, loop টা উল্টো দিকে চলে", "lang": "bn", "act": "correction", "task": "understand_code"}
+{"text": "এখন এটা আসছে\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "bn", "act": "correction", "task": "error_paste"}
+{"text": "python", "lang": "bn", "act": "clarification", "task": "feature"}
+{"text": "dark theme অবশ্যই", "lang": "bn", "act": "clarification", "task": "ui_styling"}
+{"text": "play button এ click করার ঠিক পরেই crash করে, menu আসার আগেই", "lang": "bn", "act": "clarification", "task": "bug_fix"}
+{"text": "node 20, মনে হয়", "lang": "bn", "act": "clarification", "task": "setup_deploy"}
+{"text": "শুধু backend test কর, frontend বাদ দে", "lang": "bn", "act": "clarification", "task": "tests"}
+{"text": "function এর নামগুলো যেমন আছে তেমনই থাকতে দে", "lang": "bn", "act": "clarification", "task": "refactor"}
+{"text": "ইংরেজিতে, আর screenshot এর জন্য placeholder রাখিস", "lang": "bn", "act": "clarification", "task": "docs_writing"}
+{"text": "এটা 2 player local game, তাই networking লাগবে না", "lang": "bn", "act": "clarification", "task": "planning_design"}
+{"text": "performance এর উপর focus কর", "lang": "bn", "act": "clarification", "task": "review"}
+{"text": "utils/math.py এরটা", "lang": "bn", "act": "clarification", "task": "understand_code"}
+{"text": "একটা game এর example দিয়ে বুঝিয়ে দে", "lang": "bn", "act": "clarification", "task": "learn_concept"}
+{"text": "কিছু যায় আসে না, তুই বেছে নে", "lang": "bn", "act": "clarification", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "bn", "act": "other", "task": "error_paste"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in 'C:\\\\Users\\\\Jonas\\\\app\\\\src'", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "এটার মানে কী?? error: linker `cc` not found", "lang": "bn", "act": "question", "task": "error_paste"}
+{"text": "আমার css এ এমন কিছু আছে কিনা দেখ যেগুলো আমার লাগে না", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "parse_input এ কি আমি সব special case handle করেছি?", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "hi", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "tailwind set up কর", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "login endpoint এর জন্য test যোগ কর", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "tkinter এ gui সহ একটা calculator বানা", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "installation এর guide টা readme তে লেখ", "lang": "bn", "act": "new_request", "task": "docs_writing"}
+{"text": "json file এ save হয় এমন একটা leaderboard যোগ কর", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "একটা requirements.txt বানা", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "আমরা শুরু করার আগে architecture এর একটা plan বানা", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "node 20 মনে হয়", "lang": "bn", "act": "clarification", "task": "setup_deploy"}
+{"text": "function এ যে async আছে ওটার মানে কী আমার code এ", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "কেউ !meme লিখলে bot একটা random meme post করবে", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "এটা একটা ভালো message দিয়ে commit কর", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "test কর যে bot অন্য bot দের message ignore করে", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "চালিয়ে যা", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "async await আর thread এর মধ্যে পার্থক্য বুঝিয়ে দে", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "10 টা slot এর একটা simple inventory বানাতে পারবি?", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "আমার friend রা এখন ভাবছে আমার game টা জোস, সব তোর জন্য, thanks", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "conftest.py তে যে fixture গুলো আছে সেগুলোই use কর", "lang": "bn", "act": "clarification", "task": "tests"}
+{"text": "হ্যাঁ প্লিজ", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "repo টা private, আমার username coolkid42", "lang": "bn", "act": "clarification", "task": "setup_deploy"}
+{"text": "cancel, আমি মত বদলেছি", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "ভাই এটা সত্যিই পাগলামি, thanks", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "এখন আগের চেয়েও খারাপ", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "একটা CONTRIBUTING.md তে project structure টা বুঝিয়ে লেখ", "lang": "bn", "act": "new_request", "task": "docs_writing"}
+{"text": "ok cool", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "eslint আর prettier set up কর", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "কাল দেখা হবে তাহলে", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "এটা fix কর: IndexError: list index out of range", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "3 page এর site এর জন্য react কি বেশি হয়ে যায়?", "lang": "bn", "act": "question", "task": "planning_design"}
+{"text": "stop", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "websockets দিয়ে multiplayer যোগ কর", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "পুরো repo টা ঘেঁটে দেখ আর যা তোর কাছে ভুল মনে হয় সব fix কর, আমাকে জিজ্ঞেস করতে হবে না", "lang": "bn", "act": "handoff", "task": "review"}
+{"text": "database এর জিনিসগুলো আলাদা একটা module এ নিয়ে যা", "lang": "bn", "act": "new_request", "task": "refactor"}
+{"text": "reaction সহ একটা /poll command বানা", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "ভুল file, আমি player.py বলেছিলাম enemy.py না", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "আগের মতোই same problem", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "game এর text গুলো spanish এ translate কর", "lang": "bn", "act": "new_request", "task": "other"}
+{"text": "project টা ছোট ছোট task এ ভাগ করে দে যেগুলো আমি একটার পর একটা করতে পারি", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "dependency injection কী", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "প্রথম option টা use কর কিন্তু data টা json file এ save কর", "lang": "bn", "act": "clarification", "task": "feature"}
+{"text": "একটা bestenliste বানা যেটা json file এ save করে", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "ok কিন্তু তাড়াতাড়ি কর lol", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "তোর লেখা test টা ভুল, ওটা 5 expect করছে কিন্তু হওয়া উচিত 6", "lang": "bn", "act": "correction", "task": "tests"}
+{"text": "good morning", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "হ্যাঁ, changes গুলো apply কর", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "কাজটা ঘণ্টার পর ঘণ্টা চালিয়ে যা যতক্ষণ না game টা পুরো শেষ হয়, কোনো প্রশ্ন না", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "auth আর feed সহ একটা পুরো twitter clone বানা। আমি প্রশ্নের উত্তর দেব না, তাই নিজে সিদ্ধান্ত নিস", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "ওটা আমি কখনো লিখিনি, project এ redis use হয় না", "lang": "bn", "act": "correction", "task": "docs_writing"}
+{"text": "পুরো repo টা document কর, প্রতিটা file, আর আমাকে কিছু জিজ্ঞেস করিস না", "lang": "bn", "act": "handoff", "task": "docs_writing"}
+{"text": "color গুলো পড়তে কষ্ট হয়, contrast খারাপ", "lang": "bn", "act": "correction", "task": "ui_styling"}
+{"text": "sprite টা বাঁদিকে হাঁটলে flicker করে, fix কর", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "হ্যাঁ জি", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "প্রতিবার scene change করলে music আবার শুরু হয়ে যায়", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "চালিয়ে যা প্লিজ", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "তুই game টা নষ্ট করে দিয়েছিস", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "শুধু src/api এর file গুলো দেখ", "lang": "bn", "act": "clarification", "task": "review"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Spiel.run(Spiel.java:77)", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "ok", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "আমি বাঁ দিকের sidebar টার কথা বলেছিলাম", "lang": "bn", "act": "clarification", "task": "feature"}
+{"text": "save file এর format কিভাবে design করব যাতে পুরনো save গুলো কাজ করে", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "এখন বলছে\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "bn", "act": "correction", "task": "error_paste"}
+{"text": "physics.py এর variable গুলোর ঠিকঠাক নাম দে", "lang": "bn", "act": "new_request", "task": "refactor"}
+{"text": "readme এর edit টা undo কর", "lang": "bn", "act": "stop_undo", "task": "docs_writing"}
+{"text": "আমার portfolio site টা শুরু থেকে শেষ পর্যন্ত বানা। কোন color হবে জিজ্ঞেস করিস না, যেকোনোটা নে", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "চালিয়ে যা", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "hud এর জন্য একটা pixel font নে", "lang": "bn", "act": "new_request", "task": "ui_styling"}
+{"text": "cheers mate", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "এই weekend এ আমার একটা hackathon আছে, কী বানানো যায়", "lang": "bn", "act": "other", "task": "other"}
+{"text": "না score এখনও save হচ্ছে না, তুই শুধু variable এর নাম change করেছিস", "lang": "bn", "act": "correction", "task": "bug_fix"}
+{"text": "player এর নাম সব জায়গায় hero করে দে", "lang": "bn", "act": "new_request", "task": "refactor"}
+{"text": "তাহলে শুরু কর", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "sure", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "nice one", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "abort", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "1", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "powerup: speed, shield আর magnet", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "ok তো basically আমার একটা idea আছে", "lang": "bn", "act": "other", "task": "other"}
+{"text": "সব কিছু করে ফেল, আমি ঘুমাতে যাচ্ছি", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "ok ওটা একটা পাগলা session ছিল", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "database connection কি কোথাও close হচ্ছে?", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "প্লিজ undo কর", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "তুই ভুল function test করেছিস, আমি calculate_damage বলেছিলাম", "lang": "bn", "act": "correction", "task": "tests"}
+{"text": "একজন senior dev এই code সম্পর্কে কী বলতো", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "পুরো project টা typescript এ rewrite কর, কোনো প্রশ্ন না, compile না হওয়া পর্যন্ত চালিয়ে যা", "lang": "bn", "act": "handoff", "task": "refactor"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "discord api mock কর যাতে আমরা command গুলো test করতে পারি", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "আমার code এ utils.js আর helpers.js এর মধ্যে পার্থক্য কী", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "আমার portfolio site টা শুরু থেকে শেষ পর্যন্ত বানা। কোন color হবে জিজ্ঞেস করিস না, যেকোনোটা নে", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "readme তে অনেক বেশি emoji, ওগুলো সরিয়ে দে", "lang": "bn", "act": "correction", "task": "docs_writing"}
+{"text": "হ্যাঁ, চালা", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "শুধু level 2 তে হয়", "lang": "bn", "act": "clarification", "task": "bug_fix"}
+{"text": "pytest use কর", "lang": "bn", "act": "clarification", "task": "tests"}
+{"text": "collision এর হিসাবটা আমি বুঝি না, ওখানে এটা কোন math", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "শুধু enemy এর code এ হাত দে", "lang": "bn", "act": "clarification", "task": "refactor"}
+{"text": "আমার site টা phone এ ভাঙা দেখায়, menu খোলে না", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "variable rename করাটা undo কর, এখন কিছুই মিলছে না", "lang": "bn", "act": "stop_undo", "task": "refactor"}
+{"text": "readme এর বানান ভুলগুলো ঠিক কর", "lang": "bn", "act": "new_request", "task": "docs_writing"}
+{"text": "oauth কিভাবে কাজ করে সহজ ভাষায় বুঝিয়ে দে", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "button গুলো rounded কর আর gradient দে", "lang": "bn", "act": "new_request", "task": "ui_styling"}
+{"text": "yes", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "এটা main branch এ দে", "lang": "bn", "act": "clarification", "task": "setup_deploy"}
+{"text": "pink আর purple color দিস প্লিজ", "lang": "bn", "act": "clarification", "task": "ui_styling"}
+{"text": "না না না এটা সরা", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "সব কিছুতেই হ্যাঁ", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "npm install undo কর, এখন আমার node_modules নষ্ট হয়ে গেছে", "lang": "bn", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "discord api mock কর যাতে আমরা command গুলো test করতে পারি", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "mutex কী?", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "memory leak fix কর, 10 মিনিট পর game slow হয়ে যায়", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "ভাই কাজ করছে না", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "title টা বড় আর bold কর", "lang": "bn", "act": "new_request", "task": "ui_styling"}
+{"text": "button এর code টা একটা reusable component এ নিয়ে যা", "lang": "bn", "act": "new_request", "task": "refactor"}
+{"text": "python", "lang": "bn", "act": "clarification", "task": "feature"}
+{"text": "আমার password hashing এটা কি ঠিক আছে নাকি বেশি দুর্বল", "lang": "bn", "act": "question", "task": "review"}
+{"text": "তুই করতে পারিস", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "প্লিজ project টা আমার জন্য শেষ করে দে, আমার একদম সময় নেই", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "login feature টা আবার সরিয়ে দে", "lang": "bn", "act": "stop_undo", "task": "feature"}
+{"text": "test গুলো চালা", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "python কি compiled নাকি interpreted", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "কালকের commit এ ফিরে যেতে পারবি?", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "পুরো login flow টা পড় আর বল কী কী ভুল হতে পারে", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "O(n log n) এর মানে কী", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "layout টা desktop এ 2 column আর mobile এ 1 column হবে", "lang": "bn", "act": "new_request", "task": "ui_styling"}
+{"text": "যেটা সবচেয়ে সহজ", "lang": "bn", "act": "clarification", "task": "other"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "git repo বানিয়ে আমার github এ push কর", "lang": "bn", "act": "new_request", "task": "setup_deploy"}
+{"text": "reload করার পর todo গুলো উধাও", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "API কী, মানে সত্যিই", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "game এ একটা pause menu যোগ কর", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "bot যেখানে দুইবার reply করে ওই bug টা fix কর", "lang": "bn", "act": "new_request", "task": "bug_fix"}
+{"text": "চালিয়ে যা", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "windows", "lang": "bn", "act": "clarification", "task": "setup_deploy"}
+{"text": "database connection কি কোথাও close হয়?", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "সবসময় ছোট করে উত্তর দিস প্লিজ", "lang": "bn", "act": "other", "task": "other"}
+{"text": "ok এবার button টা pink কর", "lang": "bn", "act": "approval", "task": "ui_styling"}
+{"text": "nice, পরের step", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "dependency injection কী", "lang": "bn", "act": "question", "task": "learn_concept"}
+{"text": "mhm ok", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "আমি যে screenshot পাঠিয়েছি সেটার মতো দেখা", "lang": "bn", "act": "clarification", "task": "ui_styling"}
+{"text": "animation টা অনেক fast আর lag করছে", "lang": "bn", "act": "correction", "task": "ui_styling"}
+{"text": "mhm okay", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "আমার code review কর", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "code review প্লিজ, সৎভাবে বলিস", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "'level' বলতে আমি game এর stage বুঝিয়েছি, player level না", "lang": "bn", "act": "clarification", "task": "other"}
+{"text": "লাফ যোগ কর, space bar", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "omg অবশেষে চলছে!!!", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "আমার homework এর solution check কর, ঠিক আছে কিনা", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "hello claude", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "সত্যিই দারুণ, সিরিয়াসলি", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "ওটা ভুল python version, আমরা 3.11 use করি", "lang": "bn", "act": "correction", "task": "setup_deploy"}
+{"text": "প্লিজ থাম আর সব uncommitted changes revert কর", "lang": "bn", "act": "stop_undo", "task": "other"}
+{"text": "physics code এর math টা আরেকবার double check করবি?", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "unit test আসলে কিভাবে কাজ করে, mock কী", "lang": "bn", "act": "question", "task": "tests"}
+{"text": "আমি api call করলে 403 Forbidden আসছে, এই যে response: {\"message\":\"Missing Access\",\"code\":50001}", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "login code এ কোনো security hole আছে কিনা check কর", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "অনেক ধন্যবাদ", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "ভালো শোনাচ্ছে, শুরু কর", "lang": "bn", "act": "approval", "task": "other"}
+{"text": "ok আমি lunch এ যাচ্ছি, brb", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "gg", "lang": "bn", "act": "chit_chat", "task": "other"}
+{"text": "negative number আর zero এর জন্য test case", "lang": "bn", "act": "new_request", "task": "tests"}
+{"text": "না, এখনও ভাঙা", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "error: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error\nহায় কোথায় একটা semicolon নেই", "lang": "bn", "act": "new_request", "task": "error_paste"}
+{"text": "tower defense কিভাবে বানাব তার plan, এখনই code করিস না", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "এই code টা আমি আমার ভাইয়ের কাছ থেকে পেয়েছি, কিছুই বুঝি না, bot.on('ready') জিনিসটা কী করে", "lang": "bn", "act": "question", "task": "understand_code"}
+{"text": "enemy রা player কে তাড়া করবে", "lang": "bn", "act": "new_request", "task": "feature"}
+{"text": "একজন pro এই code সম্পর্কে কী বলত", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "menu, sound, highscore, সবকিছু সহ flappy bird এর একটা পুরো clone বানা। autonomous mode প্লিজ", "lang": "bn", "act": "handoff", "task": "feature"}
+{"text": "rest api নাকি graphql, school project এর জন্য pro আর con গুলো বলতে পারবি?", "lang": "bn", "act": "new_request", "task": "planning_design"}
+{"text": "readme তে install এর instruction গুলো লেখ", "lang": "bn", "act": "new_request", "task": "docs_writing"}
+{"text": "এটা ঠিক না, আবার check কর", "lang": "bn", "act": "correction", "task": "other"}
+{"text": "কেন শুধু দ্বিতীয় click এ crash করে?", "lang": "bn", "act": "question", "task": "bug_fix"}
+{"text": "renderer এ কি কোনো memory leak আছে?", "lang": "bn", "act": "new_request", "task": "review"}
+{"text": "না থাম, ভুল file", "lang": "bn", "act": "stop_undo", "task": "other"}

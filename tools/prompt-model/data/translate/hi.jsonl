@@ -1,0 +1,250 @@
+{"text": "ठीक है", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "ok अब बटन को pink कर दो", "lang": "hi", "act": "approval", "task": "ui_styling"}
+{"text": "हाँ कर दो, tests भी लिख दो", "lang": "hi", "act": "approval", "task": "tests"}
+{"text": "हाँ push कर दो", "lang": "hi", "act": "approval", "task": "setup_deploy"}
+{"text": "सही है, अब highscore भी जोड़ दो", "lang": "hi", "act": "approval", "task": "feature"}
+{"text": "थैंक्सससस", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "छोड़ो इसे, cancel करो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "पुराने layout पर वापस जाओ", "lang": "hi", "act": "stop_undo", "task": "ui_styling"}
+{"text": "variables का rename undo करो, अब कुछ match ही नहीं कर रहा", "lang": "hi", "act": "stop_undo", "task": "refactor"}
+{"text": "git checkout कर दो जो files तुमने बदली हैं, मुझे इनमें से कुछ नहीं चाहिए", "lang": "hi", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "login वाला feature वापस हटा दो", "lang": "hi", "act": "stop_undo", "task": "feature"}
+{"text": "जो tests अभी बनाए हैं उन्हें delete कर दो", "lang": "hi", "act": "stop_undo", "task": "tests"}
+{"text": "तुम्हारे fix से और बिगड़ गया, इसे वापस लो", "lang": "hi", "act": "stop_undo", "task": "bug_fix"}
+{"text": "readme वाला edit undo कर दो", "lang": "hi", "act": "stop_undo", "task": "docs_writing"}
+{"text": "todo list के सारे features implement कर दो, बीच में मुझसे confirm मत करना", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "सब खुद सोच लो, पूरा design करो और बना भी दो, मुझे disturb मत करना", "lang": "hi", "act": "handoff", "task": "planning_design"}
+{"text": "test coverage खुद से 90% तक ले जाओ, जब तक पहुँचे काम करते रहो", "lang": "hi", "act": "handoff", "task": "tests"}
+{"text": "पूरा project typescript में दोबारा लिख दो, सवाल मत पूछना, compile होने तक लगे रहो", "lang": "hi", "act": "handoff", "task": "refactor"}
+{"text": "सब कुछ postgres पर migrate करो और पूरा code उसके हिसाब से बदल दो, please बिना पूछे", "lang": "hi", "act": "handoff", "task": "setup_deploy"}
+{"text": "पूरे repo को document कर दो, हर file, और मुझसे कुछ मत पूछना", "lang": "hi", "act": "handoff", "task": "docs_writing"}
+{"text": "पूरे frontend को नए सिरे से design करो, सारे pages, professional दिखना चाहिए। जब तक पूरा न हो feedback मत माँगना", "lang": "hi", "act": "handoff", "task": "ui_styling"}
+{"text": "project के सारे bugs खुद ढूँढ के fix करो, कितना भी टाइम लगे मुझे फर्क नहीं पड़ता", "lang": "hi", "act": "handoff", "task": "bug_fix"}
+{"text": "पूरा repo पढ़ लो और जो भी तुम्हें गलत लगे सब fix कर दो, पूछने की ज़रूरत नहीं", "lang": "hi", "act": "handoff", "task": "review"}
+{"text": "अगले कुछ घंटे बस वो करो जो तुम्हें project के लिए सबसे अच्छा लगे", "lang": "hi", "act": "handoff", "task": "other"}
+{"text": "ये code मुझे भाई से मिला है और मुझे कुछ समझ नहीं आता, ये bot.on('ready') वाली चीज़ क्या करती है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "tcp और udp में क्या फर्क है, school में पढ़ा था पर भूल गया", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "एक bot जो बहुत सारे servers पर एक साथ चले, उसे कैसे बनाओगे?", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "मैं अपना discord bot 24/7 free में कैसे host करूँ?", "lang": "hi", "act": "question", "task": "setup_deploy"}
+{"text": "ये सिर्फ दूसरे click पर ही क्यों crash होता है?", "lang": "hi", "act": "question", "task": "bug_fix"}
+{"text": "div को center कैसे करते हैं", "lang": "hi", "act": "question", "task": "ui_styling"}
+{"text": "क्या private functions को test करना चाहिए?", "lang": "hi", "act": "question", "task": "tests"}
+{"text": "ये solution अच्छा है या इससे बेहतर कुछ है?", "lang": "hi", "act": "question", "task": "review"}
+{"text": "एक अच्छी readme में क्या-क्या होना चाहिए", "lang": "hi", "act": "question", "task": "docs_writing"}
+{"text": "क्या ये बुरा है कि मेरा पूरा code एक ही file में 2000 lines का है?", "lang": "hi", "act": "question", "task": "refactor"}
+{"text": "क्या इस library से bot को voice channels में join करवाना possible है?", "lang": "hi", "act": "question", "task": "feature"}
+{"text": "अगली कौन सी language सीखनी चाहिए", "lang": "hi", "act": "question", "task": "other"}
+{"text": "इस weekend मेरा hackathon है, हम क्या बनाएँ", "lang": "hi", "act": "other", "task": "other"}
+{"text": "एक leaderboard बनाओ जो json file में save हो", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "कभी-कभी तेज़ speed पर ball paddle के आर-पार चली जाती है। fix करो", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "सारे global variables की जगह classes use करो", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "header में एक cute सा logo लगा दो, simple svg चलेगा", "lang": "hi", "act": "new_request", "task": "ui_styling"}
+{"text": "inventory full होने वाले case के लिए test लिखो", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "tailwind set up करो", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "commits से changelog बना दो", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "tower defense game कैसे बनाएँ इसका plan बनाओ, अभी code मत लिखना", "lang": "hi", "act": "new_request", "task": "planning_design"}
+{"text": "क्या code pep8 follow करता है", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "दिखाओ highscore कहाँ save होता है", "lang": "hi", "act": "new_request", "task": "understand_code"}
+{"text": "मुझे सिखाओ sorting algorithms कैसे काम करते हैं, एक छोटे example के साथ", "lang": "hi", "act": "new_request", "task": "learn_concept"}
+{"text": "folder का नाम बदलकर starhopper कर दो", "lang": "hi", "act": "new_request", "task": "other"}
+{"text": "नहीं, अभी भी टूटा हुआ है", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "नहीं score अभी भी save नहीं हो रहा, तुमने बस variable का नाम बदला है", "lang": "hi", "act": "correction", "task": "bug_fix"}
+{"text": "animation बहुत तेज़ है और अटक रही है", "lang": "hi", "act": "correction", "task": "ui_styling"}
+{"text": "मुझे login system नहीं चाहिए था, उसे हटाओ और बस leaderboard रखो", "lang": "hi", "act": "correction", "task": "feature"}
+{"text": "ये तो पहले से ज़्यादा complicated हो गया, इतनी सारी classes क्यों", "lang": "hi", "act": "correction", "task": "refactor"}
+{"text": "तुमने assert delete करके test pass करा दिया, ये cheating है", "lang": "hi", "act": "correction", "task": "tests"}
+{"text": "ये गलत python version है, हम 3.11 use करते हैं", "lang": "hi", "act": "correction", "task": "setup_deploy"}
+{"text": "readme में emojis बहुत ज़्यादा हैं, हटा दो", "lang": "hi", "act": "correction", "task": "docs_writing"}
+{"text": "ये plan बहुत बड़ा है, हमारे पास बस weekend है", "lang": "hi", "act": "correction", "task": "planning_design"}
+{"text": "तुमसे line 40 का obvious bug छूट गया", "lang": "hi", "act": "correction", "task": "review"}
+{"text": "ये explanation गलत है, loop उल्टा चलता है", "lang": "hi", "act": "correction", "task": "understand_code"}
+{"text": "तुम्हारे change के बाद भी ये आ रहा है:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "hi", "act": "correction", "task": "error_paste"}
+{"text": "python", "lang": "hi", "act": "clarification", "task": "feature"}
+{"text": "वैसे ही जैसे screenshot में भेजा है", "lang": "hi", "act": "clarification", "task": "ui_styling"}
+{"text": "मैं arrow keys दबाता हूँ और कुछ नहीं होता, पर सिर्फ पहली बार", "lang": "hi", "act": "clarification", "task": "bug_fix"}
+{"text": "node 20, शायद", "lang": "hi", "act": "clarification", "task": "setup_deploy"}
+{"text": "conftest.py वाली मौजूदा fixtures use करो", "lang": "hi", "act": "clarification", "task": "tests"}
+{"text": "function के नाम वही रखना", "lang": "hi", "act": "clarification", "task": "refactor"}
+{"text": "english में, और screenshots के placeholders भी जोड़ दो", "lang": "hi", "act": "clarification", "task": "docs_writing"}
+{"text": "हम इसे खुद host करना चाहते हैं, कोई cloud नहीं", "lang": "hi", "act": "clarification", "task": "planning_design"}
+{"text": "सिर्फ src/api की files देखो", "lang": "hi", "act": "clarification", "task": "review"}
+{"text": "वो वाला जो utils/math.py में है", "lang": "hi", "act": "clarification", "task": "understand_code"}
+{"text": "मुझे python आती है पर c++ नहीं", "lang": "hi", "act": "clarification", "task": "learn_concept"}
+{"text": "user, admin नहीं", "lang": "hi", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "hi", "act": "other", "task": "error_paste"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "hi", "act": "new_request", "task": "error_paste"}
+{"text": "इसका मतलब क्या है?? error: linker `cc` not found", "lang": "hi", "act": "question", "task": "error_paste"}
+{"text": "game over पर score reset नहीं होता। please fix करो", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "git repo बनाओ और मेरे github पर push करो", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "बस src/api की files देखो", "lang": "hi", "act": "clarification", "task": "review"}
+{"text": "ok", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "hi", "act": "new_request", "task": "error_paste"}
+{"text": "--verbose flag के लिए help text लिखो", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "eslint और prettier configure करो", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "क्या ये sql injection से safe है?", "lang": "hi", "act": "question", "task": "review"}
+{"text": "test लिखो कि bot दूसरे bots के messages ignore करता है", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "कर दो", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "neural network सीखता कैसे है? अपने game की ai के लिए use करना है", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "सारी dependencies update कर दो", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "हाहा मस्त", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "क्या multiplayer mode जोड़ सकते हो या इस setup में बहुत मुश्किल है", "lang": "hi", "act": "question", "task": "feature"}
+{"text": "एक build script बनाओ जो pyinstaller से exe बनाए", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "रुको, तुम मेरी files delete कर रहे हो!!", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "क्या renderer में कोई memory leaks हैं?", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "रुको रुको रुको stop", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "300 lines वाले function को छोटे-छोटे functions में तोड़ दो", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "मुझे सिखाओ sorting algorithms कैसे काम करते हैं, छोटे example के साथ", "lang": "hi", "act": "new_request", "task": "learn_concept"}
+{"text": "jump जोड़ दो, spacebar से", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "पुराने layout पर वापस जाओ", "lang": "hi", "act": "stop_undo", "task": "ui_styling"}
+{"text": "क्या मैंने parse_input के सारे edge cases handle किए?", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "एक license भी जोड़ दो, mit शायद", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "loop में चलाओ और game को हमेशा improve करते रहो", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "/compact", "lang": "hi", "act": "other", "task": "other"}
+{"text": "मेरी machine पर नहीं चल रहा, total अभी भी गलत आ रहा है", "lang": "hi", "act": "correction", "task": "bug_fix"}
+{"text": "इसे एक proper class बना दो methods के साथ", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "hi", "act": "new_request", "task": "error_paste"}
+{"text": "परफेक्ट, ऐसे ही चलते रहो", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "पिछले 2 changes undo करो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "autopilot: backend, frontend और database पूरा कर दो। जब चल जाए तब जगाना", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "हाँ tests लिख दो", "lang": "hi", "act": "approval", "task": "tests"}
+{"text": "javascript में closure क्या होता है", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "आगे बढ़ो pls", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "login अब चल गया पर register टूट गया", "lang": "hi", "act": "correction", "task": "bug_fix"}
+{"text": "इसे main branch पर रखो", "lang": "hi", "act": "clarification", "task": "setup_deploy"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "hi", "act": "other", "task": "error_paste"}
+{"text": "tkinter में gui वाला calculator बना दो", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "हाँ और settings भी", "lang": "hi", "act": "clarification", "task": "other"}
+{"text": "नहीं, shop E दबाने पर खुलना चाहिए, अंदर चलने पर नहीं", "lang": "hi", "act": "correction", "task": "feature"}
+{"text": "ये assignment है: books और members के साथ एक library system implement करो", "lang": "hi", "act": "other", "task": "other"}
+{"text": "हर file के हर function के लिए docstrings लिखो game.py में", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "level से मेरा मतलब game का stage है, player का level नहीं", "lang": "hi", "act": "clarification", "task": "other"}
+{"text": "एक search bar जोड़ो जो typing के साथ list को filter करे", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "integration tests जोड़ो जो server start करके /health call करें", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "ok मैं तुम्हें पूरी आज़ादी देता हूँ। एक cool game बनाओ। जब हो जाए तब आना", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "रात के 2 बज गए और मैं अभी भी code कर रहा हूँ, help", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": ".", "lang": "hi", "act": "other", "task": "other"}
+{"text": "गलत file, मैंने player.py कहा था enemy.py नहीं", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "पूरा जोर लगाओ और roadmap की सारी चीज़ें implement कर दो", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "test flaky है, इसे reliable बनाओ", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "यहाँ सच में मज़ा आ रहा है", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "src की हर file क्या करती है, summary बताओ", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "ok वो तो एक पागल session था", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "तुमने main पर push कर दिया, मुझे नई branch चाहिए थी", "lang": "hi", "act": "correction", "task": "setup_deploy"}
+{"text": "please रुको और सारे uncommitted changes revert करो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "file dialog में cancel दबाने पर app crash हो जाती है", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "मैं तुम्हें अभी और लिखता हूँ, एक second", "lang": "hi", "act": "other", "task": "other"}
+{"text": "दिखाओ highscore कहाँ save होता है", "lang": "hi", "act": "new_request", "task": "understand_code"}
+{"text": "इससे और बिगड़ गया", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "ये struct होना चाहिए या class", "lang": "hi", "act": "question", "task": "refactor"}
+{"text": "gg", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "project को छोटे tasks में तोड़ दो जो मैं क्रम से कर सकूँ", "lang": "hi", "act": "new_request", "task": "planning_design"}
+{"text": "CONTRIBUTING.md में project structure समझाओ", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "embed को green sidebar और thumbnail के साथ style करो", "lang": "hi", "act": "new_request", "task": "ui_styling"}
+{"text": "यहाँ components के बीच state कैसे share होती है?", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "बस सब कुछ कर दो, मैं सोने जा रहा हूँ", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "heyyy", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "एक function लिखो जो check करे कि number prime है या नहीं", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "bot पर message आने पर क्या-क्या होता है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "एक pro इस code के बारे में क्या कहेगा", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "इस function को साफ़ करो, बहुत गड़बड़ है", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "wow", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "आज कैसे हो?", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "multiplayer के लिए जो steps चाहिए वो लिख दो", "lang": "hi", "act": "new_request", "task": "planning_design"}
+{"text": "मेरी site phone पर टूटी दिखती है, menu खुलता ही नहीं", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "छोटे discord bot के लिए sqlite लूँ या postgres?", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "मेरा navbar content के ऊपर क्यों आ रहा है", "lang": "hi", "act": "question", "task": "ui_styling"}
+{"text": "मेरे code में function के आगे ये async क्या है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "please undo करो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "player का नाम हर जगह hero कर दो", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "readme में emojis बहुत ज़्यादा हैं, हटा दो", "lang": "hi", "act": "correction", "task": "docs_writing"}
+{"text": "हाँ, चलाओ इसे", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "pointers समझाओ", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "सारे magic numbers को एक config file में डाल दो", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "अरे और एक 5 second का cooldown भी जोड़ दो", "lang": "hi", "act": "clarification", "task": "feature"}
+{"text": "वो तो पागल session था", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "पूरे login flow को देखो और बताओ क्या गलत हो सकता है", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "string constants की जगह enum use करो", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "chatbot को पिछले 5 messages याद रखने वाला बनाओ", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "तुम कौन सा model हो", "lang": "hi", "act": "other", "task": "other"}
+{"text": "ये बंद करो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "थैंक्स, एकदम सही चला", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "python compiled है या interpreted", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "तुम्हारी favorite programming language कौन सी है?", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "छोड़ो, सब फेंक दो", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "library app के लिए कौन सा database schema चाहिए? अभी बस design करो", "lang": "hi", "act": "new_request", "task": "planning_design"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "hi", "act": "other", "task": "error_paste"}
+{"text": "रुको, तुम मेरी files delete कर रहे हो!!", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "आगे", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "मेरा homework का solution check करो, सही है क्या", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "तुमने game तोड़ दिया", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "आज कैसे हो?", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "रोको", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "रुको, पहले मैं इसे देख लूँ", "lang": "hi", "act": "stop_undo", "task": "other"}
+{"text": "deployment के लिए सब set up कर दो, ci, docker, hosting, जो भी, मुझे तभी बताना जब online हो जाए", "lang": "hi", "act": "handoff", "task": "setup_deploy"}
+{"text": "ये fix नहीं है, ये बस problem को छुपा रहा है", "lang": "hi", "act": "correction", "task": "bug_fix"}
+{"text": "ये bug का screenshot है", "lang": "hi", "act": "other", "task": "other"}
+{"text": "तुम मेरे favorite robot हो", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "पहले एक test लिखो जो crash reproduce करे, फिर fix करो", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "recursion क्या है", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "मेरे tests locally क्यों pass हो रहे हैं पर github actions में नहीं?", "lang": "hi", "act": "question", "task": "tests"}
+{"text": "मैं अपना discord bot free में 24/7 कैसे host करूँ?", "lang": "hi", "act": "question", "task": "setup_deploy"}
+{"text": "features से पहले setup के steps रखो", "lang": "hi", "act": "clarification", "task": "docs_writing"}
+{"text": "सिर्फ level 2 में होता है", "lang": "hi", "act": "clarification", "task": "bug_fix"}
+{"text": "lgtm", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "लोग global variables use करने से मना क्यों करते हैं", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "नहीं मुझे blue चाहिए था green नहीं", "lang": "hi", "act": "correction", "task": "ui_styling"}
+{"text": "code में यहाँ vec की जगह hashmap क्यों use हुआ है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "project में jest set up करो", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "enemies को player का पीछा करवाओ", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "diff देखो और बताओ कुछ अजीब लग रहा है क्या", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "ये अंग्रेज़ी में translate करो: Die Spielfigur springt über Hindernisse", "lang": "hi", "act": "other", "task": "other"}
+{"text": "server किस time zone में है", "lang": "hi", "act": "question", "task": "other"}
+{"text": "discord api को mock करो ताकि हम commands test कर सकें", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "file dialog में cancel दबाने पर app crash हो जाती है", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "ok पर यहाँ promise की जगह callback क्यों use हो रहा है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "तुम्हारे change के बाद भी ये आ रहा है:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "hi", "act": "correction", "task": "error_paste"}
+{"text": "हाँ चलेगा", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "ये सही नहीं है, दोबारा check करो", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "मुझे moderation, music और economy वाला पूरा discord bot बना दो। मुझे इससे कोई मतलब नहीं रखना, सब खुद decide करो", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "मुझे collision calculation समझ नहीं आता, ये कौन सा math है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "hi", "act": "new_request", "task": "error_paste"}
+{"text": "पूरे login flow को पढ़ो और बताओ क्या गलत हो सकता है", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "मेरे दोस्तों को अब मेरा game cool लगता है, तुम्हारी वजह से thanks", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "हम 3 लोगों की team हैं, बाकी लोग art करते हैं", "lang": "hi", "act": "other", "task": "other"}
+{"text": "scene बदलते ही music हर बार दोबारा शुरू हो जाता है", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "हाँ, changes apply कर दो।", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "एक joke सुनाओ", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "ये function असल में क्या करता है?", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "code से पहले: card game के लिए मुझे कौन सी classes चाहिए होंगी, list करो", "lang": "hi", "act": "new_request", "task": "planning_design"}
+{"text": "नहीं, दूसरा वाला", "lang": "hi", "act": "clarification", "task": "other"}
+{"text": "हमारे पास 3 हफ्ते हैं और सिर्फ 2 लोग", "lang": "hi", "act": "clarification", "task": "planning_design"}
+{"text": "scene बदलने पर music बार-बार restart हो रहा है", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "code को ज़्यादा readable बनाओ, teacher को दिखाना है", "lang": "hi", "act": "new_request", "task": "refactor"}
+{"text": "pointers समझाओ", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "double jump please", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "please बस project खत्म कर दो, मेरे पास टाइम नहीं है", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "नहीं score अभी भी save नहीं हो रहा, तुमने बस variable का नाम बदला है", "lang": "hi", "act": "correction", "task": "bug_fix"}
+{"text": "पूरा android app बना दो, रात भर काम करो", "lang": "hi", "act": "handoff", "task": "feature"}
+{"text": "मेरे game की itch.io page का description draft करो", "lang": "hi", "act": "new_request", "task": "docs_writing"}
+{"text": "तुमने मुझे गलत समझा, फिर से शुरू करो", "lang": "hi", "act": "correction", "task": "other"}
+{"text": "git merge और rebase में क्या फर्क है?", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "restart के बाद score हमेशा 0 क्यों हो जाता है", "lang": "hi", "act": "question", "task": "bug_fix"}
+{"text": "मैं थोड़ा खाना खाने जा रहा हूँ, अभी आया", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "login endpoint के लिए tests जोड़ो", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "inventory full होने वाले case के लिए एक test जोड़ो", "lang": "hi", "act": "new_request", "task": "tests"}
+{"text": "highscores file में रखना बेहतर होगा या database में", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "मेरे tests locally क्यों चलते हैं पर github actions में नहीं?", "lang": "hi", "act": "question", "task": "tests"}
+{"text": "एक function लिखो जो check करे कि number prime है", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "page load पर एक smooth fade in animation लगाओ", "lang": "hi", "act": "new_request", "task": "ui_styling"}
+{"text": "repo private है, मेरा username coolkid42 है", "lang": "hi", "act": "clarification", "task": "setup_deploy"}
+{"text": "क्या compile होने में इतना टाइम लगना normal है", "lang": "hi", "act": "question", "task": "learn_concept"}
+{"text": "requirements.txt बना दो", "lang": "hi", "act": "new_request", "task": "setup_deploy"}
+{"text": "sprite बाएँ चलते समय flicker करता है, fix करो", "lang": "hi", "act": "new_request", "task": "bug_fix"}
+{"text": "validate_email में ये regex क्या करता है", "lang": "hi", "act": "question", "task": "understand_code"}
+{"text": "ok तो basically मेरे पास एक idea है", "lang": "hi", "act": "other", "task": "other"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "hi", "act": "new_request", "task": "error_paste"}
+{"text": "बहुत thanks, तुमने मेरी शाम बचा ली", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "ये सिर्फ admins के लिए काम करना चाहिए", "lang": "hi", "act": "clarification", "task": "feature"}
+{"text": "login code में security holes हैं या नहीं check करो", "lang": "hi", "act": "new_request", "task": "review"}
+{"text": "game में एक pause menu जोड़ो", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "yup", "lang": "hi", "act": "approval", "task": "other"}

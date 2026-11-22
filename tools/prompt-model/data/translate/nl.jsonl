@@ -1,0 +1,250 @@
+{"text": "j", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "ok maak de knop nu roze", "lang": "nl", "act": "approval", "task": "ui_styling"}
+{"text": "ja ga je gang en schrijf de tests", "lang": "nl", "act": "approval", "task": "tests"}
+{"text": "ja installeer dat", "lang": "nl", "act": "approval", "task": "setup_deploy"}
+{"text": "prima, bouw nu ook die highscore erin", "lang": "nl", "act": "approval", "task": "feature"}
+{"text": "het is 2 uur 's nachts en ik zit nog te coderen, help", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "wacht, doe dat niet", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "ga terug naar de oude layout", "lang": "nl", "act": "stop_undo", "task": "ui_styling"}
+{"text": "draai de refactoring terug, ik vond de oude structuur beter", "lang": "nl", "act": "stop_undo", "task": "refactor"}
+{"text": "docker spul weer terugdraaien", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "haal dat inventory systeem er weer uit, is te veel", "lang": "nl", "act": "stop_undo", "task": "feature"}
+{"text": "verwijder de tests die je net gemaakt hebt", "lang": "nl", "act": "stop_undo", "task": "tests"}
+{"text": "die fix maakte het erger, maak ongedaan", "lang": "nl", "act": "stop_undo", "task": "bug_fix"}
+{"text": "maak de readme wijziging ongedaan", "lang": "nl", "act": "stop_undo", "task": "docs_writing"}
+{"text": "maak alle overige taken af zonder bij mij langs te komen", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "zoek alles zelf uit, ontwerp en bouw het hele ding, val me er niet mee lastig", "lang": "nl", "act": "handoff", "task": "planning_design"}
+{"text": "schrijf tests voor de hele codebase en fix alles wat faalt, stop niet tot alles groen is", "lang": "nl", "act": "handoff", "task": "tests"}
+{"text": "schrijf het hele project om naar typescript, geen vragen, ga door tot het compileert", "lang": "nl", "act": "handoff", "task": "refactor"}
+{"text": "zet alles op voor deployment, ci, docker, hosting, wat er ook nodig is, ik wil er niks over horen tot het live staat", "lang": "nl", "act": "handoff", "task": "setup_deploy"}
+{"text": "documenteer de hele repo, elk bestand, en vraag me niks", "lang": "nl", "act": "handoff", "task": "docs_writing"}
+{"text": "doe een redesign van de hele frontend, alle pagina's, laat het er professioneel uitzien. vraag niet om feedback tot je klaar bent", "lang": "nl", "act": "handoff", "task": "ui_styling"}
+{"text": "zoek en fix alle bugs in het project zelf, het maakt me niet uit hoe lang het duurt", "lang": "nl", "act": "handoff", "task": "bug_fix"}
+{"text": "loop de hele repo door en fix alles wat jij fout vindt, je hoeft niks te vragen", "lang": "nl", "act": "handoff", "task": "review"}
+{"text": "doe de komende paar uur gewoon wat jij het beste vindt voor het project", "lang": "nl", "act": "handoff", "task": "other"}
+{"text": "welk bestand doet de discord slash commands?", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "wat is een race condition?", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "moet ik sqlite of postgres gebruiken voor een kleine discord bot?", "lang": "nl", "act": "question", "task": "planning_design"}
+{"text": "waarom duurt npm install zo lang", "lang": "nl", "act": "question", "task": "setup_deploy"}
+{"text": "waarom loopt de timer op mijn laptop sneller dan op de pc van mijn maat", "lang": "nl", "act": "question", "task": "bug_fix"}
+{"text": "hoe centreer ik een div", "lang": "nl", "act": "question", "task": "ui_styling"}
+{"text": "hoe werken unit tests eigenlijk, wat is een mock", "lang": "nl", "act": "question", "task": "tests"}
+{"text": "is dit veilig tegen sql injection?", "lang": "nl", "act": "question", "task": "review"}
+{"text": "moet ik elke regel van commentaar voorzien of alleen de lastige stukken?", "lang": "nl", "act": "question", "task": "docs_writing"}
+{"text": "is het erg dat al mijn code in 1 bestand van 2000 regels staat?", "lang": "nl", "act": "question", "task": "refactor"}
+{"text": "kan je de bot met deze library in voice channels laten joinen?", "lang": "nl", "act": "question", "task": "feature"}
+{"text": "hoe lang duurt het nog", "lang": "nl", "act": "question", "task": "other"}
+{"text": "de api key staat in het .env bestand, print hem niet", "lang": "nl", "act": "other", "task": "other"}
+{"text": "maak een loginpagina met email en wachtwoord", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "de app crasht als ik op annuleren druk in het bestandsdialoog", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "ruim die functie even op, het is een zooitje", "lang": "nl", "act": "new_request", "task": "refactor"}
+{"text": "voeg een hover effect toe aan de cards", "lang": "nl", "act": "new_request", "task": "ui_styling"}
+{"text": "integratietests die de server starten en /health aanroepen", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "maak een git repo en push het naar mijn github", "lang": "nl", "act": "new_request", "task": "setup_deploy"}
+{"text": "voeg een licentiebestand toe, mit denk ik", "lang": "nl", "act": "new_request", "task": "docs_writing"}
+{"text": "rest api of graphql, kun je me voor- en nadelen geven voor een schoolproject?", "lang": "nl", "act": "new_request", "task": "planning_design"}
+{"text": "check de dependencies op bekende kwetsbaarheden", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "lijst alle TODOs in het project op", "lang": "nl", "act": "new_request", "task": "understand_code"}
+{"text": "leer me hoe sorteeralgoritmes werken, met een klein voorbeeld", "lang": "nl", "act": "new_request", "task": "learn_concept"}
+{"text": "vertaal de game teksten naar het spaans", "lang": "nl", "act": "new_request", "task": "other"}
+{"text": "je hebt het spel kapot gemaakt", "lang": "nl", "act": "correction", "task": "other"}
+{"text": "hij crasht nog steeds als ik op start klik", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "de knop is nu veel te groot", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "ik wilde geen loginsysteem, haal het eruit en doe alleen de ranglijst", "lang": "nl", "act": "correction", "task": "feature"}
+{"text": "je hebt het gedrag veranderd, de output is nu anders", "lang": "nl", "act": "correction", "task": "refactor"}
+{"text": "de test die je schreef klopt niet, hij verwacht 5 maar het moet 6 zijn", "lang": "nl", "act": "correction", "task": "tests"}
+{"text": "je hebt naar main gepusht, ik wilde een nieuwe branch", "lang": "nl", "act": "correction", "task": "setup_deploy"}
+{"text": "dat heb ik nooit geschreven, het project gebruikt geen redis", "lang": "nl", "act": "correction", "task": "docs_writing"}
+{"text": "het plan is veel te groot, we hebben alleen het weekend", "lang": "nl", "act": "correction", "task": "planning_design"}
+{"text": "je hebt de overduidelijke bug in regel 40 gemist", "lang": "nl", "act": "correction", "task": "review"}
+{"text": "de uitleg klopt niet, de loop loopt achterstevoren", "lang": "nl", "act": "correction", "task": "understand_code"}
+{"text": "zelfde fout weer\nModuleNotFoundError: No module named 'discord'", "lang": "nl", "act": "correction", "task": "error_paste"}
+{"text": "pak postgres", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "roze en paarse kleuren graag", "lang": "nl", "act": "clarification", "task": "ui_styling"}
+{"text": "het gebeurt alleen op level 2", "lang": "nl", "act": "clarification", "task": "bug_fix"}
+{"text": "windows", "lang": "nl", "act": "clarification", "task": "setup_deploy"}
+{"text": "test alleen de backend, sla de frontend over", "lang": "nl", "act": "clarification", "task": "tests"}
+{"text": "raak alleen de enemy code aan", "lang": "nl", "act": "clarification", "task": "refactor"}
+{"text": "in het engels, en zet er placeholders voor screenshots in", "lang": "nl", "act": "clarification", "task": "docs_writing"}
+{"text": "we hebben 3 weken en zijn maar met z'n tweeën", "lang": "nl", "act": "clarification", "task": "planning_design"}
+{"text": "kijk alleen naar de bestanden in src/api", "lang": "nl", "act": "clarification", "task": "review"}
+{"text": "die uit utils/math.py", "lang": "nl", "act": "clarification", "task": "understand_code"}
+{"text": "leg het uit met een game voorbeeld", "lang": "nl", "act": "clarification", "task": "learn_concept"}
+{"text": "de user, niet de admin", "lang": "nl", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "nl", "act": "other", "task": "error_paste"}
+{"text": "ReferenceError: document is not defined\n    at Object.<anonymous> (server.js:3:1)", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "wat betekent dit?? error: linker `cc` not found", "lang": "nl", "act": "question", "task": "error_paste"}
+{"text": "zoek de code smells in mijn project", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "nee alleen de homepage", "lang": "nl", "act": "clarification", "task": "other"}
+{"text": "doe maar", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "pauze, ik wil er eerst zelf naar kijken", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "tcp vs udp, hadden we bij informatica maar ben ik vergeten", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "met pytest", "lang": "nl", "act": "clarification", "task": "tests"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "leg pointers uit", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "heyyy", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "die uitleg klopt niet, de loop loopt achterstevoren", "lang": "nl", "act": "correction", "task": "understand_code"}
+{"text": "ik gebruik discord.py versie 2.3", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "nou ik heb zo'n idee", "lang": "nl", "act": "other", "task": "other"}
+{"text": "zo hoort die inventory niet te werken, items moeten stacken", "lang": "nl", "act": "correction", "task": "feature"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "is deze functie thread safe?", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "zeker weten", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "doe maar", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "kun je testen of het opslaan van de highscore werkt", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "wat betekent die async bij de functie in mijn code", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "heb ik een .gitignore nodig voor node_modules?", "lang": "nl", "act": "question", "task": "setup_deploy"}
+{"text": "zoek code smells in mijn project", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "te veel padding. maak de helft", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "sorry voor die domme vragen net", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "nee, de tweede", "lang": "nl", "act": "clarification", "task": "other"}
+{"text": "ga zelf door tot de app alle features uit de readme heeft", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "maak de docker wijzigingen ongedaan", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "zoals op die screenshot die ik gestuurd heb", "lang": "nl", "act": "clarification", "task": "ui_styling"}
+{"text": "dat moet alleen voor admins kunnen", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "mooi, maak het af", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "thx, werkte perfect", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "wat is dependency injection", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": ":)", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "je hebt dingen hernoemd die ik niet hernoemd wilde hebben", "lang": "nl", "act": "correction", "task": "refactor"}
+{"text": "voeg power ups toe: speed, shield en magnet", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "dat is geen fix, het verbergt alleen het probleem", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "wijziging terugdraaien", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "kun je de bot leren in het nederlands te antwoorden", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "de tijden worden in de verkeerde tijdzone getoond, moeten in cet zijn", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "npm install ongedaan maken, nu is mijn node_modules kapot", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "voeg een test toe die checkt dat de bot berichten van andere bots negeert", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "moet dit een struct of een class zijn", "lang": "nl", "act": "question", "task": "refactor"}
+{"text": "pauze, ik wil er eerst zelf naar kijken", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "maak een instellingenscherm waar je het volume kan aanpassen", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "ik druk op de pijltjestoetsen en er gebeurt niks, maar alleen de eerste keer", "lang": "nl", "act": "clarification", "task": "bug_fix"}
+{"text": "je kan de kleuren slecht lezen, contrast is waardeloos", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "IndexError: list index out of range\nfix dit", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "asdfghjkl", "lang": "nl", "act": "other", "task": "other"}
+{"text": "vergelijk express en fastify voor mijn ding en raad er een aan", "lang": "nl", "act": "new_request", "task": "planning_design"}
+{"text": "maak een loginpagina met email en wachtwoord", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "kijk even naar de pr voordat ik merge", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "ga zelf door tot de app alle features uit de readme heeft", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "hi", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "is deze code veilig tegen sql injection?", "lang": "nl", "act": "question", "task": "review"}
+{"text": "moet ik private functies testen?", "lang": "nl", "act": "question", "task": "tests"}
+{"text": "stop", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "wat gebeurt er precies als je op login klikt? loop dat even door", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "maak dat ongedaan", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "zet het op de main branch", "lang": "nl", "act": "clarification", "task": "setup_deploy"}
+{"text": "wat is je favoriete programmeertaal?", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "de readme is te lang en te formeel, maak hem kort en casual", "lang": "nl", "act": "correction", "task": "docs_writing"}
+{"text": "jep", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "lees het bestand notes.txt", "lang": "nl", "act": "other", "task": "other"}
+{"text": "git checkout de bestanden die je veranderd hebt, ik wil er niks van", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "open het project in vscode", "lang": "nl", "act": "new_request", "task": "other"}
+{"text": "de animatie is te snel en hapert", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "schrijf de omschrijving voor de itch.io pagina van mijn game", "lang": "nl", "act": "new_request", "task": "docs_writing"}
+{"text": "ik wil een dark mode knop", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "kan je een multiplayer modus toevoegen of is dat te moeilijk met deze setup", "lang": "nl", "act": "question", "task": "feature"}
+{"text": "stop ermee", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "schrijf op welke stappen we moeten doen om multiplayer toe te voegen", "lang": "nl", "act": "new_request", "task": "planning_design"}
+{"text": "pls help\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "nl", "act": "new_request", "task": "error_paste"}
+{"text": "klinkt goed, ga je gang", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "wat betekent dat?? error: linker `cc` not found", "lang": "nl", "act": "question", "task": "error_paste"}
+{"text": "we zijn met z'n drieën, de rest doet de graphics", "lang": "nl", "act": "other", "task": "other"}
+{"text": "ik heb niet om een loginsysteem gevraagd, haal het weg en doe alleen de leaderboard", "lang": "nl", "act": "correction", "task": "feature"}
+{"text": "ziet er goed uit, ga door", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "hoe werken hash tables eigenlijk in het algemeen?", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "je hebt de hele layout veranderd, ik wilde alleen het lettertype veranderen", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "kan hier iets crashen? kijk main.rs even door", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "voor we gaan coderen: welke classes heb ik nodig voor een kaartspel", "lang": "nl", "act": "new_request", "task": "planning_design"}
+{"text": "je hebt dingen hernoemd die ik niet hernoemd wilde hebben", "lang": "nl", "act": "correction", "task": "refactor"}
+{"text": "ik snap de collision berekening niet, wat is dat voor wiskunde", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "voeg geluidseffecten toe als je een coin pakt", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "wat is een mutex?", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "draai de tests", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "????", "lang": "nl", "act": "other", "task": "other"}
+{"text": "todos zijn weg na het herladen", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "maak deze if else keten simpeler", "lang": "nl", "act": "new_request", "task": "refactor"}
+{"text": "gebruik vanaf nu tabs ipv spaces", "lang": "nl", "act": "other", "task": "other"}
+{"text": "maak het zoals de screenshot die ik gestuurd heb", "lang": "nl", "act": "clarification", "task": "ui_styling"}
+{"text": "maak een /poll command met reactions", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "schrijf een mooie commit omschrijving voor de laatste 3 wijzigingen", "lang": "nl", "act": "new_request", "task": "docs_writing"}
+{"text": "ik bedoelde de linker zijbalk", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "haha nice", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "wat is recursie", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "kun je terug naar de commit van gisteren", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "loop de hele login flow door en zeg wat er mis kan gaan", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "dat maakte het erger", "lang": "nl", "act": "correction", "task": "other"}
+{"text": "wat zijn lifetimes in rust", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "werkt niet op mijn pc, geeft nog steeds het verkeerde totaal", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "maak een complete discord bot met moderatie, muziek en economy. ik wil er niks mee te maken hebben, beslis alles zelf", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "maak het npm install ongedaan, het heeft mijn node_modules verpest", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "maakt niet uit, jij beslist", "lang": "nl", "act": "clarification", "task": "other"}
+{"text": "fix de typfouten in de readme", "lang": "nl", "act": "new_request", "task": "docs_writing"}
+{"text": "schrijf unit tests voor de schadeberekening", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "maak een script dat met pyinstaller een exe maakt", "lang": "nl", "act": "new_request", "task": "setup_deploy"}
+{"text": "is het erg dat al mijn code in 1 bestand van 2000 regels staat?", "lang": "nl", "act": "question", "task": "refactor"}
+{"text": "zo hoort de inventory niet te werken, items moeten stacken", "lang": "nl", "act": "correction", "task": "feature"}
+{"text": "installeer pygame", "lang": "nl", "act": "new_request", "task": "setup_deploy"}
+{"text": "ja graag", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "wat doet docker compose up eigenlijk", "lang": "nl", "act": "question", "task": "setup_deploy"}
+{"text": "stop", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "nl", "act": "other", "task": "error_paste"}
+{"text": "git reset naar de laatste commit", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "de bot moet een random meme posten als iemand !meme typt", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "gebruik de eerste optie maar sla de data op in een json bestand", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "kan hier iets crashen? kijk main.rs even door", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "moet meer op discord lijken, zelfde kleuren", "lang": "nl", "act": "new_request", "task": "ui_styling"}
+{"text": "doe maar gewoon", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "hoe lang gaat dit duren", "lang": "nl", "act": "question", "task": "other"}
+{"text": "check de dependencies op bekende kwetsbaarheden", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "autopilot: maak backend, frontend en database af. maak me wakker als het draait", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "bro dit is echt knetter, thanks", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "fix die bug waarbij de bot dubbel antwoordt", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "ik ben de hele dag weg, bouw de complete website met alle pagina's en maak hem goed", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "ik wil een dark mode knop", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "code review graag, wees eerlijk", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "kijk naar de diff en zeg of er ergens iets raars staat", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "terug naar de vorige staat pls", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "mock de discord api zodat we de commands kunnen testen", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "node 20 denk ik", "lang": "nl", "act": "clarification", "task": "setup_deploy"}
+{"text": "voeg een pauzemenu toe aan het spel", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "bouw een winkelwagen pagina met totaalprijs", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "nu werkt springen maar de speler kan niet meer naar links lopen", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "wacht wacht wacht stop", "lang": "nl", "act": "stop_undo", "task": "other"}
+{"text": "schrijf de tutorial tekst in het spel, 5 korte tips voor nieuwe spelers", "lang": "nl", "act": "new_request", "task": "docs_writing"}
+{"text": "antwoord alsjeblieft altijd kort", "lang": "nl", "act": "other", "task": "other"}
+{"text": "wordt python gecompileerd of geïnterpreteerd", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "maak de titel groter en dikgedrukt", "lang": "nl", "act": "new_request", "task": "ui_styling"}
+{"text": "mijn leraar wil ook nog een klassendiagram", "lang": "nl", "act": "other", "task": "other"}
+{"text": "zet de installatiestappen voor de features", "lang": "nl", "act": "clarification", "task": "docs_writing"}
+{"text": "de bot antwoordt nog steeds dubbel, je fix heeft niks gedaan", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "is react overkill voor een site met 3 subpagina's?", "lang": "nl", "act": "question", "task": "planning_design"}
+{"text": "doe het hele project, ik vertrouw je, verras me", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "leg async await vs threads uit", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "ok dat was een wilde sessie", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "bro dit is echt knetter, bedankt", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "check mijn css op dingen die ik niet nodig heb", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "maak een /poll command met reactions", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "laat de chatbot de laatste 5 berichten onthouden", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "kun je uitleggen hoe de game loop in main.py werkt", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "doe de komende paar uur gewoon wat jij het beste vindt voor het project", "lang": "nl", "act": "handoff", "task": "other"}
+{"text": "top, maak het af", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "met pygame, niet tkinter", "lang": "nl", "act": "clarification", "task": "feature"}
+{"text": "mijn vrienden vinden mijn spel nu vet dankzij jou", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "bouw een pauzemenu in het spel", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "jij beslist de features, jij beslist het design, jij bouwt alles. ik kijk morgen wel", "lang": "nl", "act": "handoff", "task": "feature"}
+{"text": "voeg een test toe voor het geval dat de inventory vol is", "lang": "nl", "act": "new_request", "task": "tests"}
+{"text": "oké, commit het", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "houdt de code zich aan pep8", "lang": "nl", "act": "new_request", "task": "review"}
+{"text": "raak alleen de enemy code aan", "lang": "nl", "act": "clarification", "task": "refactor"}
+{"text": "is het normaal dat compileren zo lang duurt", "lang": "nl", "act": "question", "task": "learn_concept"}
+{"text": "ga door", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "https://github.com/someuser/cool-bot", "lang": "nl", "act": "other", "task": "other"}
+{"text": "de slang moet aan de rand door het scherm heen wrappen ipv dood te gaan", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "als ik de pagina ververs word ik uitgelogd, moet ingelogd blijven", "lang": "nl", "act": "new_request", "task": "bug_fix"}
+{"text": "ok ik ga lunchen, zo terug", "lang": "nl", "act": "chit_chat", "task": "other"}
+{"text": "goedgekeurd", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "nog steeds hetzelfde probleem", "lang": "nl", "act": "correction", "task": "other"}
+{"text": "de header, niet de footer", "lang": "nl", "act": "clarification", "task": "ui_styling"}
+{"text": "update alle dependencies", "lang": "nl", "act": "new_request", "task": "setup_deploy"}
+{"text": "wat is de flow als er een bericht bij de bot binnenkomt", "lang": "nl", "act": "question", "task": "understand_code"}
+{"text": "wat betekent REST", "lang": "nl", "act": "question", "task": "learn_concept"}

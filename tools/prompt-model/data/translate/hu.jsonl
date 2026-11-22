@@ -1,0 +1,250 @@
+{"text": "szuper, fejezd be", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "ok most csináld rózsaszínre a gombot", "lang": "hu", "act": "approval", "task": "ui_styling"}
+{"text": "igen nyugodtan írd meg a teszteket", "lang": "hu", "act": "approval", "task": "tests"}
+{"text": "igen pushold", "lang": "hu", "act": "approval", "task": "setup_deploy"}
+{"text": "jó így, most tedd bele a highscore-t is", "lang": "hu", "act": "approval", "task": "feature"}
+{"text": "szia claude", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "várj várj várj stop", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "vissza a régi layoutra", "lang": "hu", "act": "stop_undo", "task": "ui_styling"}
+{"text": "vond vissza a refaktort, jobban szerettem a régi struktúrát", "lang": "hu", "act": "stop_undo", "task": "refactor"}
+{"text": "git checkout azokra a fájlokra amiket módosítottál, nem kérek belőle semmit", "lang": "hu", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "vedd ki megint az inventory rendszert, túl sok", "lang": "hu", "act": "stop_undo", "task": "feature"}
+{"text": "töröld a teszteket amiket az előbb csináltál", "lang": "hu", "act": "stop_undo", "task": "tests"}
+{"text": "az a fix rontott rajta, vond vissza", "lang": "hu", "act": "stop_undo", "task": "bug_fix"}
+{"text": "vond vissza a readme módosítást", "lang": "hu", "act": "stop_undo", "task": "docs_writing"}
+{"text": "építsd meg a portfólió oldalamat az elejétől a végéig. ne kérdezd milyen színek, válassz valamit", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "találj ki mindent magadtól, tervezd meg és építsd meg az egészet, ne zavarj", "lang": "hu", "act": "handoff", "task": "planning_design"}
+{"text": "írj teszteket az egész kódbázisra, mindenre, és javítsd ami elbukik, ne állj meg amíg minden zöld nem lesz", "lang": "hu", "act": "handoff", "task": "tests"}
+{"text": "írd át az egész projektet typescriptre, nincs kérdés, menj tovább amíg nem fordul", "lang": "hu", "act": "handoff", "task": "refactor"}
+{"text": "költöztess mindent postgresre és igazítsd át az egész kódot, kérdések nélkül légyszi", "lang": "hu", "act": "handoff", "task": "setup_deploy"}
+{"text": "dokumentáld az egész repót, minden fájlt, és ne kérdezz semmit", "lang": "hu", "act": "handoff", "task": "docs_writing"}
+{"text": "csináld újra az egész frontendet, minden oldalt, legyen profi kinézete. ne kérj visszajelzést amíg nem végzel", "lang": "hu", "act": "handoff", "task": "ui_styling"}
+{"text": "keress meg és javíts ki minden hibát a projektben egyedül, nem érdekel mennyi ideig tart", "lang": "hu", "act": "handoff", "task": "bug_fix"}
+{"text": "menj végig az egész repón és javíts ki mindent amit szerinted rossz, nem kell kérdezned", "lang": "hu", "act": "handoff", "task": "review"}
+{"text": "csináld a következő pár órában azt amit szerinted a legjobb a projektnek", "lang": "hu", "act": "handoff", "task": "other"}
+{"text": "mit csinál ez a regex a validate_email-ben", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "mi az az API, de tényleg", "lang": "hu", "act": "question", "task": "learn_concept"}
+{"text": "inkább fájlban vagy adatbázisban tároljam a highscore-okat", "lang": "hu", "act": "question", "task": "planning_design"}
+{"text": "kell .gitignore a node_modules-hoz?", "lang": "hu", "act": "question", "task": "setup_deploy"}
+{"text": "miért megy gyorsabban a timer a laptopomon mint a haverom gépén", "lang": "hu", "act": "question", "task": "bug_fix"}
+{"text": "miért takarja el a navbar a tartalmat", "lang": "hu", "act": "question", "task": "ui_styling"}
+{"text": "hogy működnek egyáltalán az unit tesztek, mi az a mock", "lang": "hu", "act": "question", "task": "tests"}
+{"text": "ez védett sql injection ellen?", "lang": "hu", "act": "question", "task": "review"}
+{"text": "minden sort kommentelnem kell vagy csak a trükkös részeket?", "lang": "hu", "act": "question", "task": "docs_writing"}
+{"text": "gáz hogy az egész kódom egy 2000 soros fájlban van?", "lang": "hu", "act": "question", "task": "refactor"}
+{"text": "meg lehet csinálni ezzel a könyvtárral hogy a bot belépjen voice csatornákba?", "lang": "hu", "act": "question", "task": "feature"}
+{"text": "melyik nyelvet tanuljam meg legközelebb", "lang": "hu", "act": "question", "task": "other"}
+{"text": "mindjárt írok még, egy pillanat", "lang": "hu", "act": "other", "task": "other"}
+{"text": "adj hozzá email megerősítést regisztráció után", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "amikor frissítem az oldalt kijelentkeztet, maradjon bejelentkezve", "lang": "hu", "act": "new_request", "task": "bug_fix"}
+{"text": "cseréld le a string konstansokat enumra", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "formázd meg az embedet zöld sávval és egy thumbnaillel", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "miért flaky ez a teszt, csináld megbízhatóvá", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "deployold railwayre", "lang": "hu", "act": "new_request", "task": "setup_deploy"}
+{"text": "írj egy szép commit leírást az utolsó 3 változtatáshoz", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "gondold át hogyan lehetne az ellenség ai-t kevésbé buggyantnak érezni, csak opciók", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "nézd meg van-e biztonsági rés a login kódban", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "mutasd meg hol van mentve a highscore", "lang": "hu", "act": "new_request", "task": "understand_code"}
+{"text": "tanítsd meg hogy működnek a rendező algoritmusok, egy kis példával", "lang": "hu", "act": "new_request", "task": "learn_concept"}
+{"text": "generálj 20 vicces ellenségnevet", "lang": "hu", "act": "new_request", "task": "other"}
+{"text": "rossz fájl, azt mondtam player.py nem enemy.py", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "még mindig crashel ha a startra kattintok", "lang": "hu", "act": "correction", "task": "bug_fix"}
+{"text": "a gomb most túl nagy", "lang": "hu", "act": "correction", "task": "ui_styling"}
+{"text": "nem kértem login rendszert, vedd ki és csak a ranglistát csináld", "lang": "hu", "act": "correction", "task": "feature"}
+{"text": "megváltoztattad a viselkedést, a kimenet most más", "lang": "hu", "act": "correction", "task": "refactor"}
+{"text": "úgy tetted zöldre a tesztet hogy kitörölted az assertet, ez csalás", "lang": "hu", "act": "correction", "task": "tests"}
+{"text": "rossz python verzió, mi 3.11-et használunk", "lang": "hu", "act": "correction", "task": "setup_deploy"}
+{"text": "a readme túl hosszú és túl hivatalos, legyen rövid és laza", "lang": "hu", "act": "correction", "task": "docs_writing"}
+{"text": "ez a terv túl nagy, csak a hétvégénk van", "lang": "hu", "act": "correction", "task": "planning_design"}
+{"text": "elnézted a nyilvánvaló hibát a 40. sorban", "lang": "hu", "act": "correction", "task": "review"}
+{"text": "a magyarázat nem stimmel, a ciklus visszafelé megy", "lang": "hu", "act": "correction", "task": "understand_code"}
+{"text": "még mindig ezt kapom a változtatásod után:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "hu", "act": "correction", "task": "error_paste"}
+{"text": "suliprojekt a naprendszerről", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "lekerekített sarkok, olyan 12px", "lang": "hu", "act": "clarification", "task": "ui_styling"}
+{"text": "csak a 2. pályán történik", "lang": "hu", "act": "clarification", "task": "bug_fix"}
+{"text": "pip legyen, ne conda", "lang": "hu", "act": "clarification", "task": "setup_deploy"}
+{"text": "használj pytestet", "lang": "hu", "act": "clarification", "task": "tests"}
+{"text": "csak az ellenség kódjához nyúlj", "lang": "hu", "act": "clarification", "task": "refactor"}
+{"text": "tedd a telepítési lépéseket a funkciók elé", "lang": "hu", "act": "clarification", "task": "docs_writing"}
+{"text": "3 hetünk van és csak 2 emberünk", "lang": "hu", "act": "clarification", "task": "planning_design"}
+{"text": "a teljesítményre figyelj", "lang": "hu", "act": "clarification", "task": "review"}
+{"text": "az a utils/math.py-ból", "lang": "hu", "act": "clarification", "task": "understand_code"}
+{"text": "magyarázd el egy játékos példával", "lang": "hu", "act": "clarification", "task": "learn_concept"}
+{"text": "nem, a második", "lang": "hu", "act": "clarification", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "hu", "act": "other", "task": "error_paste"}
+{"text": "error: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error\nhát hol hiányzik itt a pontosvessző", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "ez mit jelent?? error: linker `cc` not found", "lang": "hu", "act": "question", "task": "error_paste"}
+{"text": "csináld meg és kész. az egészet. kérdések nélkül.", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "annyi időt vehetsz amennyi kell, a lényeg hogy az egész platformer elkészüljön", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "Assets/Scripts/PlayerController.cs(23,17): error CS0103: The name 'rb' does not exist in the current context", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "hogyan tervezzem meg a mentésfájl formátumát hogy a régi mentések tovább működjenek", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "csinálj egy beállítások képernyőt ahol lehet hangerőt állítani", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "nem idegesít hogy folyton szövegellek?", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "elnézted a nyilvánvaló hibát a 40. sorban", "lang": "hu", "act": "correction", "task": "review"}
+{"text": "intézd el az összes maradék feladatot anélkül hogy szólnál nekem", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "csináld újra az egész frontendet, minden oldalt, legyen profi kinézete. ne kérj visszajelzést amíg nem végzel", "lang": "hu", "act": "handoff", "task": "ui_styling"}
+{"text": "deployold railwayre", "lang": "hu", "act": "new_request", "task": "setup_deploy"}
+{"text": "Igen, alkalmazd a változtatásokat.", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "email megerősítés regisztráció után", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "állítsd át a callbackeket async/awaitre", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "hu", "act": "other", "task": "error_paste"}
+{"text": "git checkout a fájlokra amiket módosítottál, nem kérek belőle semmit", "lang": "hu", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "írj unit teszteket a sebzésszámításhoz", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "magunk akarjuk hostolni, nincs felhő", "lang": "hu", "act": "clarification", "task": "planning_design"}
+{"text": "rendben van", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "vázold fel az adatbázis táblákat userekhez, posztokhoz és lájkokhoz", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "engedd el magad és valósíts meg mindent a roadmapről", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "hover effekt a kártyákra", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "a todok eltűnnek újratöltés után", "lang": "hu", "act": "new_request", "task": "bug_fix"}
+{"text": "desktopon 2 oszlop, telefonon 1", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "jap", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "segíts kitalálni hogy legyenek a pályák tárolva, jsonban vagy kódban", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "igen nyugodtan írd meg a teszteket", "lang": "hu", "act": "approval", "task": "tests"}
+{"text": "csináld vissza a refaktort, jobban szerettem a régi struktúrát", "lang": "hu", "act": "stop_undo", "task": "refactor"}
+{"text": "rózsaszín és lila legyen", "lang": "hu", "act": "clarification", "task": "ui_styling"}
+{"text": "adj hozzá integrációs teszteket amik elindítják a szervert és meghívják a /health-et", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "a teszt flaky, csináld megbízhatóvá", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "nézd meg a kódomat", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "miért mennek át a teszteim lokálisan de a github actionsben nem?", "lang": "hu", "act": "question", "task": "tests"}
+{"text": "mindenképp", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "kösz!", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "csinálj egy scriptet ami pyinstallerrel exét készít", "lang": "hu", "act": "new_request", "task": "setup_deploy"}
+{"text": "kommentezd a kódot hogy el tudjam magyarázni a prezentációmon", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "vedd az első opciót de a datát jsonba mentsd", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "nem nem nem vond vissza", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "vond vissza a readme módosítást", "lang": "hu", "act": "stop_undo", "task": "docs_writing"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Spiel.run(Spiel.java:77)", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "oké így, folytasd", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "kérlek állj meg és vond vissza az összes nem commitolt változtatást", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "a 'level' alatt a játékbeli pályát értem, nem a játékos szintjét", "lang": "hu", "act": "clarification", "task": "other"}
+{"text": "vedd ki megint a login funkciót", "lang": "hu", "act": "stop_undo", "task": "feature"}
+{"text": "https://github.com/irgendwer/cooler-bot", "lang": "hu", "act": "other", "task": "other"}
+{"text": "nagyon köszi, megmentetted az estémet", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "folytasd", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "magyarázd el a projekt struktúrát egy CONTRIBUTING.md-ben", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "péntek a leadás", "lang": "hu", "act": "other", "task": "other"}
+{"text": "köszi szépen, megmentetted az estémet", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "kösz, mára ennyi", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "írj egy readme-t a projektemhez", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "igen telepítsd", "lang": "hu", "act": "approval", "task": "setup_deploy"}
+{"text": "tedd a main branchre", "lang": "hu", "act": "clarification", "task": "setup_deploy"}
+{"text": "egész nap nem leszek, építsd meg az egész weboldalt minden oldallal és csináld jól", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "hol vonódik le a játékos élete", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "építsd meg az egész appot, ne kérdezz semmit", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "használj osztályokat az összes globális változó helyett", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "folytasd légyszi", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "rossz függvényt teszteltél, én a calculate_damage-t értettem", "lang": "hu", "act": "correction", "task": "tests"}
+{"text": "félreértettél, kezdd elölről", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "írj unit teszteket a sebzésszámításhoz", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "tegyél egy szünet menüt a játékba", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "nevezd át a player-t hero-ra mindenhol", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "állítsd be a jestet a projekthez", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "a token környezeti változóba menjen a kód helyett", "lang": "hu", "act": "new_request", "task": "setup_deploy"}
+{"text": "lol ez vicces volt", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "egyszerűsítsd ezt az if else láncot", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "túl sok padding. felezd meg", "lang": "hu", "act": "correction", "task": "ui_styling"}
+{"text": "igen", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "írj egy rövid leírást a github repóhoz", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "windows", "lang": "hu", "act": "clarification", "task": "setup_deploy"}
+{"text": "miért törölted a kommentjeimet?? tedd vissza őket", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "nem, kéket akartam nem zöldet", "lang": "hu", "act": "correction", "task": "ui_styling"}
+{"text": "igen mindenre", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "ok", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "menj tovább egyedül amíg az appban nincs meg minden funkció a readméből", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "mi a különbség nálam a utils.js és a helpers.js között", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "az utolsó 2 változtatást vissza", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "minden sort kommentelnem kell vagy csak a trükkös részeket?", "lang": "hu", "act": "question", "task": "docs_writing"}
+{"text": "magyarázd el hogy működik a game loop a main.py-ban", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "hasonlítsd össze az expresst és a fastifyt az én esetemre és ajánlj egyet", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "megint ugyanaz a hiba\nModuleNotFoundError: No module named 'discord'", "lang": "hu", "act": "correction", "task": "error_paste"}
+{"text": "mi az a rekurzió", "lang": "hu", "act": "question", "task": "learn_concept"}
+{"text": "szia claude", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "ok de miért callback van itt és nem promise", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "igen és a beállításokat is", "lang": "hu", "act": "clarification", "task": "other"}
+{"text": "kérlek csináld meg hogy a bot random mémmel válaszoljon ha valaki beírja hogy !meme", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "miért van a score mindig 0 újraindítás után", "lang": "hu", "act": "question", "task": "bug_fix"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "nézd meg a diffet és mondd meg ha valami furcsának tűnik", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "unity vagy godot egy 2d játékhoz, te mit gondolsz", "lang": "hu", "act": "question", "task": "planning_design"}
+{"text": "pygamemel, ne tkinterrel", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "csak adminoknak működjön", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "kérlek állj meg és dobd el az összes nem commitolt változtatást", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "hogy osztják meg itt a komponensek az állapotukat?", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "írj egy scriptet ami dátum szerint átnevezi az összes fotómat", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "írd át az egész projektet typescriptre, nincs kérdés, menj tovább amíg nem fordul", "lang": "hu", "act": "handoff", "task": "refactor"}
+{"text": "ez nem fix, csak elrejti a problémát", "lang": "hu", "act": "correction", "task": "bug_fix"}
+{"text": "itt a screenshot a hibáról", "lang": "hu", "act": "other", "task": "other"}
+{"text": "szia", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "írd meg a telepítési útmutatót a readmébe", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "hárman vagyunk, a többiek csinálják a grafikát", "lang": "hu", "act": "other", "task": "other"}
+{"text": "ne nyúlj többet a main.py-hoz, állítsd vissza", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "és offline is működnie kell", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "wow", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "a haverjaim szerint most már menő a játékom, köszi neked", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "megcsinálnád a code reviewt légyszi, légy őszinte", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "nézd meg van-e biztonsági probléma a login kódban", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "az animáció túl gyors és akadozik", "lang": "hu", "act": "correction", "task": "ui_styling"}
+{"text": "discord.py 2.3-as verziót használok", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "segíts kitalálni hogy legyenek a pályák tárolva, jsonban vagy kódban", "lang": "hu", "act": "new_request", "task": "planning_design"}
+{"text": "csinálj ebből rendes osztályt metódusokkal", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "a review-d haszontalan, csak a nevekről beszéltél. nézd a logikát", "lang": "hu", "act": "correction", "task": "review"}
+{"text": "vedd át teljesen a projektet, én csak nézem", "lang": "hu", "act": "handoff", "task": "feature"}
+{"text": "nem unod hogy folyton kérdezek?", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "miért van a score újraindítás után mindig 0", "lang": "hu", "act": "question", "task": "bug_fix"}
+{"text": "szedd szét a 300 soros függvényt kisebbekre", "lang": "hu", "act": "new_request", "task": "refactor"}
+{"text": "hé", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "mit jelent az O(n log n)", "lang": "hu", "act": "question", "task": "learn_concept"}
+{"text": "discord.py 2.3-as verziót használok", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "jawohl", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "írd meg a tutorial szövegeket a játékhoz, 5 rövid tipp új játékosoknak", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "engedd hogy a userek profilképet töltsenek fel", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "adj hozzá egy finom fade-in animációt az oldal betöltésekor", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "jegyezd meg, a projektem neve starhopper", "lang": "hu", "act": "other", "task": "other"}
+{"text": "ugyanaz a gond mint az előbb", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "van memóriaszivárgás a rendererben?", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "bezáródik valahol az adatbázis kapcsolat?", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "frissítsd az összes dependencyt", "lang": "hu", "act": "new_request", "task": "setup_deploy"}
+{"text": "jó reggelt", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "túl sok emoji van a readmében, vedd ki őket", "lang": "hu", "act": "correction", "task": "docs_writing"}
+{"text": "adj hozzá mentés és betöltés rendszert a játékhoz", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "írj egy about oldal szöveget a weboldalamra, 14 éves játékfejlesztő vagyok, legyen vicces", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "mi az a race condition?", "lang": "hu", "act": "question", "task": "learn_concept"}
+{"text": "nézd át a dependencykat ismert sebezhetőségekre", "lang": "hu", "act": "new_request", "task": "review"}
+{"text": "tényleg nagyon jó, komolyan", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "ez a feladat: valósíts meg egy könyvtár rendszert könyvekkel és tagokkal", "lang": "hu", "act": "other", "task": "other"}
+{"text": "írj teszteket az egész kódbázisra és javíts ki mindent ami elbukik, ne állj meg amíg minden zöld nem lesz", "lang": "hu", "act": "handoff", "task": "tests"}
+{"text": ":)", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "ok", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "csinálj egy egyszerű a* útkeresést az npc-nek", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "stop", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "mindegy, te döntesz", "lang": "hu", "act": "clarification", "task": "other"}
+{"text": "vissza az előző állapotra légyszi", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "ami a legegyszerűbb", "lang": "hu", "act": "clarification", "task": "other"}
+{"text": "az ellenségek legyenek zombik, 2d felülnézet", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "csak a backendet teszteld, a frontendet hagyd ki", "lang": "hu", "act": "clarification", "task": "tests"}
+{"text": "nem így kéne működnie az inventorynak, a tárgyaknak stackelődniük kell", "lang": "hu", "act": "correction", "task": "feature"}
+{"text": "formázd meg az embedet zöld oldalsávval és egy thumbnaillel", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "ok megyek ebédelni, mindjárt jövök", "lang": "hu", "act": "chit_chat", "task": "other"}
+{"text": "jó, ezt akartam", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "rögtön a play-re kattintás után crashel, még mielőtt a menü megjelenne", "lang": "hu", "act": "clarification", "task": "bug_fix"}
+{"text": "olvasd el a notes.txt fájlt", "lang": "hu", "act": "other", "task": "other"}
+{"text": "unity vagy godot egy 2d játékhoz, te mit gondolsz", "lang": "hu", "act": "question", "task": "planning_design"}
+{"text": "segítség\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "hu", "act": "new_request", "task": "error_paste"}
+{"text": "tedd vissza", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "adj hozzá licensz fájlt, mit gondolom", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "windows 11-et és python 3.12-t használok", "lang": "hu", "act": "other", "task": "other"}
+{"text": "csinálj egy /poll parancsot reakciókkal", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "kell egy POST /api/notes endpoint ami elmenti a jegyzetet az adatbázisba", "lang": "hu", "act": "new_request", "task": "feature"}
+{"text": "a bal oldalsávot értettem", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "vissza úgy ahogy előtte volt", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "igen, futtasd", "lang": "hu", "act": "approval", "task": "other"}
+{"text": "ez nem helyes, nézd meg újra", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "csinálj dokumentációt az összes bot parancshoz", "lang": "hu", "act": "new_request", "task": "docs_writing"}
+{"text": "be lehet építeni multiplayer módot vagy ez ehhez a setuphoz túl nehéz", "lang": "hu", "act": "question", "task": "feature"}
+{"text": "stop", "lang": "hu", "act": "stop_undo", "task": "other"}
+{"text": "miért használ itt a kód hashmapet vec helyett", "lang": "hu", "act": "question", "task": "understand_code"}
+{"text": "a tesztek elbuknak, javítsd ki", "lang": "hu", "act": "new_request", "task": "tests"}
+{"text": "a teszt amit írtál rossz, 5-öt vár de 6-nak kéne lennie", "lang": "hu", "act": "correction", "task": "tests"}

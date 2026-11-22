@@ -1,0 +1,250 @@
+{"text": "ok cool", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "ok maintenant mets le bouton en rose", "lang": "fr", "act": "approval", "task": "ui_styling"}
+{"text": "ouais écris les tests vas-y", "lang": "fr", "act": "approval", "task": "tests"}
+{"text": "ouais installe-le", "lang": "fr", "act": "approval", "task": "setup_deploy"}
+{"text": "c'est bon, maintenant ajoute le truc du highscore", "lang": "fr", "act": "approval", "task": "feature"}
+{"text": "salut", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "non stop, mauvais fichier", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "annule le changement de couleur, c'était mieux avant", "lang": "fr", "act": "stop_undo", "task": "ui_styling"}
+{"text": "annule le renommage des variables, plus rien ne correspond", "lang": "fr", "act": "stop_undo", "task": "refactor"}
+{"text": "annule les trucs docker", "lang": "fr", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "enlève la fonctionnalité de login", "lang": "fr", "act": "stop_undo", "task": "feature"}
+{"text": "supprime les tests que tu viens de faire", "lang": "fr", "act": "stop_undo", "task": "tests"}
+{"text": "ce fix a empiré les choses, annule", "lang": "fr", "act": "stop_undo", "task": "bug_fix"}
+{"text": "annule le changement du readme", "lang": "fr", "act": "stop_undo", "task": "docs_writing"}
+{"text": "lâche-toi et implémente tout ce qu'il y a sur la roadmap", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "réfléchis à tout toi-même, conçois et construis le truc en entier, me dérange pas", "lang": "fr", "act": "handoff", "task": "planning_design"}
+{"text": "écris des tests pour tout le code, tout, et répare ce qui plante, t'arrête pas tant que tout est vert", "lang": "fr", "act": "handoff", "task": "tests"}
+{"text": "réécris tout le projet en typescript, pas de questions, continue jusqu'à ce que ça compile", "lang": "fr", "act": "handoff", "task": "refactor"}
+{"text": "configure tout pour le déploiement, ci, docker, hébergement, tout ce qu'il faut, je veux plus en entendre parler jusqu'à ce que ce soit en ligne", "lang": "fr", "act": "handoff", "task": "setup_deploy"}
+{"text": "documente tout le repo, chaque fichier, et pose-moi aucune question", "lang": "fr", "act": "handoff", "task": "docs_writing"}
+{"text": "refais tout le frontend, toutes les pages, ça doit faire pro. demande pas de feedback avant d'avoir fini", "lang": "fr", "act": "handoff", "task": "ui_styling"}
+{"text": "trouve et corrige tous les bugs du projet tout seul, je m'en fous du temps que ça prend", "lang": "fr", "act": "handoff", "task": "bug_fix"}
+{"text": "parcours tout le repo et corrige tout ce qui te paraît faux, pas besoin de me demander", "lang": "fr", "act": "handoff", "task": "review"}
+{"text": "fais juste ce que tu penses le mieux pour le projet pendant les prochaines heures", "lang": "fr", "act": "handoff", "task": "other"}
+{"text": "où est géré la vie du joueur", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "comment ça marche les hash tables en général ?", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "la logique du jeu elle doit aller sur le serveur ou chez le client ?", "lang": "fr", "act": "question", "task": "planning_design"}
+{"text": "j'ai besoin d'un .gitignore pour node_modules ?", "lang": "fr", "act": "question", "task": "setup_deploy"}
+{"text": "pourquoi le timer tourne plus vite sur mon laptop que sur le pc de mon pote", "lang": "fr", "act": "question", "task": "bug_fix"}
+{"text": "pourquoi ma navbar chevauche le contenu", "lang": "fr", "act": "question", "task": "ui_styling"}
+{"text": "comment ça marche les tests unitaires, c'est quoi un mock", "lang": "fr", "act": "question", "task": "tests"}
+{"text": "est-ce que mon hashage de mot de passe est ok ou trop faible", "lang": "fr", "act": "question", "task": "review"}
+{"text": "qu'est-ce qui doit être dans un bon readme", "lang": "fr", "act": "question", "task": "docs_writing"}
+{"text": "c'est grave que tout mon code soit dans un seul fichier de 2000 lignes ?", "lang": "fr", "act": "question", "task": "refactor"}
+{"text": "on peut mettre un mode multijoueur ou c'est trop dur avec la config actuelle", "lang": "fr", "act": "question", "task": "feature"}
+{"text": "quel langage de programmation je devrais apprendre ensuite", "lang": "fr", "act": "question", "task": "other"}
+{"text": "asdfghjkl", "lang": "fr", "act": "other", "task": "other"}
+{"text": "ajoute une page panier avec le prix total", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "les todos disparaissent après un reload", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "sépare le main.py en plusieurs fichiers", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "rends le site responsive", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "lance les tests", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "fais un script qui fait un exe avec pyinstaller", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "écris un texte d'aide pour le flag --verbose", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "dessine les tables de la base pour users, posts et likes", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "tu peux relire cette pr avant que je merge", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "liste tous les TODO du projet", "lang": "fr", "act": "new_request", "task": "understand_code"}
+{"text": "apprends-moi comment marchent les algos de tri, avec un petit exemple", "lang": "fr", "act": "new_request", "task": "learn_concept"}
+{"text": "traduis les textes du jeu en espagnol", "lang": "fr", "act": "new_request", "task": "other"}
+{"text": "t'as rien compris, recommence", "lang": "fr", "act": "correction", "task": "other"}
+{"text": "le bot répond toujours en double, ton fix a rien changé", "lang": "fr", "act": "correction", "task": "bug_fix"}
+{"text": "les couleurs sont dures à lire, le contraste est nul", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "non, le shop doit s'ouvrir avec E et pas quand on marche dedans", "lang": "fr", "act": "correction", "task": "feature"}
+{"text": "le comportement a changé, la sortie est différente maintenant", "lang": "fr", "act": "correction", "task": "refactor"}
+{"text": "t'as testé la mauvaise fonction, je voulais dire calculate_damage", "lang": "fr", "act": "correction", "task": "tests"}
+{"text": "t'as push sur main, je voulais une nouvelle branche", "lang": "fr", "act": "correction", "task": "setup_deploy"}
+{"text": "le readme est trop long et trop formel, fais-le court et décontracté", "lang": "fr", "act": "correction", "task": "docs_writing"}
+{"text": "nan l'architecture est beaucoup trop compliquée pour un projet de lycée", "lang": "fr", "act": "correction", "task": "planning_design"}
+{"text": "t'as raté le bug évident à la ligne 40", "lang": "fr", "act": "correction", "task": "review"}
+{"text": "cette explication est fausse, la boucle tourne à l'envers", "lang": "fr", "act": "correction", "task": "understand_code"}
+{"text": "maintenant ça dit\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "fr", "act": "correction", "task": "error_paste"}
+{"text": "la réponse c'est 4 joueurs max", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "coins arrondis, genre 12px", "lang": "fr", "act": "clarification", "task": "ui_styling"}
+{"text": "j'appuie sur les flèches et rien se passe, mais seulement la première fois", "lang": "fr", "act": "clarification", "task": "bug_fix"}
+{"text": "node 20, je crois", "lang": "fr", "act": "clarification", "task": "setup_deploy"}
+{"text": "avec pytest", "lang": "fr", "act": "clarification", "task": "tests"}
+{"text": "garde les mêmes noms de fonctions", "lang": "fr", "act": "clarification", "task": "refactor"}
+{"text": "mets les étapes d'installation avant les fonctionnalités", "lang": "fr", "act": "clarification", "task": "docs_writing"}
+{"text": "c'est un jeu local à 2 joueurs, donc pas de réseau", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "regarde que les fichiers dans src/api", "lang": "fr", "act": "clarification", "task": "review"}
+{"text": "celle dans utils/math.py", "lang": "fr", "act": "clarification", "task": "understand_code"}
+{"text": "explique avec un exemple de jeu", "lang": "fr", "act": "clarification", "task": "learn_concept"}
+{"text": "non, la deuxième", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "fr", "act": "other", "task": "error_paste"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in 'C:\\\\Users\\\\Jonas\\\\app\\\\src'", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "ça veut dire quoi?? error: linker `cc` not found", "lang": "fr", "act": "question", "task": "error_paste"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "ça doit marcher que pour les admins", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "continue", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "le bot doit poster un meme random quand quelqu'un écrit !meme", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "comment le routeur décide quelle page afficher", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "je vais manger vite fait, à tout de suite", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "l'utilisateur pas l'admin", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "fr", "act": "other", "task": "error_paste"}
+{"text": "drag and drop pour la liste de todos", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "écris d'abord un test qui reproduit le crash, puis répare-le", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "renomme player en hero partout", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "migre tout vers postgres et adapte tout le code, sans poser de questions stp", "lang": "fr", "act": "handoff", "task": "setup_deploy"}
+{"text": "bosse dessus pendant des heures jusqu'à ce que le jeu soit totalement fini, pas de questions", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "mock l'api discord pour qu'on puisse tester les commandes", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "c'est pas ce que je voulais dire, refais", "lang": "fr", "act": "correction", "task": "other"}
+{"text": "fais un requirements.txt", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "quelle structure de dossiers tu prendrais pour une app flask avec auth", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "le code dupliqué dans les trois fichiers de niveau doit disparaître", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "asdfghjkl", "lang": "fr", "act": "other", "task": "other"}
+{"text": "fais tout, je vais dormir", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "le plan est beaucoup trop gros, on a juste le week-end", "lang": "fr", "act": "correction", "task": "planning_design"}
+{"text": "corrige les fautes dans le readme", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "fais juste tout, je vais dormir", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "coupe cette fonction de 300 lignes en plus petites", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "le serpent doit repasser de l'autre côté de la fenêtre au lieu de mourir", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "extrais le truc de base de données dans son propre module", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "le token est stocké en sécurité ou quelqu'un peut le voler", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "mettre les étapes d'installation avant les fonctionnalités", "lang": "fr", "act": "clarification", "task": "docs_writing"}
+{"text": "relis mon code", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "écris des tests pytest pour utils.py avec les cas limites", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "écris-moi un script qui renomme toutes mes photos par date", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "on a 3 semaines et on est que deux", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "annule tout ce que tu viens de faire", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "réécris tout le projet en typescript, pose pas de questions, continue jusqu'à ce que ça compile", "lang": "fr", "act": "handoff", "task": "refactor"}
+{"text": "le sprite scintille quand il va à gauche, répare ça", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "fais tout le projet, je te fais confiance, surprends-moi", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "trop d'espace. divise par deux", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "test", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "crée une page de login avec email et mot de passe", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "à demain alors", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "initialise un repo git et push sur mon github", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "c'est moi qui ai jamais écrit ça, le projet utilise pas redis", "lang": "fr", "act": "correction", "task": "docs_writing"}
+{"text": "oui vas-y écris les tests", "lang": "fr", "act": "approval", "task": "tests"}
+{"text": "haha trop bien", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "traduis les textes du jeu en espagnol", "lang": "fr", "act": "new_request", "task": "other"}
+{"text": "salut, t'es là ?", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "tu en as pas marre de mes questions ?", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "ajoute un test pour le cas où l'inventaire est plein", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "salut, t'es là ?", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "fais un clone complet de flappy bird avec menus, sons, highscores, tout. en autonomie stp", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "non juste la page principale", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "windows", "lang": "fr", "act": "clarification", "task": "setup_deploy"}
+{"text": "fais un changelog à partir des commits", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "toujours ça après ton changement:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "fr", "act": "correction", "task": "error_paste"}
+{"text": "désolé pour les questions nulles de tout à l'heure", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "c'est quoi le flow quand un message arrive au bot", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "raconte-moi une blague", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "titre plus grand et en gras", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "finis tout sans moi. merci", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "super, finis-le", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "mets tous les magic numbers dans un fichier de config", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "merci, ça a marché parfaitement", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "rédige la description pour ma page itch.io", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "ouais exactement, fais comme ça", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "ajoute un système de sauvegarde et de chargement pour le jeu", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "reviens à comment c'était avant", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "trop d'emojis dans le readme, enlève-les", "lang": "fr", "act": "correction", "task": "docs_writing"}
+{"text": "oui stp", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "confirmation par email après l'inscription", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "annule le refactoring, j'aimais mieux l'ancienne structure", "lang": "fr", "act": "stop_undo", "task": "refactor"}
+{"text": "ajoute des tests pour l'endpoint de login", "lang": "fr", "act": "new_request", "task": "tests"}
+{"text": "intègre le multijoueur avec des websockets", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "boutons arrondis avec un dégradé", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "on doit tester les fonctions privées ?", "lang": "fr", "act": "question", "task": "tests"}
+{"text": "stop, tu supprimes mes fichiers !!", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "j'ai besoin d'un endpoint POST /api/notes qui enregistre une note dans la db", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "fr", "act": "other", "task": "error_paste"}
+{"text": "remets la version précédente du fichier", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "ouaip", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "coupe la fonction de 300 lignes en plus petites", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "pygame.error: No video device\nça veut dire quoi et comment je répare", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "mauvaise version de python, on utilise la 3.11", "lang": "fr", "act": "correction", "task": "setup_deploy"}
+{"text": "wow", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "c'est quoi la différence entre git merge et rebase ?", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "bonjour", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "écris-moi une belle description de commit pour les 3 derniers changements", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "les timestamps s'affichent dans le mauvais fuseau horaire, ils devraient être en cet", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "cherche les code smells dans mon projet", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "fais-moi une code review stp, sois honnête", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "pause, laisse-moi regarder d'abord", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "git reset au dernier commit", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "je suis parti toute la journée, fais le site complet avec toutes les pages et fais-le bien", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "mauvais fichier, je voulais dire player.py pas enemy.py", "lang": "fr", "act": "correction", "task": "other"}
+{"text": "rends les boutons arrondis avec un dégradé", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "elle fait quoi cette fonction en fait ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "pourquoi y a un lock dans le module de cache ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "trop d'emojis dans le readme, enlève-les", "lang": "fr", "act": "correction", "task": "docs_writing"}
+{"text": "commit ça avec un bon message", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "j'appuie sur les flèches et rien se passe, mais seulement la première fois", "lang": "fr", "act": "clarification", "task": "bug_fix"}
+{"text": "rends le code plus lisible, je dois le montrer à mon prof", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "je t'écris plus dans un instant, attends", "lang": "fr", "act": "other", "task": "other"}
+{"text": "qu'est-ce qui appelle update_score()", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "c'est quoi la diff entre tcp et udp, on l'a vu en cours et j'ai oublié", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "même erreur encore\nModuleNotFoundError: No module named 'discord'", "lang": "fr", "act": "correction", "task": "error_paste"}
+{"text": "rose et violet stp", "lang": "fr", "act": "clarification", "task": "ui_styling"}
+{"text": "approved", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "tu peux implémenter un inventaire simple avec 10 slots", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "revérifie les maths dans le code de physique stp", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "aide-moi à réfléchir à comment stocker les niveaux, json ou dans le code", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "le texte est pas centré, il est toujours à gauche", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nc'est quoi le problème", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "ah et ajoute aussi un cooldown de 5 secondes", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "implémente le pathfinding a* pour le pnj", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "c'est un jeu local à 2 joueurs, donc pas besoin de réseau", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "mets le token dans une variable d'environnement au lieu du code", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "oui et aussi les paramètres", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "oui la bleue, et rends-la ronde aussi", "lang": "fr", "act": "clarification", "task": "feature"}
+{"text": "quel fichier gère les slash commands discord ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "j'ai pas du tout demandé ça", "lang": "fr", "act": "correction", "task": "other"}
+{"text": "fais un clone complet de twitter avec auth et feed. je réponds à aucune question, donc décide tout seul", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "enlève les boucles imbriquées dans le générateur de map", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "c'est pas ce que je voulais dire, recommence", "lang": "fr", "act": "correction", "task": "other"}
+{"text": "style l'embed avec une barre verte et une miniature", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "utilise des classes au lieu de toutes les variables globales", "lang": "fr", "act": "new_request", "task": "refactor"}
+{"text": "ok mais dépêche-toi lol", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "le rendu c'est vendredi", "lang": "fr", "act": "other", "task": "other"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "t'as fait passer le test au vert en supprimant le assert, c'est de la triche", "lang": "fr", "act": "correction", "task": "tests"}
+{"text": "ajoute une barre de recherche qui filtre la liste pendant qu'on tape", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "fais un clone complet de flappy bird avec menus, sons, highscores, tout. en autonomie stp", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "j'ai un hackathon ce week-end, on devrait construire quoi", "lang": "fr", "act": "other", "task": "other"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Spiel.run(Spiel.java:77)", "lang": "fr", "act": "new_request", "task": "error_paste"}
+{"text": "vas-y fais", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "qu'est-ce qui se passe exactement quand on clique sur login ? explique-moi étape par étape", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "j'arrive pas à choisir entre une rest api et graphql, avantages et inconvénients pour un projet de lycée ?", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "explique-moi comment marche la game loop dans main.py", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "le test que t'as écrit est faux, il attend 5 mais ça doit être 6", "lang": "fr", "act": "correction", "task": "tests"}
+{"text": "le formulaire s'envoie même si des champs sont vides", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "conçois la state machine pour le combat de boss", "lang": "fr", "act": "new_request", "task": "planning_design"}
+{"text": "t'as renommé des trucs que je voulais pas renommer", "lang": "fr", "act": "correction", "task": "refactor"}
+{"text": "comme sur le screenshot que j'ai envoyé", "lang": "fr", "act": "clarification", "task": "ui_styling"}
+{"text": "annule stp", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "c'est toi qui décides des features et du design, tu construis tout. je regarde demain", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "programme un clone complet de minecraft, vas-y", "lang": "fr", "act": "handoff", "task": "feature"}
+{"text": "déploie-le sur railway", "lang": "fr", "act": "new_request", "task": "setup_deploy"}
+{"text": "pourquoi ça plante que au deuxième clic ?", "lang": "fr", "act": "question", "task": "bug_fix"}
+{"text": "Yes, apply the changes.", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "laisse les utilisateurs uploader une photo de profil", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "par level je veux dire le niveau dans le jeu, pas le niveau du joueur", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "est-ce que le code respecte pep8", "lang": "fr", "act": "new_request", "task": "review"}
+{"text": "pourquoi y a un lock dans le module de cache ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "bon j'ai une idée", "lang": "fr", "act": "other", "task": "other"}
+{"text": "écris une courte intro d'essai sur comment marche mon moteur d'échecs pour le rapport de l'école", "lang": "fr", "act": "new_request", "task": "docs_writing"}
+{"text": "nvm annule ça", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "ajoute une commande /ban à mon bot", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "l'utilisateur, pas l'admin", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "https://github.com/someuser/cool-bot", "lang": "fr", "act": "other", "task": "other"}
+{"text": "y", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "elle fait quoi cette fonction ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "l'option 2 a l'air mieux, prends celle-là", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "python c'est compilé ou interprété", "lang": "fr", "act": "question", "task": "learn_concept"}
+{"text": "dans quel fichier sont les slash commands du bot ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "supprime les tests que tu viens de faire", "lang": "fr", "act": "stop_undo", "task": "tests"}
+{"text": "y a une erreur off by one dans la pagination", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "c'est quoi ton langage de programmation préféré ?", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "merci beaucoup, tu m'as sauvé la soirée", "lang": "fr", "act": "chit_chat", "task": "other"}
+{"text": "réponds toujours court stp", "lang": "fr", "act": "other", "task": "other"}
+{"text": "l'appli plante quand je clique sur annuler dans la boîte de dialogue de fichier", "lang": "fr", "act": "new_request", "task": "bug_fix"}
+{"text": "le bouton est beaucoup trop gros maintenant", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "annule le renommage des variables, plus rien ne va ensemble", "lang": "fr", "act": "stop_undo", "task": "refactor"}
+{"text": "fais en sorte que le serpent repasse de l'autre côté de l'écran au lieu de mourir", "lang": "fr", "act": "new_request", "task": "feature"}
+{"text": "rends le site responsive", "lang": "fr", "act": "new_request", "task": "ui_styling"}

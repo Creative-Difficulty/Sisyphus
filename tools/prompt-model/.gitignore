@@ -1,0 +1,11 @@
+# Downloaded base models, environments and build outputs.
+.venv/
+hf/
+models/
+*.pkl
+*.bin
+*.npy
+results*.json
+data/_train-*.jsonl
+# Real prompts are private; never commit them.
+data/real/

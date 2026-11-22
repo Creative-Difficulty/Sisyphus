@@ -1,0 +1,250 @@
+{"text": "iya, terapin perubahannya", "lang": "id", "act": "approval", "task": "other"}
+{"text": "ok sekarang bikin tombolnya jadi pink", "lang": "id", "act": "approval", "task": "ui_styling"}
+{"text": "iya lanjut, tulis testnya juga", "lang": "id", "act": "approval", "task": "tests"}
+{"text": "iya push aja", "lang": "id", "act": "approval", "task": "setup_deploy"}
+{"text": "oke mantap, sekarang tambahin highscore juga", "lang": "id", "act": "approval", "task": "feature"}
+{"text": "makasih!", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "bentar, gue mau liat sendiri dulu", "lang": "id", "act": "stop_undo", "task": "other"}
+{"text": "balikin ke layout yang lama", "lang": "id", "act": "stop_undo", "task": "ui_styling"}
+{"text": "batalin refactoringnya, gue lebih suka struktur yang lama", "lang": "id", "act": "stop_undo", "task": "refactor"}
+{"text": "batalin yang docker tadi", "lang": "id", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "hapus lagi sistem inventorynya, kebanyakan", "lang": "id", "act": "stop_undo", "task": "feature"}
+{"text": "hapus test yang baru kamu bikin", "lang": "id", "act": "stop_undo", "task": "tests"}
+{"text": "fix kamu malah bikin makin parah, balikin", "lang": "id", "act": "stop_undo", "task": "bug_fix"}
+{"text": "batalin edit readme tadi", "lang": "id", "act": "stop_undo", "task": "docs_writing"}
+{"text": "selesaiin semua sisa tugasnya tanpa nanya-nanya ke gue", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "cari tau semuanya sendiri, desain dan bikin semuanya, jangan ganggu gue", "lang": "id", "act": "handoff", "task": "planning_design"}
+{"text": "naikin test coverage jadi 90% sendiri, terus kerjain sampe nyampe", "lang": "id", "act": "handoff", "task": "tests"}
+{"text": "tulis ulang seluruh project pake typescript, jangan nanya, lanjut terus sampe bisa compile", "lang": "id", "act": "handoff", "task": "refactor"}
+{"text": "migrasi semuanya ke postgres dan sesuaiin semua kodenya, tolong tanpa nanya balik", "lang": "id", "act": "handoff", "task": "setup_deploy"}
+{"text": "dokumentasiin seluruh repo, tiap file, dan jangan nanya apa-apa", "lang": "id", "act": "handoff", "task": "docs_writing"}
+{"text": "desain ulang seluruh frontend, semua halaman, harus keliatan profesional. jangan minta feedback sampe selesai", "lang": "id", "act": "handoff", "task": "ui_styling"}
+{"text": "cari dan benerin semua bug di project ini sendiri, gue gak peduli selama apa pun", "lang": "id", "act": "handoff", "task": "bug_fix"}
+{"text": "cek seluruh repo dan benerin semua yang menurut kamu salah, gak usah nanya", "lang": "id", "act": "handoff", "task": "review"}
+{"text": "kerjain apa pun yang menurut kamu terbaik buat project ini beberapa jam ke depan", "lang": "id", "act": "handoff", "task": "other"}
+{"text": "jelasin ke gue kayak gue umur 12 tahun", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "async await atau thread, bedanya apa sih", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "mending highscore disimpen di file atau di database", "lang": "id", "act": "question", "task": "planning_design"}
+{"text": "sebenernya docker compose up itu ngapain sih", "lang": "id", "act": "question", "task": "setup_deploy"}
+{"text": "kenapa cuma crash pas klik yang kedua?", "lang": "id", "act": "question", "task": "bug_fix"}
+{"text": "gimana cara center div", "lang": "id", "act": "question", "task": "ui_styling"}
+{"text": "emang private function perlu dites?", "lang": "id", "act": "question", "task": "tests"}
+{"text": "hashing password gue udah oke apa terlalu lemah", "lang": "id", "act": "question", "task": "review"}
+{"text": "perlu gak sih ngasih komentar di tiap baris atau cuma bagian yang susah aja?", "lang": "id", "act": "question", "task": "docs_writing"}
+{"text": "parah gak kalo semua kode gue ada di satu file 2000 baris?", "lang": "id", "act": "question", "task": "refactor"}
+{"text": "bisa tambahin mode multiplayer gak atau terlalu susah buat setup ini", "lang": "id", "act": "question", "task": "feature"}
+{"text": "bahasa pemrograman apa yang sebaiknya gue pelajarin selanjutnya", "lang": "id", "act": "question", "task": "other"}
+{"text": "kita bertiga, yang lain bagian grafis", "lang": "id", "act": "other", "task": "other"}
+{"text": "tambahin halaman keranjang dengan total harga", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "sprite-nya kedip-kedip pas jalan ke kiri, benerin dong", "lang": "id", "act": "new_request", "task": "bug_fix"}
+{"text": "hilangin nested loop di map generator", "lang": "id", "act": "new_request", "task": "refactor"}
+{"text": "tombolnya bikin rounded dan pake gradient", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "tulis dulu test yang mereproduksi crash-nya, baru benerin", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "commit ini dengan pesan yang bagus", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "bikinin teks about me buat webku, gue 14 tahun dan game developer, yang santai gitu", "lang": "id", "act": "new_request", "task": "docs_writing"}
+{"text": "rencanain gimana kita bikin tower defense, jangan ngoding dulu", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "apa kodenya udah sesuai pep8", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "tunjukin di mana highscore disimpen", "lang": "id", "act": "new_request", "task": "understand_code"}
+{"text": "ajarin gue cara kerja algoritma sorting, pake contoh kecil", "lang": "id", "act": "new_request", "task": "learn_concept"}
+{"text": "terjemahin teks game ke bahasa spanyol", "lang": "id", "act": "new_request", "task": "other"}
+{"text": "kamu ngerusak gamenya", "lang": "id", "act": "correction", "task": "other"}
+{"text": "login udah jalan tapi register jadi rusak", "lang": "id", "act": "correction", "task": "bug_fix"}
+{"text": "warnanya susah dibaca, kontrasnya jelek", "lang": "id", "act": "correction", "task": "ui_styling"}
+{"text": "bukan gitu cara kerja inventorynya, item harusnya bisa numpuk", "lang": "id", "act": "correction", "task": "feature"}
+{"text": "perilakunya berubah, outputnya sekarang beda", "lang": "id", "act": "correction", "task": "refactor"}
+{"text": "test yang kamu tulis salah, harusnya 6 bukan 5", "lang": "id", "act": "correction", "task": "tests"}
+{"text": "kamu push ke main, padahal gue maunya branch baru", "lang": "id", "act": "correction", "task": "setup_deploy"}
+{"text": "gue gak nulis itu, project ini gak pake redis", "lang": "id", "act": "correction", "task": "docs_writing"}
+{"text": "gak, arsitekturnya terlalu ribet buat project sekolah", "lang": "id", "act": "correction", "task": "planning_design"}
+{"text": "kamu kelewatan bug yang jelas banget di baris 40", "lang": "id", "act": "correction", "task": "review"}
+{"text": "penjelasannya salah, loopnya jalan mundur", "lang": "id", "act": "correction", "task": "understand_code"}
+{"text": "error yang sama lagi\nModuleNotFoundError: No module named 'discord'", "lang": "id", "act": "correction", "task": "error_paste"}
+{"text": "ini cuma buat admin", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "header-nya, bukan footer", "lang": "id", "act": "clarification", "task": "ui_styling"}
+{"text": "gue pencet tombol panah dan gak terjadi apa-apa, tapi cuma pas pertama kali", "lang": "id", "act": "clarification", "task": "bug_fix"}
+{"text": "pake pip bukan conda", "lang": "id", "act": "clarification", "task": "setup_deploy"}
+{"text": "pake pytest", "lang": "id", "act": "clarification", "task": "tests"}
+{"text": "nama fungsinya tolong jangan diubah", "lang": "id", "act": "clarification", "task": "refactor"}
+{"text": "taruh langkah instalasi sebelum fitur", "lang": "id", "act": "clarification", "task": "docs_writing"}
+{"text": "kita cuma punya 3 minggu dan cuma berdua", "lang": "id", "act": "clarification", "task": "planning_design"}
+{"text": "perhatiin terutama performanya", "lang": "id", "act": "clarification", "task": "review"}
+{"text": "yang di utils/math.py", "lang": "id", "act": "clarification", "task": "understand_code"}
+{"text": "gue bisa python tapi gak bisa c++", "lang": "id", "act": "clarification", "task": "learn_concept"}
+{"text": "maksud gue 'level' itu stage di game, bukan level player", "lang": "id", "act": "clarification", "task": "other"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "id", "act": "other", "task": "error_paste"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "ini artinya apa?? error: linker `cc` not found", "lang": "id", "act": "question", "task": "error_paste"}
+{"text": "bikinin web portofolio gue dari awal sampe akhir. gak usah nanya warna, pilih aja yang mana", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "deploy ke railway", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "di mana nyawa player dikurangin", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "ok tapi kenapa di sini pake callback bukan promise", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "tambahin sistem save dan load buat game-nya", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "yang paling gampang", "lang": "id", "act": "clarification", "task": "other"}
+{"text": "403 Forbidden pas gue panggil api-nya, ini responsenya: {\"message\":\"Missing Access\",\"code\":50001}", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "konfigurasi eslint dan prettier", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "musuhnya spawn di mana", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "warnanya susah dibaca, kontrasnya jelek", "lang": "id", "act": "correction", "task": "ui_styling"}
+{"text": "taruh langkah setup sebelum fitur", "lang": "id", "act": "clarification", "task": "docs_writing"}
+{"text": "error[E0499]: cannot borrow `*self` as mutable more than once at a time\n  --> src/world.rs:54:13\n   |\n52 |         let p = self.player_mut();\n   |                 ---- first mutable borrow occurs here\n54 |         self.spawn(p);\n   |         ^^^^ second mutable borrow occurs here", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "ok itu sesi yang gila banget", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "selesaiin semua sisa tugasnya tanpa lapor ke gue", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "jalanin testnya", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "makasih!", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "bisa cek PR ini dulu sebelum gue merge", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "gue butuh endpoint POST /api/notes yang nyimpen catatan ke db", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "tambahin multiplayer pake websocket", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "udah bagus, sekarang tambahin fitur highscore", "lang": "id", "act": "approval", "task": "feature"}
+{"text": "jadiin ini class yang bener dengan method", "lang": "id", "act": "new_request", "task": "refactor"}
+{"text": "git reset ke commit terakhir", "lang": "id", "act": "stop_undo", "task": "other"}
+{"text": "oke, commit aja", "lang": "id", "act": "approval", "task": "other"}
+{"text": "ini screenshot bug-nya", "lang": "id", "act": "other", "task": "other"}
+{"text": "tolong cek lagi matematika di kode fisikanya", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "jalanin dalam loop dan terus tingkatin gamenya tanpa henti", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "nested loop di map generator harus dihapus", "lang": "id", "act": "new_request", "task": "refactor"}
+{"text": "async di fungsi ini di kode gue itu ngapain", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "kamu ngetes fungsi yang salah, maksud gue calculate_damage", "lang": "id", "act": "correction", "task": "tests"}
+{"text": "gambarin tabel database buat users, posts, dan likes", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "itu versi python yang salah, kita pake 3.11", "lang": "id", "act": "correction", "task": "setup_deploy"}
+{"text": "tambahin test buat endpoint login", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "yang di utils/math.py", "lang": "id", "act": "clarification", "task": "understand_code"}
+{"text": "generate 20 nama musuh yang lucu", "lang": "id", "act": "new_request", "task": "other"}
+{"text": "gak, masih rusak", "lang": "id", "act": "correction", "task": "other"}
+{"text": "setupin github action yang jalanin test tiap ada push", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "bikinin kalkulator pake gui di tkinter", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "ganti nama foldernya jadi starhopper", "lang": "id", "act": "new_request", "task": "other"}
+{"text": "selesaiin semuanya tanpa gue. makasih", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "tambahin verifikasi email setelah signup", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "kerjain semua fitur dari todo list, tanpa nanya ke gue", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "gapapa, lanjut", "lang": "id", "act": "approval", "task": "other"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "enggak, skornya masih belum kesimpen, kamu cuma ganti nama variabelnya", "lang": "id", "act": "correction", "task": "bug_fix"}
+{"text": "kamu yang terbaik, serius", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "fix itu malah bikin makin parah, batalin", "lang": "id", "act": "stop_undo", "task": "bug_fix"}
+{"text": "kamu ngetes fungsi yang salah, maksud gue calculate_damage", "lang": "id", "act": "correction", "task": "tests"}
+{"text": "setup github action yang jalanin test di tiap push", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "thx", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "tulis unit test buat perhitungan damage", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "tambahin test case buat angka negatif dan nol", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "tulis test pytest buat utils.py dengan edge case", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "asdfghjkl", "lang": "id", "act": "other", "task": "other"}
+{"text": "kamu model apa", "lang": "id", "act": "other", "task": "other"}
+{"text": "kamu push ke main, padahal gue maunya branch baru", "lang": "id", "act": "correction", "task": "setup_deploy"}
+{"text": "bantuin gue milih tech stack buat aplikasi sosial kecil", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "buka project di vscode", "lang": "id", "act": "new_request", "task": "other"}
+{"text": "benerin bug yang bikin bot ngebales dua kali", "lang": "id", "act": "new_request", "task": "bug_fix"}
+{"text": "luangin waktu sebanyak yang kamu mau, pokoknya selesaiin seluruh platformer-nya", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "gue pergi seharian, bikin website lengkap dengan semua halaman dan bikin yang bagus", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "jelasin pointer", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "di firefox. chrome sih aman", "lang": "id", "act": "clarification", "task": "bug_fix"}
+{"text": "kok timernya jalan lebih cepet di laptop gue dibanding di pc temen gue", "lang": "id", "act": "question", "task": "bug_fix"}
+{"text": "double jump dong", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "sampe besok ya", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "init git repo terus push ke github gue", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "struktur folder apa yang bakal kamu pake buat aplikasi flask dengan auth", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "closure di javascript itu apa", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "bikin websitenya responsif", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "gimana cara hosting bot discord gue gratis 24/7?", "lang": "id", "act": "question", "task": "setup_deploy"}
+{"text": "bikin seluruh aplikasi android-nya, kerjain sepanjang malam", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "ini cara yang bagus gak atau ada yang lebih baik?", "lang": "id", "act": "question", "task": "review"}
+{"text": "bikin tampilannya lebih mirip discord, warnanya sama", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "jelasin kode ini ke gue kayak gue umur 12 tahun", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "ini buat tugas sekolah tentang tata surya", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "gak kesel apa gue bawel terus ke kamu?", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "kamu bikin testnya hijau dengan ngehapus assert-nya, itu curang", "lang": "id", "act": "correction", "task": "tests"}
+{"text": "seru banget di sini", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "bukan itu maksud gue, ulangin", "lang": "id", "act": "correction", "task": "other"}
+{"text": "kok timernya jalan lebih cepet di laptop gue dibanding di pc temen gue", "lang": "id", "act": "question", "task": "bug_fix"}
+{"text": "yup", "lang": "id", "act": "approval", "task": "other"}
+{"text": "pake bahasa inggris, dan kasih placeholder buat screenshot", "lang": "id", "act": "clarification", "task": "docs_writing"}
+{"text": "ini teks pdf tugasnya: implementasi sistem perpustakaan dengan buku dan anggota", "lang": "id", "act": "other", "task": "other"}
+{"text": "iya, jalanin", "lang": "id", "act": "approval", "task": "other"}
+{"text": "padding-nya kebanyakan. kecilin setengah", "lang": "id", "act": "correction", "task": "ui_styling"}
+{"text": "enggak, musuhnya masih tembus tembok", "lang": "id", "act": "correction", "task": "bug_fix"}
+{"text": "mutex itu apa?", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "ini jadi lebih ribet dari sebelumnya, kenapa banyak banget class", "lang": "id", "act": "correction", "task": "refactor"}
+{"text": "bikin git repo terus push ke github gue", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "bantuin mikir gimana level disimpen, json atau di dalam kode", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "tambahin multiplayer lewat websocket", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "enggak, arsitekturnya terlalu ribet buat project sekolah", "lang": "id", "act": "correction", "task": "planning_design"}
+{"text": "bikin search bar yang nyaring list-nya pas lagi ngetik", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "iya tolong", "lang": "id", "act": "approval", "task": "other"}
+{"text": "tunjukin di mana highscore disimpen", "lang": "id", "act": "new_request", "task": "understand_code"}
+{"text": "yoi", "lang": "id", "act": "approval", "task": "other"}
+{"text": "selamat pagi", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "bikin changelog dari commit-commit ini", "lang": "id", "act": "new_request", "task": "docs_writing"}
+{"text": "design pattern itu apa? observer itu berguna gak buat game?", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "bikin build script yang bikin exe pake pyinstaller", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "tokennya harus di environment variable bukan di kode", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "/compact", "lang": "id", "act": "other", "task": "other"}
+{"text": "enggak, shop harusnya kebuka pas pencet E bukan pas jalan masuk", "lang": "id", "act": "correction", "task": "feature"}
+{"text": "pake opsi pertama tapi simpen datanya di file json", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "iya", "lang": "id", "act": "approval", "task": "other"}
+{"text": "apa aja yang harus ada di readme yang bagus", "lang": "id", "act": "question", "task": "docs_writing"}
+{"text": "setupin semuanya buat deployment, ci, docker, hosting, apa aja, gue baru mau denger kabar kalo udah online", "lang": "id", "act": "handoff", "task": "setup_deploy"}
+{"text": "gambarin tabel database buat user, posts, dan likes", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "bikin layar settings buat ngubah volume", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "ganti background jadi biru tua dan teksnya putih", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "gue 15 tahun, jadi bikin simpel aja", "lang": "id", "act": "clarification", "task": "other"}
+{"text": "layoutnya harus 2 kolom di desktop dan 1 di mobile", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "stop", "lang": "id", "act": "stop_undo", "task": "other"}
+{"text": "compact", "lang": "id", "act": "other", "task": "other"}
+{"text": "/clear", "lang": "id", "act": "other", "task": "other"}
+{"text": "ini aman gak dari sql injection?", "lang": "id", "act": "question", "task": "review"}
+{"text": "background biru tua dan teks putih", "lang": "id", "act": "new_request", "task": "ui_styling"}
+{"text": "oke itu yang gue mau", "lang": "id", "act": "approval", "task": "other"}
+{"text": "enggak, gue maunya biru bukan hijau", "lang": "id", "act": "correction", "task": "ui_styling"}
+{"text": "setup jest buat project ini", "lang": "id", "act": "new_request", "task": "tests"}
+{"text": "bikin requirements.txt", "lang": "id", "act": "new_request", "task": "setup_deploy"}
+{"text": "apa yang terjadi pas user klik tombol login, jelasin step by step", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "batalin npm install-nya, ngerusak node_modules gue", "lang": "id", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "kamu ganti nama hal-hal yang gue gak mau diganti", "lang": "id", "act": "correction", "task": "refactor"}
+{"text": "bikinin halaman keranjang dengan total harga", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "ok gue kasih kebebasan penuh. bikin game keren. balik lagi kalo udah selesai", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "timestamp-nya muncul di timezone yang salah, harusnya cet", "lang": "id", "act": "new_request", "task": "bug_fix"}
+{"text": "file mana yang ngurus slash command discord?", "lang": "id", "act": "question", "task": "understand_code"}
+{"text": "tambahin search bar yang nyaring list-nya pas lagi ngetik", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "sekarang lompatnya jalan tapi player gak bisa gerak ke kiri lagi", "lang": "id", "act": "correction", "task": "bug_fix"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "itu gak bener, cek lagi", "lang": "id", "act": "correction", "task": "other"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "id", "act": "new_request", "task": "error_paste"}
+{"text": "tolong code review, jujur ya", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "gue makan bentar ya, bentar lagi balik", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "pokoknya bikin. semuanya. gak usah nanya.", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "seru banget ini", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "bikinin kalkulator pake gui di tkinter", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "wkwk itu lucu", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "1", "lang": "id", "act": "approval", "task": "other"}
+{"text": "ok mantap", "lang": "id", "act": "approval", "task": "other"}
+{"text": "salah file, maksud gue player.py bukan enemy.py", "lang": "id", "act": "correction", "task": "other"}
+{"text": "generate 20 nama musuh yang lucu", "lang": "id", "act": "new_request", "task": "other"}
+{"text": "bro gak bisa", "lang": "id", "act": "correction", "task": "other"}
+{"text": "bentar bentar bentar stop", "lang": "id", "act": "stop_undo", "task": "other"}
+{"text": "lgtm", "lang": "id", "act": "approval", "task": "other"}
+{"text": "batalin 2 perubahan terakhir", "lang": "id", "act": "stop_undo", "task": "other"}
+{"text": "musuhnya harus ngejar player", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "bisa gak bikin inventory simpel dengan 10 slot", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "mending pake sqlite atau postgres buat bot discord kecil?", "lang": "id", "act": "question", "task": "planning_design"}
+{"text": "bisa gak pake lib ini biar bot-nya join voice channel?", "lang": "id", "act": "question", "task": "feature"}
+{"text": "app-nya crash pas gue pencet cancel di dialog file", "lang": "id", "act": "new_request", "task": "bug_fix"}
+{"text": "ok", "lang": "id", "act": "approval", "task": "other"}
+{"text": "cari dan benerin semua bug di project ini sendiri, gue gak peduli selama apa pun", "lang": "id", "act": "handoff", "task": "bug_fix"}
+{"text": "migrasi semuanya ke postgres dan update semua kodenya, jangan berhenti buat nanya", "lang": "id", "act": "handoff", "task": "setup_deploy"}
+{"text": "REST itu apa", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "apa bedanya git merge sama rebase?", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "lanjutin sendiri sampe app-nya punya semua fitur dari readme", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "gue pake windows 11 dan python 3.12", "lang": "id", "act": "other", "task": "other"}
+{"text": "kamu robot favorit gue", "lang": "id", "act": "chit_chat", "task": "other"}
+{"text": "desain state machine buat boss fight", "lang": "id", "act": "new_request", "task": "planning_design"}
+{"text": "kerjain seluruh project-nya, gue percaya kamu, kasih gue kejutan", "lang": "id", "act": "handoff", "task": "feature"}
+{"text": "tambahin lompat, pake spasi", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "iya, terapin perubahannya", "lang": "id", "act": "approval", "task": "other"}
+{"text": "enggak, yang kedua", "lang": "id", "act": "clarification", "task": "other"}
+{"text": "kenapa orang bilang jangan pernah pake variabel global", "lang": "id", "act": "question", "task": "learn_concept"}
+{"text": "fungsi ini thread-safe gak?", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "oh iya tambahin cooldown 5 detik juga", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "gue pake discord.py versi 2.3", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "tambahin file license, mit kayaknya", "lang": "id", "act": "new_request", "task": "docs_writing"}
+{"text": "tokennya disimpen dengan aman gak atau bisa dicuri orang", "lang": "id", "act": "new_request", "task": "review"}
+{"text": "masalahnya masih sama", "lang": "id", "act": "correction", "task": "other"}

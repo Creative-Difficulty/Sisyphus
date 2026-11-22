@@ -1,0 +1,250 @@
+{"text": "joo just tätä mä halusin", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "ok nyt tee se nappi pinkiksi", "lang": "fi", "act": "approval", "task": "ui_styling"}
+{"text": "joo kirjoita ne testit vaan", "lang": "fi", "act": "approval", "task": "tests"}
+{"text": "joo asenna se", "lang": "fi", "act": "approval", "task": "setup_deploy"}
+{"text": "sopii, nyt lisää vielä se highscore", "lang": "fi", "act": "approval", "task": "feature"}
+{"text": "oot paras", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "stop", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "palaa siihen vanhaan layoutiin", "lang": "fi", "act": "stop_undo", "task": "ui_styling"}
+{"text": "peru se refaktorointi, vanha rakenne oli parempi", "lang": "fi", "act": "stop_undo", "task": "refactor"}
+{"text": "peru npm install, nyt mun node_modules on rikki", "lang": "fi", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "ota se login-feature pois", "lang": "fi", "act": "stop_undo", "task": "feature"}
+{"text": "poista ne testit jotka sä just teit", "lang": "fi", "act": "stop_undo", "task": "tests"}
+{"text": "toi fiksi teki siitä pahemman, peru se", "lang": "fi", "act": "stop_undo", "task": "bug_fix"}
+{"text": "peru se readme-muutos", "lang": "fi", "act": "stop_undo", "task": "docs_writing"}
+{"text": "tee koko appi, älä kysy multa mitään", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "mieti kaikki itse, suunnittele ja tee koko juttu, älä häiritse mua", "lang": "fi", "act": "handoff", "task": "planning_design"}
+{"text": "nosta testikattavuus 90 prosenttiin yksin, jatka kunnes pääset siihen", "lang": "fi", "act": "handoff", "task": "tests"}
+{"text": "kirjoita koko projekti uudestaan typescriptillä, älä kysy mitään, jatka kunnes se kääntyy", "lang": "fi", "act": "handoff", "task": "refactor"}
+{"text": "laita kaikki valmiiks deploymenttia varten, ci, docker, hosting, mitä ikinä tarvitaan, en halua kuulla siitä ennen kuin se on livenä", "lang": "fi", "act": "handoff", "task": "setup_deploy"}
+{"text": "dokumentoi koko repo, jokainen tiedosto, äläkä kysy multa mitään", "lang": "fi", "act": "handoff", "task": "docs_writing"}
+{"text": "suunnittele koko frontend uusiks, kaikki sivut, tee siitä ammattimaisen näköinen. älä kysy palautetta ennen kuin oot valmis", "lang": "fi", "act": "handoff", "task": "ui_styling"}
+{"text": "etsi ja korjaa kaikki projektin bugit yksin, mulle sama kauan se kestää", "lang": "fi", "act": "handoff", "task": "bug_fix"}
+{"text": "käy koko repo läpi ja korjaa kaikki mikä sun mielestä on pielessä, ei tarvii kysyä multa", "lang": "fi", "act": "handoff", "task": "review"}
+{"text": "tee mitä ikinä oot sitä mieltä et projektille on parasta seuraavat pari tuntia", "lang": "fi", "act": "handoff", "task": "other"}
+{"text": "missä tiedostossa botin slash-komennot on?", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "miten neuroverkko oppii? haluun käyttää sellasta mun pelin tekoälyyn", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "mikä on paras tapa rakentaa unity-projekti jossa on tosi paljon vihuja", "lang": "fi", "act": "question", "task": "planning_design"}
+{"text": "mitä docker compose up oikeesti tekee", "lang": "fi", "act": "question", "task": "setup_deploy"}
+{"text": "miksi mun hahmo putoaa välillä lattian läpi", "lang": "fi", "act": "question", "task": "bug_fix"}
+{"text": "miksi mun navbar menee sisällön päälle", "lang": "fi", "act": "question", "task": "ui_styling"}
+{"text": "miten unit testit oikeesti toimii, mikä on mock", "lang": "fi", "act": "question", "task": "tests"}
+{"text": "onks toi turvallinen sql injectionia vastaan?", "lang": "fi", "act": "question", "task": "review"}
+{"text": "pitääkö mun kommentoida jokainen rivi vai vaan hankalat kohdat?", "lang": "fi", "act": "question", "task": "docs_writing"}
+{"text": "onks se paha et mun koko koodi on yhessä 2000 rivin tiedostossa?", "lang": "fi", "act": "question", "task": "refactor"}
+{"text": "voitko lisätä multiplayer-moodin vai onko se liian vaikeeta tällä setupilla", "lang": "fi", "act": "question", "task": "feature"}
+{"text": "paljonko hetznerin serveri suunnilleen maksaa", "lang": "fi", "act": "question", "task": "other"}
+{"text": "vastaa aina lyhyesti", "lang": "fi", "act": "other", "task": "other"}
+{"text": "kirjota funktio joka tarkistaa onks luku alkuluku", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "mun nettisivu näyttää rikkinäiseltä mobiilissa, valikko ei aukea", "lang": "fi", "act": "new_request", "task": "bug_fix"}
+{"text": "tee koodista luettavampaa, mun pitää näyttää tää opettajalle", "lang": "fi", "act": "new_request", "task": "refactor"}
+{"text": "otsikko isommaks ja lihavoiduks", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "laita jest käyntiin projektiin", "lang": "fi", "act": "new_request", "task": "tests"}
+{"text": "laita tailwind käyntiin", "lang": "fi", "act": "new_request", "task": "setup_deploy"}
+{"text": "kirjota mulle hyvä commit-kuvaus viimeisistä 3 muutoksesta", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "minkä kansiorakenteen sä tekisit flask-appiin jossa on auth", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "etsi code smellejä mun projektista", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "näytä mulle missä highscore tallennetaan", "lang": "fi", "act": "new_request", "task": "understand_code"}
+{"text": "opeta mulle miten lajittelualgoritmit toimii, pienellä esimerkillä", "lang": "fi", "act": "new_request", "task": "learn_concept"}
+{"text": "käännä pelin tekstit espanjaks", "lang": "fi", "act": "new_request", "task": "other"}
+{"text": "äh ei toimi", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "ei, score ei vieläkään tallennu, sä muutit vaan muuttujan nimen", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "ei, mä halusin sinisen en vihreää", "lang": "fi", "act": "correction", "task": "ui_styling"}
+{"text": "sä teit tietokannan mut mä halusin json-tiedoston", "lang": "fi", "act": "correction", "task": "feature"}
+{"text": "sä nimesit uusiks juttuja joita mä en halunnut nimettävän uusiks", "lang": "fi", "act": "correction", "task": "refactor"}
+{"text": "sä testasit väärää funktiota, mä tarkoitin calculate_damage", "lang": "fi", "act": "correction", "task": "tests"}
+{"text": "npm install failaa edelleen samalla viestillä", "lang": "fi", "act": "correction", "task": "setup_deploy"}
+{"text": "en mä kirjottanu tota, projekti ei käytä redistä", "lang": "fi", "act": "correction", "task": "docs_writing"}
+{"text": "toi suunnitelma on liian iso, meillä on vaan viikonloppu", "lang": "fi", "act": "correction", "task": "planning_design"}
+{"text": "sun arvostelu ei auta mitään, puhuit vaan nimistä. kato sitä logiikkaa", "lang": "fi", "act": "correction", "task": "review"}
+{"text": "toi selitys on väärin, loop pyörii takaperin", "lang": "fi", "act": "correction", "task": "understand_code"}
+{"text": "sama error taas\nModuleNotFoundError: No module named 'discord'", "lang": "fi", "act": "correction", "task": "error_paste"}
+{"text": "mä käytän discord.py versiota 2.3", "lang": "fi", "act": "clarification", "task": "feature"}
+{"text": "header, ei footer", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "se kaatuu heti kun painan playta, jo ennen kuin menu tulee", "lang": "fi", "act": "clarification", "task": "bug_fix"}
+{"text": "repo on privaatti, mun käyttäjänimi on coolkid42", "lang": "fi", "act": "clarification", "task": "setup_deploy"}
+{"text": "testaa vaan backend, skippaa frontend", "lang": "fi", "act": "clarification", "task": "tests"}
+{"text": "funktioiden nimet saa jäädä niinkuin ne on", "lang": "fi", "act": "clarification", "task": "refactor"}
+{"text": "laita asennusohjeet ennen featureita", "lang": "fi", "act": "clarification", "task": "docs_writing"}
+{"text": "meillä on 3 viikkoa ja vaan 2 ihmistä", "lang": "fi", "act": "clarification", "task": "planning_design"}
+{"text": "kato vaan tiedostot kansiossa src/api", "lang": "fi", "act": "clarification", "task": "review"}
+{"text": "se utils/math.py:ssä", "lang": "fi", "act": "clarification", "task": "understand_code"}
+{"text": "selitä se jollain peli-esimerkillä", "lang": "fi", "act": "clarification", "task": "learn_concept"}
+{"text": "ihan sama, päätä sä", "lang": "fi", "act": "clarification", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "fi", "act": "other", "task": "error_paste"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "mitä toi tarkoittaa?? error: linker `cc` not found", "lang": "fi", "act": "question", "task": "error_paste"}
+{"text": "tee mulle kokonainen discord-botti jossa on moderointi, musiikki ja economy. en halua tekemisiin sen kanssa, päätä kaikki itse", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "teksti ei oo keskellä, se on vieläkin vasemmalla", "lang": "fi", "act": "correction", "task": "ui_styling"}
+{"text": "onks mun salasanojen hashays näin ok vai liian heikko", "lang": "fi", "act": "question", "task": "review"}
+{"text": "nimeä player uusiks hero kaikkialla", "lang": "fi", "act": "new_request", "task": "refactor"}
+{"text": "siirrä kaikki magic numberit config-tiedostoon", "lang": "fi", "act": "new_request", "task": "refactor"}
+{"text": "pitäiskö tän olla struct vai luokka", "lang": "fi", "act": "question", "task": "refactor"}
+{"text": "koodireview pls, ole rehellinen", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "se pitää toimia myös offline", "lang": "fi", "act": "clarification", "task": "feature"}
+{"text": "kirjota pelille tutoriaalitekstit, 5 lyhyttä vinkkiä uusille pelaajille", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "miten rakentasit botin joka pyörii tosi monella serverillä yhtä aikaa?", "lang": "fi", "act": "question", "task": "planning_design"}
+{"text": "mulla on tällanen idea", "lang": "fi", "act": "other", "task": "other"}
+{"text": "tässä screenshot bugista", "lang": "fi", "act": "other", "task": "other"}
+{"text": "Assets/Scripts/PlayerController.cs(23,17): error CS0103: The name 'rb' does not exist in the current context", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "tee suunnitelma arkkitehtuurista ennen ku aloitetaan", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "edelleen sama ongelma", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "lisää äänitehosteet kun kerää kolikon", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "tarkista mun läksy, onks toi oikein", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "pyöreet kulmat, jotain 12px", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "kirjota mulle johdanto koulun raporttiin siitä miten mun shakkimoottori toimii", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "IndexError: list index out of range\nkorjaa toi", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "lisää smooth fade-in animaatio kun sivu latautuu", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "listaa kaikki TODOt projektissa", "lang": "fi", "act": "new_request", "task": "understand_code"}
+{"text": "tumma teema ilmiselvästi", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "sä pushasit mainiin, mä halusin uuden branchin", "lang": "fi", "act": "correction", "task": "setup_deploy"}
+{"text": "mitä toi funktio tekee?", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "niinku siinä screenshotissa jonka mä lähetin", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "etsi code smellejä mun projektista", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "pyöri loopissa ja paranna peliä koko ajan", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "mikä on API, niinku oikeesti", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "onks normaalia et koodin kääntäminen kestää näin kauan", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "mikä on dependency injection", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "voitko palata eilisen committiin", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "firefoxissa. chromessa toimii", "lang": "fi", "act": "clarification", "task": "bug_fix"}
+{"text": "ei jätä, muutin mieltä", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "kato onko mun css:ssä juttuja joita mä en tarvi", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "mitä tarkoittaa idempotent", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "mitä tarkoittaa O(n log n)", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "lisää power upit: speed, shield ja magnet", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "väsyks sä ikinä mun kysymyksiin?", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "botti vastaa edelleen kahdesti, sun fiksi ei tehnyt mitään", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "kun lataan sivun uudestaan mut kirjataan ulos, mut pitäis pysyä kirjautuneena", "lang": "fi", "act": "new_request", "task": "bug_fix"}
+{"text": "tee build-skripti joka tekee exen pyinstallerilla", "lang": "fi", "act": "new_request", "task": "setup_deploy"}
+{"text": "tee requirements.txt", "lang": "fi", "act": "new_request", "task": "setup_deploy"}
+{"text": "täydellistä, jatka samaan malliin", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "tee skripti joka tekee exen pyinstallerilla", "lang": "fi", "act": "new_request", "task": "setup_deploy"}
+{"text": "mitä on lifetimet rustissa", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "kirjota ohjeteksti --verbose-flägille", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "voisitko tehdä simppelin inventaarin 10 slotilla", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "onks token tallessa turvallisesti vai voiko joku varastaa sen", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "peru muuttujien uudelleennimeäminen, nyt mikään ei täsmää", "lang": "fi", "act": "stop_undo", "task": "refactor"}
+{"text": "tee täys flappy bird -klooni menuilla, äänillä, highscoreilla, kaikella. autonomous mode pls", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "selvitä kaikki itse, suunnittele ja tee koko juttu, älä vaivaa mua", "lang": "fi", "act": "handoff", "task": "planning_design"}
+{"text": "ei ei ei peru se", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "hoida kaikki loput tehtävät ilman että otat muhun yhteyttä", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "toi näyttää rumalta, tee siitä simppelimpi", "lang": "fi", "act": "correction", "task": "ui_styling"}
+{"text": "palauta kaikki mitä sä just teit", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "tee koko android-appi, tee töitä läpi yön", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "näyttää hyvältä", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "tässä screenshot virheestä", "lang": "fi", "act": "other", "task": "other"}
+{"text": "tee mulle tämän päivän todo-lista", "lang": "fi", "act": "new_request", "task": "other"}
+{"text": "missä viholliset spawnaa", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "nyt hyppy toimii mut pelaaja ei voi enää kävellä vasemmalle", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "sä rikoit pelin", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "generoi 20 hauskaa vihollisnimeä", "lang": "fi", "act": "new_request", "task": "other"}
+{"text": "käytä pytestiä", "lang": "fi", "act": "clarification", "task": "tests"}
+{"text": "sä sait testin menemään läpi poistamalla assertin, toi on huijaamista", "lang": "fi", "act": "correction", "task": "tests"}
+{"text": "liikaa paddingia. puolita se", "lang": "fi", "act": "correction", "task": "ui_styling"}
+{"text": "moi", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "no mennään", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "https://github.com/someuser/cool-bot", "lang": "fi", "act": "other", "task": "other"}
+{"text": "napit pyöreiks ja liukuvärillä", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "tee sivusta responsiivinen", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "omg se pyörii vihdoin!!!", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "nice", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "ei, mä sanoin TOINEN nappi", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "se kaatuu heti kun painan play-nappia, ennen kuin menu näkyy", "lang": "fi", "act": "clarification", "task": "bug_fix"}
+{"text": "ei, viholliset kävelee edelleen seinien läpi", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "me haluttiin hostata se itse, ei pilveä", "lang": "fi", "act": "clarification", "task": "planning_design"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in '/home/me/app/src'", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "sen pitäis näyttää enemmän discordilta, samat värit", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "mikä on closure javascriptissä", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "toi fiksi tekee siitä pahemman, ota se pois", "lang": "fi", "act": "stop_undo", "task": "bug_fix"}
+{"text": "approved", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "miten keskitän divin", "lang": "fi", "act": "question", "task": "ui_styling"}
+{"text": "kiitti", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "tarkista vielä se matikka fysiikkakoodissa", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "komennon pitää olla /kick ei !kick", "lang": "fi", "act": "correction", "task": "feature"}
+{"text": "siirrä napin koodi uudelleenkäytettäväks komponentiks", "lang": "fi", "act": "new_request", "task": "refactor"}
+{"text": "dokumentoi kaikki botin komennot", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "meillä on hackathon viikonloppuna, mitä me voitais tehä", "lang": "fi", "act": "other", "task": "other"}
+{"text": "voiko multiplayer-moodin lisätä vai onko se liian vaikeeta tällä setupilla", "lang": "fi", "act": "question", "task": "feature"}
+{"text": "chatbotin pitää muistaa viimeiset 5 viestiä", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "sä teit tietokannan mut mä sanoin json-tiedosto", "lang": "fi", "act": "correction", "task": "feature"}
+{"text": "oot paras, ihan oikeesti", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "missä pelaajan health hoidetaan", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "lisää tason 3 loppuun end boss", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "miten voin hostata mun discord-botin ilmaiseks 24/7?", "lang": "fi", "act": "question", "task": "setup_deploy"}
+{"text": "takas edelliseen tilaan pls", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "ok toi oli aika hullu sessio", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "lopeta toi", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "tiivistä mitä jokainen tiedosto src:ssä tekee", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "lisää sähköpostivahvistus rekisteröitymisen jälkeen", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "compact", "lang": "fi", "act": "other", "task": "other"}
+{"text": "joo pls", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "kirjota funktio joka tarkistaa onks luku alkuluku", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "ok eli mulla on tällanen idea", "lang": "fi", "act": "other", "task": "other"}
+{"text": "miten router päättää minkä sivun näyttää", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "nice, seuraava vaihe", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "toi ei oo oikein, tarkista uudestaan", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "????", "lang": "fi", "act": "other", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "fi", "act": "other", "task": "error_paste"}
+{"text": "pytestillä", "lang": "fi", "act": "clarification", "task": "tests"}
+{"text": "pilko projekti pieniin tehtäviin jotka mä voin tehdä järjestyksessä", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "tarkista onko login-koodissa tietoturva-aukkoja", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "tee kokonainen twitter-klooni authilla ja feedillä. mä en vastaa kysymyksiin joten tee omat päätökset", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "selitä tää koodi mulle niinku olisin 12", "lang": "fi", "act": "question", "task": "understand_code"}
+{"text": "kirjota ensin testi joka toistaa kaatumisen, sitten korjaa se", "lang": "fi", "act": "new_request", "task": "tests"}
+{"text": "älä koske main.py:hyn enää, palauta se", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "lisää integraatiotestit jotka käynnistää serverin ja kutsuu /health", "lang": "fi", "act": "new_request", "task": "tests"}
+{"text": "käy koko login-flow läpi ja sano mikä voi mennä pieleen", "lang": "fi", "act": "new_request", "task": "review"}
+{"text": "laita kaikki valmiiks deploymenttia varten, ci, docker, hosting, mitä ikinä tarvitaan, en halua kuulla mitään ennen kuin se on livenä", "lang": "fi", "act": "handoff", "task": "setup_deploy"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "fi", "act": "new_request", "task": "error_paste"}
+{"text": "tee koko projekti, mä luotan suhun, yllätä mut", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "auta mua valitsemaan techstack pienelle some-appille", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "ennen koodausta: listaa luokat mitä mä tarvisin korttipeliin", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "jaa main.py moneen tiedostoon", "lang": "fi", "act": "new_request", "task": "refactor"}
+{"text": "mikä vaan simppeleintä", "lang": "fi", "act": "clarification", "task": "other"}
+{"text": "keskeytä", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "tumma teema tietty", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "korjaa memory leak, peli hidastuu 10 minuutin jälkeen", "lang": "fi", "act": "new_request", "task": "bug_fix"}
+{"text": "tee mun portfolio-sivu alusta loppuun. älä kysy mitä värejä, valitse vaan", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "se kaatuu edelleen kun painan startia", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "ota niin kauan aikaa kun tarvitset, tee vaan koko platformeri valmiiks", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "odota odota odota stop", "lang": "fi", "act": "stop_undo", "task": "other"}
+{"text": "selvä", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "oot mun lempirobotti", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "tarvitsenks .gitignoren node_modulesille?", "lang": "fi", "act": "question", "task": "setup_deploy"}
+{"text": "tee se vaan. kaikki. ei kysymyksiä.", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "kerro joku vitsi", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "tee login-sivu sähköpostilla ja salasanalla", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "appi kaatuu kun painan tiedostodialogissa cancel", "lang": "fi", "act": "new_request", "task": "bug_fix"}
+{"text": "test", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "sä korjasit loginin mut nyt signup on rikki", "lang": "fi", "act": "correction", "task": "bug_fix"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "fi", "act": "other", "task": "error_paste"}
+{"text": "muista, mun projekti on nimeltään starhopper", "lang": "fi", "act": "other", "task": "other"}
+{"text": "unity vai godot 2d-peliin, mitä mieltä oot", "lang": "fi", "act": "question", "task": "planning_design"}
+{"text": "1", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "ok mä annan sulle täyden vapauden. tee siisti peli. tuu takas kun se on valmis", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "miten niin ajastin käy nopeemmin mun läppärillä kuin kaverin koneella", "lang": "fi", "act": "question", "task": "bug_fix"}
+{"text": "osaan pythonia mut en c++:aa", "lang": "fi", "act": "clarification", "task": "learn_concept"}
+{"text": "miten hash-taulut toimii yleisesti?", "lang": "fi", "act": "question", "task": "learn_concept"}
+{"text": "miten deployaan tän vercelissä", "lang": "fi", "act": "question", "task": "setup_deploy"}
+{"text": "git checkout niihin tiedostoihin joita muutit, en halua mitään siitä", "lang": "fi", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "tää on niin hauskaa", "lang": "fi", "act": "chit_chat", "task": "other"}
+{"text": "mieti miten saada vihollisen tekoäly tuntumaan vähemmän tyhmältä, pelkät vaihtoehdot", "lang": "fi", "act": "new_request", "task": "planning_design"}
+{"text": "mee täysillä ja toteuta kaikki roadmapista", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "missä aikavyöhykkeessä serveri on", "lang": "fi", "act": "question", "task": "other"}
+{"text": "tee vaan", "lang": "fi", "act": "approval", "task": "other"}
+{"text": "toi ei pidä paikkaansa, tarkista uudestaan", "lang": "fi", "act": "correction", "task": "other"}
+{"text": "pitäiskö tän olla struct vai luokka", "lang": "fi", "act": "question", "task": "refactor"}
+{"text": "/clear", "lang": "fi", "act": "other", "task": "other"}
+{"text": "tarvitsenko .gitignoren node_modulesille?", "lang": "fi", "act": "question", "task": "setup_deploy"}
+{"text": "vastaus on max 4 pelaajaa", "lang": "fi", "act": "clarification", "task": "feature"}
+{"text": "kirjota hyvä commit-kuvaus viimeisistä 3 muutoksesta", "lang": "fi", "act": "new_request", "task": "docs_writing"}
+{"text": "musiikki alkaa alusta aina kun vaihdan scenejä", "lang": "fi", "act": "new_request", "task": "bug_fix"}
+{"text": "pinkki ja violetti pls", "lang": "fi", "act": "clarification", "task": "ui_styling"}
+{"text": "testi jonka kirjoitit on väärin, se odottaa 5 mut pitää olla 6", "lang": "fi", "act": "correction", "task": "tests"}
+{"text": "mee täysillä ja toteuta kaikki roadmapista", "lang": "fi", "act": "handoff", "task": "feature"}
+{"text": "minkä ohjelmointikielen mun pitäis opetella seuraavaks", "lang": "fi", "act": "question", "task": "other"}
+{"text": "tallennus ja lataus peliin", "lang": "fi", "act": "new_request", "task": "feature"}
+{"text": "vaihda tausta tummansiniseks ja teksti valkoiseks", "lang": "fi", "act": "new_request", "task": "ui_styling"}
+{"text": "mitä senior-kehittäjä sanois tästä koodista", "lang": "fi", "act": "new_request", "task": "review"}

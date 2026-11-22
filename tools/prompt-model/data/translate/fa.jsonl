@@ -1,0 +1,250 @@
+{"text": "اوکی ولی یکم سریع تر لطفا", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "اوکی حالا دکمه رو صورتی کن", "lang": "fa", "act": "approval", "task": "ui_styling"}
+{"text": "آره برو جلو تست ها رو بنویس", "lang": "fa", "act": "approval", "task": "tests"}
+{"text": "آره نصبش کن", "lang": "fa", "act": "approval", "task": "setup_deploy"}
+{"text": "خوبه، حالا highscore رو هم اضافه کن", "lang": "fa", "act": "approval", "task": "feature"}
+{"text": "واقعا عالیه، جدی میگم", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "بیخیال، لغوش کن", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "برگرد به layout قبلی", "lang": "fa", "act": "stop_undo", "task": "ui_styling"}
+{"text": "rename کردن متغیرها رو برگردون، الان هیچی بهم نمیخوره", "lang": "fa", "act": "stop_undo", "task": "refactor"}
+{"text": "npm install رو undo کن، node_modules من خراب شد", "lang": "fa", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "سیستم inventory رو دوباره بردار، زیادی سنگینه", "lang": "fa", "act": "stop_undo", "task": "feature"}
+{"text": "تست هایی که الان ساختی رو پاک کن", "lang": "fa", "act": "stop_undo", "task": "tests"}
+{"text": "اون fix بدترش کرد، برش گردون", "lang": "fa", "act": "stop_undo", "task": "bug_fix"}
+{"text": "تغییر readme رو برگردون", "lang": "fa", "act": "stop_undo", "task": "docs_writing"}
+{"text": "درباره ی feature ها و طراحی خودت تصمیم بگیر، همه رو خودت بساز. فردا میبینم", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "همه چی رو خودت بفهم، کل پروژه رو طراحی کن و بساز، اذیتم نکن", "lang": "fa", "act": "handoff", "task": "planning_design"}
+{"text": "برای کل codebase تست بنویس، همه اش، هر چی fail شد درستش کن، تا وقتی همه سبز نشدن نایست", "lang": "fa", "act": "handoff", "task": "tests"}
+{"text": "کل پروژه رو با typescript از اول بنویس، بدون سوال، ادامه بده تا کامپایل شه", "lang": "fa", "act": "handoff", "task": "refactor"}
+{"text": "همه چی رو به postgres منتقل کن و کل کد رو عوض کن، لطفا بدون سوال", "lang": "fa", "act": "handoff", "task": "setup_deploy"}
+{"text": "کل repo رو داکیومنت کن، هر فایل، و از من هیچی نپرس", "lang": "fa", "act": "handoff", "task": "docs_writing"}
+{"text": "کل frontend رو از نو طراحی کن، همه صفحه ها، باید حرفه ای بشه. تا تموم نشده فیدبک نخواه", "lang": "fa", "act": "handoff", "task": "ui_styling"}
+{"text": "همه ی باگ های پروژه رو خودت پیدا کن و درست کن، مهم نیست چقدر طول بکشه", "lang": "fa", "act": "handoff", "task": "bug_fix"}
+{"text": "کل repo رو بگرد و هر چی به نظرت اشتباهه درست کن، لازم نیست بپرسی", "lang": "fa", "act": "handoff", "task": "review"}
+{"text": "ساعت های بعدی فقط هر چی به نظرت برای پروژه بهتره انجام بده", "lang": "fa", "act": "handoff", "task": "other"}
+{"text": "collision detection من چطوری کار میکنه، ریاضیش رو نمیفهمم", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "شبکه عصبی چطوری یاد میگیره؟ میخوام برای هوش مصنوعی بازیم ازش استفاده کنم", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "برای یه بازی 2d unity یا godot، نظرت چیه", "lang": "fa", "act": "question", "task": "planning_design"}
+{"text": "برای node_modules به .gitignore نیاز دارم؟", "lang": "fa", "act": "question", "task": "setup_deploy"}
+{"text": "چرا کاراکتر من بعضی وقت ها از کف رد میشه", "lang": "fa", "act": "question", "task": "bug_fix"}
+{"text": "چطوری یه div رو وسط بذارم", "lang": "fa", "act": "question", "task": "ui_styling"}
+{"text": "باید توابع private رو تست کرد؟", "lang": "fa", "act": "question", "task": "tests"}
+{"text": "این کد در برابر sql injection امنه؟", "lang": "fa", "act": "question", "task": "review"}
+{"text": "باید برای هر خط کامنت بذارم یا فقط جاهای سخت؟", "lang": "fa", "act": "question", "task": "docs_writing"}
+{"text": "اینجا باید struct باشه یا class", "lang": "fa", "act": "question", "task": "refactor"}
+{"text": "میتونی multiplayer اضافه کنی یا با این setup خیلی سخته", "lang": "fa", "act": "question", "task": "feature"}
+{"text": "بعدش کدوم زبان رو یاد بگیرم", "lang": "fa", "act": "question", "task": "other"}
+{"text": "از این به بعد از tab استفاده کن نه space", "lang": "fa", "act": "other", "task": "other"}
+{"text": "یه دستور /ban به بات من اضافه کن", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "وقتی صفحه رو refresh میکنم logout میشم، باید login بمونم", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "این تابع رو تمیز کن، افتضاحه", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "سایت رو responsive کن", "lang": "fa", "act": "new_request", "task": "ui_styling"}
+{"text": "jest رو برای پروژه راه بنداز", "lang": "fa", "act": "new_request", "task": "tests"}
+{"text": "token باید تو environment variable باشه نه تو کد", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "برای هر تابع تو game.py یه docstring بنویس", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "rest api یا graphql، میتونی مزایا و معایبشون رو برای یه پروژه مدرسه بگی؟", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "میتونی ریاضی کد physics رو دوباره چک کنی", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "نشونم بده highscore کجا ذخیره میشه", "lang": "fa", "act": "new_request", "task": "understand_code"}
+{"text": "یادم بده الگوریتم های مرتب سازی چطوری کار میکنن با یه مثال کوچیک", "lang": "fa", "act": "new_request", "task": "learn_concept"}
+{"text": "۲۰ تا اسم خنده دار برای دشمن ها بساز", "lang": "fa", "act": "new_request", "task": "other"}
+{"text": "نه منظورم دکمه ی اون یکی بود", "lang": "fa", "act": "correction", "task": "other"}
+{"text": "login الان کار میکنه ولی register خراب شده", "lang": "fa", "act": "correction", "task": "bug_fix"}
+{"text": "padding زیاده. نصفش کن", "lang": "fa", "act": "correction", "task": "ui_styling"}
+{"text": "تو database گذاشتی ولی من فایل json میخواستم", "lang": "fa", "act": "correction", "task": "feature"}
+{"text": "رفتار برنامه رو عوض کردی، output الان فرق داره", "lang": "fa", "act": "correction", "task": "refactor"}
+{"text": "تست رو با پاک کردن assert پاس کردی، این تقلبه", "lang": "fa", "act": "correction", "task": "tests"}
+{"text": "این نسخه python اشتباهه، ما از 3.11 استفاده میکنیم", "lang": "fa", "act": "correction", "task": "setup_deploy"}
+{"text": "من اینو ننوشتم، پروژه از redis استفاده نمیکنه", "lang": "fa", "act": "correction", "task": "docs_writing"}
+{"text": "نه معماری خیلی پیچیده است برای یه پروژه مدرسه", "lang": "fa", "act": "correction", "task": "planning_design"}
+{"text": "review تو به درد نمیخوره، فقط درباره ی اسم ها حرف زدی. به منطق نگاه کن", "lang": "fa", "act": "correction", "task": "review"}
+{"text": "این توضیح اشتباهه، حلقه برعکس میره", "lang": "fa", "act": "correction", "task": "understand_code"}
+{"text": "باز همون error\nModuleNotFoundError: No module named 'discord'", "lang": "fa", "act": "correction", "task": "error_paste"}
+{"text": "ضمنا باید offline هم کار کنه", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "رنگ های صورتی و بنفش لطفا", "lang": "fa", "act": "clarification", "task": "ui_styling"}
+{"text": "رو firefox. رو chrome مشکلی نیست", "lang": "fa", "act": "clarification", "task": "bug_fix"}
+{"text": "pip، نه conda", "lang": "fa", "act": "clarification", "task": "setup_deploy"}
+{"text": "فقط backend رو تست کن، frontend رو ولش کن", "lang": "fa", "act": "clarification", "task": "tests"}
+{"text": "فقط به کد دشمن ها دست بزن", "lang": "fa", "act": "clarification", "task": "refactor"}
+{"text": "مراحل setup رو قبل از feature ها بذار", "lang": "fa", "act": "clarification", "task": "docs_writing"}
+{"text": "ما ۳ هفته وقت داریم و فقط دو نفریم", "lang": "fa", "act": "clarification", "task": "planning_design"}
+{"text": "فقط به فایل های src/api نگاه کن", "lang": "fa", "act": "clarification", "task": "review"}
+{"text": "اونی که تو utils/math.py هست", "lang": "fa", "act": "clarification", "task": "understand_code"}
+{"text": "با یه مثال بازی توضیح بده", "lang": "fa", "act": "clarification", "task": "learn_concept"}
+{"text": "هر دو", "lang": "fa", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "fa", "act": "other", "task": "error_paste"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "این یعنی چی?? error: linker `cc` not found", "lang": "fa", "act": "question", "task": "error_paste"}
+{"text": "api اصلا چیه", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "این تابع چیکار میکنه?", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "هی", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "یه کلون کامل minecraft کد بزن، برو", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "login رو دوباره بردار", "lang": "fa", "act": "stop_undo", "task": "feature"}
+{"text": "کی update_score() رو صدا میزنه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "main.py رو به چند تا فایل تقسیم کن", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "برو جلو", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "شبیه screenshot ای که فرستادم بکنش", "lang": "fa", "act": "clarification", "task": "ui_styling"}
+{"text": "pygame رو نصب کن", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "کل برنامه رو بساز، چیزی از من نپرس", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "پرش اضافه کن، با space", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "فقط بساز. همه اش. بدون سوال.", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "فاصله زیاده. نصفش کن", "lang": "fa", "act": "correction", "task": "ui_styling"}
+{"text": "به diff نگاه کن و بگو یه چیزی مشکوک به نظر میرسه یا نه", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "یه دستور /poll با reaction بساز", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "به نظرم درسته، ادامه بده", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "دو تا تغییر آخر رو برگردون", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "highscore ها رو بهتره تو فایل ذخیره کنم یا تو database", "lang": "fa", "act": "question", "task": "planning_design"}
+{"text": "یه افکت صدا وقتی سکه جمع میکنه", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "یه code review بکن لطفا، صادق باش", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "تحویلش جمعه است", "lang": "fa", "act": "other", "task": "other"}
+{"text": "تو به main push کردی، من یه branch جدید میخواستم", "lang": "fa", "act": "correction", "task": "setup_deploy"}
+{"text": "چرا navbar من روی محتوا افتاده", "lang": "fa", "act": "question", "task": "ui_styling"}
+{"text": "میخوایم خودمون host کنیم، بدون cloud", "lang": "fa", "act": "clarification", "task": "planning_design"}
+{"text": "مراحل نصب رو قبل از feature ها بذار", "lang": "fa", "act": "clarification", "task": "docs_writing"}
+{"text": "برای یه پروژه مدرسه درباره ی منظومه شمسیه", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": ".", "lang": "fa", "act": "other", "task": "other"}
+{"text": "نه، دومی", "lang": "fa", "act": "clarification", "task": "other"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "فرمت فایل ذخیره رو چطوری طراحی کنم که ذخیره های قدیمی کار کنن", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "یه سیستم save و load برای بازی اضافه کن", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "میتونی برگردی به commit دیروز", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "با pytest", "lang": "fa", "act": "clarification", "task": "tests"}
+{"text": "با یه مثال بازی توضیح بده", "lang": "fa", "act": "clarification", "task": "learn_concept"}
+{"text": "اون session خیلی وحشی بود", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "ساعت ۲ شبه و هنوز دارم کد میزنم، کمک", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "فرق git merge و rebase چیه؟", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "برای یه پروژه مدرسه درباره ی منظومه شمسیه", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "باید برای هر خط کامنت بذارم یا فقط جاهای سخت؟", "lang": "fa", "act": "question", "task": "docs_writing"}
+{"text": "گزینه ی اول رو بردار ولی داده ها رو تو یه فایل json ذخیره کن", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "متن وسط نیست، هنوز سمت چپه", "lang": "fa", "act": "correction", "task": "ui_styling"}
+{"text": "recursion چیه", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "design pattern ها چیان؟ اون observer به درد بازی ها میخوره؟", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "تو ربات مورد علاقه ی منی", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "این رو رو railway deploy کن", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "اوکی، commit کن", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "خودت ادامه بده تا برنامه همه ی feature های readme رو داشته باشه", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "الان بدتر از قبل شده", "lang": "fa", "act": "correction", "task": "other"}
+{"text": "تابع اشتباه رو تست کردی، منظورم calculate_damage بود", "lang": "fa", "act": "correction", "task": "tests"}
+{"text": "lifetime ها تو rust چیان", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "تایید", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "وای", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "idempotent یعنی چی", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "async await در برابر thread رو توضیح بده", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "میشه با این کتابخونه بات رو به voice channel ها وصل کرد؟", "lang": "fa", "act": "question", "task": "feature"}
+{"text": "همه ی feature های لیست todo رو پیاده کن بدون اینکه ازم تایید بگیری", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "هوم نه، یه چیز دیگه امتحان کن", "lang": "fa", "act": "correction", "task": "other"}
+{"text": "یه توضیح کوتاه برای github repo من بنویس", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "نه نه نه پاکش کن", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "هی", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "تستی که نوشتی اشتباهه، ۵ انتظار داره ولی باید ۶ باشه", "lang": "fa", "act": "correction", "task": "tests"}
+{"text": "رو سیستم من کار نمیکنه، هنوز مجموع رو اشتباه میده", "lang": "fa", "act": "correction", "task": "bug_fix"}
+{"text": "بازگشت چیه", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "یه افکت hover برای کارت ها", "lang": "fa", "act": "new_request", "task": "ui_styling"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "فایل اسمش scores.json هست و تو پوشه ی data قرار داره", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "پرش اضافه کن، space", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "dark theme معلومه", "lang": "fa", "act": "clarification", "task": "ui_styling"}
+{"text": "کد از pep8 پیروی میکنه", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "powerup ها: سرعت، سپر و آهنربا", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "تست ها fail میشن، درستشون کن", "lang": "fa", "act": "new_request", "task": "tests"}
+{"text": "میتونی توضیح بدی game loop تو main.py چطوری کار میکنه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "فرم ارسال میشه با اینکه فیلدها خالین", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "چرا npm install کلی طول میکشه", "lang": "fa", "act": "question", "task": "setup_deploy"}
+{"text": "یه جوک بگو", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "کل مراحل login رو بگرد و بگو چی ممکنه خراب بشه", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "health بازیکن کجا مدیریت میشه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "python compile میشه یا interpret", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "بعد از ثبت نام ایمیل تایید بفرست", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "چطوری این رو رو vercel deploy کنم", "lang": "fa", "act": "question", "task": "setup_deploy"}
+{"text": "ctrl z", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "یه leaderboard اضافه کن که تو فایل json ذخیره بشه", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "اول یه تست بنویس که crash رو بازسازی کنه، بعد درستش کن", "lang": "fa", "act": "new_request", "task": "tests"}
+{"text": "یه اسکریپت بنویس که همه ی عکس های من رو بر اساس تاریخ rename کنه", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\n\tat Game.run(Game.java:77)", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "به کد کامنت اضافه کن که بتونم تو ارائه ام توضیحش بدم", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "callback ها رو به async/await تبدیل کن", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "یه مقدمه ی کوتاه انشا بنویس درباره ی اینکه موتور شطرنج من چطوری کار میکنه برای گزارش مدرسه", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "همه ی feature های لیست todo رو پیاده کن، از من نپرس", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "اسم توابع رو همونطور که هست بذار لطفا", "lang": "fa", "act": "clarification", "task": "refactor"}
+{"text": "نه این اشتباهه", "lang": "fa", "act": "correction", "task": "other"}
+{"text": "تست ها fail میشن، درستشون کن", "lang": "fa", "act": "new_request", "task": "tests"}
+{"text": "pointer رو برام توضیح بده", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "اینو با یه پیام خوب commit کن", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "npm install هنوز با همون پیام fail میشه", "lang": "fa", "act": "correction", "task": "setup_deploy"}
+{"text": "وب سایتم تو موبایل خراب به نظر میرسه، منو باز نمیشه", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "چند ساعت رو این کار کن تا بازی کامل تموم شه، بدون سوال", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "خداحافظ", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "چقدر دیگه طول میکشه", "lang": "fa", "act": "question", "task": "other"}
+{"text": "mutex چیه؟", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "کدم رو review کن", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "دو تا تغییر آخر رو undo کن", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "همیشه کوتاه جواب بده لطفا", "lang": "fa", "act": "other", "task": "other"}
+{"text": "هی، اونجایی؟", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "جواب اینه که حداکثر ۴ بازیکن", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "بات باید وقتی کسی !meme مینویسه یه meme رندوم بفرسته", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "یه کلون کامل flappy bird بساز با منو، صدا، highscore، همه چی. مستقل لطفا", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "ctrl z", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "صورتی و بنفش لطفا", "lang": "fa", "act": "clarification", "task": "ui_styling"}
+{"text": "این regex تو validate_email چیکار میکنه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "timestamp ها منطقه زمانی اشتباه نشون میدن، باید cet باشن", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "اوکی بهت آزادی کامل میدم. یه بازی باحال بساز. وقتی تموم شد برگرد", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "الان این میاد\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "fa", "act": "correction", "task": "error_paste"}
+{"text": "یه endpoint بساز POST /api/notes که یه یادداشت رو تو db ذخیره کنه", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "اذیت نمیشی که همش دارم برات پیام میدم؟", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "tailwind رو راه بنداز", "lang": "fa", "act": "new_request", "task": "setup_deploy"}
+{"text": "یه senior dev درباره ی این کد چی میگفت", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "آره لطفا", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "اوکی", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "حلقه های تو در توی map generator رو حذف کن", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "layout باید تو دسکتاپ ۲ ستون باشه و تو موبایل ۱ ستون", "lang": "fa", "act": "new_request", "task": "ui_styling"}
+{"text": "تو دسکتاپ ۲ ستون، تو گوشی ۱", "lang": "fa", "act": "new_request", "task": "ui_styling"}
+{"text": "/clear", "lang": "fa", "act": "other", "task": "other"}
+{"text": "درست بعد از کلیک روی play crash میکنه، قبل از اینکه منو بیاد", "lang": "fa", "act": "clarification", "task": "bug_fix"}
+{"text": "این fix نیست، فقط مشکل رو قایم میکنه", "lang": "fa", "act": "correction", "task": "bug_fix"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "این screenshot ی خطاست", "lang": "fa", "act": "other", "task": "other"}
+{"text": "برگرد به layout قبلی", "lang": "fa", "act": "stop_undo", "task": "ui_styling"}
+{"text": "من windows 11 و python 3.12 دارم", "lang": "fa", "act": "other", "task": "other"}
+{"text": "کاری که داری میکنی رو متوقف کن", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "این callback ها رو به async/await تبدیل کن", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "state machine رو برای boss fight طراحی کن", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "کمکم کن فکر کنم level ها چطوری ذخیره بشن، json یا تو کد", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nچی شده", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "کد از pep8 پیروی میکنه", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "معلمم یه class diagram هم میخواد", "lang": "fa", "act": "other", "task": "other"}
+{"text": "git checkout رو فایل هایی که عوض کردی بزن، هیچکدومشون رو نمیخوام", "lang": "fa", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "همه چی رو برای deployment راه بنداز، ci، docker، hosting، هر چی لازمه، تا وقتی آنلاین نشده نمیخوام چیزی بشنوم", "lang": "fa", "act": "handoff", "task": "setup_deploy"}
+{"text": "فرق utils.js و helpers.js تو پروژه ی من چیه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "یه readme برای پروژه ام بنویس", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "عالی، مرحله ی بعد", "lang": "fa", "act": "approval", "task": "other"}
+{"text": "یه لوگوی ناز تو header اضافه کن، یه svg ساده کافیه", "lang": "fa", "act": "new_request", "task": "ui_styling"}
+{"text": "O(n log n) یعنی چی", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "کد دکمه رو تو یه component قابل استفاده ی دوباره بذار", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "بعضی وقت ها توپ با سرعت بالا از راکت رد میشه. درستش کن", "lang": "fa", "act": "new_request", "task": "bug_fix"}
+{"text": "thread 'main' has overflowed its stack\nfatal runtime error: stack overflow", "lang": "fa", "act": "new_request", "task": "error_paste"}
+{"text": "بذار کاربرها بتونن عکس پروفایل آپلود کنن", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "همه ی magic number ها رو تو یه فایل config بذار", "lang": "fa", "act": "new_request", "task": "refactor"}
+{"text": "تغییرات docker رو undo کن", "lang": "fa", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "اوکی دستت بازه. یه بازی باحال بساز. وقتی تموم شد برگرد", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "برنامه ریزی کن چطوری یه بازی tower defense بسازیم، هنوز کد نزن", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "چک کن تو کد login مشکل امنیتی هست یا نه", "lang": "fa", "act": "new_request", "task": "review"}
+{"text": "برگرد به حالت قبلی pls", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "برای یه برنامه ی کتابخونه چه database schema ای لازم دارم؟ فقط اول طراحیش کن", "lang": "fa", "act": "new_request", "task": "planning_design"}
+{"text": "مرسی عالی کار کرد", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "برگرد به حالت چند لحظه پیش", "lang": "fa", "act": "stop_undo", "task": "other"}
+{"text": "دشمن ها باید زامبی باشن، 2d top down", "lang": "fa", "act": "clarification", "task": "feature"}
+{"text": "گوشه های گرد، مثلا 12px", "lang": "fa", "act": "clarification", "task": "ui_styling"}
+{"text": "closure تو javascript چیه", "lang": "fa", "act": "question", "task": "learn_concept"}
+{"text": "یه متن برای صفحه ی about سایتم بنویس، من یه game dev ۱۴ ساله ام، باحال باشه", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "یه بات کامل discord برام بساز با moderation، موزیک و economy. نمیخوام درگیر باشم، همه چی رو خودت تصمیم بگیر", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "غلط های املایی readme رو درست کن", "lang": "fa", "act": "new_request", "task": "docs_writing"}
+{"text": "امروز حالت چطوره؟", "lang": "fa", "act": "chit_chat", "task": "other"}
+{"text": "چیزای docker رو دوباره undo کن", "lang": "fa", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "پرش دوبل لطفا", "lang": "fa", "act": "new_request", "task": "feature"}
+{"text": "هر چقدر وقت لازم داری بذار، مهم اینه که کل platformer تموم شه", "lang": "fa", "act": "handoff", "task": "feature"}
+{"text": "چرا npm install کلی طول میکشه", "lang": "fa", "act": "question", "task": "setup_deploy"}
+{"text": "میتونی خلاصه کنی هر فایل تو src چیکار میکنه", "lang": "fa", "act": "question", "task": "understand_code"}
+{"text": "تو database اضافه کردی ولی من گفتم فایل json", "lang": "fa", "act": "correction", "task": "feature"}
+{"text": "unit test ها اصلا چطوری کار میکنن، mock چیه", "lang": "fa", "act": "question", "task": "tests"}
+{"text": "عالی، ادامه بده", "lang": "fa", "act": "approval", "task": "other"}

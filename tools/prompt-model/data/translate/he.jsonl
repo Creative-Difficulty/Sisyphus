@@ -1,0 +1,250 @@
+{"text": "מממ אוקיי", "lang": "he", "act": "approval", "task": "other"}
+{"text": "אוקיי עכשיו תעשה את הכפתור ורוד", "lang": "he", "act": "approval", "task": "ui_styling"}
+{"text": "כן תמשיך ותכתוב את הטסטים", "lang": "he", "act": "approval", "task": "tests"}
+{"text": "כן תתקין את זה", "lang": "he", "act": "approval", "task": "setup_deploy"}
+{"text": "נראה טוב, עכשיו תוסיף את הדבר של הhighscore", "lang": "he", "act": "approval", "task": "feature"}
+{"text": "טוב אז עד מחר", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "תעצור ותחזיר את כל השינויים שלא עשיתי להם commit", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "תבטל את שינוי הצבע, זה נראה יותר טוב קודם", "lang": "he", "act": "stop_undo", "task": "ui_styling"}
+{"text": "תבטל את הrefactoring, אהבתי יותר את המבנה הישן", "lang": "he", "act": "stop_undo", "task": "refactor"}
+{"text": "תבטל את npm install, עכשיו הnode_modules שלי שבור", "lang": "he", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "תוציא שוב את הlogin", "lang": "he", "act": "stop_undo", "task": "feature"}
+{"text": "תמחק את הטסטים שבדיוק עשית", "lang": "he", "act": "stop_undo", "task": "tests"}
+{"text": "התיקון הזה החמיר את זה, תבטל אותו", "lang": "he", "act": "stop_undo", "task": "bug_fix"}
+{"text": "תבטל את השינוי בreadme", "lang": "he", "act": "stop_undo", "task": "docs_writing"}
+{"text": "קח כמה זמן שאתה צריך, פשוט תסיים את כל הפלטפורמר", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "תבין הכל לבד, תתכנן ותבנה את כל הדבר, אל תטרידו אותי", "lang": "he", "act": "handoff", "task": "planning_design"}
+{"text": "תעלה את הtest coverage ל90% לבד, תמשיך לעבוד עד שתגיע לזה", "lang": "he", "act": "handoff", "task": "tests"}
+{"text": "תכתוב מחדש את כל הפרויקט בtypescript, בלי שאלות, תמשיך עד שזה מתקמפל", "lang": "he", "act": "handoff", "task": "refactor"}
+{"text": "תסדר הכל לdeployment, ci, docker, hosting, כל מה שצריך, אני לא רוצה לשמוע כלום עד שזה באוויר", "lang": "he", "act": "handoff", "task": "setup_deploy"}
+{"text": "תתעד את כל הrepo, כל קובץ, ואל תשאל אותי כלום", "lang": "he", "act": "handoff", "task": "docs_writing"}
+{"text": "תעצב מחדש את כל הfrontend, כל הדפים, שייראה מקצועי. אל תבקש פידבק עד שתסיים", "lang": "he", "act": "handoff", "task": "ui_styling"}
+{"text": "תמצא ותתקן את כל הבאגים בפרויקט לבד, לא אכפת לי כמה זמן זה לוקח", "lang": "he", "act": "handoff", "task": "bug_fix"}
+{"text": "תעבור על כל הrepo ותתקן כל מה שנראה לך לא נכון, לא צריך לשאול", "lang": "he", "act": "handoff", "task": "review"}
+{"text": "בשעות הקרובות תעשה מה שנראה לך הכי טוב לפרויקט", "lang": "he", "act": "handoff", "task": "other"}
+{"text": "איך הstate משותף בין הcomponents פה?", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "למה כולם אומרים לא להשתמש במשתנים גלובליים", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "unity או godot למשחק 2d, מה דעתך", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "למה npm install לוקח נצח", "lang": "he", "act": "question", "task": "setup_deploy"}
+{"text": "למה הדמות שלי נופלת דרך הרצפה לפעמים", "lang": "he", "act": "question", "task": "bug_fix"}
+{"text": "למה הnavbar שלי מכסה על התוכן", "lang": "he", "act": "question", "task": "ui_styling"}
+{"text": "איך unit tests בכלל עובדים, מה זה mock", "lang": "he", "act": "question", "task": "tests"}
+{"text": "הhashing של הסיסמאות שלי בסדר או חלש מדי", "lang": "he", "act": "question", "task": "review"}
+{"text": "אני צריך להוסיף הערה לכל שורה או רק לחלקים המסובכים?", "lang": "he", "act": "question", "task": "docs_writing"}
+{"text": "זה צריך להיות struct או class", "lang": "he", "act": "question", "task": "refactor"}
+{"text": "אפשר לגרום לבוט להצטרף לvoice channels עם הספרייה הזאת?", "lang": "he", "act": "question", "task": "feature"}
+{"text": "איזו שפה כדאי לי ללמוד הבאה", "lang": "he", "act": "question", "task": "other"}
+{"text": "הנה הטקסט של קובץ המטלה: implement a library system with books and members", "lang": "he", "act": "other", "task": "other"}
+{"text": "האויבים צריכים לרדוף אחרי השחקן", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "memory leak, אחרי 10 דקות המשחק נהיה יותר ויותר איטי", "lang": "he", "act": "new_request", "task": "bug_fix"}
+{"text": "תעשה את הקוד יותר קריא, אני צריך להראות אותו למורה", "lang": "he", "act": "new_request", "task": "refactor"}
+{"text": "תמרכז הכל ותוסיף עוד padding", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": "תריץ את הטסטים", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "תתקין pygame", "lang": "he", "act": "new_request", "task": "setup_deploy"}
+{"text": "תתעד את כל הפקודות של הבוט", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "תתכנן איך לבנות משחק tower defense, אל תקודד עדיין", "lang": "he", "act": "new_request", "task": "planning_design"}
+{"text": "תבדוק את הפתרון שלי לשיעורי בית, זה נכון", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "תרשום את כל הTODO בפרויקט", "lang": "he", "act": "new_request", "task": "understand_code"}
+{"text": "תלמד אותי איך אלגוריתמי מיון עובדים עם דוגמה קטנה", "lang": "he", "act": "new_request", "task": "learn_concept"}
+{"text": "תתרגם את הטקסטים במשחק לספרדית", "lang": "he", "act": "new_request", "task": "other"}
+{"text": "הרסת לי את המשחק", "lang": "he", "act": "correction", "task": "other"}
+{"text": "הlogin עובד עכשיו אבל הregister שבור", "lang": "he", "act": "correction", "task": "bug_fix"}
+{"text": "האנימציה מהירה מדי ומקטעת", "lang": "he", "act": "correction", "task": "ui_styling"}
+{"text": "לא ביקשתי login, תוריד אותו ותעשה רק את הleaderboard", "lang": "he", "act": "correction", "task": "feature"}
+{"text": "שינית שמות של דברים שלא רציתי שתשנה", "lang": "he", "act": "correction", "task": "refactor"}
+{"text": "הטסט שכתבת לא נכון, הוא מצפה ל5 אבל זה צריך להיות 6", "lang": "he", "act": "correction", "task": "tests"}
+{"text": "npm install עדיין נכשל עם אותה הודעה", "lang": "he", "act": "correction", "task": "setup_deploy"}
+{"text": "הreadme ארוך מדי ורשמי מדי, תעשה אותו קצר ורגוע", "lang": "he", "act": "correction", "task": "docs_writing"}
+{"text": "לא, הארכיטקטורה הזאת מסובכת מדי לפרויקט בית ספר", "lang": "he", "act": "correction", "task": "planning_design"}
+{"text": "הreview שלך חסר טעם, דיברת רק על שמות. תסתכל על הלוגיקה", "lang": "he", "act": "correction", "task": "review"}
+{"text": "ההסבר לא נכון, הלולאה רצה אחורה", "lang": "he", "act": "correction", "task": "understand_code"}
+{"text": "עכשיו יוצא\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "he", "act": "correction", "task": "error_paste"}
+{"text": "אה וגם תוסיף cooldown של 5 שניות", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "dark theme כמובן", "lang": "he", "act": "clarification", "task": "ui_styling"}
+{"text": "אני לוחץ על החצים ושום דבר לא קורה, אבל רק בפעם הראשונה", "lang": "he", "act": "clarification", "task": "bug_fix"}
+{"text": "windows", "lang": "he", "act": "clarification", "task": "setup_deploy"}
+{"text": "עם pytest", "lang": "he", "act": "clarification", "task": "tests"}
+{"text": "תשאיר את שמות הפונקציות אותו דבר", "lang": "he", "act": "clarification", "task": "refactor"}
+{"text": "באנגלית, ותשים placeholders לscreenshots", "lang": "he", "act": "clarification", "task": "docs_writing"}
+{"text": "יש לנו 3 שבועות ורק 2 אנשים", "lang": "he", "act": "clarification", "task": "planning_design"}
+{"text": "תתמקד בביצועים", "lang": "he", "act": "clarification", "task": "review"}
+{"text": "זה שבutils/math.py", "lang": "he", "act": "clarification", "task": "understand_code"}
+{"text": "אני יודע python אבל לא c++", "lang": "he", "act": "clarification", "task": "learn_concept"}
+{"text": "כן וגם ההגדרות", "lang": "he", "act": "clarification", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "he", "act": "other", "task": "error_paste"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nמה קורה פה", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "מה זה אומר?? error: linker `cc` not found", "lang": "he", "act": "question", "task": "error_paste"}
+{"text": "תעזור לי לחשוב איך לשמור את הlevels, json או קוד", "lang": "he", "act": "new_request", "task": "planning_design"}
+{"text": "נראה מכוער, תעשה את זה יותר פשוט", "lang": "he", "act": "correction", "task": "ui_styling"}
+{"text": "היייי", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "מה קורה כשהיוזר לוחץ על כפתור הlogin, תעבור איתי על זה", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "מה זה O(n log n)", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "וואלה זה סוף סוף עובד!!!", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "אש", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "יפה, השלב הבא", "lang": "he", "act": "approval", "task": "other"}
+{"text": "הlayout צריך להיות 2 עמודות בדסקטופ ועמודה אחת במובייל", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": "תסתכל רק על הקבצים בsrc/api", "lang": "he", "act": "clarification", "task": "review"}
+{"text": "תעשה deploy לrailway", "lang": "he", "act": "new_request", "task": "setup_deploy"}
+{"text": "מה זה REST", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "תמשיך לבד עד שלאפליקציה יש את כל הפיצ'רים מהreadme", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "סבבה", "lang": "he", "act": "approval", "task": "other"}
+{"text": "תסביר async await לעומת threads", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "אתה הכי טוב, ברצינות", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "כן תעשה push", "lang": "he", "act": "approval", "task": "setup_deploy"}
+{"text": "הטסט flaky, תעשה אותו אמין", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "תרוץ בלולאה ותמשיך לשפר את המשחק כל הזמן", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "תוסיף טסט למקרה שהinventory מלא", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "אוקיי אז בעצם יש לי רעיון", "lang": "he", "act": "other", "task": "other"}
+{"text": "תחזיר את זה", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "לא האויבים עדיין עוברים דרך קירות", "lang": "he", "act": "correction", "task": "bug_fix"}
+{"text": "כיסיתי בparse_input את כל מקרי הקצה?", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "תתרגם את הטקסטים במשחק לספרדית", "lang": "he", "act": "new_request", "task": "other"}
+{"text": "איך הrouter מחליט איזה דף להציג", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "אפשר להוסיף מצב multiplayer או שזה קשה מדי עם הסטאפ הזה", "lang": "he", "act": "question", "task": "feature"}
+{"text": "פינות מעוגלות, בערך 12px", "lang": "he", "act": "clarification", "task": "ui_styling"}
+{"text": "תתקן את הטעויות כתיב בreadme", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "זה החמיר את זה", "lang": "he", "act": "correction", "task": "other"}
+{"text": "תוסיף leaderboard שנשמר בקובץ json", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "לפעמים הכדור עובר דרך המחבט במהירות גבוהה. תתקן", "lang": "he", "act": "new_request", "task": "bug_fix"}
+{"text": "מה מפתח senior היה אומר על הקוד הזה", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "abort", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "תעצור ותזרוק את כל השינויים שלא עשיתי להם commit", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "לא הscore עדיין לא נשמר, רק שינית את שם המשתנה", "lang": "he", "act": "correction", "task": "bug_fix"}
+{"text": "איזה database schema אני צריך לאפליקציית ספרייה? רק תתכנן קודם", "lang": "he", "act": "new_request", "task": "planning_design"}
+{"text": "פס החיים צריך להיות אדום כשהוא מתחת ל20%", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": "תזכור, הפרויקט שלי נקרא starhopper", "lang": "he", "act": "other", "task": "other"}
+{"text": "מה זה lifetimes בrust", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "זה לפרויקט בית ספר על מערכת השמש", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "תעבור על הpr לפני שאני עושה merge", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "אפשר לעשות inventory פשוט עם 10 slots", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke \"String.length()\" because \"s\" is null\n\tat Main.countChars(Main.java:14)\n\tat Main.main(Main.java:6)", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "1", "lang": "he", "act": "approval", "task": "other"}
+{"text": "את זה אף פעם לא כתבתי, הפרויקט לא משתמש בredis", "lang": "he", "act": "correction", "task": "docs_writing"}
+{"text": "תתכנן איך אנחנו בונים tower defense, אל תקודד עדיין", "lang": "he", "act": "new_request", "task": "planning_design"}
+{"text": "תסביר לי איך הgame loop בmain.py עובד", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "למה הtimer רץ יותר מהר בלפטופ שלי מאשר במחשב של החבר שלי", "lang": "he", "act": "question", "task": "bug_fix"}
+{"text": "תסתכל רק על הקבצים בsrc/api", "lang": "he", "act": "clarification", "task": "review"}
+{"text": "תשתמש בtabs ולא בspaces מעכשיו", "lang": "he", "act": "other", "task": "other"}
+{"text": "תכתוב מחדש את כל הפרויקט בtypescript, בלי שאלות, תמשיך עד שזה מתקמפל", "lang": "he", "act": "handoff", "task": "refactor"}
+{"text": "שינית את כל הlayout, רציתי רק לשנות את הפונט", "lang": "he", "act": "correction", "task": "ui_styling"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "איך הכי טוב לבנות פרויקט unity עם הרבה אויבים", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "לא, החנות צריכה להיפתח עם E ולא כשנכנסים אליה", "lang": "he", "act": "correction", "task": "feature"}
+{"text": "תעשה code review בבקשה, תהיה כן", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "תעצב את הembed עם sidebar ירוק ותמונה ממוזערת", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": "היי", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "פאוז, אני רוצה להסתכל על זה בעצמי קודם", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "תעשה mock לdiscord api כדי שנוכל לבדוק את הפקודות", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "מה זה recursion", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "חחח יפה", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "קח את האפשרות הראשונה אבל תשמור את הנתונים בjson", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "מה זה idempotent", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "אחי זה לא עובד", "lang": "he", "act": "correction", "task": "other"}
+{"text": "שניהם", "lang": "he", "act": "clarification", "task": "other"}
+{"text": "תחזיר לlayout הישן", "lang": "he", "act": "stop_undo", "task": "ui_styling"}
+{"text": "ביי, נתראה מחר", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "לא התכוונתי לזה, שוב", "lang": "he", "act": "correction", "task": "other"}
+{"text": "תמשיך", "lang": "he", "act": "approval", "task": "other"}
+{"text": "תעשה changelog מהcommits", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "זה רע שכל הקוד שלי בקובץ אחד של 2000 שורות?", "lang": "he", "act": "question", "task": "refactor"}
+{"text": "זה צריך לעבוד רק לאדמינים", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "תמשיך לבד עד שלאפליקציה יש את כל הפיצ'רים מהreadme", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "תוסיף test cases למספרים שליליים ואפס", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "פשוט תעשה הכל, אני הולך לישון", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "יש לנו 3 שבועות ואנחנו רק שניים", "lang": "he", "act": "clarification", "task": "planning_design"}
+{"text": "התוכנית גדולה מדי, יש לנו רק את סוף השבוע", "lang": "he", "act": "correction", "task": "planning_design"}
+{"text": "תוסיף integration tests שמרימים את השרת וקוראים ל/health", "lang": "he", "act": "new_request", "task": "tests"}
+{"text": "TypeError: unsupported operand type(s) for +: 'int' and 'str'", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "/clear", "lang": "he", "act": "other", "task": "other"}
+{"text": "תיצור git repo ותעשה push לgithub שלי", "lang": "he", "act": "new_request", "task": "setup_deploy"}
+{"text": "תכתוב לי סקריפט ששם לכל התמונות שלי שם לפי תאריך", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "שברת את המשחק", "lang": "he", "act": "correction", "task": "other"}
+{"text": "תסיים את הכל בלעדיי. תודה", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "מה זה API, אבל באמת", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "הheader, לא הfooter", "lang": "he", "act": "clarification", "task": "ui_styling"}
+{"text": "node 20 נראה לי", "lang": "he", "act": "clarification", "task": "setup_deploy"}
+{"text": "תתעד את כל הrepo, כל קובץ, ואל תשאל אותי כלום", "lang": "he", "act": "handoff", "task": "docs_writing"}
+{"text": "יאללה", "lang": "he", "act": "approval", "task": "other"}
+{"text": "אני צריך sqlite או postgres לבוט דיסקורד קטן?", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "עצור, אתה מוחק לי קבצים!!", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "תעשה שייראה כמו הscreenshot ששלחתי", "lang": "he", "act": "clarification", "task": "ui_styling"}
+{"text": "תשתמש בpostgres", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "תלמד אותי איך אלגוריתמי מיון עובדים, עם דוגמה קטנה", "lang": "he", "act": "new_request", "task": "learn_concept"}
+{"text": "מממ לא, תנסה משהו אחר", "lang": "he", "act": "correction", "task": "other"}
+{"text": "תסדר הכל לdeployment, ci, docker, hosting, כל מה שצריך, אני לא רוצה לשמוע כלום עד שזה באוויר", "lang": "he", "act": "handoff", "task": "setup_deploy"}
+{"text": "תוסיף קפיצה, רווח", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "למה הscore תמיד 0 אחרי ריסטארט", "lang": "he", "act": "question", "task": "bug_fix"}
+{"text": "תודה, עבד מושלם", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "unity או godot למשחק 2d, מה דעתך", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "עכשיו כתוב\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "he", "act": "correction", "task": "error_paste"}
+{"text": "למה הטסטים שלי עוברים מקומית אבל לא בgithub actions?", "lang": "he", "act": "question", "task": "tests"}
+{"text": "אתה יכול", "lang": "he", "act": "approval", "task": "other"}
+{"text": "git reset לcommit האחרון", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "יש memory leaks בrenderer?", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "כן לכולם", "lang": "he", "act": "approval", "task": "other"}
+{"text": "תהפוך את זה ל class אמיתי עם methods", "lang": "he", "act": "new_request", "task": "refactor"}
+{"text": "תשתמש בfixtures הקיימים בconftest.py", "lang": "he", "act": "clarification", "task": "tests"}
+{"text": "תיצור 20 שמות מצחיקים לאויבים", "lang": "he", "act": "new_request", "task": "other"}
+{"text": "אל תיגע יותר בmain.py, תחזיר אותו", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "אני הולך לאכול משהו, תכף חוזר", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "למה npm install לוקח נצח", "lang": "he", "act": "question", "task": "setup_deploy"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5\nלמה", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "זה קורה רק בlevel 2", "lang": "he", "act": "clarification", "task": "bug_fix"}
+{"text": "תעשה אנימציית fade in חלקה כשהדף נטען", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": ":)", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "נראה לי נכון, תמשיך", "lang": "he", "act": "approval", "task": "other"}
+{"text": "הנה הscreenshot של הבאג", "lang": "he", "act": "other", "task": "other"}
+{"text": "וגם זה צריך לעבוד offline", "lang": "he", "act": "clarification", "task": "feature"}
+{"text": "לא, החנות צריכה להיפתח כשלוחצים E ולא כשנכנסים אליה", "lang": "he", "act": "correction", "task": "feature"}
+{"text": "זו גרסת python לא נכונה, אנחנו משתמשים ב3.11", "lang": "he", "act": "correction", "task": "setup_deploy"}
+{"text": "תסכם מה כל קובץ בsrc עושה", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "לא. להפך", "lang": "he", "act": "correction", "task": "other"}
+{"text": "פאוז, תן לי להסתכל על זה קודם", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "למה יש lock במודול הcache?", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "תסיים את כל זה בלעדיי. תודה", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "אנחנו רוצים לעשות לזה hosting לבד, בלי cloud", "lang": "he", "act": "clarification", "task": "planning_design"}
+{"text": "Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')\n    at script.js:5", "lang": "he", "act": "new_request", "task": "error_paste"}
+{"text": "תעשה מסך הגדרות שאפשר לשנות בו את הווליום", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "אל תיגע יותר בmain.py, תחזיר אותו", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "מה זה mutex?", "lang": "he", "act": "question", "task": "learn_concept"}
+{"text": "המורה שלי רוצה גם class diagram", "lang": "he", "act": "other", "task": "other"}
+{"text": "אני צריך endpoint POST /api/notes ששומר הערה בdb", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "תחזיר את השינוי האחרון", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "ביטול", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "יאפ", "lang": "he", "act": "approval", "task": "other"}
+{"text": "אוקיי", "lang": "he", "act": "approval", "task": "other"}
+{"text": "תעשה את האתר responsive", "lang": "he", "act": "new_request", "task": "ui_styling"}
+{"text": "נשמע טוב, תמשיך", "lang": "he", "act": "approval", "task": "other"}
+{"text": "תבנה את כל האפליקציה, אל תשאל אותי כלום", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "????", "lang": "he", "act": "other", "task": "other"}
+{"text": "כן", "lang": "he", "act": "approval", "task": "other"}
+{"text": "אוקיי אני הולך לאכול צהריים, תכף חוזר", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "תסביר את מבנה הפרויקט בקובץ CONTRIBUTING.md", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "תבדוק רק את הbackend, תדלג על הfrontend", "lang": "he", "act": "clarification", "task": "tests"}
+{"text": "אני צריך sqlite או postgres לבוט דיסקורד קטן?", "lang": "he", "act": "question", "task": "planning_design"}
+{"text": "תראה לי איפה הhighscore נשמר", "lang": "he", "act": "new_request", "task": "understand_code"}
+{"text": "מה הregex הזה עושה בvalidate_email", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "תחזיר אחורה את כל מה שעשית עכשיו", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "תכתוב טקסט עזרה לflag של --verbose", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "תוסיף סעיף בreadme על איך להריץ את הבוט מקומית", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "תתקן את הoff by one בpagination", "lang": "he", "act": "new_request", "task": "bug_fix"}
+{"text": "זו דרך טובה לעשות את זה או שיש משהו יותר טוב?", "lang": "he", "act": "question", "task": "review"}
+{"text": "כן, תחיל את השינויים.", "lang": "he", "act": "approval", "task": "other"}
+{"text": "זה יותר מסובך מקודם, למה כל כך הרבה classes", "lang": "he", "act": "correction", "task": "refactor"}
+{"text": "אתה הכי טוב", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "הrepo פרטי, שם המשתמש שלי coolkid42", "lang": "he", "act": "clarification", "task": "setup_deploy"}
+{"text": "תשנה את שם התיקייה ל starhopper", "lang": "he", "act": "new_request", "task": "other"}
+{"text": "תסתכל על הdiff ותגיד לי אם משהו נראה חשוד", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "תיקנת את הlogin אבל עכשיו הsignup שבור", "lang": "he", "act": "correction", "task": "bug_fix"}
+{"text": "אימייל אימות אחרי ההרשמה", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "תממש את כל הפיצ'רים ברשימת הTODO בלי לבקש ממני אישור", "lang": "he", "act": "handoff", "task": "feature"}
+{"text": "מה ההבדל בין utils.js ל helpers.js אצלי", "lang": "he", "act": "question", "task": "understand_code"}
+{"text": "תעלה את הtest coverage ל90% לבד, תמשיך לעבוד עד שתגיע", "lang": "he", "act": "handoff", "task": "tests"}
+{"text": "תחזיר את הגרסה הקודמת של הקובץ", "lang": "he", "act": "stop_undo", "task": "other"}
+{"text": "asdfghjkl", "lang": "he", "act": "other", "task": "other"}
+{"text": "תכתוב את התיאור של העמוד שלי באitch.io למשחק", "lang": "he", "act": "new_request", "task": "docs_writing"}
+{"text": "תבדוק אם יש בcss שלי דברים שאני לא צריך", "lang": "he", "act": "new_request", "task": "review"}
+{"text": "תוסיף בוס בסוף של level 3", "lang": "he", "act": "new_request", "task": "feature"}
+{"text": "ממש כיף פה", "lang": "he", "act": "chit_chat", "task": "other"}
+{"text": "תכתוב את הוראות ההתקנה בreadme", "lang": "he", "act": "new_request", "task": "docs_writing"}

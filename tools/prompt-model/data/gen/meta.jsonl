@@ -1,0 +1,300 @@
+{"text": "don't commit yet, let me check the diff first", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "yes but skip the tests for now", "lang": "en", "act": "approval", "task": "tests"}
+{"text": "ok go ahead", "lang": "en", "act": "approval", "task": "other"}
+{"text": "how long would this take roughly?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "is sqlite good enough or should we go postgres", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "keep the binary under 20 MB please", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "ask me before deleting any files", "lang": "en", "act": "clarification", "task": "other"}
+{"text": "use haiku for the sub agents, opus is overkill", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "what would you recommend for the auth, oauth or magic links", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "undo that last commit, i dont want it in main", "lang": "en", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "commit and push when the tests pass", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "open a pr against main with a short description", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "stop, that deleted my config file. put it back", "lang": "en", "act": "stop_undo", "task": "other"}
+{"text": "can you summarize what you changed so far", "lang": "en", "act": "question", "task": "other"}
+{"text": "thanks, that was really helpful", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "looks good to me", "lang": "en", "act": "approval", "task": "other"}
+{"text": "the login still breaks on safari, that change didnt fix it", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "is this approach secure enough for storing tokens?", "lang": "en", "act": "question", "task": "review"}
+{"text": "review the migration before we run it", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "what's the difference between a mutex and a rwlock?", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "build the whole app, dont ask me anything", "lang": "en", "act": "handoff", "task": "feature"}
+{"text": "run cargo clippy and fix the warnings, nothing else", "lang": "en", "act": "new_request", "task": "refactor"}
+{"text": "keep the dependencies to a minimum, no new crates without asking", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "should we use docker for the deploy or just a systemd service?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "yes, the second option", "lang": "en", "act": "approval", "task": "planning_design"}
+{"text": "ok but dont touch the readme", "lang": "en", "act": "clarification", "task": "docs_writing"}
+{"text": "compare react and svelte for a small dashboard, which one is less code", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "how much would hosting this on hetzner cost per month", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "cancel the build, its taking forever", "lang": "en", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "ship it", "lang": "en", "act": "approval", "task": "setup_deploy"}
+{"text": "the cron job should only run at night, not every minute", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "no, i said keep the old api, you removed it", "lang": "en", "act": "correction", "task": "planning_design"}
+{"text": "go on", "lang": "en", "act": "approval", "task": "other"}
+{"text": "is it worth adding redis for this or overkill for 50 users", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "make the dark mode the default this time, thats what i wanted", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "nah dont do that, just leave it as it is", "lang": "en", "act": "stop_undo", "task": "other"}
+{"text": "do you think the folder structure is ok?", "lang": "en", "act": "question", "task": "review"}
+{"text": "please keep every commit small and separate by topic", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "we need pagination eventually, not now", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "what's the estimate for the websocket part, a day or a week", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "rebase on main before you push", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "the timeout should be 30s not 3s", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "hmm, is there a way to make the server faster without rewriting it?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "you can go a bit over budget if it saves us a dependency", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "wait, undo the migration change, the column name is wrong", "lang": "en", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "yes, skip the docs for now, just the code", "lang": "en", "act": "approval", "task": "docs_writing"}
+{"text": "write a quick script to check the database is reachable", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "how many agents can run in parallel before the laptop gets slow", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "good. continue with the next step", "lang": "en", "act": "approval", "task": "other"}
+{"text": "what did you do in the last 10 minutes?", "lang": "en", "act": "question", "task": "other"}
+{"text": "have we got any open tasks left before the demo?", "lang": "en", "act": "question", "task": "other"}
+{"text": "don't use any ORM, plain sql is fine", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "the logo should stay as is, don't redesign it", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "this is a very simple app, keep the design simple too", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "are we on track for friday or should I cut the export feature", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "can you run the tests and tell me just the failing ones", "lang": "en", "act": "new_request", "task": "tests"}
+{"text": "is the code ready for production or still rough", "lang": "en", "act": "question", "task": "review"}
+{"text": "let's wrap up for today, write a short status note", "lang": "en", "act": "new_request", "task": "other"}
+{"text": "ok this is good enough, lets stop polishing", "lang": "en", "act": "approval", "task": "other"}
+{"text": "what is the best way to hash passwords in 2026", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "don't push to main, only to a branch", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "can I use the free tier of render for this or will it sleep?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "one more thing: make sure errors get logged to a file", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "that's not what I asked for, I wanted the summary not the code", "lang": "en", "act": "correction", "task": "other"}
+{"text": "instead of a popup use a small banner at the top", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "please double check the license headers are in every file", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "ok go with postgres then", "lang": "en", "act": "approval", "task": "planning_design"}
+{"text": "is it fine to keep the api key in the config file for now?", "lang": "en", "act": "question", "task": "review"}
+{"text": "i'm going to bed, keep working on the tests and commit when they pass", "lang": "en", "act": "handoff", "task": "tests"}
+{"text": "pause everything until I answer the question about the database", "lang": "en", "act": "stop_undo", "task": "planning_design"}
+{"text": "the agent should ask before running shell commands, always", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "don't spend more than 2 hours on this, then tell me where you are", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "i'd rather use a static site than a server, does that make sense here?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "thanks a lot, you're great", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "who wrote this function, can you explain what it does", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "reset the branch to the commit before the refactor", "lang": "en", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "turn off the analytics thing, we don't want it", "lang": "en", "act": "clarification", "task": "other"}
+{"text": "what's the status of the deploy?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "add a github action that builds on every push", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "the build fails with a linker error on windows, fix it", "lang": "en", "act": "new_request", "task": "bug_fix"}
+{"text": "not a fan of that library, use something smaller", "lang": "en", "act": "correction", "task": "planning_design"}
+{"text": "cool, do the same for the other two endpoints", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "how would you split this into microservices, is it worth it?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "make a list of the risks before we start the migration", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "only change the header, leave everything else the same", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "proceed but keep the old table around for a week", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "no more new features until the release is out", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "is the test coverage good enough to refactor safely?", "lang": "en", "act": "question", "task": "review"}
+{"text": "my laptop has 8 gb of ram, does that matter for compiling?", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "please don't add emojis to the output", "lang": "en", "act": "clarification", "task": "docs_writing"}
+{"text": "so what should I do next?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "revert the color change, it's unreadable on white", "lang": "en", "act": "stop_undo", "task": "ui_styling"}
+{"text": "great, merge it", "lang": "en", "act": "approval", "task": "setup_deploy"}
+{"text": "when you're done, tell me in one sentence what changed", "lang": "en", "act": "clarification", "task": "other"}
+{"text": "the sync should only happen when the wifi is on", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "what's a good name for this project, keep it short", "lang": "en", "act": "question", "task": "other"}
+{"text": "can you check whether the readme still matches the code", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "the mouse hook is too heavy, what are lighter options", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "use the cheaper model for the summaries, quality doesn't matter there", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "you deleted the test I wrote yesterday, bring it back", "lang": "en", "act": "correction", "task": "tests"}
+{"text": "nope, the approach is wrong, start over with a state machine", "lang": "en", "act": "correction", "task": "planning_design"}
+{"text": "is the fetch in a loop going to hammer the server?", "lang": "en", "act": "question", "task": "review"}
+{"text": "keep the response under 200 lines of code please", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "we agreed on sqlite earlier, stick to that", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "I'll deploy myself, just prepare the release notes", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "yeah that works, carry on", "lang": "en", "act": "approval", "task": "other"}
+{"text": "what happens if the user loses connection halfway through?", "lang": "en", "act": "question", "task": "planning_design"}
+{"text": "delete the temp folder before the commit", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "why is the cpu at 100% when the app is idle", "lang": "en", "act": "question", "task": "understand_code"}
+{"text": "how do I install the rust toolchain on a school laptop without admin rights", "lang": "en", "act": "question", "task": "setup_deploy"}
+{"text": "set up a git hook that runs the formatter before each commit", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "fine, approve the plan, but ping me before the schema change", "lang": "en", "act": "approval", "task": "planning_design"}
+{"text": "please keep the old flow behind a feature flag so we can switch back", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "ok thanks, i'll test it tomorrow", "lang": "en", "act": "chit_chat", "task": "other"}
+{"text": "review the security of the upload endpoint, the file size limits especially", "lang": "en", "act": "new_request", "task": "review"}
+{"text": "the dashboard should update every 10 seconds, not live", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "don't refactor the parser, only add the new field", "lang": "en", "act": "clarification", "task": "refactor"}
+{"text": "how do I learn async rust in a week", "lang": "en", "act": "question", "task": "learn_concept"}
+{"text": "write the commit message yourself, I'm too lazy", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "the color of the header is wrong in dark mode, fix it", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "Noch nicht committen, ich schau mir erst den Diff an.", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "Ja, aber die Tests bitte noch überspringen.", "lang": "de", "act": "approval", "task": "tests"}
+{"text": "Wie lange würde das ungefähr dauern?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Das Binary soll unter 20 MB bleiben.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Frag mich bitte, bevor du irgendwelche Dateien löschst.", "lang": "de", "act": "clarification", "task": "other"}
+{"text": "Nimm für die Subagents Haiku, Opus ist dafür übertrieben.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Was würdest du für die Anmeldung empfehlen, OAuth oder Magic Links?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Mach den letzten Commit rückgängig, der gehört nicht auf main.", "lang": "de", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "Commit und push, sobald die Tests durch sind.", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "Öffne einen PR gegen main mit einer kurzen Beschreibung.", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "Stopp, das hat meine Config gelöscht! Mach das rückgängig.", "lang": "de", "act": "stop_undo", "task": "other"}
+{"text": "Kannst du kurz zusammenfassen, was du bisher geändert hast?", "lang": "de", "act": "question", "task": "other"}
+{"text": "Danke, das hat mir echt geholfen.", "lang": "de", "act": "chit_chat", "task": "other"}
+{"text": "Sieht gut aus, mach weiter.", "lang": "de", "act": "approval", "task": "other"}
+{"text": "Der Login geht auf Safari immer noch nicht, die Änderung hat nichts gebracht.", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "Ist das sicher genug, wenn wir die Tokens so speichern?", "lang": "de", "act": "question", "task": "review"}
+{"text": "Schau dir die Migration an, bevor wir sie laufen lassen.", "lang": "de", "act": "new_request", "task": "review"}
+{"text": "Was ist der Unterschied zwischen einem Mutex und einem RwLock?", "lang": "de", "act": "question", "task": "learn_concept"}
+{"text": "Bau die ganze App, ich will dazu nichts mehr hören.", "lang": "de", "act": "handoff", "task": "feature"}
+{"text": "Führ cargo clippy aus und fix nur die Warnungen, sonst nichts.", "lang": "de", "act": "new_request", "task": "refactor"}
+{"text": "Bitte keine neuen Crates ohne vorher zu fragen.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Sollen wir für das Deployment Docker nehmen oder einen systemd-Service?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "Ja, die zweite Variante.", "lang": "de", "act": "approval", "task": "planning_design"}
+{"text": "Ok, aber fass die README nicht an.", "lang": "de", "act": "clarification", "task": "docs_writing"}
+{"text": "Vergleich mal React und Svelte für ein kleines Dashboard, was ist weniger Code?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Was kostet das ungefähr im Monat bei Hetzner?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "Brich den Build ab, der dauert ewig.", "lang": "de", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "Ship it!", "lang": "de", "act": "approval", "task": "setup_deploy"}
+{"text": "Der Cronjob soll nur nachts laufen, nicht jede Minute.", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "Nein, ich hatte gesagt die alte API bleibt. Du hast sie entfernt.", "lang": "de", "act": "correction", "task": "planning_design"}
+{"text": "Mach weiter.", "lang": "de", "act": "approval", "task": "other"}
+{"text": "Lohnt sich Redis hier oder ist das bei 50 Nutzern übertrieben?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Der Dark Mode soll diesmal der Standard sein, das wollte ich ja.", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "Lass das bloß, so wie es ist, passt schon.", "lang": "de", "act": "stop_undo", "task": "other"}
+{"text": "Findest du die Ordnerstruktur okay?", "lang": "de", "act": "question", "task": "review"}
+{"text": "Halte jeden Commit klein und trenne nach Thema.", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "Paginierung brauchen wir irgendwann, aber noch nicht jetzt.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Wie groß ist der Aufwand für den WebSocket-Teil, ein Tag oder eine Woche?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Rebase auf main, bevor du pushst.", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "Der Timeout sollte 30 Sekunden sein, nicht 3.", "lang": "de", "act": "clarification", "task": "bug_fix"}
+{"text": "Geht der Server irgendwie schneller, ohne alles neu zu schreiben?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Du darfst ruhig etwas über das Budget gehen, wenn wir damit eine Abhängigkeit sparen.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Warte, mach die Migration rückgängig, der Spaltenname stimmt nicht.", "lang": "de", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "Ja, die Doku lassen wir erstmal weg, nur den Code.", "lang": "de", "act": "approval", "task": "docs_writing"}
+{"text": "Schreib kurz ein Skript, das prüft ob die Datenbank erreichbar ist.", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "Gut. Weiter mit dem nächsten Schritt.", "lang": "de", "act": "approval", "task": "other"}
+{"text": "Was hast du in den letzten zehn Minuten gemacht?", "lang": "de", "act": "question", "task": "other"}
+{"text": "Kein ORM, normales SQL reicht.", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "Das Logo bleibt so, bitte nicht neu gestalten.", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "Schaffen wir Freitag, oder soll ich die Export-Funktion streichen?", "lang": "de", "act": "question", "task": "planning_design"}
+{"text": "Lass die Tests laufen und sag mir nur, welche fehlschlagen.", "lang": "de", "act": "new_request", "task": "tests"}
+{"text": "Ist der Code schon produktionsreif oder noch grob?", "lang": "de", "act": "question", "task": "review"}
+{"text": "Ich hör für heute auf, schreib bitte eine kurze Statusnotiz.", "lang": "de", "act": "new_request", "task": "other"}
+{"text": "Passt, das reicht. Nicht weiter polieren.", "lang": "de", "act": "approval", "task": "other"}
+{"text": "Wie hashe ich Passwörter heute am besten?", "lang": "de", "act": "question", "task": "learn_concept"}
+{"text": "Nicht auf main pushen, nur auf einen Branch.", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "Kann ich den kostenlosen Tarif von Render nehmen, oder schläft der Dienst ein?", "lang": "de", "act": "question", "task": "setup_deploy"}
+{"text": "Die Fehler sollen zusätzlich in eine Datei geloggt werden.", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "Das ist nicht, was ich wollte. Ich wollte die Zusammenfassung, nicht den Code.", "lang": "de", "act": "correction", "task": "other"}
+{"text": "Statt Popup bitte einen kleinen Banner oben.", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "on commit pas encore, je veux d'abord voir le diff", "lang": "fr", "act": "clarification", "task": "setup_deploy"}
+{"text": "oui mais saute les tests pour l'instant", "lang": "fr", "act": "approval", "task": "tests"}
+{"text": "c'est combien de temps à peu près pour finir ça ?", "lang": "fr", "act": "question", "task": "planning_design"}
+{"text": "garde le projet sous 20 Mo svp", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "demande-moi avant de supprimer un fichier, c'est clair ?", "lang": "fr", "act": "clarification", "task": "other"}
+{"text": "est-ce que ça vaut le coup d'ajouter une base de données ou un fichier json suffit ?", "lang": "fr", "act": "question", "task": "planning_design"}
+{"text": "annule le dernier changement, il casse tout", "lang": "fr", "act": "stop_undo", "task": "other"}
+{"text": "ok vas-y", "lang": "fr", "act": "approval", "task": "other"}
+{"text": "non c'est pas ça, je voulais la version sombre", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "tu peux me dire ce que fait cette fonction ?", "lang": "fr", "act": "question", "task": "understand_code"}
+{"text": "¿Cuánto tardaría esto más o menos?", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "no hagas commit todavía, primero quiero ver el diff", "lang": "es", "act": "clarification", "task": "setup_deploy"}
+{"text": "sí pero sin los tests por ahora", "lang": "es", "act": "approval", "task": "tests"}
+{"text": "que el ejecutable no pase de 20 MB", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "pregúntame antes de borrar cualquier archivo", "lang": "es", "act": "clarification", "task": "other"}
+{"text": "¿te parece mejor usar Postgres o con SQLite basta?", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "deshaz el último commit, no quiero eso en main", "lang": "es", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "genial, sigue", "lang": "es", "act": "approval", "task": "other"}
+{"text": "eso no es lo que pedí, quería el resumen y no el código", "lang": "es", "act": "correction", "task": "other"}
+{"text": "¿qué recomiendas para el login, OAuth o enlaces mágicos?", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "não faz commit ainda, quero ver o diff primeiro", "lang": "pt", "act": "clarification", "task": "setup_deploy"}
+{"text": "ok, pode seguir", "lang": "pt", "act": "approval", "task": "other"}
+{"text": "quanto tempo levaria isso mais ou menos?", "lang": "pt", "act": "question", "task": "planning_design"}
+{"text": "não adiciona nenhuma biblioteca nova sem me avisar antes", "lang": "pt", "act": "clarification", "task": "planning_design"}
+{"text": "para o deploy, o que você recomenda, docker ou só systemd?", "lang": "pt", "act": "question", "task": "setup_deploy"}
+{"text": "reverte isso, o botão sumiu da tela", "lang": "pt", "act": "correction", "task": "ui_styling"}
+{"text": "faz push só quando os testes passarem", "lang": "pt", "act": "new_request", "task": "setup_deploy"}
+{"text": "valeu, ajudou muito", "lang": "pt", "act": "chit_chat", "task": "other"}
+{"text": "non fare ancora commit, prima guardo il diff", "lang": "it", "act": "clarification", "task": "setup_deploy"}
+{"text": "sì ma salta i test per ora", "lang": "it", "act": "approval", "task": "tests"}
+{"text": "quanto ci vorrà più o meno?", "lang": "it", "act": "question", "task": "planning_design"}
+{"text": "non toccare il README, grazie", "lang": "it", "act": "clarification", "task": "docs_writing"}
+{"text": "ferma tutto, hai cancellato il file di config", "lang": "it", "act": "stop_undo", "task": "other"}
+{"text": "secondo te conviene usare Redis o è esagerato per 50 utenti?", "lang": "it", "act": "question", "task": "planning_design"}
+{"text": "fai una PR verso main con una descrizione breve", "lang": "it", "act": "new_request", "task": "setup_deploy"}
+{"text": "perfetto, va bene così", "lang": "it", "act": "approval", "task": "other"}
+{"text": "nog niet committen, ik wil eerst de diff zien", "lang": "nl", "act": "clarification", "task": "setup_deploy"}
+{"text": "ja maar sla de tests voorlopig over", "lang": "nl", "act": "approval", "task": "tests"}
+{"text": "hoe lang duurt dit ongeveer?", "lang": "nl", "act": "question", "task": "planning_design"}
+{"text": "vraag me eerst voordat je bestanden verwijdert", "lang": "nl", "act": "clarification", "task": "other"}
+{"text": "zet de donkere modus standaard aan, dat wilde ik", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "is het slim om hier een message queue te gebruiken of is dat overkill?", "lang": "nl", "act": "question", "task": "planning_design"}
+{"text": "draai de migratie terug, de kolomnaam klopt niet", "lang": "nl", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "top, ga door", "lang": "nl", "act": "approval", "task": "other"}
+{"text": "пока не коммить, сначала я посмотрю diff", "lang": "ru", "act": "clarification", "task": "setup_deploy"}
+{"text": "да, но тесты пока пропусти", "lang": "ru", "act": "approval", "task": "tests"}
+{"text": "сколько это примерно займёт времени?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "бинарник должен быть меньше 20 МБ", "lang": "ru", "act": "clarification", "task": "planning_design"}
+{"text": "спроси меня, прежде чем удалять какие-то файлы", "lang": "ru", "act": "clarification", "task": "other"}
+{"text": "что лучше для авторизации, OAuth или magic links?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "откати последний коммит, он не должен быть в main", "lang": "ru", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "ок, продолжай", "lang": "ru", "act": "approval", "task": "other"}
+{"text": "нет, я же говорил оставить старое API, а ты его убрал", "lang": "ru", "act": "correction", "task": "planning_design"}
+{"text": "стоит ли добавлять Redis для 50 пользователей или это перебор?", "lang": "ru", "act": "question", "task": "planning_design"}
+{"text": "поки не коміть, спершу я хочу глянути diff", "lang": "uk", "act": "clarification", "task": "setup_deploy"}
+{"text": "так, але тести поки пропусти", "lang": "uk", "act": "approval", "task": "tests"}
+{"text": "скільки це приблизно займе часу?", "lang": "uk", "act": "question", "task": "planning_design"}
+{"text": "не додавай нових бібліотек без того, щоб спитати мене", "lang": "uk", "act": "clarification", "task": "planning_design"}
+{"text": "зупини, ти видалив мій конфіг", "lang": "uk", "act": "stop_undo", "task": "other"}
+{"text": "що ти порадиш для деплою, Docker чи просто systemd?", "lang": "uk", "act": "question", "task": "setup_deploy"}
+{"text": "зроби пуш тільки коли тести пройдуть", "lang": "uk", "act": "new_request", "task": "setup_deploy"}
+{"text": "дякую, це дуже допомогло", "lang": "uk", "act": "chit_chat", "task": "other"}
+{"text": "先别提交，我想先看一下 diff", "lang": "zh", "act": "clarification", "task": "setup_deploy"}
+{"text": "可以，但是先跳过测试", "lang": "zh", "act": "approval", "task": "tests"}
+{"text": "大概要多久能做完？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "二进制文件请控制在 20 MB 以内", "lang": "zh", "act": "clarification", "task": "planning_design"}
+{"text": "删除任何文件之前先问我", "lang": "zh", "act": "clarification", "task": "other"}
+{"text": "这里用 SQLite 够不够，还是要上 Postgres？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "把上一个提交撤销掉，我不想让它进 main", "lang": "zh", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "好的，继续吧", "lang": "zh", "act": "approval", "task": "other"}
+{"text": "不对，我要的是摘要，不是代码", "lang": "zh", "act": "correction", "task": "other"}
+{"text": "你觉得登录用 OAuth 还是邮件链接比较好？", "lang": "zh", "act": "question", "task": "planning_design"}
+{"text": "아직 커밋하지 마, 먼저 diff 좀 볼게", "lang": "ko", "act": "clarification", "task": "setup_deploy"}
+{"text": "응, 근데 테스트는 일단 빼고 해", "lang": "ko", "act": "approval", "task": "tests"}
+{"text": "이거 대략 얼마나 걸릴까?", "lang": "ko", "act": "question", "task": "planning_design"}
+{"text": "파일 삭제하기 전에는 꼭 물어봐", "lang": "ko", "act": "clarification", "task": "other"}
+{"text": "방금 바꾼 거 되돌려, 버튼이 안 보여", "lang": "ko", "act": "stop_undo", "task": "ui_styling"}
+{"text": "배포는 Docker로 하는 게 나을까, 아니면 systemd가 낫나?", "lang": "ko", "act": "question", "task": "setup_deploy"}
+{"text": "테스트 통과하면 커밋하고 푸시해", "lang": "ko", "act": "new_request", "task": "setup_deploy"}
+{"text": "고마워, 진짜 도움 됐어", "lang": "ko", "act": "chit_chat", "task": "other"}
+{"text": "अभी commit मत करो, पहले मैं diff देखना चाहता हूँ", "lang": "hi", "act": "clarification", "task": "setup_deploy"}
+{"text": "हाँ, लेकिन अभी tests छोड़ दो", "lang": "hi", "act": "approval", "task": "tests"}
+{"text": "इसमें लगभग कितना समय लगेगा?", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "कोई नई library मुझसे पूछे बिना मत जोड़ना", "lang": "hi", "act": "clarification", "task": "planning_design"}
+{"text": "वो आखिरी change वापस लो, इससे पूरा login टूट गया", "lang": "hi", "act": "stop_undo", "task": "bug_fix"}
+{"text": "Postgres लूँ या SQLite काफी है?", "lang": "hi", "act": "question", "task": "planning_design"}
+{"text": "ठीक है, आगे बढ़ो", "lang": "hi", "act": "approval", "task": "other"}
+{"text": "बहुत बढ़िया, धन्यवाद", "lang": "hi", "act": "chit_chat", "task": "other"}
+{"text": "jangan commit dulu, aku mau lihat diff-nya dulu", "lang": "id", "act": "clarification", "task": "setup_deploy"}
+{"text": "oke tapi skip test-nya dulu", "lang": "id", "act": "approval", "task": "tests"}
+{"text": "kira-kira butuh berapa lama ya?", "lang": "id", "act": "question", "task": "planning_design"}
+{"text": "jangan hapus file apa pun tanpa nanya aku dulu", "lang": "id", "act": "clarification", "task": "other"}
+{"text": "kamu rekomendasiin hosting apa yang murah buat ini?", "lang": "id", "act": "question", "task": "setup_deploy"}
+{"text": "batalin perubahan terakhir, tampilannya malah rusak", "lang": "id", "act": "stop_undo", "task": "ui_styling"}
+{"text": "lanjut aja, udah bagus", "lang": "id", "act": "approval", "task": "other"}
+{"text": "itu bukan yang aku minta, aku mau ringkasan bukan kodenya", "lang": "id", "act": "correction", "task": "other"}
+{"text": "đừng commit vội, cho mình xem diff trước đã", "lang": "vi", "act": "clarification", "task": "setup_deploy"}
+{"text": "ok nhưng bỏ qua test cho bây giờ", "lang": "vi", "act": "approval", "task": "tests"}
+{"text": "làm cái này mất khoảng bao lâu vậy?", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "giữ file binary dưới 20 MB nhé", "lang": "vi", "act": "clarification", "task": "planning_design"}
+{"text": "hoàn tác commit cuối đi, mình không muốn nó nằm trên main", "lang": "vi", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "theo bạn nên dùng Redis hay không cần thiết cho 50 người dùng?", "lang": "vi", "act": "question", "task": "planning_design"}
+{"text": "đừng sửa README, chỉ sửa code thôi", "lang": "vi", "act": "clarification", "task": "docs_writing"}
+{"text": "cảm ơn, giúp được nhiều lắm", "lang": "vi", "act": "chit_chat", "task": "other"}
+{"text": "committa inte än, jag vill först titta på diffen", "lang": "sv", "act": "clarification", "task": "setup_deploy"}
+{"text": "ja men hoppa över testerna för nu", "lang": "sv", "act": "approval", "task": "tests"}
+{"text": "hur lång tid skulle det ta ungefär?", "lang": "sv", "act": "question", "task": "planning_design"}
+{"text": "fråga mig innan du tar bort några filer", "lang": "sv", "act": "clarification", "task": "other"}
+{"text": "ångra den senaste ändringen, den bröt inloggningen", "lang": "sv", "act": "stop_undo", "task": "bug_fix"}
+{"text": "vad rekommenderar du för hosting, en VPS eller något gratis?", "lang": "sv", "act": "question", "task": "setup_deploy"}
+{"text": "pusha bara till en branch, inte till main", "lang": "sv", "act": "clarification", "task": "setup_deploy"}
+{"text": "bra, kör på", "lang": "sv", "act": "approval", "task": "other"}
+{"text": "zatím necommituj, nejdřív chci vidět diff", "lang": "cs", "act": "clarification", "task": "setup_deploy"}
+{"text": "jo, ale testy zatím přeskoč", "lang": "cs", "act": "approval", "task": "tests"}
+{"text": "jak dlouho by to asi trvalo?", "lang": "cs", "act": "question", "task": "planning_design"}
+{"text": "nepřidávej žádné nové knihovny bez toho, abys se zeptal", "lang": "cs", "act": "clarification", "task": "planning_design"}
+{"text": "vrať to zpátky, rozbilo to přihlašování", "lang": "cs", "act": "stop_undo", "task": "bug_fix"}
+{"text": "co bys doporučil na hosting, Docker nebo jen systemd služba?", "lang": "cs", "act": "question", "task": "setup_deploy"}
+{"text": "díky, to je fakt pomohlo", "lang": "cs", "act": "chit_chat", "task": "other"}
+{"text": "ne, tohle jsem nechtěl, chtěl jsem jen shrnutí", "lang": "cs", "act": "correction", "task": "other"}

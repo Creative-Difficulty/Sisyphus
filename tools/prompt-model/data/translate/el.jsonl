@@ -1,0 +1,250 @@
+{"text": "τέλειο, συνέχισε", "lang": "el", "act": "approval", "task": "other"}
+{"text": "οκ τώρα κάνε το κουμπί ροζ", "lang": "el", "act": "approval", "task": "ui_styling"}
+{"text": "ναι προχώρα και γράψε τα τεστ", "lang": "el", "act": "approval", "task": "tests"}
+{"text": "ναι βάλτο", "lang": "el", "act": "approval", "task": "setup_deploy"}
+{"text": "φαίνεται καλό, τώρα πρόσθεσε το highscore", "lang": "el", "act": "approval", "task": "feature"}
+{"text": "ποια είναι η αγαπημένη σου γλώσσα προγραμματισμού;", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "γύρνα πίσω την τελευταία αλλαγή", "lang": "el", "act": "stop_undo", "task": "other"}
+{"text": "γύρνα πίσω την αλλαγή στο χρώμα, πριν ήταν καλύτερα", "lang": "el", "act": "stop_undo", "task": "ui_styling"}
+{"text": "ξεκάνε το rename των μεταβλητών, τώρα δεν ταιριάζει τίποτα", "lang": "el", "act": "stop_undo", "task": "refactor"}
+{"text": "ξεκάνε τις αλλαγές στο docker", "lang": "el", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "βγάλε πάλι το σύστημα inventory, είναι υπερβολικό", "lang": "el", "act": "stop_undo", "task": "feature"}
+{"text": "σβήσε πάλι τα τεστ που μόλις έφτιαξες", "lang": "el", "act": "stop_undo", "task": "tests"}
+{"text": "το fix το χειροτέρεψε, γύρνα το πίσω", "lang": "el", "act": "stop_undo", "task": "bug_fix"}
+{"text": "αναίρεσε την αλλαγή στο readme", "lang": "el", "act": "stop_undo", "task": "docs_writing"}
+{"text": "φτιάξε ολόκληρη την android εφαρμογή, δούλευε όλη νύχτα", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "βρες τα όλα μόνος σου, σχεδίασε και φτιάξε το όλο πράγμα, μη με ενοχλείς", "lang": "el", "act": "handoff", "task": "planning_design"}
+{"text": "γράψε τεστ για ολόκληρο το codebase, όλο, και φτιάξε ό,τι αποτύχει, μη σταματήσεις μέχρι να γίνουν όλα πράσινα", "lang": "el", "act": "handoff", "task": "tests"}
+{"text": "ξαναγράψε όλο το project σε typescript, χωρίς ερωτήσεις, συνέχισε μέχρι να κάνει compile", "lang": "el", "act": "handoff", "task": "refactor"}
+{"text": "στήσε τα πάντα για deployment, ci, docker, hosting, ό,τι χρειάζεται, δεν θέλω να ακούσω τίποτα μέχρι να είναι live", "lang": "el", "act": "handoff", "task": "setup_deploy"}
+{"text": "κάνε documentation σε όλο το repo, κάθε αρχείο, και μη με ρωτήσεις τίποτα", "lang": "el", "act": "handoff", "task": "docs_writing"}
+{"text": "ξανασχεδίασε ολόκληρο το frontend, όλες τις σελίδες, να φαίνεται επαγγελματικό. μη ζητήσεις feedback μέχρι να τελειώσεις", "lang": "el", "act": "handoff", "task": "ui_styling"}
+{"text": "βρες και φτιάξε όλα τα bugs του project μόνος σου, δεν με νοιάζει πόση ώρα θα πάρει", "lang": "el", "act": "handoff", "task": "bug_fix"}
+{"text": "πέρνα όλο το repo και φτιάξε ό,τι νομίζεις ότι είναι λάθος, δε χρειάζεται να ρωτάς", "lang": "el", "act": "handoff", "task": "review"}
+{"text": "τις επόμενες ώρες κάνε ό,τι νομίζεις καλύτερο για το project", "lang": "el", "act": "handoff", "task": "other"}
+{"text": "κληρονόμησα αυτόν τον κώδικα από τον αδερφό μου και δεν έχω ιδέα τι κάνει το bot.on('ready')", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "τι είναι τα design patterns; το observer είναι χρήσιμο για παιχνίδια;", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "είναι καλύτερα να αποθηκεύω τα highscores σε αρχείο ή σε βάση δεδομένων", "lang": "el", "act": "question", "task": "planning_design"}
+{"text": "πώς το κάνω deploy στο vercel", "lang": "el", "act": "question", "task": "setup_deploy"}
+{"text": "πώς γίνεται ο timer να τρέχει πιο γρήγορα στο λάπτοπ μου από ό,τι στον υπολογιστή του φίλου μου", "lang": "el", "act": "question", "task": "bug_fix"}
+{"text": "γιατί το navbar μου πέφτει πάνω στο περιεχόμενο", "lang": "el", "act": "question", "task": "ui_styling"}
+{"text": "γιατί τα τεστ μου περνάνε τοπικά αλλά όχι στο github actions?", "lang": "el", "act": "question", "task": "tests"}
+{"text": "είναι καλός τρόπος αυτός ή υπάρχει κάτι καλύτερο;", "lang": "el", "act": "question", "task": "review"}
+{"text": "τι πρέπει να έχει ένα καλό readme", "lang": "el", "act": "question", "task": "docs_writing"}
+{"text": "να είναι struct ή class αυτό", "lang": "el", "act": "question", "task": "refactor"}
+{"text": "μπορείς να βάλεις multiplayer mode ή είναι πολύ δύσκολο για αυτό το setup", "lang": "el", "act": "question", "task": "feature"}
+{"text": "πόσο κάνει περίπου ένας server στη hetzner", "lang": "el", "act": "question", "task": "other"}
+{"text": "απάντα πάντα σύντομα please", "lang": "el", "act": "other", "task": "other"}
+{"text": "γράψε μου ένα script που μετονομάζει όλες τις φωτογραφίες μου με βάση την ημερομηνία", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "τα timestamps δείχνουν λάθος ζώνη ώρας, πρέπει να είναι cet", "lang": "el", "act": "new_request", "task": "bug_fix"}
+{"text": "γύρνα τα callbacks σε async/await", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "να μοιάζει περισσότερο με discord, ίδια χρώματα", "lang": "el", "act": "new_request", "task": "ui_styling"}
+{"text": "τρέξε τα τεστ", "lang": "el", "act": "new_request", "task": "tests"}
+{"text": "κάνε το deploy στο railway", "lang": "el", "act": "new_request", "task": "setup_deploy"}
+{"text": "γράψε την περιγραφή για τη σελίδα του παιχνιδιού μου στο itch.io", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "βοήθησέ με να σκεφτώ πώς να αποθηκεύονται τα levels, json ή κώδικας", "lang": "el", "act": "new_request", "task": "planning_design"}
+{"text": "κοίτα το diff και πες μου αν φαίνεται κάτι περίεργο πουθενά", "lang": "el", "act": "new_request", "task": "review"}
+{"text": "κάνε λίστα με όλα τα TODO του project", "lang": "el", "act": "new_request", "task": "understand_code"}
+{"text": "μάθε μου πώς δουλεύουν οι αλγόριθμοι ταξινόμησης, με ένα μικρό παράδειγμα", "lang": "el", "act": "new_request", "task": "learn_concept"}
+{"text": "μετονόμασε τον φάκελο σε starhopper", "lang": "el", "act": "new_request", "task": "other"}
+{"text": "όχι, είναι ακόμα χαλασμένο", "lang": "el", "act": "correction", "task": "other"}
+{"text": "κρασάρει ακόμα όταν πατάω start", "lang": "el", "act": "correction", "task": "bug_fix"}
+{"text": "άλλαξες όλο το layout, εγώ ήθελα μόνο να αλλάξει η γραμματοσειρά", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "δεν ήθελα login system, βγάλτο και κάνε μόνο το leaderboard", "lang": "el", "act": "correction", "task": "feature"}
+{"text": "άλλαξες τη συμπεριφορά, το output είναι διαφορετικό τώρα", "lang": "el", "act": "correction", "task": "refactor"}
+{"text": "έκανες το τεστ πράσινο σβήνοντας το assert, αυτό είναι κλέψιμο", "lang": "el", "act": "correction", "task": "tests"}
+{"text": "το npm install αποτυγχάνει ακόμα με το ίδιο μήνυμα", "lang": "el", "act": "correction", "task": "setup_deploy"}
+{"text": "πολλά emojis στο readme, βγάλτα", "lang": "el", "act": "correction", "task": "docs_writing"}
+{"text": "όχι, αυτή η αρχιτεκτονική είναι πολύ περίπλοκη για σχολικό project", "lang": "el", "act": "correction", "task": "planning_design"}
+{"text": "το review σου είναι άχρηστο, μίλησες μόνο για ονόματα. κοίτα τη λογική", "lang": "el", "act": "correction", "task": "review"}
+{"text": "αυτή η εξήγηση είναι λάθος, το loop τρέχει ανάποδα", "lang": "el", "act": "correction", "task": "understand_code"}
+{"text": "μετά την αλλαγή σου παίρνω ακόμα αυτό:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "el", "act": "correction", "task": "error_paste"}
+{"text": "πάρε την πρώτη επιλογή αλλά αποθήκευσε τα δεδομένα σε json", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "κάνε το να μοιάζει με το screenshot που έστειλα", "lang": "el", "act": "clarification", "task": "ui_styling"}
+{"text": "γίνεται μόνο στο level 2", "lang": "el", "act": "clarification", "task": "bug_fix"}
+{"text": "το repo είναι private, το username μου είναι coolkid42", "lang": "el", "act": "clarification", "task": "setup_deploy"}
+{"text": "τεστάρισε μόνο το backend, παράλειψε το frontend", "lang": "el", "act": "clarification", "task": "tests"}
+{"text": "κράτα τα ονόματα των συναρτήσεων όπως είναι please", "lang": "el", "act": "clarification", "task": "refactor"}
+{"text": "βάλε τα βήματα εγκατάστασης πριν από τα features", "lang": "el", "act": "clarification", "task": "docs_writing"}
+{"text": "θέλουμε να το κάνουμε host μόνοι μας, όχι cloud", "lang": "el", "act": "clarification", "task": "planning_design"}
+{"text": "πρόσεξε κυρίως την απόδοση", "lang": "el", "act": "clarification", "task": "review"}
+{"text": "αυτό στο utils/math.py", "lang": "el", "act": "clarification", "task": "understand_code"}
+{"text": "ξέρω python αλλά όχι c++", "lang": "el", "act": "clarification", "task": "learn_concept"}
+{"text": "όχι μόνο την κεντρική σελίδα", "lang": "el", "act": "clarification", "task": "other"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "el", "act": "other", "task": "error_paste"}
+{"text": "Access to fetch at 'http://localhost:5000/api' from origin 'http://localhost:3000' has been blocked by CORS policy", "lang": "el", "act": "new_request", "task": "error_paste"}
+{"text": "ΤΙ σημαίνει αυτό?? error: linker `cc` not found", "lang": "el", "act": "question", "task": "error_paste"}
+{"text": "φτιάξε το απλά. όλο. χωρίς ερωτήσεις.", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "φτιάξε ένα πλάνο για την αρχιτεκτονική πριν ξεκινήσουμε", "lang": "el", "act": "new_request", "task": "planning_design"}
+{"text": "lgtm", "lang": "el", "act": "approval", "task": "other"}
+{"text": "ωραία", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "ουάου", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "συνέχισε", "lang": "el", "act": "approval", "task": "other"}
+{"text": "άλλαξε το background σε σκούρο μπλε και το κείμενο σε λευκό", "lang": "el", "act": "new_request", "task": "ui_styling"}
+{"text": "γεια", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "τι είναι ένα mutex?", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "είναι αυτός ο κώδικας ασφαλής από sql injection?", "lang": "el", "act": "question", "task": "review"}
+{"text": "χμμ όχι, δοκίμασε κάτι άλλο", "lang": "el", "act": "correction", "task": "other"}
+{"text": "κάνε τη σελίδα responsive", "lang": "el", "act": "new_request", "task": "ui_styling"}
+{"text": "κοίτα μόνο τα αρχεία στο src/api", "lang": "el", "act": "clarification", "task": "review"}
+{"text": "γύρνα στην προηγούμενη κατάσταση pls", "lang": "el", "act": "stop_undo", "task": "other"}
+{"text": "σκούρο θέμα φυσικά", "lang": "el", "act": "clarification", "task": "ui_styling"}
+{"text": "πώς μοιράζονται το state τα components εδώ;", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "ο δάσκαλός μου λέει ότι το ai είναι αντιγραφή χαχα", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "το φίδι να περνάει από την άλλη πλευρά του παραθύρου στις άκρες αντί να πεθαίνει", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "το τεστ είναι flaky, κάνε το αξιόπιστο", "lang": "el", "act": "new_request", "task": "tests"}
+{"text": "το header, όχι το footer", "lang": "el", "act": "clarification", "task": "ui_styling"}
+{"text": "φτιάξε ολόκληρη την εφαρμογή, μη με ρωτήσεις τίποτα", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "είναι τοπικό παιχνίδι για 2 παίκτες, άρα όχι δίκτυο", "lang": "el", "act": "clarification", "task": "planning_design"}
+{"text": "γιατί λένε όλοι να μην χρησιμοποιείς ποτέ global μεταβλητές", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "το readme είναι πολύ μεγάλο και πολύ επίσημο, κάνε το μικρό και χαλαρό", "lang": "el", "act": "correction", "task": "docs_writing"}
+{"text": "τι είναι closure στη javascript", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "ο δάσκαλός μου λέει ότι το ai είναι αντιγραφή χαχα", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "μετάφερε τα πάντα σε postgres και προσάρμοσε όλο τον κώδικα, please χωρίς ερωτήσεις", "lang": "el", "act": "handoff", "task": "setup_deploy"}
+{"text": "windows", "lang": "el", "act": "clarification", "task": "setup_deploy"}
+{"text": "powerups: ταχύτητα, ασπίδα και μαγνήτης", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "αυτό το fix το χειροτέρεψε, ξεκάνε το", "lang": "el", "act": "stop_undo", "task": "bug_fix"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "el", "act": "other", "task": "error_paste"}
+{"text": "κρασάρει αμέσως αφού πατήσω το κουμπί play, πριν εμφανιστεί το μενού", "lang": "el", "act": "clarification", "task": "bug_fix"}
+{"text": "το bot απαντάει ακόμα διπλά, το fix σου δεν έκανε τίποτα", "lang": "el", "act": "correction", "task": "bug_fix"}
+{"text": "υλοποίησε όλα τα features από τη todo λίστα, χωρίς να με ρωτήσεις", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "????", "lang": "el", "act": "other", "task": "other"}
+{"text": "δείξε μου πώς δουλεύουν οι αλγόριθμοι ταξινόμησης με ένα μικρό παράδειγμα", "lang": "el", "act": "new_request", "task": "learn_concept"}
+{"text": "η εντολή πρέπει να λέγεται /kick όχι !kick", "lang": "el", "act": "correction", "task": "feature"}
+{"text": "η απάντηση είναι 4 παίκτες max", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "git reset στο τελευταίο commit", "lang": "el", "act": "stop_undo", "task": "other"}
+{"text": "είναι τοπικό παιχνίδι για 2 παίκτες, άρα δεν χρειάζεται δίκτυο", "lang": "el", "act": "clarification", "task": "planning_design"}
+{"text": "χρησιμοποίησε από εδώ και πέρα tabs αντί για spaces", "lang": "el", "act": "other", "task": "other"}
+{"text": "η απάντηση είναι max 4 παίκτες", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "ξεκάνε το refactoring, μου άρεσε περισσότερο η παλιά δομή", "lang": "el", "act": "stop_undo", "task": "refactor"}
+{"text": "πολύ μεγάλο κενό. κάνε το μισό", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "συνέχισε pls", "lang": "el", "act": "approval", "task": "other"}
+{"text": "εννοούσα την αριστερή πλευρική μπάρα", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "πρόσθεσε drag and drop στη todo λίστα", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "1", "lang": "el", "act": "approval", "task": "other"}
+{"text": "είναι καλή λύση αυτή ή υπάρχει κάτι καλύτερο;", "lang": "el", "act": "question", "task": "review"}
+{"text": "πού κάνουν spawn οι εχθροί", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "κάνε όλες τις υπόλοιπες δουλειές χωρίς να μου πεις τίποτα", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "φτιάξε ένα script που φτιάχνει exe με pyinstaller", "lang": "el", "act": "new_request", "task": "setup_deploy"}
+{"text": "οι χρήστες να μπορούν να ανεβάζουν φωτογραφία προφίλ", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "fatal: refusing to merge unrelated histories", "lang": "el", "act": "new_request", "task": "error_paste"}
+{"text": "οκ ήταν τρελό session", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "δείξε μου πού αποθηκεύεται το highscore", "lang": "el", "act": "new_request", "task": "understand_code"}
+{"text": "αυτό δεν είναι fix, απλά κρύβει το πρόβλημα", "lang": "el", "act": "correction", "task": "bug_fix"}
+{"text": "γράψε μια ωραία περιγραφή commit για τις τελευταίες 3 αλλαγές", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "χρειάζομαι ολόκληρο το σχολικό project έτοιμο μέχρι αύριο, κάν' τα όλα μόνος σου", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "πρόσθεσε test cases για αρνητικούς αριθμούς και το μηδέν", "lang": "el", "act": "new_request", "task": "tests"}
+{"text": "κάνε όλο το project, σε εμπιστεύομαι, εξέπληξέ με", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "μπορείς να γυρίσεις στο commit από χθες", "lang": "el", "act": "stop_undo", "task": "other"}
+{"text": "εξήγησέ μου αυτόν τον κώδικα σαν να είμαι 12", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "τελείωσέ τα όλα χωρίς εμένα. ευχαριστώ", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "γιατί λένε όλοι να μην χρησιμοποιείς global μεταβλητές", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "η επιλογή 2 ακούγεται καλύτερη, κάν' το", "lang": "el", "act": "approval", "task": "other"}
+{"text": "το readme είναι πολύ μεγάλο και πολύ επίσημο, κάνε το μικρό και χαλαρό", "lang": "el", "act": "correction", "task": "docs_writing"}
+{"text": "είμαι 15 οπότε κράτα το απλό", "lang": "el", "act": "clarification", "task": "other"}
+{"text": "χρειάζομαι ένα endpoint POST /api/notes που αποθηκεύει μια σημείωση στη βάση", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "ναι γράψε τα τεστ", "lang": "el", "act": "approval", "task": "tests"}
+{"text": "δεν σε εκνευρίζει που σε πρήζω συνέχεια;", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "γράψε docstrings για κάθε συνάρτηση στο game.py", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "τι σημαίνει O(n log n)", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "όχι, το δεύτερο", "lang": "el", "act": "clarification", "task": "other"}
+{"text": "τι σημαίνει αυτό?? error: linker `cc` not found", "lang": "el", "act": "question", "task": "error_paste"}
+{"text": "https://github.com/irgendwer/cooler-bot", "lang": "el", "act": "other", "task": "other"}
+{"text": "python", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "πάρε την πρώτη επιλογή αλλά αποθήκευσε τα δεδομένα σε αρχείο json", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "το τεστ που έγραψες είναι λάθος, περιμένει 5 αλλά πρέπει να είναι 6", "lang": "el", "act": "correction", "task": "tests"}
+{"text": "φτιάξε 20 αστεία ονόματα εχθρών", "lang": "el", "act": "new_request", "task": "other"}
+{"text": "ξεκάνε το npm install, τώρα χάλασε το node_modules μου", "lang": "el", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "φτιάξε docs για όλες τις εντολές του bot", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "κάνε το deploy στο railway", "lang": "el", "act": "new_request", "task": "setup_deploy"}
+{"text": "χρησιμοποίησε ένα retro pixel font για το hud", "lang": "el", "act": "new_request", "task": "ui_styling"}
+{"text": "οκ σου δίνω πλήρη ελευθερία. φτιάξε ένα ωραίο παιχνίδι. έλα πίσω όταν τελειώσει", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "το κουμπί είναι τώρα πολύ μεγάλο", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "αφαίρεσε τον διπλό κώδικα στα τρία αρχεία των levels", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "έβαλες βάση δεδομένων αλλά εγώ ήθελα αρχείο json", "lang": "el", "act": "correction", "task": "feature"}
+{"text": "χρησιμοποιώ discord.py version 2.3", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "node 20 νομίζω", "lang": "el", "act": "clarification", "task": "setup_deploy"}
+{"text": "καθάρισε αυτή τη συνάρτηση, είναι χάος", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "ακούγεται καλά, ξεκίνα", "lang": "el", "act": "approval", "task": "other"}
+{"text": "τσέκαρε τη λύση της εργασίας μου, είναι σωστή", "lang": "el", "act": "new_request", "task": "review"}
+{"text": "φτιάξε μια σελίδα καλαθιού με συνολική τιμή", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "χρησιμοποιώ discord.py version 2.3", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "κάνε όλο το project, σε εμπιστεύομαι, εξέπληξέ με", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "ξεκάνε τα πράγματα του docker", "lang": "el", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "μετάφερε τα πάντα σε postgres και άλλαξε όλο τον κώδικα, μη σταματήσεις για ερωτήσεις", "lang": "el", "act": "handoff", "task": "setup_deploy"}
+{"text": "φτιάξε ένα leaderboard που αποθηκεύει σε αρχείο json", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "και τα δύο", "lang": "el", "act": "clarification", "task": "other"}
+{"text": "εξήγησε το oauth απλά", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "ΟΚ μπορείς", "lang": "el", "act": "approval", "task": "other"}
+{"text": "κοίτα αν υπάρχουν πράγματα στο css μου που δεν χρειάζομαι", "lang": "el", "act": "new_request", "task": "review"}
+{"text": "φτιάξε ένα github action που τρέχει τα τεστ σε κάθε push", "lang": "el", "act": "new_request", "task": "setup_deploy"}
+{"text": "εξήγησέ μου τους pointers", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "/clear", "lang": "el", "act": "other", "task": "other"}
+{"text": "τέστάρισες λάθος συνάρτηση, εννοούσα calculate_damage", "lang": "el", "act": "correction", "task": "tests"}
+{"text": "εξήγησέ το με παράδειγμα από παιχνίδι", "lang": "el", "act": "clarification", "task": "learn_concept"}
+{"text": "σπάσε τη συνάρτηση των 300 γραμμών σε μικρότερες", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "φτιάξε πλάνο για το πώς θα χτίσουμε ένα tower defense, μην γράψεις κώδικα ακόμα", "lang": "el", "act": "new_request", "task": "planning_design"}
+{"text": "υπάρχει κάτι εδώ που μπορεί να κρασάρει; κοίτα το main.rs", "lang": "el", "act": "new_request", "task": "review"}
+{"text": "γράψε τις οδηγίες εγκατάστασης στο readme", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "γράψε ένα help text για το flag --verbose", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "θυμήσου, το project μου λέγεται starhopper", "lang": "el", "act": "other", "task": "other"}
+{"text": "πρόσθεσε ένα τεστ για την περίπτωση που το inventory είναι γεμάτο", "lang": "el", "act": "new_request", "task": "tests"}
+{"text": "μμμ οκ", "lang": "el", "act": "approval", "task": "other"}
+{"text": "το score δεν μηδενίζεται στο game over. φτιάξτο please", "lang": "el", "act": "new_request", "task": "bug_fix"}
+{"text": "είναι για ένα σχολικό project για το ηλιακό σύστημα", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "πάρε το project εντελώς, εγώ απλά θα βλέπω", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "απλά φτιάξτο. όλο. χωρίς ερωτήσεις.", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "λάθος αρχείο, είπα player.py όχι enemy.py", "lang": "el", "act": "correction", "task": "other"}
+{"text": "το πλάνο είναι πολύ μεγάλο, έχουμε μόνο το σαββατοκύριακο", "lang": "el", "act": "correction", "task": "planning_design"}
+{"text": "πρόσθεσε τεστ για το login endpoint", "lang": "el", "act": "new_request", "task": "tests"}
+{"text": "φτιάξε ένα κείμενο για τη σελίδα about του site μου, είμαι 14 χρονών game dev, κράτα το διασκεδαστικό", "lang": "el", "act": "new_request", "task": "docs_writing"}
+{"text": "ευχαριστώ, δούλεψε τέλεια", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "με pygame, όχι tkinter", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "φτιάξε το bug που το bot απαντάει διπλά", "lang": "el", "act": "new_request", "task": "bug_fix"}
+{"text": "είναι αυτό ασφαλές από sql injection?", "lang": "el", "act": "question", "task": "review"}
+{"text": "οι εχθροί να είναι ζόμπι, 2d top down", "lang": "el", "act": "clarification", "task": "feature"}
+{"text": "gg", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "αυτό δεν είναι σωστό, τσέκαρε ξανά", "lang": "el", "act": "correction", "task": "other"}
+{"text": "error[E0502]: cannot borrow `self.enemies` as mutable because it is also borrowed as immutable\n  --> src/game.rs:88:9\n   |\n86 |     for e in self.enemies.iter() {\n   |              -------------------- immutable borrow occurs here\n88 |         self.kill(e);\n   |         ^^^^^^^^^^^^ mutable borrow occurs here", "lang": "el", "act": "new_request", "task": "error_paste"}
+{"text": "πόσο θα πάρει αυτό", "lang": "el", "act": "question", "task": "other"}
+{"text": "γύρνα πίσω όπως ήταν πριν", "lang": "el", "act": "stop_undo", "task": "other"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "el", "act": "other", "task": "error_paste"}
+{"text": "ναι σε όλα", "lang": "el", "act": "approval", "task": "other"}
+{"text": "οκ ωραία, κάνε commit", "lang": "el", "act": "approval", "task": "other"}
+{"text": "πάλι το ίδιο error\nModuleNotFoundError: No module named 'discord'", "lang": "el", "act": "correction", "task": "error_paste"}
+{"text": "χρειάζεται να σχολιάσω κάθε γραμμή ή μόνο τα δύσκολα σημεία;", "lang": "el", "act": "question", "task": "docs_writing"}
+{"text": "βγάλε τα πράγματα της βάσης σε δικό τους module", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "φτιάξε το state machine για το boss fight", "lang": "el", "act": "new_request", "task": "planning_design"}
+{"text": "χρησιμοποίησε κλάσεις αντί για όλες τις global μεταβλητές", "lang": "el", "act": "new_request", "task": "refactor"}
+{"text": "δεν καταλαβαίνω τον υπολογισμό των collisions, τι μαθηματικά είναι αυτά", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "Error: listen EADDRINUSE: address already in use :::3000", "lang": "el", "act": "new_request", "task": "error_paste"}
+{"text": "το κουμπί είναι τώρα πολύ μεγάλο", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "τι σημαίνει idempotent", "lang": "el", "act": "question", "task": "learn_concept"}
+{"text": "ευχαριστώ, αυτά για σήμερα", "lang": "el", "act": "chit_chat", "task": "other"}
+{"text": "πάμε", "lang": "el", "act": "approval", "task": "other"}
+{"text": "φτιάξε το bot να απαντάει με ένα random meme όταν κάποιος γράφει !meme", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "το bot απαντάει ακόμα δύο φορές, το fix σου δεν έκανε τίποτα", "lang": "el", "act": "correction", "task": "bug_fix"}
+{"text": "οκ κάν' το", "lang": "el", "act": "approval", "task": "other"}
+{"text": "ναι προχώρα", "lang": "el", "act": "approval", "task": "other"}
+{"text": "asdfghjkl", "lang": "el", "act": "other", "task": "other"}
+{"text": "αυτή είναι λάθος έκδοση python, χρησιμοποιούμε 3.11", "lang": "el", "act": "correction", "task": "setup_deploy"}
+{"text": "μπορείς να υλοποιήσεις ένα απλό inventory με 10 slots", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "αυτό είναι πιο περίπλοκο από πριν, γιατί πρόσθεσες τόσες κλάσεις", "lang": "el", "act": "correction", "task": "refactor"}
+{"text": "το τεστ που έγραψες είναι λάθος, περιμένει 5 αλλά πρέπει να είναι 6", "lang": "el", "act": "correction", "task": "tests"}
+{"text": "τα χρώματα διαβάζονται δύσκολα, η αντίθεση είναι κακή", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "έχουμε 3 εβδομάδες και μόνο 2 άτομα", "lang": "el", "act": "clarification", "task": "planning_design"}
+{"text": "βγάλε όλα τα TODO του project σε λίστα", "lang": "el", "act": "new_request", "task": "understand_code"}
+{"text": "συνέχισε", "lang": "el", "act": "approval", "task": "other"}
+{"text": "έχασες το προφανές bug στη γραμμή 40", "lang": "el", "act": "correction", "task": "review"}
+{"text": "ποια η διαφορά μεταξύ utils.js και helpers.js στο project μου", "lang": "el", "act": "question", "task": "understand_code"}
+{"text": "βάλε το test coverage στο 90% μόνος σου, συνέχισε μέχρι να φτάσεις", "lang": "el", "act": "handoff", "task": "tests"}
+{"text": "αυτό δεν το έγραψα ποτέ, το project δεν χρησιμοποιεί redis", "lang": "el", "act": "correction", "task": "docs_writing"}
+{"text": "χμμ όχι, δοκίμασε άλλη προσέγγιση", "lang": "el", "act": "correction", "task": "other"}
+{"text": "βγάλε πάλι το login feature", "lang": "el", "act": "stop_undo", "task": "feature"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nτι γίνεται", "lang": "el", "act": "new_request", "task": "error_paste"}
+{"text": "δούλευε πάνω σε αυτό για ώρες μέχρι να τελειώσει πλήρως το παιχνίδι, χωρίς ερωτήσεις", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "λείπω όλη μέρα, φτιάξε ολόκληρο το website με όλες τις σελίδες και κάνε το ωραίο", "lang": "el", "act": "handoff", "task": "feature"}
+{"text": "πρόσθεσε hover effect στις κάρτες", "lang": "el", "act": "new_request", "task": "ui_styling"}
+{"text": "υλοποίησε a* pathfinding για το npc", "lang": "el", "act": "new_request", "task": "feature"}
+{"text": "πολύ padding. κάνε το μισό", "lang": "el", "act": "correction", "task": "ui_styling"}
+{"text": "γύρνα πίσω όλα όσα μόλις έκανες", "lang": "el", "act": "stop_undo", "task": "other"}

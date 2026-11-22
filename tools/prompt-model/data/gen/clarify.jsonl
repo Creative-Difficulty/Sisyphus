@@ -1,0 +1,300 @@
+{"text": "the left one, not the right", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "use postgres not sqlite, it's for the leaderboard", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "i meant the settings page not the profile one", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "it's for mobile too, make the nav collapse under 600px", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "the tests are in /tests not /test", "lang": "en", "act": "clarification", "task": "tests"}
+{"text": "yes the dark mode toggle, put it in the header", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "go with option 2", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "only admins should see the delete button", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "keep the old endpoint too, the app still calls it", "lang": "en", "act": "clarification", "task": "refactor"}
+{"text": "deploy to fly, not vercel", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "the timer should count down not up", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "check the auth module again, i meant the token handling", "lang": "en", "act": "clarification", "task": "review"}
+{"text": "it should sort by date descending", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "the error only happens on the second login", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "for the readme say it runs on linux and windows", "lang": "en", "act": "clarification", "task": "docs_writing"}
+{"text": "i'm using pnpm not npm", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "make the tests use the mock server", "lang": "en", "act": "clarification", "task": "tests"}
+{"text": "i have rust 1.80 installed, keep it compatible", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "the chart should use weekly data, not daily", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "keep the colors from the logo", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "call the component StatsCard", "lang": "en", "act": "clarification", "task": "refactor"}
+{"text": "the score is out of 100, not 10", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "the json file is data/users.json, read from there", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "yes, but the timer only for the final round", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "look at the score code again, is it safe to trust the client", "lang": "en", "act": "clarification", "task": "review"}
+{"text": "it's a static site, no backend needed", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "the font should be fredoka", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "use the same modal as the login page", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "the migration should be reversible", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "the api returns xml, not json", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "it's for a school project on the water cycle, not a real app", "lang": "en", "act": "clarification", "task": "other"}
+{"text": "i meant debounce, not throttle, for the search box", "lang": "en", "act": "clarification", "task": "learn_concept"}
+{"text": "use snake case for the variables this time", "lang": "en", "act": "clarification", "task": "refactor"}
+{"text": "the ids are uuids not ints", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "yeah, the animation should be slower, like 800ms", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "it's a hobby project so sqlite is fine", "lang": "en", "act": "clarification", "task": "planning_design"}
+{"text": "i'm on windows, the path separators are backslash", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "i meant the score in the header, not the footer one", "lang": "en", "act": "clarification", "task": "bug_fix"}
+{"text": "the readme should mention the env var", "lang": "en", "act": "clarification", "task": "docs_writing"}
+{"text": "the function in utils.js, the one that calls fetch", "lang": "en", "act": "clarification", "task": "understand_code"}
+{"text": "the ci should run on pull requests too", "lang": "en", "act": "clarification", "task": "setup_deploy"}
+{"text": "the user can be a teacher too, not only students", "lang": "en", "act": "clarification", "task": "feature"}
+{"text": "the coverage check should skip the bin folder", "lang": "en", "act": "clarification", "task": "tests"}
+{"text": "that's the one, the cards on the home page", "lang": "en", "act": "clarification", "task": "ui_styling"}
+{"text": "the second column, the one with the totals, i mean what it calculates", "lang": "en", "act": "clarification", "task": "understand_code"}
+{"text": "nicht den roten button, den grünen", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "ich meinte die Highscore-Liste, nicht die Startseite", "lang": "de", "act": "clarification", "task": "bug_fix"}
+{"text": "das Timer soll runterzählen, nicht hochzählen", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "nimm sqlite, postgres ist mir zu kompliziert für die Schule", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "fass die auth-datei bitte nicht an", "lang": "de", "act": "clarification", "task": "refactor"}
+{"text": "es ist für Handys auch wichtig, also responsive bitte", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "die Tests liegen im Ordner spec, nicht tests", "lang": "de", "act": "clarification", "task": "tests"}
+{"text": "ja, die Sortierung nach Datum absteigend", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "für die README bitte auf Deutsch, der Rest auf Englisch", "lang": "de", "act": "clarification", "task": "docs_writing"}
+{"text": "ich nutze Windows, also bitte die Befehle für PowerShell", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "der Fehler kommt nur beim zweiten Login", "lang": "de", "act": "clarification", "task": "bug_fix"}
+{"text": "wähl Option 2, die ist einfacher", "lang": "de", "act": "clarification", "task": "planning_design"}
+{"text": "nimm die Wochendaten, nicht die Tagesdaten für das Diagramm", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "die Farben vom Logo übernehmen, also dunkelblau und orange", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "nenn die Komponente bitte StatsCard", "lang": "de", "act": "clarification", "task": "refactor"}
+{"text": "es soll die Daten in data/users.json lesen", "lang": "de", "act": "clarification", "task": "bug_fix"}
+{"text": "die Punkte gehen von 0 bis 100, nicht bis 10", "lang": "de", "act": "clarification", "task": "feature"}
+{"text": "schau nur nach der Token-Behandlung, nicht nach dem Rest", "lang": "de", "act": "clarification", "task": "review"}
+{"text": "ich hab Rust 1.80, kannst du darauf achten", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "mach den Test mit dem Mock-Server, nicht mit der echten Datenbank", "lang": "de", "act": "clarification", "task": "tests"}
+{"text": "die Schrift soll Fredoka sein, schon im Projekt", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "schau nochmal, ob die Eingabe sicher geprüft wird", "lang": "de", "act": "clarification", "task": "review"}
+{"text": "das ist für ein Schulprojekt über den Wasserkreislauf, kein echtes Programm", "lang": "de", "act": "clarification", "task": "other"}
+{"text": "genau, so wie beim letzten Mal mit dem Modal", "lang": "de", "act": "clarification", "task": "ui_styling"}
+{"text": "die Funktion im utils-Ordner, die fetch aufruft, meine ich", "lang": "de", "act": "clarification", "task": "understand_code"}
+{"text": "das Cache-Verzeichnis ist in /var/cache, nicht im Projekt", "lang": "de", "act": "clarification", "task": "setup_deploy"}
+{"text": "la fonction de gauche, celle qui parse le csv", "lang": "fr", "act": "clarification", "task": "understand_code"}
+{"text": "c'est pour le mobile aussi, fais que le menu se replie", "lang": "fr", "act": "clarification", "task": "ui_styling"}
+{"text": "non, pas de framework js, du html simple suffit", "lang": "fr", "act": "clarification", "task": "planning_design"}
+{"text": "les tests sont dans /tests pas /test", "lang": "fr", "act": "clarification", "task": "tests"}
+{"text": "el de la izquierda, no el de la derecha", "lang": "es", "act": "clarification", "task": "ui_styling"}
+{"text": "mejor una sola app, nada de microservicios", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "quiero decir la página de ajustes, no la del perfil", "lang": "es", "act": "clarification", "task": "bug_fix"}
+{"text": "despliega en railway, no en vercel", "lang": "es", "act": "clarification", "task": "setup_deploy"}
+{"text": "o da esquerda, não o da direita", "lang": "pt", "act": "clarification", "task": "ui_styling"}
+{"text": "é pra celular também, faz o menu recolher", "lang": "pt", "act": "clarification", "task": "ui_styling"}
+{"text": "vê se o código de login é seguro, não só o layout", "lang": "pt", "act": "clarification", "task": "review"}
+{"text": "faz deploy no render, não na vercel", "lang": "pt", "act": "clarification", "task": "setup_deploy"}
+{"text": "quello a sinistra, non quello a destra", "lang": "it", "act": "clarification", "task": "ui_styling"}
+{"text": "meglio un file json, non serve un database", "lang": "it", "act": "clarification", "task": "planning_design"}
+{"text": "intendevo la pagina impostazioni, non il profilo", "lang": "it", "act": "clarification", "task": "bug_fix"}
+{"text": "ok ma è solo per la scuola, non per pubblicarlo", "lang": "it", "act": "clarification", "task": "other"}
+{"text": "die linker, niet de rechter", "lang": "nl", "act": "clarification", "task": "ui_styling"}
+{"text": "zet het op een gewone vps, niet op kubernetes", "lang": "nl", "act": "clarification", "task": "setup_deploy"}
+{"text": "ik bedoelde een mutex, niet een semaphore", "lang": "nl", "act": "clarification", "task": "learn_concept"}
+{"text": "de tests staan in /tests, niet in /test", "lang": "nl", "act": "clarification", "task": "tests"}
+{"text": "den till vänster, inte den till höger", "lang": "sv", "act": "clarification", "task": "ui_styling"}
+{"text": "det är bara för mig själv, så kör det lokalt", "lang": "sv", "act": "clarification", "task": "planning_design"}
+{"text": "jag menade closures, inte callbacks", "lang": "sv", "act": "clarification", "task": "learn_concept"}
+{"text": "testerna ligger i /tests, inte i /test", "lang": "sv", "act": "clarification", "task": "tests"}
+{"text": "a bal oldali, nem a jobb", "lang": "hu", "act": "clarification", "task": "ui_styling"}
+{"text": "postgres kell, nem sqlite, a ranglistához", "lang": "hu", "act": "clarification", "task": "feature"}
+{"text": "a beállítások oldalt értettem, nem a profilt", "lang": "hu", "act": "clarification", "task": "bug_fix"}
+{"text": "a tesztek a /tests mappában vannak, nem a /test-ben", "lang": "hu", "act": "clarification", "task": "tests"}
+{"text": "cel din stânga, nu cel din dreapta", "lang": "ro", "act": "clarification", "task": "ui_styling"}
+{"text": "folosește postgres, nu sqlite, e pentru clasament", "lang": "ro", "act": "clarification", "task": "feature"}
+{"text": "am vrut să zic pagina de setări", "lang": "ro", "act": "clarification", "task": "bug_fix"}
+{"text": "testele sunt în /tests, nu în /test", "lang": "ro", "act": "clarification", "task": "tests"}
+{"text": "левый, а не правый", "lang": "ru", "act": "clarification", "task": "ui_styling"}
+{"text": "используй postgres, не sqlite, это для таблицы рекордов", "lang": "ru", "act": "clarification", "task": "feature"}
+{"text": "я имел в виду хеш-таблицу, а не дерево", "lang": "ru", "act": "clarification", "task": "learn_concept"}
+{"text": "тесты лежат в /tests, а не в /test", "lang": "ru", "act": "clarification", "task": "tests"}
+{"text": "той, що зліва, а не справа", "lang": "uk", "act": "clarification", "task": "ui_styling"}
+{"text": "постгрес, а не sqlite, це для таблиці рекордів", "lang": "uk", "act": "clarification", "task": "feature"}
+{"text": "я мав на увазі сторінку налаштувань", "lang": "uk", "act": "clarification", "task": "bug_fix"}
+{"text": "тести лежать у /tests, а не у /test", "lang": "uk", "act": "clarification", "task": "tests"}
+{"text": "是左边那个，不是右边的", "lang": "zh", "act": "clarification", "task": "ui_styling"}
+{"text": "用 python 写就行，别用 rust 了", "lang": "zh", "act": "clarification", "task": "planning_design"}
+{"text": "我说的是设置页面，不是个人资料", "lang": "zh", "act": "clarification", "task": "bug_fix"}
+{"text": "测试放在 /tests 里，不是 /test", "lang": "zh", "act": "clarification", "task": "tests"}
+{"text": "왼쪽 거요, 오른쪽 말고요", "lang": "ko", "act": "clarification", "task": "ui_styling"}
+{"text": "sqlite로 해요, 서버는 따로 안 둘 거예요", "lang": "ko", "act": "clarification", "task": "planning_design"}
+{"text": "그 함수 말고 render 쪽 얘기예요, 어디서 호출되는지", "lang": "ko", "act": "clarification", "task": "understand_code"}
+{"text": "테스트는 /tests 폴더에 있어요", "lang": "ko", "act": "clarification", "task": "tests"}
+{"text": "बाईं वाली, दाईं वाली नहीं", "lang": "hi", "act": "clarification", "task": "ui_styling"}
+{"text": "सिर्फ़ मेरे लिए है, इसलिए simple रखो", "lang": "hi", "act": "clarification", "task": "planning_design"}
+{"text": "मेरा मतलब settings वाले पेज से था", "lang": "hi", "act": "clarification", "task": "bug_fix"}
+{"text": "tests /tests फ़ोल्डर में हैं", "lang": "hi", "act": "clarification", "task": "tests"}
+{"text": "yang kiri, bukan yang kanan", "lang": "id", "act": "clarification", "task": "ui_styling"}
+{"text": "pake postgres, bukan sqlite ya, buat leaderboard", "lang": "id", "act": "clarification", "task": "feature"}
+{"text": "maksud aku halaman settings, bukan profil", "lang": "id", "act": "clarification", "task": "bug_fix"}
+{"text": "testnya ada di /tests, bukan /test", "lang": "id", "act": "clarification", "task": "tests"}
+{"text": "cái bên trái, không phải bên phải", "lang": "vi", "act": "clarification", "task": "ui_styling"}
+{"text": "không cần deploy, chạy trên máy mình thôi", "lang": "vi", "act": "clarification", "task": "planning_design"}
+{"text": "mình muốn nói trang cài đặt cơ", "lang": "vi", "act": "clarification", "task": "bug_fix"}
+{"text": "the button is invisible now, white on white", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "you broke the login, now it just spins forever", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "that's not what i meant, i wanted it to stay in the sidebar", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "same again: TypeError: Cannot read properties of undefined (reading 'map') at App.jsx:41", "lang": "en", "act": "correction", "task": "error_paste"}
+{"text": "the font got smaller on mobile, it was fine before", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "tests pass but the game crashes at level 2 now", "lang": "en", "act": "correction", "task": "tests"}
+{"text": "you removed the score counter, put it back", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "the readme now has the old install steps", "lang": "en", "act": "correction", "task": "docs_writing"}
+{"text": "your refactor made the build way slower, revert the cache part", "lang": "en", "act": "correction", "task": "refactor"}
+{"text": "the docker build fails now because of your Cargo.toml edit", "lang": "en", "act": "correction", "task": "setup_deploy"}
+{"text": "the spacing is way too big now", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "it's incomplete, delete only removes the row not the file", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "the animation stutters since your change", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "panic again: called `Option::unwrap()` on a `None` value", "lang": "en", "act": "correction", "task": "error_paste"}
+{"text": "you changed the wrong function, the bug is in parse_line", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the color is still wrong, it should be darker", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "half the translations are missing now", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "the comments are in german now, they should be english", "lang": "en", "act": "correction", "task": "docs_writing"}
+{"text": "the test still expects the old behaviour, you didn't update it", "lang": "en", "act": "correction", "task": "tests"}
+{"text": "the new code leaks memory, the counter keeps growing", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "CI is red, your yaml indentation is off", "lang": "en", "act": "correction", "task": "setup_deploy"}
+{"text": "your change deleted the save button", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "this doesn't work on safari, the grid collapses", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "the function is still way too long, you only split it once", "lang": "en", "act": "correction", "task": "refactor"}
+{"text": "still getting this: panicked at src/main.rs:12, index out of bounds", "lang": "en", "act": "correction", "task": "error_paste"}
+{"text": "the logout button does nothing now", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "your answer came out in french again, reply in english please", "lang": "en", "act": "correction", "task": "other"}
+{"text": "you undid my earlier fix in the parser", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the hover state is broken on the cards", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "it still double counts the same minute", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the readme example doesn't run anymore", "lang": "en", "act": "correction", "task": "docs_writing"}
+{"text": "the webhook handler returns 200 even when it fails, that's wrong", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the sidebar overlaps the content on tablets", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "you renamed the table but not the queries", "lang": "en", "act": "correction", "task": "refactor"}
+{"text": "the grid is off by one row", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "the cache is now never invalidated", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the error messages are useless now, they were better before", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "the dropdown closes on click, it shouldn't", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the score resets after reload, it used to persist", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "the settings screen is missing the save button", "lang": "en", "act": "correction", "task": "feature"}
+{"text": "the vite build outputs to the wrong folder after your change", "lang": "en", "act": "correction", "task": "setup_deploy"}
+{"text": "the test file got deleted by your refactor", "lang": "en", "act": "correction", "task": "tests"}
+{"text": "now the badge is in the wrong corner", "lang": "en", "act": "correction", "task": "ui_styling"}
+{"text": "it's still not sorted, the order is random", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "your fix broke the jump, the player falls through the floor", "lang": "en", "act": "correction", "task": "bug_fix"}
+{"text": "der button ist jetzt unsichtbar, weiß auf weiß", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "du hast den login kaputt gemacht, jetzt kommt nur noch 500", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "das ist nicht was ich wollte, die liste soll oben bleiben", "lang": "de", "act": "correction", "task": "feature"}
+{"text": "immer noch: error[E0382]: borrow of moved value: `cfg` --> src/main.rs:88", "lang": "de", "act": "correction", "task": "error_paste"}
+{"text": "die schrift ist viel zu klein jetzt auf dem handy", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "die tests gehen durch aber der server startet nicht mehr", "lang": "de", "act": "correction", "task": "setup_deploy"}
+{"text": "du hast die Punkteanzeige entfernt, bitte wieder rein", "lang": "de", "act": "correction", "task": "feature"}
+{"text": "die README stimmt nicht mehr, da stehen die alten Install-Schritte", "lang": "de", "act": "correction", "task": "docs_writing"}
+{"text": "die Kommentare hast du gelöscht, die brauchen wir", "lang": "de", "act": "correction", "task": "docs_writing"}
+{"text": "der test erwartet noch das alte verhalten, das hast du nicht angepasst", "lang": "de", "act": "correction", "task": "tests"}
+{"text": "das ist unvollständig, die datei wird nicht gelöscht nur der eintrag", "lang": "de", "act": "correction", "task": "feature"}
+{"text": "bei zwei Spielern zählt er falsch, vorher war es richtig", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "die Animation ruckelt seit deinem Update", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "der refactor hat die Ladezeit verdoppelt, bitte den Cache-Teil zurück", "lang": "de", "act": "correction", "task": "refactor"}
+{"text": "du hast die falsche Funktion geändert, der Fehler ist in parse_line", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "auf dem Handy überlappt das Menü den Text", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "die CI ist rot wegen deiner Änderung an der workflow-Datei", "lang": "de", "act": "correction", "task": "setup_deploy"}
+{"text": "der Code ist immer noch zu lang, du hast nur einmal aufgeteilt", "lang": "de", "act": "correction", "task": "refactor"}
+{"text": "die Validierung fehlt noch, das hast du nicht gemacht", "lang": "de", "act": "correction", "task": "feature"}
+{"text": "Passwörter landen jetzt im Log, das darf nicht sein", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "die API-Doku ist falsch, die Parameter heißen anders", "lang": "de", "act": "correction", "task": "docs_writing"}
+{"text": "nach dem Merge fehlen die Einstellungen komplett", "lang": "de", "act": "correction", "task": "setup_deploy"}
+{"text": "bei 0 gibt er immer noch 1 aus", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "die Farben passen gar nicht zum Rest der Seite", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "der Dark Mode funktioniert jetzt nur noch halb", "lang": "de", "act": "correction", "task": "ui_styling"}
+{"text": "der Token steht jetzt im Frontend, das ist unsicher", "lang": "de", "act": "correction", "task": "bug_fix"}
+{"text": "le bouton est invisible maintenant, blanc sur blanc", "lang": "fr", "act": "correction", "task": "ui_styling"}
+{"text": "tu as cassé la connexion, ça tourne en boucle", "lang": "fr", "act": "correction", "task": "bug_fix"}
+{"text": "c'est pas ce que je voulais, la liste doit rester à gauche", "lang": "fr", "act": "correction", "task": "feature"}
+{"text": "le readme contient encore les anciennes étapes d'install", "lang": "fr", "act": "correction", "task": "docs_writing"}
+{"text": "el botón ya no se ve, blanco sobre blanco", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "rompiste el login, ahora se queda cargando", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "quitaste el contador de puntos, ponlo de nuevo", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "el refactor hizo que todo tarde el doble", "lang": "es", "act": "correction", "task": "refactor"}
+{"text": "você quebrou o login, agora fica carregando pra sempre", "lang": "pt", "act": "correction", "task": "bug_fix"}
+{"text": "ainda: ModuleNotFoundError: No module named 'flask'", "lang": "pt", "act": "correction", "task": "error_paste"}
+{"text": "a fonte ficou minúscula no mobile", "lang": "pt", "act": "correction", "task": "ui_styling"}
+{"text": "os testes passam mas o jogo trava no nível 2", "lang": "pt", "act": "correction", "task": "tests"}
+{"text": "il bottone adesso non si vede più", "lang": "it", "act": "correction", "task": "ui_styling"}
+{"text": "hai rotto il login, gira all'infinito", "lang": "it", "act": "correction", "task": "bug_fix"}
+{"text": "non è quello che volevo, la lista doveva restare a sinistra", "lang": "it", "act": "correction", "task": "feature"}
+{"text": "il readme ha ancora i vecchi passaggi di installazione", "lang": "it", "act": "correction", "task": "docs_writing"}
+{"text": "je hebt de login gesloopt, nu laadt het eeuwig", "lang": "nl", "act": "correction", "task": "bug_fix"}
+{"text": "de knop is nu onzichtbaar", "lang": "nl", "act": "correction", "task": "ui_styling"}
+{"text": "dit is niet wat ik wilde, de lijst moet links blijven", "lang": "nl", "act": "correction", "task": "feature"}
+{"text": "de readme klopt niet meer, die oude install stappen staan erin", "lang": "nl", "act": "correction", "task": "docs_writing"}
+{"text": "knappen syns inte längre, vit på vit", "lang": "sv", "act": "correction", "task": "ui_styling"}
+{"text": "du bröt inloggningen, nu snurrar det bara", "lang": "sv", "act": "correction", "task": "bug_fix"}
+{"text": "du svarar på fel språk, svara på engelska", "lang": "sv", "act": "correction", "task": "other"}
+{"text": "samma igen: ECONNREFUSED 127.0.0.1:5432", "lang": "sv", "act": "correction", "task": "error_paste"}
+{"text": "a gomb most láthatatlan", "lang": "hu", "act": "correction", "task": "ui_styling"}
+{"text": "elromlott a bejelentkezés, most végtelenül tölt", "lang": "hu", "act": "correction", "task": "bug_fix"}
+{"text": "a válaszod franciául jött, angolul kérem", "lang": "hu", "act": "correction", "task": "other"}
+{"text": "a readme régi telepítési lépéseket tartalmaz", "lang": "hu", "act": "correction", "task": "docs_writing"}
+{"text": "butonul nu se mai vede, alb pe alb", "lang": "ro", "act": "correction", "task": "ui_styling"}
+{"text": "ai stricat logarea, acum se învârte la infinit", "lang": "ro", "act": "correction", "task": "bug_fix"}
+{"text": "nu asta voiam, lista trebuie să rămână sus", "lang": "ro", "act": "correction", "task": "feature"}
+{"text": "readme-ul are încă pașii vechi de instalare", "lang": "ro", "act": "correction", "task": "docs_writing"}
+{"text": "кнопка теперь невидимая, белое на белом", "lang": "ru", "act": "correction", "task": "ui_styling"}
+{"text": "ты сломал логин, теперь вечная загрузка", "lang": "ru", "act": "correction", "task": "bug_fix"}
+{"text": "это не то, что я хотел, список должен остаться слева", "lang": "ru", "act": "correction", "task": "feature"}
+{"text": "в readme всё ещё старые шаги установки", "lang": "ru", "act": "correction", "task": "docs_writing"}
+{"text": "досі: Uncaught ReferenceError: x is not defined at main.js:12", "lang": "uk", "act": "correction", "task": "error_paste"}
+{"text": "кнопка тепер не видно, біле на білому", "lang": "uk", "act": "correction", "task": "ui_styling"}
+{"text": "ти зламав вхід, тепер крутиться вічно", "lang": "uk", "act": "correction", "task": "bug_fix"}
+{"text": "у readme досі старі кроки встановлення", "lang": "uk", "act": "correction", "task": "docs_writing"}
+{"text": "按钮现在看不见了，白底白字", "lang": "zh", "act": "correction", "task": "ui_styling"}
+{"text": "你把登录搞坏了，一直转圈", "lang": "zh", "act": "correction", "task": "bug_fix"}
+{"text": "这不是我要的，列表应该还在左边", "lang": "zh", "act": "correction", "task": "feature"}
+{"text": "README 还是旧的安装步骤", "lang": "zh", "act": "correction", "task": "docs_writing"}
+{"text": "버튼이 안 보여요, 흰색 위에 흰색이에요", "lang": "ko", "act": "correction", "task": "ui_styling"}
+{"text": "로그인 깨졌어요, 계속 로딩만 돌아요", "lang": "ko", "act": "correction", "task": "bug_fix"}
+{"text": "이거 원한 게 아니에요, 목록은 왼쪽에 있어야 해요", "lang": "ko", "act": "correction", "task": "feature"}
+{"text": "README 설치 방법이 옛날 거예요", "lang": "ko", "act": "correction", "task": "docs_writing"}
+{"text": "अभी भी: Uncaught SyntaxError: Unexpected token '<'", "lang": "hi", "act": "correction", "task": "error_paste"}
+{"text": "बटन दिख ही नहीं रहा अब", "lang": "hi", "act": "correction", "task": "ui_styling"}
+{"text": "यह वो नहीं है जो मैंने माँगा था", "lang": "hi", "act": "correction", "task": "feature"}
+{"text": "README में पुराने install steps लिखे हैं", "lang": "hi", "act": "correction", "task": "docs_writing"}
+{"text": "tombolnya ilang, putih di atas putih", "lang": "id", "act": "correction", "task": "ui_styling"}
+{"text": "kamu ngerusak login, sekarang muter terus", "lang": "id", "act": "correction", "task": "bug_fix"}
+{"text": "bukan itu yang aku mau, listnya harus tetep di kiri", "lang": "id", "act": "correction", "task": "feature"}
+{"text": "readme masih pake langkah install yang lama", "lang": "id", "act": "correction", "task": "docs_writing"}
+{"text": "nút biến mất rồi, trắng trên trắng", "lang": "vi", "act": "correction", "task": "ui_styling"}
+{"text": "vẫn lỗi: Uncaught TypeError: fetch failed at login.js:3", "lang": "vi", "act": "correction", "task": "error_paste"}
+{"text": "không phải cái này mình muốn, danh sách phải nằm bên trái", "lang": "vi", "act": "correction", "task": "feature"}
+{"text": "now add a dark mode toggle too", "lang": "en", "act": "new_request", "task": "ui_styling"}
+{"text": "also make a leaderboard page", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "can you write a test for the parser", "lang": "en", "act": "new_request", "task": "tests"}
+{"text": "set up github actions that runs the tests on push", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "add a feature to export the scores as csv", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "make a readme for this project", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "how about we add multiplayer, make a plan first", "lang": "en", "act": "new_request", "task": "planning_design"}
+{"text": "add a sound when you collect a coin", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "create a script that resets the database", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "can you add a button that restarts the game", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "write a changelog entry for version 0.2", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "add a login page with a username field", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "style the footer with a gradient", "lang": "en", "act": "new_request", "task": "ui_styling"}
+{"text": "refactor the timer into its own module", "lang": "en", "act": "new_request", "task": "refactor"}
+{"text": "add tests for the score function", "lang": "en", "act": "new_request", "task": "tests"}
+{"text": "add a /health endpoint", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "write docs for the api routes", "lang": "en", "act": "new_request", "task": "docs_writing"}
+{"text": "make a pink theme for the settings page", "lang": "en", "act": "new_request", "task": "ui_styling"}
+{"text": "set up docker compose for local dev", "lang": "en", "act": "new_request", "task": "setup_deploy"}
+{"text": "implement undo for the drawing tool", "lang": "en", "act": "new_request", "task": "feature"}
+{"text": "füg bitte noch einen Dark-Mode-Schalter hinzu", "lang": "de", "act": "new_request", "task": "ui_styling"}
+{"text": "kannst du noch eine Seite für die Bestenliste bauen", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "schreib mir einen Test für den Parser", "lang": "de", "act": "new_request", "task": "tests"}
+{"text": "richte bitte GitHub Actions ein, die bei jedem Push testet", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "mach eine Startseite mit einer Begrüßung", "lang": "de", "act": "new_request", "task": "feature"}
+{"text": "erstell ein Skript, das die Datenbank zurücksetzt", "lang": "de", "act": "new_request", "task": "setup_deploy"}
+{"text": "ajoute aussi un mode sombre", "lang": "fr", "act": "new_request", "task": "ui_styling"}
+{"text": "también haz una página de ranking", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "faz uma tela de login com o google", "lang": "pt", "act": "new_request", "task": "feature"}
+{"text": "aggiungi anche un test per il parser", "lang": "it", "act": "new_request", "task": "tests"}
+{"text": "maak een knop om het spel opnieuw te starten", "lang": "nl", "act": "new_request", "task": "feature"}
+{"text": "добавь экспорт результатов в csv", "lang": "ru", "act": "new_request", "task": "feature"}
+{"text": "зроби сторінку з рекордами", "lang": "uk", "act": "new_request", "task": "feature"}
+{"text": "帮我加一个导出成 csv 的功能", "lang": "zh", "act": "new_request", "task": "feature"}
+{"text": "README 파일도 하나 만들어 주세요", "lang": "ko", "act": "new_request", "task": "docs_writing"}
+{"text": "एक नया पेज बनाओ जिसमें प्रोफ़ाइल हो", "lang": "hi", "act": "new_request", "task": "feature"}
+{"text": "tambahin fitur export ke csv dong", "lang": "id", "act": "new_request", "task": "feature"}
+{"text": "thêm trang đăng nhập bằng email", "lang": "vi", "act": "new_request", "task": "feature"}
+{"text": "csinálj egy sötét módot is", "lang": "hu", "act": "new_request", "task": "ui_styling"}
+{"text": "adaugă o pagină pentru clasament", "lang": "ro", "act": "new_request", "task": "feature"}

@@ -1,0 +1,250 @@
+{"text": "obvio", "lang": "es", "act": "approval", "task": "other"}
+{"text": "vale ahora pon el botón rosa", "lang": "es", "act": "approval", "task": "ui_styling"}
+{"text": "sí dale escribe los tests", "lang": "es", "act": "approval", "task": "tests"}
+{"text": "sí instálalo", "lang": "es", "act": "approval", "task": "setup_deploy"}
+{"text": "se ve bien, ahora añade lo del highscore", "lang": "es", "act": "approval", "task": "feature"}
+{"text": "joder por fin funciona!!!", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "vuelve a como estaba antes", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "vuelve al layout de antes", "lang": "es", "act": "stop_undo", "task": "ui_styling"}
+{"text": "deshaz el renombrado de las variables, ahora nada encaja", "lang": "es", "act": "stop_undo", "task": "refactor"}
+{"text": "deshaz el npm install, ahora mi node_modules está roto", "lang": "es", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "quita otra vez lo del login", "lang": "es", "act": "stop_undo", "task": "feature"}
+{"text": "borra otra vez los tests que acabas de hacer", "lang": "es", "act": "stop_undo", "task": "tests"}
+{"text": "ese arreglo lo empeoró, deshazlo", "lang": "es", "act": "stop_undo", "task": "bug_fix"}
+{"text": "deshaz el cambio del readme", "lang": "es", "act": "stop_undo", "task": "docs_writing"}
+{"text": "tú constrúyelo. todo. sin preguntas.", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "piénsalo todo tú, diseña y construye la cosa entera, no me molestes", "lang": "es", "act": "handoff", "task": "planning_design"}
+{"text": "sube tú solo el coverage de los tests al 90%, sigue hasta que llegues", "lang": "es", "act": "handoff", "task": "tests"}
+{"text": "reescribe todo el proyecto en typescript, sin preguntas, sigue hasta que compile", "lang": "es", "act": "handoff", "task": "refactor"}
+{"text": "migra todo a postgres y adapta todo el código, sin preguntarme nada porfa", "lang": "es", "act": "handoff", "task": "setup_deploy"}
+{"text": "documenta todo el repo, cada archivo, y no me preguntes nada", "lang": "es", "act": "handoff", "task": "docs_writing"}
+{"text": "rediseña todo el frontend, todas las páginas, que se vea profesional. no me pidas feedback hasta que acabes", "lang": "es", "act": "handoff", "task": "ui_styling"}
+{"text": "encuentra y arregla todos los bugs del proyecto tú solo, me da igual cuánto tardes", "lang": "es", "act": "handoff", "task": "bug_fix"}
+{"text": "revisa todo el repo y arregla lo que creas que está mal, no hace falta que me preguntes", "lang": "es", "act": "handoff", "task": "review"}
+{"text": "las próximas horas haz lo que creas que es lo mejor para el proyecto", "lang": "es", "act": "handoff", "task": "other"}
+{"text": "cómo es el flujo cuando le llega un mensaje al bot", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "qué es la inyección de dependencias", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "uso sqlite o postgres para un bot de discord pequeño?", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "por qué tarda tanto el npm install", "lang": "es", "act": "question", "task": "setup_deploy"}
+{"text": "por qué el timer va más rápido en mi portátil que en el pc de mi colega", "lang": "es", "act": "question", "task": "bug_fix"}
+{"text": "por qué mi navbar se pone encima del contenido", "lang": "es", "act": "question", "task": "ui_styling"}
+{"text": "debería testear las funciones privadas?", "lang": "es", "act": "question", "task": "tests"}
+{"text": "esto es seguro contra sql injection?", "lang": "es", "act": "question", "task": "review"}
+{"text": "tengo que comentar cada línea o solo las partes difíciles?", "lang": "es", "act": "question", "task": "docs_writing"}
+{"text": "esto debería ser un struct o una clase", "lang": "es", "act": "question", "task": "refactor"}
+{"text": "se puede hacer que el bot entre a canales de voz con esta librería?", "lang": "es", "act": "question", "task": "feature"}
+{"text": "qué lenguaje debería aprender ahora", "lang": "es", "act": "question", "task": "other"}
+{"text": "oye tengo una idea", "lang": "es", "act": "other", "task": "other"}
+{"text": "hazme una calculadora con interfaz en tkinter", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "a veces la pelota atraviesa la pala cuando va rápido. arréglalo", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "mete el código del botón en un componente reutilizable", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "que se parezca más a discord, mismos colores", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "escribe unit tests para el cálculo del daño", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "el token tiene que ir en una variable de entorno y no en el código", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "comenta el código para que pueda explicarlo en mi presentación", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "diseña la state machine para el combate del boss", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "qué diría un dev senior de este código", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "lista todos los TODO del proyecto", "lang": "es", "act": "new_request", "task": "understand_code"}
+{"text": "enséñame cómo funcionan los algoritmos de ordenación, con un ejemplo pequeño", "lang": "es", "act": "new_request", "task": "learn_concept"}
+{"text": "renombra la carpeta a starhopper", "lang": "es", "act": "new_request", "task": "other"}
+{"text": "me has destrozado el juego", "lang": "es", "act": "correction", "task": "other"}
+{"text": "nop los enemigos siguen atravesando paredes", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "demasiado padding. a la mitad", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "yo no pedí un sistema de login, quítalo y haz solo el leaderboard", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "has renombrado cosas que yo no quería que renombraras", "lang": "es", "act": "correction", "task": "refactor"}
+{"text": "has puesto el test en verde borrando el assert, eso es trampa", "lang": "es", "act": "correction", "task": "tests"}
+{"text": "el npm install sigue fallando con el mismo mensaje", "lang": "es", "act": "correction", "task": "setup_deploy"}
+{"text": "demasiados emojis en el readme, quítalos", "lang": "es", "act": "correction", "task": "docs_writing"}
+{"text": "ese plan es demasiado grande, solo tenemos el finde", "lang": "es", "act": "correction", "task": "planning_design"}
+{"text": "tu review no sirve, solo hablaste de los nombres. mira la lógica", "lang": "es", "act": "correction", "task": "review"}
+{"text": "la explicación está mal, el bucle va al revés", "lang": "es", "act": "correction", "task": "understand_code"}
+{"text": "sigo con esto después de tu cambio:\nTypeError: Cannot read properties of undefined (reading 'map')\n    at Feed (Feed.jsx:14:22)", "lang": "es", "act": "correction", "task": "error_paste"}
+{"text": "ah y ponle también 5 segundos de cooldown", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "el header, no el footer", "lang": "es", "act": "clarification", "task": "ui_styling"}
+{"text": "se cierra justo después de darle a play, antes de que salga el menú", "lang": "es", "act": "clarification", "task": "bug_fix"}
+{"text": "el repo es privado, mi usuario es coolkid42", "lang": "es", "act": "clarification", "task": "setup_deploy"}
+{"text": "usa los fixtures que ya están en conftest.py", "lang": "es", "act": "clarification", "task": "tests"}
+{"text": "deja los nombres de las funciones igual", "lang": "es", "act": "clarification", "task": "refactor"}
+{"text": "en inglés, y con placeholders para capturas", "lang": "es", "act": "clarification", "task": "docs_writing"}
+{"text": "es un juego local de 2 jugadores, así que sin red", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "fíjate sobre todo en el rendimiento", "lang": "es", "act": "clarification", "task": "review"}
+{"text": "la de utils/math.py", "lang": "es", "act": "clarification", "task": "understand_code"}
+{"text": "explícalo con un ejemplo de un juego", "lang": "es", "act": "clarification", "task": "learn_concept"}
+{"text": "las dos", "lang": "es", "act": "clarification", "task": "other"}
+{"text": "sqlite3.OperationalError: no such table: users", "lang": "es", "act": "other", "task": "error_paste"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.\nqué pasa", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "qué significa esto?? error: linker `cc` not found", "lang": "es", "act": "question", "task": "error_paste"}
+{"text": "gracias eso funcionó perfecto", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "unity o godot para un juego 2d, tú qué opinas", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "añade un temporizador de cuenta atrás de 60 segundos al quiz", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "se ve bien", "lang": "es", "act": "approval", "task": "other"}
+{"text": "pygame.error: No video device\nqué significa y cómo lo arreglo", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "haz commit de esto con un buen mensaje", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "no, te dije el OTRO botón", "lang": "es", "act": "correction", "task": "other"}
+{"text": "qué pasa cuando el usuario le da al botón de login, explícamelo paso a paso", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "así no debería funcionar el inventario, los items tienen que apilarse", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "qué modelo eres", "lang": "es", "act": "other", "task": "other"}
+{"text": "no, lo quería azul no verde", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "para, estás borrando mis archivos!!", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "yo eso no lo escribí, el proyecto no usa redis", "lang": "es", "act": "correction", "task": "docs_writing"}
+{"text": "ayuda\nUnhandled Exception: System.IO.FileNotFoundException: Could not find file 'highscores.txt'.\n   at Program.Main()", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "ayúdame a pensar cómo guardar los niveles, json o en el código", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "mira el diff y dime si ves algo raro", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "haz un code review porfa, sé sincero", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "he cubierto todos los casos límite en parse_input?", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "has metido una base de datos pero yo quería un archivo json", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "python", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "explícame oauth fácil", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "renombra player a hero en todas partes", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "sí, ejecútalo", "lang": "es", "act": "approval", "task": "other"}
+{"text": "busca code smells en mi proyecto", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "quita otra vez el sistema de inventario, es demasiado", "lang": "es", "act": "stop_undo", "task": "feature"}
+{"text": "los colores se leen mal, el contraste es malo", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "pon los pasos de instalación antes de las funciones", "lang": "es", "act": "clarification", "task": "docs_writing"}
+{"text": "el finde tenemos hackathon, qué podríamos hacer", "lang": "es", "act": "other", "task": "other"}
+{"text": "solo testea el backend, salta el frontend", "lang": "es", "act": "clarification", "task": "tests"}
+{"text": "el texto no está centrado, sigue a la izquierda", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "haz un clon completo de flappy bird con menús, sonidos, highscores, todo. modo autónomo porfa", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "simplifica esta cadena de if else", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "eres el mejor", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "fondo azul oscuro y texto blanco", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "escribe unit tests para el cálculo del daño", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "el usuario, no el admin", "lang": "es", "act": "clarification", "task": "other"}
+{"text": "el repo es privado, mi usuario es coolkid42", "lang": "es", "act": "clarification", "task": "setup_deploy"}
+{"text": "añade drag and drop a la lista de todos", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "has hecho push a main, yo quería una rama nueva", "lang": "es", "act": "correction", "task": "setup_deploy"}
+{"text": "implementa un pathfinding a* sencillo para el npc", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "que los usuarios puedan subir una foto de perfil", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "por qué el código usa un hashmap aquí en vez de un vec", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "cuando recargo la página me desloguea, tiene que seguir logueado", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "cuando recargo la página me desloguea, tiene que seguir logueado", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "añade una sección al readme sobre cómo ejecutar el bot en local", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "en qué archivo están los slash commands del bot?", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "puedes hacerlo", "lang": "es", "act": "approval", "task": "other"}
+{"text": "mete una cuenta atrás de 60 segundos en el quiz", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "mil gracias, me salvaste la noche", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "se puede meter un modo multijugador o es muy difícil con esta configuración", "lang": "es", "act": "question", "task": "feature"}
+{"text": "para, estás borrando mis archivos!!", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "esboza las tablas de la base de datos para users, posts y likes", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "ponle un logo mono en el header, un svg simple vale", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "planea cómo hacer un tower defense, todavía no programes", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "este código es seguro contra sql injection?", "lang": "es", "act": "question", "task": "review"}
+{"text": "termina todas las tareas que quedan sin avisarme", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "queremos hostearlo nosotros, sin cloud", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "tests de pytest para utils.py, también casos límite", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in '/home/me/app/src'", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "se puede meter un modo multijugador o es muy difícil con esta configuración", "lang": "es", "act": "question", "task": "feature"}
+{"text": "arreglaste el login pero ahora el registro está roto", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "deshaz lo de docker", "lang": "es", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "el layout tiene que ser de 2 columnas en escritorio y 1 en móvil", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "qué es un mutex?", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "ReferenceError: document is not defined\n    at Object.<anonymous> (server.js:3:1)", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "tema oscuro obvio", "lang": "es", "act": "clarification", "task": "ui_styling"}
+{"text": "vale a ver, tengo una idea", "lang": "es", "act": "other", "task": "other"}
+{"text": "haz de esto una clase de verdad con métodos", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "haz un clon entero de twitter con auth y feed. no voy a contestar preguntas así que decide tú", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "la entrega es el viernes", "lang": "es", "act": "other", "task": "other"}
+{"text": "uso discord.py versión 2.3", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "mira solo los archivos de src/api", "lang": "es", "act": "clarification", "task": "review"}
+{"text": "deshazlo porfa", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "cuál es la mejor forma de estructurar un proyecto de unity con muchos enemigos", "lang": "es", "act": "question", "task": "planning_design"}
+{"text": "ahora sale\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "es", "act": "correction", "task": "error_paste"}
+{"text": "la respuesta es máximo 4 jugadores", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "haz todo tú, yo me voy a dormir", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "sí instálalo", "lang": "es", "act": "approval", "task": "setup_deploy"}
+{"text": "explícame async await vs threads", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "pon el token en una variable de entorno en vez de en el código", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "la barra de vida tiene que ponerse roja por debajo del 20%", "lang": "es", "act": "new_request", "task": "ui_styling"}
+{"text": "File \"main.py\", line 12\n    if x = 5:\n         ^\nSyntaxError: invalid syntax", "lang": "es", "act": "other", "task": "error_paste"}
+{"text": "qué tal estás hoy?", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "toca solo el código de los enemigos", "lang": "es", "act": "clarification", "task": "refactor"}
+{"text": "ctrl z", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "solo pasa en el nivel 2", "lang": "es", "act": "clarification", "task": "bug_fix"}
+{"text": "sigue", "lang": "es", "act": "approval", "task": "other"}
+{"text": "uso windows 11 y python 3.12", "lang": "es", "act": "other", "task": "other"}
+{"text": "eso no es correcto, vuelve a mirar", "lang": "es", "act": "correction", "task": "other"}
+{"text": "añade un test para cuando el inventario está lleno", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "por qué solo se cierra al segundo clic?", "lang": "es", "act": "question", "task": "bug_fix"}
+{"text": "ReferenceError: window is not defined\n    at Object.<anonymous> (server.js:3:1)", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "sí y también los ajustes", "lang": "es", "act": "clarification", "task": "other"}
+{"text": "programa un clon completo de minecraft, vamos", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "revierte el refactor, me gustaba más la estructura de antes", "lang": "es", "act": "stop_undo", "task": "refactor"}
+{"text": "escribe un texto de ayuda para el flag --verbose", "lang": "es", "act": "new_request", "task": "docs_writing"}
+{"text": "python es compilado o interpretado", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "como en la captura que te mandé", "lang": "es", "act": "clarification", "task": "ui_styling"}
+{"text": "ahora sale\nerror[E0382]: borrow of moved value: `name`\n --> src/main.rs:12:20", "lang": "es", "act": "correction", "task": "error_paste"}
+{"text": "haz el código más legible, se lo tengo que enseñar a mi profe", "lang": "es", "act": "new_request", "task": "refactor"}
+{"text": "para ya", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "casos de prueba para números negativos y cero", "lang": "es", "act": "new_request", "task": "tests"}
+{"text": "en mi máquina no va, sigue dando mal el total", "lang": "es", "act": "correction", "task": "bug_fix"}
+{"text": "la app se cierra cuando le doy a cancelar en el diálogo de archivos", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "eres lo máximo", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "cómo se comparte el estado entre los componentes aquí?", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "deshaz los cambios de docker", "lang": "es", "act": "stop_undo", "task": "setup_deploy"}
+{"text": "archivo equivocado, quería decir player.py no enemy.py", "lang": "es", "act": "correction", "task": "other"}
+{"text": "sigue tú solo hasta que la app tenga todas las funciones del readme", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "restaura la versión anterior del archivo", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "dónde aparecen los enemigos", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "cuál es la diferencia entre utils.js y helpers.js en mi proyecto", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "Traceback (most recent call last):\n  File \"bot.py\", line 31, in <module>\n    client.run(TOKEN)\ndiscord.errors.LoginFailure: Improper token has been passed.", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "con pytest", "lang": "es", "act": "clarification", "task": "tests"}
+{"text": "aquí va la captura del bug", "lang": "es", "act": "other", "task": "other"}
+{"text": "/clear", "lang": "es", "act": "other", "task": "other"}
+{"text": "antes de programar: lista las clases que necesitaría para un juego de cartas", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "thread 'main' panicked at src/main.rs:23:14:\ncalled `Option::unwrap()` on a `None` value\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace", "lang": "es", "act": "other", "task": "error_paste"}
+{"text": "ERROR in ./src/App.js\nModule not found: Error: Can't resolve './components/Header' in 'C:\\\\Users\\\\Jonas\\\\app\\\\src'", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "has metido una base de datos pero yo dije archivo json", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "deja todo listo para el deploy, ci, docker, hosting, lo que haga falta, no quiero saber nada hasta que esté online", "lang": "es", "act": "handoff", "task": "setup_deploy"}
+{"text": "y también tiene que funcionar sin conexión", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "bien, siguiente paso", "lang": "es", "act": "approval", "task": "other"}
+{"text": "haz toda la app, no me preguntes nada", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "vale ahora pon el botón rosa", "lang": "es", "act": "approval", "task": "ui_styling"}
+{"text": "se ve feo, hazlo más simple", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "escribe una función que compruebe si un número es primo", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "perfecto, así sigue", "lang": "es", "act": "approval", "task": "other"}
+{"text": "tu review no sirve, solo hablaste de los nombres. mira la lógica", "lang": "es", "act": "correction", "task": "review"}
+{"text": "qué significa O(n log n)", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "approved", "lang": "es", "act": "approval", "task": "other"}
+{"text": "resume qué hace cada archivo de src", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "tenemos 3 semanas y somos solo 2", "lang": "es", "act": "clarification", "task": "planning_design"}
+{"text": "qué significa REST", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "el comando tiene que ser /kick no !kick", "lang": "es", "act": "correction", "task": "feature"}
+{"text": "esta función es thread safe?", "lang": "es", "act": "new_request", "task": "review"}
+{"text": "cómo debería diseñar el formato de guardado para que las partidas viejas sigan funcionando", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "haz una pantalla de ajustes donde se pueda cambiar el volumen", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "el botón es demasiado grande ahora", "lang": "es", "act": "correction", "task": "ui_styling"}
+{"text": "cómo es que el timer va más rápido en mi portátil que en el pc de mi colega", "lang": "es", "act": "question", "task": "bug_fix"}
+{"text": "qué hace docker compose up", "lang": "es", "act": "question", "task": "setup_deploy"}
+{"text": "me refería a la barra lateral izquierda", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "configura tailwind", "lang": "es", "act": "new_request", "task": "setup_deploy"}
+{"text": "Compiling...\nerror: expected `;`, found `}`\n --> src/lib.rs:7:5\nerror: aborting due to previous error", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "dale", "lang": "es", "act": "approval", "task": "other"}
+{"text": "arregla el error off by one de la paginación", "lang": "es", "act": "new_request", "task": "bug_fix"}
+{"text": "aquí el texto del pdf de la tarea: implementa un sistema de biblioteca con libros y socios", "lang": "es", "act": "other", "task": "other"}
+{"text": "tú constrúyelo. todo. sin preguntas.", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "añade salto, con la barra espaciadora", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "hazlo", "lang": "es", "act": "approval", "task": "other"}
+{"text": "divide el proyecto en tareas pequeñas que pueda ir haciendo una a una", "lang": "es", "act": "new_request", "task": "planning_design"}
+{"text": "Assets/Scripts/PlayerController.cs(23,17): error CS0103: The name 'rb' does not exist in the current context", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "haz un comando /encuesta con reacciones", "lang": "es", "act": "new_request", "task": "feature"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "es", "act": "other", "task": "error_paste"}
+{"text": "coge la primera opción pero guarda los datos en un json", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "NullReferenceException: Object reference not set to an instance of an object\nGameManager.Update () (at Assets/GameManager.cs:41)", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "arregla esto: IndexError: list index out of range", "lang": "es", "act": "new_request", "task": "error_paste"}
+{"text": "vale te doy libertad total. haz un juego guay. vuelve cuando esté listo", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "ahora es más complicado que antes, por qué tantas clases", "lang": "es", "act": "correction", "task": "refactor"}
+{"text": "son las 2 de la mañana y sigo programando, ayuda", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "ctrl z", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "npm ERR! code ERESOLVE\nnpm ERR! ERESOLVE unable to resolve dependency tree\nnpm ERR! peer react@\"^17.0.0\" from react-dom@17.0.2", "lang": "es", "act": "other", "task": "error_paste"}
+{"text": "explícame cómo funciona el game loop en main.py", "lang": "es", "act": "question", "task": "understand_code"}
+{"text": "qué es un mutex?", "lang": "es", "act": "question", "task": "learn_concept"}
+{"text": "haz toda la app, no me preguntes nada", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "con pygame, no tkinter", "lang": "es", "act": "clarification", "task": "feature"}
+{"text": "cómo puedo hostear mi bot de discord 24/7 gratis?", "lang": "es", "act": "question", "task": "setup_deploy"}
+{"text": "lgtm", "lang": "es", "act": "approval", "task": "other"}
+{"text": "puedes volver al commit de ayer", "lang": "es", "act": "stop_undo", "task": "other"}
+{"text": "haz un clon completo de flappy bird con menús, sonido, highscores, todo. autónomo porfa", "lang": "es", "act": "handoff", "task": "feature"}
+{"text": "nop solo la página principal", "lang": "es", "act": "clarification", "task": "other"}
+{"text": "oye, estás ahí?", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "cuál es tu lenguaje de programación favorito?", "lang": "es", "act": "chit_chat", "task": "other"}
+{"text": "tests de integración que arranquen el servidor y llamen a /health", "lang": "es", "act": "new_request", "task": "tests"}
