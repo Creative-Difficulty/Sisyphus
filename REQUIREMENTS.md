@@ -78,15 +78,25 @@ product must:
   per session per minute, signed into the hash chain, queued on disk and
   uploaded every 30 seconds while logged in. File changes are found by
   polling the project folder while its agent runs; agent edit claims come
-  from the edit tool calls. `corrections` stays 0 until the prompt model
-  exists.
+  from the edit tool calls. Each prompt is scored by the local prompt
+  model (below).
   - Windows: `GetLastInputInfo`, the foreground window's process.
   - macOS: CoreGraphics idle time, `NSWorkspace`'s frontmost app.
   - Linux X11: XScreenSaver, `_NET_ACTIVE_WINDOW`.
   - Linux Wayland: `ext-idle-notify` (GNOME: Mutter's IdleMonitor); focus
     from Hyprland IPC, Sway IPC, the "Window Calls" GNOME Shell extension,
     a KWin script on KDE, or `wlr-foreign-toplevel-management`.
+- The local prompt model (2026-11-22): scores every prompt from 0 to 1000
+  for each of 22 categories (9 kinds of message, 13 topics), on the
+  device, in any language; only the scores go into the heartbeat. A
+  fine-tuned, compressed multilingual static embedding model
+  (blink-multilingual-64M, MIT) with a small classifier, 26.7 MB, run in
+  plain Rust. Downloaded from the Sisyphus server on first start and only
+  used if its SHA-256 matches. Training tools and synthetic data:
+  `tools/prompt-model/`.
 - Client window (iced):
+  - first start: log in, "Additional required files" (downloads the prompt
+    model with a progress bar; required), connect agents
   - no consent step for activity (removed 2026-11-21); on Linux Wayland
     without the input helper, a popup that says exactly what setting it up
     asks for and installs it through polkit
@@ -159,7 +169,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 7,
+    "version": 8,
     "minute_ms": 1795201380000,
     "os": "linux",
 
@@ -186,7 +196,11 @@ product must:
       "submitted": 1,
       "typed_chars": 86,
       "pasted_chars": 0,
-      "corrections": 1
+      "corrections": 1,
+      "model": "sisyphus-prompt-1",
+      "classes": [
+        [3, 912, 40, 0, 2, 31, 0, 0, 1, 12, 770, 0, 4, 0, 0, 96, 0, 2, 0, 0, 1, 3]
+      ]
     },
 
     "interrupts": 0,
@@ -258,8 +272,15 @@ product must:
   running for that repo.
 - `interrupts` (added 2026-11-21, scheme version 3): times the user
   stopped the agent mid-turn this minute.
-- `prompts`: counts only, never text.
-  - `corrections` counts prompts the local model labelled as corrections.
+- `prompts`: counts and the local model's scores only, never text.
+  - `corrections` counts prompts the local model scored at 500 or more as
+    corrections.
+  - `model` (decided 2026-11-22, scheme version 8): the prompt model's
+    name, empty when no prompt was scored this minute.
+  - `classes` (decided 2026-11-22, scheme version 8): per scored prompt, in
+    the order they were sent, the probability of each of the model's 22
+    categories as a whole number from 0 to 1000 (heartbeats have no
+    floats). Fewer entries than `submitted` if the model wasn't loaded.
 - `responses` (added 2026-11-21): counts only, never text.
   - `finished`: agent responses that finished this minute.
   - `chars`: characters of their visible response text (not thinking, not
@@ -392,13 +413,23 @@ product must:
 
 ### Prompt analysis, on the device
 
-- A really small local embedding model classifies prompts. Only the label
-  leaves the machine.
+- A small local model classifies prompts. Only its scores leave the
+  machine.
 - Many labels that cover all kinds of prompts, not only corrections
-  (decided 2026-11-22). Which labels isn't decided yet.
+  (decided 2026-11-22). For now the draft set is used (2026-11-22): 9 acts
+  and 13 tasks, defined in `tools/prompt-model/labels.md`. Changing them
+  means a new model.
 - The model gives each category a probability from 0.0 to 1.0, and those
-  probabilities are sent (decided 2026-11-22). Heartbeats have no floats,
-  so they go as integers on a fixed scale (which scale isn't decided).
+  probabilities are sent (decided 2026-11-22), as whole numbers from 0 to
+  1000.
+- The model (2026-11-22): blink-multilingual-64M (MIT) fine-tuned together
+  with a 2-layer classifier, compressed to 26.7 MB. Fine-tuning may only
+  change word pieces that occur in the public, LLM-written training data,
+  so the published model doesn't reveal words from the private real
+  prompts it was also trained on.
+- It isn't bundled with the app: the first start downloads it from the
+  Sisyphus server on a screen labelled "Additional required files", which
+  can't be skipped (decided 2026-11-22). The app checks the file's SHA-256.
 - The model should be about 20 MB; a little over is fine, far over (like
   70 MB) isn't (decided 2026-11-22).
 - It works with prompts in any language (decided 2026-11-22).
@@ -419,7 +450,9 @@ product must:
   need Window Calls.
 - Pasted error logs and stack traces are real struggle. They may need an
   exemption from the paste penalty.
-- Which embedding model (small, multilingual). The architecture comes first.
+- Improving the prompt model: conversation context (did the agent just ask
+  something or change something) for corrections and clarifications, real
+  prompts from more people, splitting the catch-all `other` task.
 - Tuning the decay speeds with real data.
 - The mouse-jiggle rule. Proposal: minutes where the agent's window is in
   front but the agent doesn't run only count up to a budget before the next

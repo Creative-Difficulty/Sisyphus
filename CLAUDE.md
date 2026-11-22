@@ -17,7 +17,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 - When the user makes or changes a decision, record it in `REQUIREMENTS.md`, and in this file if agents need it to work.
 - Privacy:
   - Never collect or upload file contents, absolute paths, window titles, keystroke content or prompt text.
-  - Only counts, timings, coarse app classes, the operating system family, paths of edited files and of the project's own programs relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
+  - Only counts, timings, coarse app classes, the operating system family, the local prompt model's per-category scores, paths of edited files and of the project's own programs relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
   - AI chat history and prompts stay local. `AgentEvent`s carry full prompt and response text in memory on the client; anything that leaves the machine must be reduced to what the heartbeat scheme allows.
 - Never write to, commit to or modify a user's repository. Everything runs in the background.
 - Never credit more time than was actually tracked. Multipliers from 0.0 to 1.0 are applied server-side.
@@ -59,8 +59,9 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 7 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`, v7 `os`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v7`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
-- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
+  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 8 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`, v7 `os`, v8 `prompts.model` and `prompts.classes`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v8`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
+- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `prompt_model`, `tracker`) plus a binary (`main.rs`).
+  - `prompt_model/`: the local prompt classifier, see "Prompt model" below.
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
   - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
@@ -89,6 +90,7 @@ Three crates in `crates/`:
   - `GET /api/app/today?start_ms=…` and `POST /api/app/logout` (`app.rs`): signed app requests, see "Signed app requests" below.
   - `GET /api/heartbeats?offset=N` (`dashboard.rs`, debug): the heartbeats the user's devices uploaded, newest first, 100 per page, with `total`, exactly as stored (device, seq, hash, prev, sig, claimed and received time, offline flag, body), with what it was credited (`credit`: session id, multiplier, the heartbeat's attention, credit and AI time, formula).
   - `GET /health` returns `ok`.
+  - `GET /models/sisyphus-prompt-1.bin` (`web.rs`): the prompt model, embedded in the binary from `models/` (cached as immutable), and its base model's licence at `/models/LICENSE-blink-multilingual-64M.txt`.
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
     - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles.
     - Logged out it shows a "Log in with Hack Club" button; logged in, the name and "Log out" in the header and the dashboard.
@@ -221,7 +223,7 @@ Reads, without a keyboard hook, the time since the last input (any key or mouse 
 
 ### Tracker (`crates/client/src/tracker/`)
 
-Records heartbeats (v7) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
+Records heartbeats (v8) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
 - One tracker per machine: `tracker.lock` next to the config is locked (`File::try_lock`); a second window or `track` doesn't record.
 - `mod.rs`, once a second:
   - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
@@ -238,7 +240,18 @@ Records heartbeats (v7) and uploads them. The window starts it (`Tracker::start`
 - Known gap (any agent): sessions are re-read every 10 s, so the first turn of a brand-new session can finish before its project folder is watched, and its `working_dir` changes are missed.
 - `minute.rs`: a session's minute; a slot's focus is the class seen most often (latest on a tie).
 - `queue.rs`: heartbeats are signed with the device key into the chain, appended to `queue.jsonl` (written before the tip) and the tip saved in `chain.json`, both next to the config. The uploader thread sends batches of up to 500 every 30 s while logged in (`account()`) and the server is https or localhost, never holding the queue's lock during a request. On `OutOfSync` it drops what the server already has, or signs the unsent heartbeats again from the server's tip if the chains differ. At most 50,000 are kept.
-- Not built: correction labels (`corrections` is 0 until the embedding model exists), opencode on Windows, tmux/terminal-tab disambiguation beyond "most recently active".
+- Prompts are classified by the prompt model as they arrive (once it's downloaded; the tracker loads it on its 10 s reload): each prompt's per-category scores go into the minute's `prompts.classes`, `prompts.model` names the model, and `corrections` counts prompts scored at 500 or more as `act:correction`. The text is dropped right after.
+- Not built: opencode on Windows, tmux/terminal-tab disambiguation beyond "most recently active".
+
+### Prompt model (`crates/client/src/prompt_model/`, decided 2026-11-22)
+
+- Gives every prompt a probability (0.0–1.0, sent as 0–1000) for each of 22 categories, in `LABELS` order: 9 acts (`new_request`, `correction`, `clarification`, `approval`, `question`, `stop_undo`, `handoff`, `chit_chat`, `other`), then 13 tasks (`feature`, `bug_fix`, `error_paste`, `refactor`, `understand_code`, `learn_concept`, `ui_styling`, `tests`, `setup_deploy`, `docs_writing`, `planning_design`, `review`, `other`). Definitions: `tools/prompt-model/labels.md`. Categories are independent (sigmoid each).
+- The model: `minishlab/blink-multilingual-64M` (MIT; static embeddings, 250,000 word pieces x 256, 100+ languages), its table and a 256 → 512 → 512 → 22 classifier fine-tuned on our labels. Shipped as `models/sisyphus-prompt-1.bin` (26.7 MB, our own format, see `mod.rs` docs): the original table as 64 one-byte PQ codes per row, the ~29,000 fine-tuned rows and the layers as int8, the tokenizer, and the Unicode tables it needs.
+- Privacy: fine-tuning only changed rows of word pieces that occur in the public, LLM-written training data; private real prompts trained the classifier but no word only they contain, so the file doesn't reveal their vocabulary.
+- Inference in plain Rust, no new dependencies (`tokenizer.rs` matches Hugging Face `tokenizers` for this tokenizer: added tokens first, `BertNormalizer` with lowercase, `BertPreTokenizer`, 100-char pieces, WordPiece): tokenize, drop `[UNK]`, average rows, L2-normalize, layers with ReLU, sigmoid. Under a millisecond per prompt.
+- Not bundled: downloaded on first start ("Additional required files") from `<server>/models/sisyphus-prompt-1.bin` into `models/` next to the config; used only if size and SHA-256 match `MODEL_SIZE`/`MODEL_SHA256`, also checked on every load. A new model needs a new name, hash, parity file and server route.
+- `prompt_model::tests` checks 391 cases against the Python reference (`crates/client/tests/data/prompt_model_parity.json`): token ids exactly, probabilities to 0.0005. It reads `models/sisyphus-prompt-1.bin` from the repo.
+- Training: `tools/prompt-model/` (scripts, synthetic data, README with results; real prompts are never committed). Results: real prompts (one person) act 71% / task 55% right; synthetic 12 languages 68% / 69%; with typos 58% / 59%.
 
 ### Local config (`config.rs`)
 
@@ -253,16 +266,17 @@ Fields:
 - `server_url`: the Sisyphus server; absent means production, `https://sisyphus.aelx.dev` (`DEFAULT_SERVER_URL`). Changeable in Settings.
 - `account`: `{ "name": …, "server": … }` once logged in, absent when logged out. A device is linked per server, so `Config::account()` only returns the account when its `server` matches the current one; switching servers (or an older account without `server`) means logging in again. Always use `account()`, not the field.
 
-`device.key` (the device's private key) lives next to it, as do the tracker's `queue.jsonl`, `chain.json` and `tracker.lock`.
+`device.key` (the device's private key) lives next to it, as do the tracker's `queue.jsonl`, `chain.json` and `tracker.lock`, and `models/sisyphus-prompt-1.bin` (the downloaded prompt model).
 
 Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Window (`crates/client/src/gui/`, iced 0.14)
 
-- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; no agents → connect step; Linux Wayland without a running input helper → the input helper popup; otherwise the dashboard.
+- `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; prompt model missing → additional required files; no agents → connect step; Linux Wayland without a running input helper → the input helper popup; otherwise the dashboard.
 - First start (`onboarding.rs`), never the settings screen:
   1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
-  2. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
+  2. "Additional required files" (`files.rs`, decided 2026-11-22): a card "Prompt model" with a pink progress bar ("8.9 of 27 MB", then "Ready") and one line on what it does. The download starts by itself from the server (`prompt_model::download`, on a worker thread, progress polled five times a second); "Continue" is enabled once it's saved and its SHA-256 checked; on failure the error and "Try again". Required: shown again whenever the file is missing.
+  3. Connect step: agent tiles (logo, name, Connect/Disconnect) and "Continue", enabled once an agent is connected.
 - Input helper popup (`input_helper.rs`, only on Linux Wayland without the helper running): says why (Wayland doesn't tell apps keys from mouse), what it does (counts only, never which keys), what the password allows (the installed copy, the service, `/dev/input`, not root, no network, only this account reads it), how to remove it, and "Questions or concerns? Contact @simon on Slack." "Set up" runs `pkexec … input-helper install` on a worker thread ("Waiting for your password" meanwhile; errors for cancel, no polkit agent, failures); it can't be skipped (decided 2026-11-21: the counts are needed), so the dashboard only opens once the helper answers. There is no activity consent step any more (removed 2026-11-21).
 - Settings (`settings.rs`, gear icon) is a compact list in the dashboard's bubble style, deliberately not a copy of the onboarding tiles:
   - an account row (name, "Hack Club", "Log out"; logging out unlinks the device on the server first, shows "Logging out" meanwhile and an error if that fails, then returns to the login step)
@@ -270,7 +284,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
   - an "Input helper" row (Linux Wayland, or wherever it's installed): Running / Not running, "Restart" and "Uninstall" (whenever installed), or "Set up" when it doesn't answer; each runs `pkexec … input-helper install|restart|uninstall` (`input_helper::run_as_admin`). Uninstalling on Wayland brings the required popup back.
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
 - Top bar: gear on the dashboard, back arrow in settings and the debug screen, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
-- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, how keys and mouse are told apart and this minute's counts, backends, watched folders, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
+- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, how keys and mouse are told apart and this minute's counts, backends, watched folders, the prompt model's state and the last prompt's top act and task, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
   - Bottom half: "Recorded today" and three figures. "Recorded today" and the "agent time" figure come from the server (`GET /api/app/today`: `tracked_ms`, `agent_ms`, for the local day; decided 2026-11-21), fetched with each 10 s refresh. "prompts" and "sessions" are placeholders (zero).
@@ -336,7 +350,7 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
   - six 10-second slots, each with whether there was input, key presses and mouse events counted, and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `testing` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
   - `tested_programs`: the project's own executables that were in front (focus `testing`), relative to the project folder
   - `running_programs`: the project's own executables running this minute (in front or not); a running program alone sends a heartbeat, earning nothing for now
-  - prompt counts: submitted, typed chars, pasted chars, corrections; interrupts
+  - prompt counts: submitted, typed chars, pasted chars, corrections; per prompt the local model's 22 scores (0–1000) and the model's name; interrupts
   - response counts: responses finished this minute and their visible characters (never text)
   - per edited file, its path relative to the project folder, with non-whitespace characters added/removed in the working directory and what the agent's edit calls claim
 - **Never from the client:** a 0–1 value, attention, the struggle value, or a session UUID.
@@ -359,9 +373,9 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
   - Linux Wayland: `ext-idle-notify` (Mutter's IdleMonitor on GNOME); key/mouse counts only through the input helper, which the user installs with their password after a popup that says exactly what it does (decided 2026-11-21). It reads `/dev/input` as its own unprivileged user and passes on counts only.
   - Activity is read without a consent step (decided 2026-11-21). Per compositor: see "Activity" above.
 - **Edits must match.** While an agent runs, the client watches its working directory. The agent's edit calls and the actual file changes must match up, file by file; the server flags it when the agent claims more than actually changed.
-- **Prompt classification.** A really small local embedding model classifies each prompt on the device. The model is deliberately not chosen yet: the architecture comes first. Only the label leaves the machine.
+- **Prompt classification.** A small local model classifies each prompt on the device (see "Prompt model"); only its per-category scores leave the machine.
   - Correction prompts ("no, you did this wrong, redo it") add to struggle; they don't reduce time, for now.
   - Pasted prompts earn less than typed ones.
   - Detecting AI-generated prompts is a low-priority idea.
 - Not possible with this design: detecting deleting or rewriting inside a prompt draft.
-- Open and for-later items (unmatched file changes, error-log pastes, struggle's effect on credit, the embedding model, tuning decay speeds, the mouse-jiggle rule, low values for other user actions without activity) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.
+- Open and for-later items (unmatched file changes, error-log pastes, struggle's effect on credit, tuning decay speeds, the mouse-jiggle rule, low values for other user actions without activity) are listed in `REQUIREMENTS.md`. Ask before deciding any of them.
