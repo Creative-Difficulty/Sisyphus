@@ -2,13 +2,14 @@ use ed25519_dalek::SigningKey;
 use sisyphus_common::api::{StoredHeartbeat, UploadBatch, UploadError, verify_batch as verify_at};
 use sisyphus_common::chain::{ChainError, ChainTip, ChainWriter, SignedHeartbeat};
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, Slot, VERSION,
+    Changes, FileChange, Focus, Heartbeat, InputKinds, Os, Prompts, Responses, Slot, VERSION,
 };
 
 fn minute(i: u64) -> Heartbeat {
     Heartbeat {
         version: VERSION,
         minute_ms: 1_795_201_380_000 + i * 60_000,
+        os: Os::Linux,
         agent: "claude-code".into(),
         agent_session_id: "77ae4435-adc7-40d4-934f-f70f97ced5e4".into(),
         session_name: "Demo".into(),

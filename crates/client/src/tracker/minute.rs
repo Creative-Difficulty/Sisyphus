@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, InputKinds, Prompts, Responses, SLOTS, Slot, VERSION,
+    Changes, FileChange, Focus, Heartbeat, InputKinds, Os, Prompts, Responses, SLOTS, Slot, VERSION,
 };
 
 /// One slot's input, for the whole system.
@@ -182,6 +182,7 @@ impl SessionMinute {
         Heartbeat {
             version: VERSION,
             minute_ms: meta.minute_ms,
+            os: Os::CURRENT,
             agent: meta.agent.to_string(),
             agent_session_id: meta.agent_session_id.to_string(),
             session_name: meta.session_name.to_string(),

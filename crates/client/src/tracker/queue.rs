@@ -266,6 +266,7 @@ mod tests {
         Heartbeat {
             version: VERSION,
             minute_ms: minute * 60_000,
+            os: sisyphus_common::heartbeat::Os::CURRENT,
             agent: "claude-code".into(),
             agent_session_id: "s".into(),
             session_name: "t".into(),

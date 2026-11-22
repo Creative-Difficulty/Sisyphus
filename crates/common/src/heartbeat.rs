@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v6).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v7).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -14,7 +14,7 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 6;
+pub const VERSION: u32 = 7;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -27,6 +27,8 @@ pub struct Heartbeat {
     /// Start of the minute (unix ms, device clock). The device clock is not
     /// trusted; the server records its own receive time separately.
     pub minute_ms: u64,
+    /// The operating system the client runs on.
+    pub os: Os,
 
     /// The agent integration's id, e.g. `claude-code`.
     pub agent: String,
@@ -84,6 +86,31 @@ impl Slot {
         keys: 0,
         mouse: 0,
         focus: Focus::Unknown,
+    };
+}
+
+/// The client's operating system family. Only the family, never a version,
+/// distribution or machine name.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Os {
+    Windows,
+    Macos,
+    Linux,
+    /// Any other system the client was built for.
+    Other,
+}
+
+impl Os {
+    /// The system this was compiled for.
+    pub const CURRENT: Self = if cfg!(target_os = "windows") {
+        Self::Windows
+    } else if cfg!(target_os = "macos") {
+        Self::Macos
+    } else if cfg!(target_os = "linux") {
+        Self::Linux
+    } else {
+        Self::Other
     };
 }
 
