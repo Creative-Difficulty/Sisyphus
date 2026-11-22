@@ -400,6 +400,7 @@ product must:
   probabilities are sent (decided 2026-11-22). Heartbeats have no floats,
   so they go as integers on a fixed scale (which scale isn't decided).
 - The model is at most 20 MB (decided 2026-11-22).
+- It works with prompts in any language (decided 2026-11-22).
 - Correction prompts ("no, you did this wrong, redo it") add to struggle.
   They don't reduce time, for now.
 - Pasted prompts earn less.
