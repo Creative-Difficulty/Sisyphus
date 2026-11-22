@@ -7,11 +7,9 @@ use super::*;
 fn model() -> PromptModel {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../models/",
-        "sisyphus-prompt-1.bin"
+        "/../../models/sisyphus-prompt-1.bin"
     );
-    PromptModel::from_bytes(&fs::read(path).expect("models/sisyphus-prompt-1.bin"))
-        .expect("model loads")
+    PromptModel::open(Path::new(path)).expect("models/sisyphus-prompt-1.bin loads")
 }
 
 #[test]
@@ -39,7 +37,7 @@ fn matches_the_reference() {
             ));
             continue;
         }
-        let probs = model.classify(text);
+        let probs = model.classify(text).expect("model file readable");
         for (p, e) in probs.iter().zip(case["probs"].as_array().unwrap()) {
             worst = worst.max((p - e.as_f64().unwrap() as f32).abs());
         }
@@ -55,7 +53,10 @@ fn matches_the_reference() {
 
 #[test]
 fn refuses_other_files() {
-    assert!(PromptModel::from_bytes(b"SPMODEL1 not really").is_err());
+    let path = std::env::temp_dir().join(format!("sisyphus-not-a-model-{}", std::process::id()));
+    fs::write(&path, b"SPMODEL1 not really").unwrap();
+    assert!(PromptModel::open(&path).is_err());
+    let _ = fs::remove_file(&path);
 }
 
 #[test]

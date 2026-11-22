@@ -573,7 +573,8 @@ impl State {
                 let classes = self
                     .prompt_model
                     .as_ref()
-                    .map(|model| prompt_model::per_mille(&model.classify(&text)));
+                    .and_then(|model| model.classify(&text))
+                    .map(|probs| prompt_model::per_mille(&probs));
                 if classes.is_some() {
                     self.last_prompt_classes = classes;
                 }

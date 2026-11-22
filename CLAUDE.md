@@ -248,6 +248,7 @@ Records heartbeats (v8) and uploads them. The window starts it (`Tracker::start`
 - Gives every prompt a probability (0.0–1.0, sent as 0–1000) for each of 22 categories, in `LABELS` order: 9 acts (`new_request`, `correction`, `clarification`, `approval`, `question`, `stop_undo`, `handoff`, `chit_chat`, `other`), then 13 tasks (`feature`, `bug_fix`, `error_paste`, `refactor`, `understand_code`, `learn_concept`, `ui_styling`, `tests`, `setup_deploy`, `docs_writing`, `planning_design`, `review`, `other`). Definitions: `tools/prompt-model/labels.md`. Categories are independent (sigmoid each).
 - The model: `minishlab/blink-multilingual-64M` (MIT; static embeddings, 250,000 word pieces x 256, 100+ languages), its table and a 256 → 512 → 512 → 22 classifier fine-tuned on our labels. Shipped as `models/sisyphus-prompt-1.bin` (26.7 MB, our own format, see `mod.rs` docs): the original table as 64 one-byte PQ codes per row, the ~29,000 fine-tuned rows and the layers as int8, the tokenizer, and the Unicode tables it needs.
 - Privacy: fine-tuning only changed rows of word pieces that occur in the public, LLM-written training data; private real prompts trained the classifier but no word only they contain, so the file doesn't reveal their vocabulary.
+- Memory: the file stays open and only the rows a prompt uses are read from it (`classify` returns `None` if that fails); in memory are a compact sorted word index (`tokenizer::StrIndex`, about 5 MB), the codebooks and the int8 layers: about 6–9 MB in all. The SHA-256 is checked while streaming the file on open.
 - Inference in plain Rust, no new dependencies (`tokenizer.rs` matches Hugging Face `tokenizers` for this tokenizer: added tokens first, `BertNormalizer` with lowercase, `BertPreTokenizer`, 100-char pieces, WordPiece): tokenize, drop `[UNK]`, average rows, L2-normalize, layers with ReLU, sigmoid. Under a millisecond per prompt.
 - Not bundled: downloaded on first start ("Additional required files") from `<server>/models/sisyphus-prompt-1.bin` into `models/` next to the config; used only if size and SHA-256 match `MODEL_SIZE`/`MODEL_SHA256`, also checked on every load. A new model needs a new name, hash, parity file and server route.
 - `prompt_model::tests` checks 391 cases against the Python reference (`crates/client/tests/data/prompt_model_parity.json`): token ids exactly, probabilities to 0.0005. It reads `models/sisyphus-prompt-1.bin` from the repo.
@@ -271,6 +272,8 @@ Fields:
 Unknown fields are ignored. Saving replaces the file atomically.
 
 ### Window (`crates/client/src/gui/`, iced 0.14)
+
+- Rendered in software (tiny-skia; iced's `wgpu` feature is off, decided 2026-11-22): the GPU renderer loaded the graphics drivers (LLVM, Mesa, Vulkan, about 135 MB) into the process. Measured in release builds: window about 70 MB on the dashboard, `track` about 28 MB.
 
 - `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; prompt model missing → additional required files; no agents → connect step; Linux Wayland without a running input helper → the input helper popup; otherwise the dashboard.
 - First start (`onboarding.rs`), never the settings screen:

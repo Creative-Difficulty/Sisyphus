@@ -13,11 +13,43 @@
 //! The Unicode tables (punctuation, "other" characters) come from the model
 //! file, so they match what the model was trained with.
 
-use std::collections::HashMap;
+/// Strings to ids, compact: all strings in one buffer, sorted, looked up by
+/// binary search. About 5 MB for the 250,000 entries, where a `HashMap` of
+/// `String`s takes about four times that.
+pub struct StrIndex {
+    text: String,
+    /// (start, end) in `text`, sorted by the string.
+    spans: Vec<(u32, u32)>,
+    ids: Vec<u32>,
+}
+
+impl StrIndex {
+    pub fn new<'a>(entries: impl Iterator<Item = (&'a str, u32)>) -> Self {
+        let mut entries: Vec<(&str, u32)> = entries.collect();
+        entries.sort_unstable_by(|a, b| a.0.cmp(b.0));
+        let mut text = String::with_capacity(entries.iter().map(|(s, _)| s.len()).sum());
+        let mut spans = Vec::with_capacity(entries.len());
+        let mut ids = Vec::with_capacity(entries.len());
+        for (s, id) in entries {
+            let start = text.len() as u32;
+            text.push_str(s);
+            spans.push((start, text.len() as u32));
+            ids.push(id);
+        }
+        Self { text, spans, ids }
+    }
+
+    pub fn get(&self, key: &str) -> Option<u32> {
+        self.spans
+            .binary_search_by(|&(start, end)| self.text[start as usize..end as usize].cmp(key))
+            .ok()
+            .map(|i| self.ids[i])
+    }
+}
 
 pub struct Tokenizer {
-    pub(super) vocab: HashMap<String, u32>,
-    pub(super) added: HashMap<String, u32>,
+    pub(super) vocab: StrIndex,
+    pub(super) added: StrIndex,
     /// Longest added token, in characters.
     pub(super) added_max_chars: usize,
     pub(super) punctuation: Vec<(u32, u32)>,
@@ -56,7 +88,7 @@ impl Tokenizer {
         for len in (1..=longest).rev() {
             let start = chars[i].0;
             let end = chars.get(i + len).map_or(text.len(), |c| c.0);
-            if let Some(&id) = self.added.get(&text[start..end]) {
+            if let Some(id) = self.added.get(&text[start..end]) {
                 return Some((id, i + len));
             }
         }
@@ -137,7 +169,7 @@ impl Tokenizer {
                     piece.push_str("##");
                 }
                 piece.extend(&word[start..end]);
-                if let Some(&id) = self.vocab.get(&piece) {
+                if let Some(id) = self.vocab.get(&piece) {
                     found = Some(id);
                     break;
                 }
