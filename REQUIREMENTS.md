@@ -394,6 +394,9 @@ product must:
 
 - A really small local embedding model classifies prompts. Only the label
   leaves the machine.
+- Many labels that cover all kinds of prompts, not only corrections
+  (decided 2026-11-22). Which labels, and how they go into the heartbeat,
+  isn't decided yet.
 - Correction prompts ("no, you did this wrong, redo it") add to struggle.
   They don't reduce time, for now.
 - Pasted prompts earn less.
