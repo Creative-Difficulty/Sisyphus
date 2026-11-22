@@ -104,8 +104,9 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
         .is_offline();
         sqlx::query(
             "INSERT INTO heartbeats
-                 (device_id, seq, hash, prev, sig, claimed_ms, received_ms, body, offline)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9)",
+                 (device_id, seq, hash, prev, sig, claimed_ms, received_ms, body, offline,
+                  user_id)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10)",
         )
         .bind(&device)
         .bind(signed.seq as i64)
@@ -116,6 +117,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
         .bind(now)
         .bind(&body)
         .bind(offline)
+        .bind(user_id)
         .execute(&mut *tx)
         .await?;
         let stored = credit::Stored {

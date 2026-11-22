@@ -248,8 +248,8 @@ pub async fn share_minute(db: &mut PgConnection, user_id: i64, minute_ms: i64) -
     Ok(())
 }
 
-/// Credit every stored heartbeat of a linked device that isn't credited
-/// yet, after dropping rows of older formulas. Runs on start.
+/// Credit every stored heartbeat that belongs to an account (the one its
+/// device was linked to when it was uploaded) and isn't credited yet, after dropping rows of older formulas. Runs on start.
 pub async fn backfill(db: &PgPool) -> sqlx::Result<usize> {
     let mut tx = db.begin().await?;
     sqlx::query("DELETE FROM session_minutes WHERE formula <> $1")
@@ -257,9 +257,9 @@ pub async fn backfill(db: &PgPool) -> sqlx::Result<usize> {
         .execute(&mut *tx)
         .await?;
     let rows = sqlx::query(
-        "SELECT h.device_id, h.seq, h.offline, h.body::text AS body, d.user_id
-         FROM heartbeats h JOIN devices d ON d.device_id = h.device_id
-         WHERE d.user_id IS NOT NULL
+        "SELECT h.device_id, h.seq, h.offline, h.body::text AS body, h.user_id
+         FROM heartbeats h
+         WHERE h.user_id IS NOT NULL
            AND NOT EXISTS (SELECT 1 FROM session_minutes m
                            WHERE m.device_id = h.device_id AND m.seq = h.seq)
          ORDER BY h.device_id, h.seq",

@@ -229,22 +229,19 @@ pub async fn heartbeats(
         eprintln!("heartbeats failed: {e}");
         StatusCode::INTERNAL_SERVER_ERROR
     };
-    let total: i64 = sqlx::query(
-        "SELECT count(*) AS n FROM heartbeats h
-         JOIN devices d ON d.device_id = h.device_id WHERE d.user_id = $1",
-    )
-    .bind(user.id)
-    .fetch_one(&state.db)
-    .await
-    .map_err(failed)?
-    .get("n");
+    let total: i64 = sqlx::query("SELECT count(*) AS n FROM heartbeats WHERE user_id = $1")
+        .bind(user.id)
+        .fetch_one(&state.db)
+        .await
+        .map_err(failed)?
+        .get("n");
     let rows = sqlx::query(
         "SELECT h.device_id, h.seq, h.hash, h.prev, h.sig, h.claimed_ms, h.received_ms,
                 h.offline, h.body::text AS body, m.session_id, m.multiplier,
                 m.attention_end, m.credit_ms, m.ai_ms, m.formula
-         FROM heartbeats h JOIN devices d ON d.device_id = h.device_id
+         FROM heartbeats h
          LEFT JOIN session_minutes m ON m.device_id = h.device_id AND m.seq = h.seq
-         WHERE d.user_id = $1
+         WHERE h.user_id = $1
          ORDER BY h.received_ms DESC, h.claimed_ms DESC, h.seq DESC
          LIMIT $2 OFFSET $3",
     )
