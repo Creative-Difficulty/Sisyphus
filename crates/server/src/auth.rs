@@ -391,7 +391,7 @@ async fn confirm_page(State(state): State<AppState>, headers: HeaderMap) -> Resp
          <p class=\"muted\">Only continue if you just clicked \u{201c}Log in with Hack Club\u{201d} \
          in the app.</p>\
          <form method=\"post\" action=\"{CONFIRM_PATH}\">\
-         <p><button class=\"pill\" type=\"submit\">Log in</button></p></form>\
+         <p><button class=\"pill confirm\" type=\"submit\">Log in</button></p></form>\
          <form method=\"post\" action=\"{CONFIRM_PATH}/cancel\">\
          <button class=\"link\" type=\"submit\">Cancel</button></form>\
          </main></body></html>"

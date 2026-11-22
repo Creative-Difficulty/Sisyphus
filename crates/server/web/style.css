@@ -87,6 +87,8 @@ header h1 { flex: 1; }
   text-decoration: none;
 }
 .pill:hover { filter: brightness(1.08); }
+/* As a button: no browser outline or font. */
+button.pill { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
 
 .welcome, .message {
   text-align: center;
@@ -94,6 +96,9 @@ header h1 { flex: 1; }
 }
 .welcome p, .message p { margin-bottom: 24px; }
 .message h1 { margin-bottom: 16px; }
+/* The app login's confirmation: a big "Log in", a small "Cancel". */
+.message .pill.confirm { font-size: 20px; padding: 16px 48px; }
+.message .link { font-size: 15px; }
 
 h1 { font-weight: 600; font-size: 30px; }
 h2 { font-weight: 600; font-size: 22px; margin-bottom: 12px; }
