@@ -21,7 +21,19 @@ ureq = { version = "3", features = ["json"] }
 jsonwebtoken = { version = "11", default-features = false, features = ["rust_crypto"] }
 getrandom = "0.4"
 sisyphus-common = { path = "crates/common" }
-iced = { version = "0.14", features = ["svg"] }
+# Software rendering (tiny-skia) only: the GPU renderer (wgpu) loads the
+# graphics drivers into the process (LLVM, Mesa, Vulkan: about 135 MB), far
+# too much for this simple window. These are iced's defaults minus wgpu.
+iced = { version = "0.14", default-features = false, features = [
+    "svg",
+    "tiny-skia",
+    "crisp",
+    "web-colors",
+    "thread-pool",
+    "linux-theme-detection",
+    "x11",
+    "wayland",
+] }
 
 # Activity (time since the last input, the focused app), per OS. All of
 # these were already compiled into the client through iced/winit.
