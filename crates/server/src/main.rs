@@ -187,13 +187,16 @@ async fn security_headers(
     let set = |headers: &mut axum::http::HeaderMap, name: &'static str, value: &'static str| {
         headers.insert(name, HeaderValue::from_static(value));
     };
-    set(
-        headers,
-        "content-security-policy",
-        "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; \
+    // A page may bring its own policy (the app login's confirmation page).
+    if !headers.contains_key("content-security-policy") {
+        set(
+            headers,
+            "content-security-policy",
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; \
          font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; \
          form-action 'self'",
-    );
+        );
+    }
     set(headers, "x-frame-options", "DENY");
     set(headers, "x-content-type-options", "nosniff");
     set(headers, "referrer-policy", "same-origin");

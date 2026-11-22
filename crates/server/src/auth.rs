@@ -8,8 +8,12 @@
 //! 1. The app listens on `127.0.0.1:<port>`, makes a random `verifier`, and
 //!    opens `/auth/app?port=…&challenge=sha256hex(verifier)&device=<key>`.
 //! 2. The user logs in in the browser as on the website.
-//! 3. `/auth/callback` sends the browser to `http://127.0.0.1:<port>/done?
-//!    code=…` (a one-time code, valid for 2 minutes).
+//! 3. `/auth/callback` shows a confirmation page (`/auth/app/confirm`),
+//!    tied to this browser by a cookie: "Log in the app as <name>?". Only a
+//!    click on "Log in" there sends the browser to `http://127.0.0.1:<port>/
+//!    done?code=…` (a one-time code, valid for 2 minutes from then), so
+//!    following a login link by accident (Hack Club may skip its own
+//!    screen) links nothing.
 //! 4. The app posts the code, the `verifier` and a device signature over the
 //!    code to `/auth/app/token`, which links the device to the user. A stolen
 //!    code is useless without the verifier and the device's private key.
@@ -45,6 +49,8 @@ pub fn routes() -> Router<AppState> {
         .route("/auth/login", get(login))
         .route("/auth/app", get(app_login))
         .route("/auth/callback", get(callback))
+        .route("/auth/app/confirm", get(confirm_page).post(confirm))
+        .route("/auth/app/confirm/cancel", post(cancel))
         .route("/auth/app/token", post(app_token))
         .route("/auth/logout", post(logout))
         .route("/api/me", get(me))
@@ -276,18 +282,21 @@ async fn callback(
 
     let app_port: Option<i32> = attempt.get("app_port");
     match app_port {
-        // Desktop app: hand a one-time code to its loopback listener.
+        // Desktop app: an unconfirmed one-time code, held by this browser
+        // until the user confirms on the next page.
         Some(port) => {
             let code = random_token();
             let saved = sqlx::query(
-                "INSERT INTO app_codes (code_hash, user_id, device_id, challenge, expires_ms)
-                 VALUES ($1, $2, $3, $4, $5)",
+                "INSERT INTO app_codes
+                     (code_hash, user_id, device_id, challenge, app_port, confirmed, expires_ms)
+                 VALUES ($1, $2, $3, $4, $5, FALSE, $6)",
             )
             .bind(sha256_hex(&code))
             .bind(user_id)
             .bind(attempt.get::<String, _>("app_device_id"))
             .bind(attempt.get::<String, _>("app_challenge"))
-            .bind(now_ms() + APP_CODE_TTL_MS)
+            .bind(port)
+            .bind(now_ms() + LOGIN_TTL_MS)
             .execute(&state.db)
             .await;
             if let Err(e) = saved {
@@ -297,10 +306,8 @@ async fn callback(
                     "Something went wrong. Please try again.",
                 );
             }
-            redirect(
-                &format!("http://127.0.0.1:{port}/done?code={code}"),
-                &[clear_login],
-            )
+            let pending = state.cookie("confirm", &code, CONFIRM_PATH, LOGIN_TTL_MS / 1000);
+            redirect(CONFIRM_PATH, &[clear_login, pending])
         }
         // Website: start a session.
         None => {
@@ -327,6 +334,172 @@ async fn callback(
             redirect("/", &[clear_login, session])
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// The desktop app's login waits for the user to confirm it
+
+/// The confirmation page; its cookie is scoped here (and to `…/cancel`).
+const CONFIRM_PATH: &str = "/auth/app/confirm";
+
+/// The unconfirmed code this browser holds, if it is still valid.
+fn pending_code(state: &AppState, headers: &HeaderMap) -> Option<String> {
+    cookie(headers, &state.cookie_name("confirm", CONFIRM_PATH)).filter(|c| is_hex(c, 64))
+}
+
+fn from_this_site(state: &AppState, headers: &HeaderMap) -> bool {
+    headers
+        .get(ORIGIN)
+        .and_then(|v| v.to_str().ok())
+        .is_some_and(|origin| origin == state.public_origin())
+}
+
+async fn confirm_page(State(state): State<AppState>, headers: HeaderMap) -> Response {
+    let Some(code) = pending_code(&state, &headers) else {
+        return message_page(StatusCode::BAD_REQUEST, EXPIRED);
+    };
+    let row = sqlx::query(
+        "SELECT u.name FROM app_codes c JOIN users u ON u.id = c.user_id
+         WHERE c.code_hash = $1 AND NOT c.confirmed AND c.expires_ms > $2",
+    )
+    .bind(sha256_hex(&code))
+    .bind(now_ms())
+    .fetch_optional(&state.db)
+    .await;
+    let name: Option<String> = match row {
+        Ok(Some(row)) => row.get("name"),
+        Ok(None) => return message_page(StatusCode::BAD_REQUEST, EXPIRED),
+        Err(e) => {
+            eprintln!("confirm page failed: {e}");
+            return message_page(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Something went wrong. Please try again.",
+            );
+        }
+    };
+    let account = match name {
+        Some(name) => format!(" as <strong>{}</strong>", html_escape(&name)),
+        None => String::new(),
+    };
+    let html = format!(
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">\
+         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
+         <title>Sisyphus</title><link rel=\"stylesheet\" href=\"/style.css\">\
+         <script src=\"/theme.js\"></script></head>\
+         <body><main class=\"message\"><h1>Sisyphus</h1>\
+         <p>Log in the Sisyphus app on this computer{account}?</p>\
+         <p class=\"muted\">Only continue if you just clicked \u{201c}Log in with Hack Club\u{201d} \
+         in the app.</p>\
+         <form method=\"post\" action=\"{CONFIRM_PATH}\">\
+         <p><button class=\"pill\" type=\"submit\">Log in</button></p></form>\
+         <form method=\"post\" action=\"{CONFIRM_PATH}/cancel\">\
+         <button class=\"link\" type=\"submit\">Cancel</button></form>\
+         </main></body></html>"
+    );
+    let mut response = (
+        StatusCode::OK,
+        [(axum::http::header::CONTENT_TYPE, "text/html; charset=utf-8")],
+        html,
+    )
+        .into_response();
+    // The "Log in" form redirects to the app's loopback listener, which
+    // the site-wide `form-action 'self'` would block.
+    response.headers_mut().insert(
+        axum::http::header::CONTENT_SECURITY_POLICY,
+        HeaderValue::from_static(
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; \
+             font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; \
+             form-action 'self' http://127.0.0.1:*",
+        ),
+    );
+    response.headers_mut().insert(
+        axum::http::header::CACHE_CONTROL,
+        HeaderValue::from_static("no-store"),
+    );
+    response
+}
+
+const EXPIRED: &str = "This login expired. Please start it again in the app.";
+
+async fn confirm(State(state): State<AppState>, headers: HeaderMap) -> Response {
+    if !from_this_site(&state, &headers) {
+        return message_page(
+            StatusCode::FORBIDDEN,
+            "Login must be confirmed on this site.",
+        );
+    }
+    let clear = state.clear_cookie("confirm", CONFIRM_PATH);
+    let Some(code) = pending_code(&state, &headers) else {
+        return message_page(StatusCode::BAD_REQUEST, EXPIRED);
+    };
+    let now = now_ms();
+    // Confirm once; from now on the app has the usual two minutes.
+    let row = sqlx::query(
+        "UPDATE app_codes SET confirmed = TRUE, expires_ms = $3
+         WHERE code_hash = $1 AND NOT confirmed AND expires_ms > $2
+         RETURNING app_port",
+    )
+    .bind(sha256_hex(&code))
+    .bind(now)
+    .bind(now + APP_CODE_TTL_MS)
+    .fetch_optional(&state.db)
+    .await;
+    match row {
+        Ok(Some(row)) => {
+            let port: i32 = row.get("app_port");
+            redirect(
+                &format!("http://127.0.0.1:{port}/done?code={code}"),
+                &[clear],
+            )
+        }
+        Ok(None) => with_cookies(message_page(StatusCode::BAD_REQUEST, EXPIRED), &[clear]),
+        Err(e) => {
+            eprintln!("confirming app login failed: {e}");
+            message_page(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Something went wrong. Please try again.",
+            )
+        }
+    }
+}
+
+async fn cancel(State(state): State<AppState>, headers: HeaderMap) -> Response {
+    if !from_this_site(&state, &headers) {
+        return message_page(
+            StatusCode::FORBIDDEN,
+            "Login must be cancelled on this site.",
+        );
+    }
+    if let Some(code) = pending_code(&state, &headers)
+        && let Err(e) = sqlx::query("DELETE FROM app_codes WHERE code_hash = $1 AND NOT confirmed")
+            .bind(sha256_hex(&code))
+            .execute(&state.db)
+            .await
+    {
+        eprintln!("cancelling app login failed: {e}");
+    }
+    with_cookies(
+        message_page(
+            StatusCode::OK,
+            "Login was cancelled. Nothing was linked to your account.",
+        ),
+        &[state.clear_cookie("confirm", CONFIRM_PATH)],
+    )
+}
+
+fn html_escape(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    for c in text.chars() {
+        match c {
+            '&' => out.push_str("&amp;"),
+            '<' => out.push_str("&lt;"),
+            '>' => out.push_str("&gt;"),
+            '"' => out.push_str("&quot;"),
+            '\'' => out.push_str("&#39;"),
+            c => out.push(c),
+        }
+    }
+    out
 }
 
 async fn upsert_user(state: &AppState, identity: &Identity) -> Result<i64, sqlx::Error> {
@@ -373,7 +546,7 @@ async fn app_token(
 
     // Use the code exactly once, whatever happens next.
     let row = sqlx::query(
-        "DELETE FROM app_codes WHERE code_hash = $1
+        "DELETE FROM app_codes WHERE code_hash = $1 AND confirmed
          RETURNING user_id, device_id, challenge, expires_ms",
     )
     .bind(sha256_hex(&request.code))
@@ -551,6 +724,14 @@ mod tests {
         assert_eq!(cookie(&headers, "sisyphus_session").as_deref(), Some("abc"));
         assert_eq!(cookie(&headers, "missing"), None);
         assert_eq!(cookie(&headers, "sisyphus"), None);
+    }
+
+    #[test]
+    fn escapes_names_for_html() {
+        assert_eq!(
+            html_escape("<b>\"Tom\" & 'Jo'</b>"),
+            "&lt;b&gt;&quot;Tom&quot; &amp; &#39;Jo&#39;&lt;/b&gt;"
+        );
     }
 
     #[test]

@@ -6,7 +6,8 @@
 //! 1. Listen on a random port on `127.0.0.1`, make a random `verifier`, and
 //!    open the browser at `<server>/auth/app?port=…&challenge=…&device=…`
 //!    (`challenge` = SHA-256 of the verifier, `device` = our public key).
-//! 2. The user logs in with Hack Club in the browser.
+//! 2. The user logs in with Hack Club in the browser and confirms on the
+//!    server's page that this app should log in.
 //! 3. The server sends the browser to `http://127.0.0.1:<port>/done?code=…`.
 //! 4. We post the code, the verifier and a device-key signature over the
 //!    code to `<server>/auth/app/token`, which links this device to the

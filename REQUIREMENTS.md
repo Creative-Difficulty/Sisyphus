@@ -111,7 +111,9 @@ product must:
   - a Dockerfile for deployment
   - accounts via Hack Club Auth (OpenID Connect) for the website and the
     app: the server is the only OAuth client; the app logs in through it and
-    links its device key to the account
+    links its device key to the account; the browser asks "Log in the
+    Sisyphus app on this computer as <name>?" before a device is linked
+    (decided 2026-11-22)
   - uploads accepted only from devices linked to an account; each user sees
     only their own devices and heartbeats
   - signed app requests: today's credited and agent time, and logging the
