@@ -30,6 +30,7 @@ mod auth;
 mod credit;
 mod crypto;
 mod dashboard;
+mod devices;
 mod oidc;
 mod settings;
 mod upload;
@@ -145,6 +146,8 @@ async fn main() {
         .route("/api/upload", post(upload::upload))
         .route("/api/dashboard", get(dashboard::dashboard))
         .route("/api/projects", get(dashboard::projects))
+        .route("/api/devices", get(devices::list))
+        .route("/api/devices/unlink", post(devices::unlink))
         .route("/api/heartbeats", get(dashboard::heartbeats))
         .route("/api/settings", get(settings::get).post(settings::save))
         .route("/api/app/today", get(app::today))

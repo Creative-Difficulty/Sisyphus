@@ -17,7 +17,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 - When the user makes or changes a decision, record it in `REQUIREMENTS.md`, and in this file if agents need it to work.
 - Privacy:
   - Never collect or upload file contents, absolute paths, window titles, keystroke content or prompt text.
-  - Only counts, timings, coarse app classes, paths of edited files and of the project's own programs relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
+  - Only counts, timings, coarse app classes, the operating system family, paths of edited files and of the project's own programs relative to the project folder, and the agent's session titles may leave the machine. Paths and titles are visible only to the user and reviewers, never on public profiles.
   - AI chat history and prompts stay local. `AgentEvent`s carry full prompt and response text in memory on the client; anything that leaves the machine must be reduced to what the heartbeat scheme allows.
 - Never write to, commit to or modify a user's repository. Everything runs in the background.
 - Never credit more time than was actually tracked. Multipliers from 0.0 to 1.0 are applied server-side.
@@ -59,7 +59,7 @@ Three crates in `crates/`:
   - `chain.rs`: sequence number, previous hash, SHA-256 with domain tag `sisyphus/heartbeat/v1`, ed25519 signature.
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
-  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 6 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v6`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
+  - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 7 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`, v7 `os`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v7`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
 - **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `tracker`) plus a binary (`main.rs`).
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
@@ -71,7 +71,7 @@ Three crates in `crates/`:
   - Configured from the environment or `.env` (`.env` is git-ignored; `.env.example` lists every key): `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), `PUBLIC_URL` (login redirect and whether cookies are `Secure`), `HACKCLUB_CLIENT_ID` / `HACKCLUB_CLIENT_SECRET` (login is disabled without them), optional `HACKCLUB_AUTH_URL`.
   - Migrations in `crates/server/migrations/` are embedded (`sqlx::migrate!`) and run on start.
     - `devices`: device key, chain tip, first/last seen, owning user.
-    - `heartbeats`: device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB` (so the v2 format won't need a table rewrite).
+    - `heartbeats`: device, seq, hash, prev, sig, claimed and received time, and the heartbeat body as `JSONB` (so the v2 format won't need a table rewrite), and `user_id`: the account the device was linked to when it was uploaded. Heartbeat queries, the Heartbeats view and `backfill` go by this, never by `devices.user_id`, so unlinking a device keeps its history and time with that account.
     - `users` (with `timezone`), `sessions`, `login_attempts`, `app_codes`: see "Accounts" below.
     - `heartbeats.offline`: received more than 5 min after its minute (set on upload).
     - `agent_sessions` and `session_minutes`: crediting, see "Crediting" below.
@@ -84,6 +84,7 @@ Three crates in `crates/`:
     - 409 with `OutOfSync` (resend from the expected tip) or 400 with `Empty`/`Invalid`/`UnsupportedVersion`/`FutureDated`.
   - `GET /api/dashboard` and `GET /api/projects` (`dashboard.rs`): the logged-in user's tracked time (today, this week, all time), project/session/device counts, and each project with its tracked time and session count. 401 without a session.
     - Tracked time is the sum of `session_minutes.credit_ms`; agent time (`agent_today_ms`/`agent_week_ms`/`agent_total_ms`) counts the distinct minutes with `ai_ms > 0`, so concurrent agents count once; today and this week (from Monday) are in the user's time zone (UTC until set), computed in Postgres (`day_and_week_start`). Projects group `agent_sessions` by folder name.
+  - `GET /api/devices` and `POST /api/devices/unlink` (`devices.rs`): the user's linked devices, most recently seen first, each with its `os` (from its latest heartbeat that has one; `null` before v7), credited time and first/last seen; unlinking (`{ "device_id" }`, `Origin` must match `PUBLIC_URL`) sets `devices.user_id` to NULL (decided 2026-11-22: the device can't upload or make app requests until it logs in again; its heartbeats and credited time stay). 404 if it isn't the user's.
   - `GET /api/settings` and `POST /api/settings` (`settings.rs`): `{ "timezone": IANA name | null }`. Saving needs the `Origin` to match `PUBLIC_URL` and a zone Postgres knows (`pg_timezone_names`).
   - `GET /api/app/today?start_ms=…` and `POST /api/app/logout` (`app.rs`): signed app requests, see "Signed app requests" below.
   - `GET /api/heartbeats?offset=N` (`dashboard.rs`, debug): the heartbeats the user's devices uploaded, newest first, 100 per page, with `total`, exactly as stored (device, seq, hash, prev, sig, claimed and received time, offline flag, body), with what it was credited (`credit`: session id, multiplier, the heartbeat's attention, credit and AI time, formula).
@@ -91,7 +92,7 @@ Three crates in `crates/`:
   - The web page (`crates/server/web/`: plain HTML, CSS and JS, no framework) and the Fredoka fonts are embedded in the binary (`web.rs`).
     - It matches the client: pink light/dark theme (OS-following, sun/moon switch saved in `localStorage`), Fredoka, pink bubbles.
     - Logged out it shows a "Log in with Hack Club" button; logged in, the name and "Log out" in the header and the dashboard.
-    - The dashboard spans the full window width: a sidebar at the left edge (a row of pills on phones), the content centred in the space to its right. The sidebar switches between Overview (tracked today big, this week and all time, then agent time today/this week/all time, then project/session/device counts), Projects (one bubble per project with its tracked time), Settings (a time-zone picker listing the browser's zones, preselecting the saved one or the browser's own; says UTC is used until saved) and, set a little apart, the debug view Heartbeats: every uploaded heartbeat as a bubble (session title, project, minute), "Show more" for older pages; clicking one opens a `<dialog>` popup with the stored record as JSON, keys in the scheme's order. The view is kept in the URL hash (`#overview` / `#projects` / `#settings` / `#heartbeats`).
+    - The dashboard spans the full window width: a sidebar at the left edge (a row of pills on phones), the content centred in the space to its right. The sidebar switches between Overview (tracked today big, this week and all time, then agent time today/this week/all time, then project/session/device counts), Projects (one bubble per project with its tracked time), Devices (one bubble per linked device: an OS icon drawn for the site as inline SVG, the system's name, last seen, tracked time, and an × that asks in a `<dialog>` before unlinking it), Settings (a time-zone picker listing the browser's zones, preselecting the saved one or the browser's own; says UTC is used until saved) and, set a little apart and with a dotted outline, the debug view Heartbeats: every uploaded heartbeat as a bubble (session title, project, minute), "Show more" for older pages; clicking one opens a `<dialog>` popup with the stored record as JSON, keys in the scheme's order. The view is kept in the URL hash (`#overview` / `#projects` / `#devices` / `#settings` / `#heartbeats`).
     - It refreshes every 10 s. Data is inserted with `textContent` only, never as HTML.
     - Every response carries security headers (`main.rs`): a strict Content-Security-Policy (no inline scripts or styles, which is why `theme.js` is its own file), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: same-origin` (not `no-referrer`: that makes browsers send `Origin: null` on form posts, which broke the logout form's Origin check), and HSTS on https.
   - `Dockerfile` at the repo root builds only the server (`rust:1.95-slim-trixie`, then `debian:trixie-slim`), with BuildKit cache mounts for crates and `target/` so rebuilds are incremental. Only ever build it on the production server; see the Docker rule above.
@@ -144,7 +145,8 @@ Hack Club Auth (OpenID Connect) requires the client secret on every token reques
   - The app gets no bearer token. Uploads are already signed by the device key (and a replayed batch doesn't continue the chain), and the server accepts them only from linked devices. Everything else the app asks for is a signed request (below).
 - Discovery endpoints must be https; plain http is only accepted when `HACKCLUB_AUTH_URL` is itself `http://localhost` / `http://127.0.0.1` (local testing).
 - "Log out" in the app first unlinks the device on the server (`POST /api/app/logout`) and only forgets the account once the server agreed (or says the device isn't linked); if the server can't be reached it stays logged in and shows the error. Logging in again links it again.
-- Not built yet: unlinking a device from the website, and rate limiting. Switching servers in settings leaves the device linked on the old server.
+- Devices can also be removed (unlinked) on the website's Devices view; the app then gets 403 on uploads and app requests and keeps its queue until it logs in again.
+- Not built yet: rate limiting. Switching servers in settings leaves the device linked on the old server.
 
 ### Signed app requests (decided 2026-11-21)
 
@@ -219,7 +221,7 @@ Reads, without a keyboard hook, the time since the last input (any key or mouse 
 
 ### Tracker (`crates/client/src/tracker/`)
 
-Records heartbeats (v4) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
+Records heartbeats (v7) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
 - One tracker per machine: `tracker.lock` next to the config is locked (`File::try_lock`); a second window or `track` doesn't record.
 - `mod.rs`, once a second:
   - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
@@ -329,7 +331,7 @@ The full JSON scheme and the field meanings are in `REQUIREMENTS.md` ("Heartbeat
 
 - **Per session.** Time is counted and calculated per agent session. Each session sends its own heartbeat each minute while its agent is running, or while it isn't running but its agent's window is in front (decided 2026-11-21).
 - **What a heartbeat carries:**
-  - the minute, agent, agent session id, the agent's session title, and the project folder name
+  - the minute, the operating system family (`windows` / `macos` / `linux` / `other`, from the build target; decided 2026-11-22), agent, agent session id, the agent's session title, and the project folder name
   - whether the agent was running, `activity` (always true now), and `input_kinds`: how keys and mouse were told apart (`exact` / `inferred` / `unknown`)
   - six 10-second slots, each with whether there was input, key presses and mouse events counted, and the focused app class (`agent` / `terminal` / `editor` / `browser` / `other` / `testing` / `none` / `unknown`; all slots `unknown` without input when activity isn't allowed)
   - `tested_programs`: the project's own executables that were in front (focus `testing`), relative to the project folder

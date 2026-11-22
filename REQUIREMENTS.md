@@ -34,8 +34,8 @@ product must:
 ## Hard rules
 
 - Never credit more time than was actually tracked.
-- Only counts, timings, coarse app classes, paths of edited files and of
-  the project's own programs (relative to the project folder) and the
+- Only counts, timings, coarse app classes, the operating system family,
+  paths of edited files and of the project's own programs (relative to the project folder) and the
   agent's session titles leave the machine. Never
   prompt text, file contents, absolute paths, window titles or keystrokes.
   Paths and session titles are visible only to the user and reviewers, never
@@ -106,8 +106,14 @@ product must:
   - a web dashboard in the client's style with a sidebar: Overview (tracked
     time, agent time and counts), Projects (each project with its tracked time) and
     Settings (the time zone)
-  - a debug view, Heartbeats, listing every heartbeat the user's devices
-    uploaded; clicking one shows the stored record in a popup
+  - a debug view, Heartbeats (dotted outline in the sidebar), listing every
+    heartbeat the user's devices uploaded; clicking one shows the stored
+    record in a popup
+  - a Devices view (decided 2026-11-22): each linked device with its
+    operating system's icon and tracked time, and removing it. Removing
+    unlinks it: it can't upload until it logs in again, and its heartbeats
+    and tracked time stay in the account. Each stored heartbeat remembers
+    the account it was uploaded to.
   - a Dockerfile for deployment
   - accounts via Hack Club Auth (OpenID Connect) for the website and the
     app: the server is the only OAuth client; the app logs in through it and
@@ -153,8 +159,9 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 6,
+    "version": 7,
     "minute_ms": 1795201380000,
+    "os": "linux",
 
     "agent": "claude-code",
     "agent_session_id": "77ae4435-adc7-40d4-934f-f70f97ced5e4",
@@ -207,6 +214,10 @@ product must:
 - `session_name`: the agent's own session title. Visible only to the user and
   reviewers.
 - `project`: the working directory's folder name only.
+- `os` (decided 2026-11-22, scheme version 7): the client's operating
+  system family, always sent: `windows`, `macos`, `linux` or `other`.
+  Never a version, distribution or machine name. The website's Devices
+  view shows it as an icon.
 - `activity` (added 2026-11-21): whether activity was read. Since the
   consent step was removed (2026-11-21) it is always `true`; `false` sends
   every slot as `{ "input": false, "keys": 0, "mouse": 0, "focus":
