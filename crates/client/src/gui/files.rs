@@ -1,6 +1,7 @@
 //! First start, after logging in: "Additional required files". Downloads
 //! the local prompt model ([`crate::prompt_model`]) from the server, with a
-//! progress bar. Required: the window only goes on once the file is there
+//! progress bar. The screen only ever says "additional required files",
+//! never "model" (decided 2026-11-22). Required: the window only goes on once the file is there
 //! and checked, and comes back here if it goes missing.
 
 use iced::widget::{button, column, container, progress_bar, row, text};
@@ -39,16 +40,20 @@ pub fn view(download: &Download) -> Element<'static, Message> {
     let file = container(
         column![
             row![
-                text("Prompt model").size(17).font(style::BOLD).width(Fill),
+                text(if download.finished {
+                    "Additional required files downloaded"
+                } else {
+                    "Downloading additional required files"
+                })
+                .size(17)
+                .font(style::BOLD)
+                .width(Fill),
                 text(status).size(14).style(style::muted),
             ]
             .align_y(Center),
             progress_bar(0.0..=1.0, fraction)
                 .girth(12)
                 .style(style::progress),
-            text("Sorts your prompts into kinds, right on this computer. Only those numbers are sent, never your prompts.")
-                .size(14)
-                .style(style::muted),
         ]
         .spacing(12),
     )

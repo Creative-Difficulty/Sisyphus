@@ -400,7 +400,7 @@ pub fn download(server: &str, mut progress: impl FnMut(u64, u64)) -> Result<(), 
         .reader();
     let partial = target.with_extension("part");
     let mut file =
-        fs::File::create(&partial).map_err(|e| format!("Could not save the model: {e}"))?;
+        fs::File::create(&partial).map_err(|e| format!("Could not save the files: {e}"))?;
     let mut hash = Sha256::new();
     let mut done = 0u64;
     let mut buf = vec![0u8; 64 * 1024];
@@ -414,16 +414,16 @@ pub fn download(server: &str, mut progress: impl FnMut(u64, u64)) -> Result<(), 
         }
         hash.update(&buf[..n]);
         file.write_all(&buf[..n])
-            .map_err(|e| format!("Could not save the model: {e}"))?;
+            .map_err(|e| format!("Could not save the files: {e}"))?;
         done += n as u64;
         progress(done, MODEL_SIZE);
     }
     drop(file);
     if done != MODEL_SIZE || hex::encode(hash.finalize()) != MODEL_SHA256 {
         let _ = fs::remove_file(&partial);
-        return Err("The downloaded file isn't the expected model. Please try again.".to_string());
+        return Err("The downloaded files are damaged. Please try again.".to_string());
     }
-    fs::rename(&partial, &target).map_err(|e| format!("Could not save the model: {e}"))?;
+    fs::rename(&partial, &target).map_err(|e| format!("Could not save the files: {e}"))?;
     Ok(())
 }
 
