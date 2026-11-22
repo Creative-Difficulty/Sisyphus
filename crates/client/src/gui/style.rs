@@ -3,7 +3,7 @@
 
 use iced::font::Weight;
 use iced::theme::Palette;
-use iced::widget::{button, container, scrollable, svg, text, text_input};
+use iced::widget::{button, container, progress_bar, scrollable, svg, text, text_input};
 use iced::{Border, Color, Font, Theme};
 
 use crate::agents::Integration;
@@ -87,6 +87,19 @@ pub fn card(theme: &Theme) -> container::Style {
             ..Border::default()
         },
         ..container::Style::default()
+    }
+}
+
+/// A rounded pink bar on a light pink track.
+pub fn progress(theme: &Theme) -> progress_bar::Style {
+    let palette = theme.palette();
+    progress_bar::Style {
+        background: mix(palette.background, palette.primary, 0.18).into(),
+        bar: palette.primary.into(),
+        border: Border {
+            radius: 6.0.into(),
+            ..Border::default()
+        },
     }
 }
 

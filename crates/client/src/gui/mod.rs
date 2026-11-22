@@ -1,8 +1,9 @@
 //! The client's window.
 //!
 //! Screens:
-//! - first start ([`onboarding`]): log in with Hack Club, connect agents.
-//!   The window resumes at whichever step isn't done yet.
+//! - first start ([`onboarding`]): log in with Hack Club, download the
+//!   additional required files ([`files`]: the prompt model), connect
+//!   agents. The window resumes at whichever step isn't done yet.
 //! - on Linux Wayland without the input helper, a popup to set it up
 //!   ([`input_helper`]); it can't be skipped
 //! - the dashboard ([`sessions`]), refreshed every few seconds
@@ -20,6 +21,7 @@ use crate::agents::Integration;
 use crate::config::Config;
 
 mod debug;
+mod files;
 mod input_helper;
 mod onboarding;
 mod sessions;
@@ -97,6 +99,8 @@ struct App {
     /// it's installed. `None` where it doesn't apply (not Linux, or X11
     /// without it installed).
     input_helper_running: Option<(bool, bool)>,
+    /// The prompt model download, updated by its worker thread.
+    download: Arc<Mutex<files::Download>>,
 }
 
 /// What the input helper can be asked to do.
@@ -110,7 +114,9 @@ pub enum HelperAction {
 enum Screen {
     /// First start, step 1: log in with Hack Club.
     Login,
-    /// First start, step 2: connect agents.
+    /// First start, step 2: download the prompt model.
+    Files,
+    /// First start, step 3: connect agents.
     ConnectAgents,
     /// Linux Wayland without the input helper: ask to set it up.
     InputHelper,
@@ -161,6 +167,11 @@ pub enum Message {
     DebugKey,
     /// Redraw the debug screen.
     DebugTick,
+    /// Download the additional required files (the prompt model).
+    DownloadFiles,
+    /// Redraw the download progress.
+    DownloadTick,
+    DownloadFinished(Result<(), String>),
 }
 
 impl App {
@@ -184,6 +195,7 @@ impl App {
             input_helper_pending: false,
             input_helper_error: None,
             input_helper_running: None,
+            download: Arc::default(),
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -228,7 +240,18 @@ impl App {
                     Task::none()
                 }
             }
-            Message::DebugTick => Task::none(),
+            Message::DebugTick | Message::DownloadTick => Task::none(),
+            Message::DownloadFiles => self.start_download(),
+            Message::DownloadFinished(result) => {
+                if let Ok(mut download) = self.download.lock() {
+                    download.running = false;
+                    match result {
+                        Ok(()) => download.finished = true,
+                        Err(e) => download.error = Some(e),
+                    }
+                }
+                Task::none()
+            }
             Message::SessionsLoaded(list) => {
                 if let Screen::Sessions(sessions) = &mut self.screen {
                     *sessions = Some(list);
@@ -390,6 +413,9 @@ impl App {
                     error: self.login_error.as_deref(),
                 },
             ),
+            Screen::Files => {
+                files::view(&self.download.lock().map(|d| d.clone()).unwrap_or_default())
+            }
             Screen::ConnectAgents => onboarding::agents(&self.config, &self.errors),
             Screen::InputHelper => input_helper::view(
                 self.input_helper_pending,
@@ -429,7 +455,9 @@ impl App {
             Screen::Sessions(_) => icon_button(style::Icon::Gear, Message::ShowSettings),
             Screen::Settings => icon_button(style::Icon::Back, Message::ShowSessions),
             Screen::Debug => icon_button(style::Icon::Back, Message::Continue),
-            Screen::Login | Screen::ConnectAgents | Screen::InputHelper => space().into(),
+            Screen::Login | Screen::Files | Screen::ConnectAgents | Screen::InputHelper => {
+                space().into()
+            }
         };
         let theme_icon = if self.is_dark() {
             style::Icon::Sun
@@ -456,6 +484,7 @@ impl App {
                 Subscription::batch([system, keys, Subscription::run(refresh_ticks)])
             }
             Screen::Debug => Subscription::batch([system, keys, Subscription::run(debug_ticks)]),
+            Screen::Files => Subscription::batch([system, keys, Subscription::run(download_ticks)]),
             _ => Subscription::batch([system, keys]),
         }
     }
@@ -493,6 +522,9 @@ impl App {
         if self.config.account().is_none() {
             self.screen = Screen::Login;
             Task::none()
+        } else if !crate::prompt_model::is_installed() {
+            self.screen = Screen::Files;
+            self.start_download()
         } else if self.config.connected_agents.is_empty() {
             self.screen = Screen::ConnectAgents;
             Task::none()
@@ -502,6 +534,34 @@ impl App {
         } else {
             self.show_sessions()
         }
+    }
+
+    /// Download the prompt model on a worker thread, unless that's already
+    /// under way. Progress goes into `self.download`.
+    fn start_download(&mut self) -> Task<Message> {
+        let Ok(mut download) = self.download.lock() else {
+            return Task::none();
+        };
+        if download.running {
+            return Task::none();
+        }
+        *download = files::Download {
+            running: true,
+            ..Default::default()
+        };
+        drop(download);
+        let shared = self.download.clone();
+        let server_url = self.config.server_url();
+        Task::perform(
+            on_thread(move || {
+                crate::prompt_model::download(&server_url, |done, _| {
+                    if let Ok(mut d) = shared.lock() {
+                        d.done = done;
+                    }
+                })
+            }),
+            Message::DownloadFinished,
+        )
     }
 
     /// Switch to the session list and load it in the background.
@@ -601,6 +661,26 @@ fn debug_ticks() -> impl Stream<Item = Message> {
         });
         while rx.next().await.is_some() {
             if output.send(Message::DebugTick).await.is_err() {
+                break;
+            }
+        }
+    })
+}
+
+/// A `DownloadTick` five times a second while the download screen is open.
+fn download_ticks() -> impl Stream<Item = Message> {
+    iced::stream::channel(1, async move |mut output| {
+        let (tx, mut rx) = iced::futures::channel::mpsc::unbounded();
+        std::thread::spawn(move || {
+            while !tx.is_closed() {
+                std::thread::sleep(Duration::from_millis(200));
+                if tx.unbounded_send(()).is_err() {
+                    break;
+                }
+            }
+        });
+        while rx.next().await.is_some() {
+            if output.send(Message::DownloadTick).await.is_err() {
                 break;
             }
         }

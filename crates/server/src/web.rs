@@ -16,6 +16,11 @@ const THEME_SCRIPT: &str = include_str!("../web/theme.js");
 const FONT_REGULAR: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-Regular.ttf");
 const FONT_SEMIBOLD: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-SemiBold.ttf");
 const FONT_LICENSE: &str = include_str!("../../client/assets/fonts/Fredoka-OFL.txt");
+// The local prompt classifier the app downloads on first start. The app
+// checks its SHA-256, so it never changes under the same name.
+const PROMPT_MODEL: &[u8] = include_bytes!("../../../models/sisyphus-prompt-1.bin");
+const PROMPT_MODEL_LICENSE: &str =
+    include_str!("../../../models/LICENSE-blink-multilingual-64M.txt");
 
 pub fn routes() -> Router<AppState> {
     Router::new()
@@ -39,6 +44,22 @@ pub fn routes() -> Router<AppState> {
         .route(
             "/fonts/Fredoka-SemiBold.ttf",
             get(|| async { asset("font/ttf", FONT_SEMIBOLD) }),
+        )
+        .route(
+            "/models/sisyphus-prompt-1.bin",
+            get(|| async {
+                (
+                    [
+                        (header::CONTENT_TYPE, "application/octet-stream"),
+                        (header::CACHE_CONTROL, "public, max-age=31536000, immutable"),
+                    ],
+                    PROMPT_MODEL,
+                )
+            }),
+        )
+        .route(
+            "/models/LICENSE-blink-multilingual-64M.txt",
+            get(|| async { asset("text/plain; charset=utf-8", PROMPT_MODEL_LICENSE) }),
         )
         .route(
             "/fonts/OFL.txt",
