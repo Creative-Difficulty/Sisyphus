@@ -399,7 +399,8 @@ product must:
 - The model gives each category a probability from 0.0 to 1.0, and those
   probabilities are sent (decided 2026-11-22). Heartbeats have no floats,
   so they go as integers on a fixed scale (which scale isn't decided).
-- The model is at most 20 MB (decided 2026-11-22).
+- The model should be about 20 MB; a little over is fine, far over (like
+  70 MB) isn't (decided 2026-11-22).
 - It works with prompts in any language (decided 2026-11-22).
 - Correction prompts ("no, you did this wrong, redo it") add to struggle.
   They don't reduce time, for now.
