@@ -173,8 +173,10 @@ async fn main() {
 }
 
 /// Security headers on every response: no framing, no MIME sniffing, no
-/// referrer (login URLs carry codes), a strict content security policy
-/// (no inline scripts), and HSTS on https.
+/// referrer to other sites (login URLs carry codes; `same-origin` rather
+/// than `no-referrer`, which makes browsers send `Origin: null` on our own
+/// form posts, such as logout), a strict content security policy (no inline
+/// scripts), and HSTS on https.
 async fn security_headers(
     axum::extract::State(state): axum::extract::State<AppState>,
     request: Request,
@@ -194,7 +196,7 @@ async fn security_headers(
     );
     set(headers, "x-frame-options", "DENY");
     set(headers, "x-content-type-options", "nosniff");
-    set(headers, "referrer-policy", "no-referrer");
+    set(headers, "referrer-policy", "same-origin");
     if state.secure {
         set(headers, "strict-transport-security", "max-age=31536000");
     }
