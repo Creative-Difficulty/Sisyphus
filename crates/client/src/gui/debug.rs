@@ -141,6 +141,13 @@ fn now_rows<'a>(info: &DebugInfo, now_ms: u64) -> Element<'a, Message> {
         ),
         ("Backends", info.backends.clone()),
         ("Watched folders", info.watched_folders.to_string()),
+        ("Prompt model", info.prompt_model.clone()),
+        (
+            "Last prompt",
+            info.last_prompt_classes
+                .map(top_classes)
+                .unwrap_or_else(|| "none yet".to_string()),
+        ),
         ("Heartbeats this run", info.heartbeats.to_string()),
         ("Waiting for upload", info.queued.to_string()),
         ("Last upload", upload),
@@ -192,4 +199,20 @@ fn bubble<'a>(content: impl Into<Element<'a, Message>>) -> container::Container<
         .width(Fill)
         .padding([12, 22])
         .style(|theme| style::bubble(theme, false))
+}
+
+/// The highest-scoring act and task, e.g. "correction 0.91, bug_fix 0.77".
+fn top_classes(classes: [u16; 22]) -> String {
+    let labels = crate::prompt_model::LABELS;
+    let best = |range: std::ops::Range<usize>| {
+        range
+            .max_by_key(|&i| classes[i])
+            .map(|i| {
+                let name = labels[i].split_once(':').map_or(labels[i], |(_, n)| n);
+                format!("{name} {:.2}", classes[i] as f32 / 1000.0)
+            })
+            .unwrap_or_default()
+    };
+    let acts = labels.iter().take_while(|l| l.starts_with("act:")).count();
+    format!("{}, {}", best(0..acts), best(acts..labels.len()))
 }

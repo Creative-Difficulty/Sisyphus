@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v7).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v8).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -14,7 +14,7 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 7;
+pub const VERSION: u32 = 8;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -149,14 +149,26 @@ pub enum Focus {
     Unknown,
 }
 
-/// Prompts submitted this minute. Counts only, never text.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+/// Number of categories the prompt model scores (9 acts, then 13 tasks; the
+/// order is the model's, named by `Prompts::model`).
+pub const PROMPT_CLASSES: usize = 22;
+
+/// Prompts submitted this minute. Counts and the local model's scores only,
+/// never text.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Prompts {
     pub submitted: u32,
     pub typed_chars: u32,
     pub pasted_chars: u32,
-    /// Prompts the local model labelled as corrections.
+    /// Prompts the local model scored at 500 or more as corrections.
     pub corrections: u32,
+    /// The local prompt model's name (`sisyphus-prompt-1`), empty if no
+    /// prompt was classified this minute.
+    pub model: String,
+    /// One entry per classified prompt, in the order they were sent: the
+    /// probability of each category from 0 to 1000. Fewer entries than
+    /// `submitted` when the model wasn't loaded.
+    pub classes: Vec<[u16; PROMPT_CLASSES]>,
 }
 
 /// Agent responses that finished this minute. Counts only, never text.

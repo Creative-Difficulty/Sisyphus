@@ -27,7 +27,7 @@ use std::thread::JoinHandle;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use sisyphus_common::attention::{self, Carry};
-use sisyphus_common::heartbeat::{Focus, Heartbeat, SLOT_SECS, SLOTS};
+use sisyphus_common::heartbeat::{Focus, Heartbeat, PROMPT_CLASSES, SLOT_SECS, SLOTS};
 
 use crate::activity::process::{self, WindowAgent};
 use crate::activity::{
@@ -35,6 +35,7 @@ use crate::activity::{
 };
 use crate::agents::{AgentEvent, AgentEventKind, AttachMode, Attachment, Integration, ToolOutcome};
 use crate::config::Config;
+use crate::prompt_model::{self, PromptModel};
 
 mod edits;
 pub mod files;
@@ -98,6 +99,10 @@ pub struct DebugInfo {
     pub last_upload: Option<(u64, String)>,
     /// Project folders watched for file changes.
     pub watched_folders: usize,
+    /// The prompt model's name once loaded, else why it isn't.
+    pub prompt_model: String,
+    /// The latest prompt's scores (0–1000 per category).
+    pub last_prompt_classes: Option<[u16; PROMPT_CLASSES]>,
 }
 
 /// One followed session, with attention as the server would compute it.
@@ -336,6 +341,11 @@ struct State {
     input_kinds: Option<InputKinds>,
     /// Which session last claimed an edit to a file, by project and path.
     claimed: HashMap<(PathBuf, String), Key>,
+    /// The local prompt classifier, once its file is downloaded. Loaded on
+    /// the next reload after it appears.
+    prompt_model: Option<PromptModel>,
+    prompt_model_status: String,
+    last_prompt_classes: Option<[u16; PROMPT_CLASSES]>,
 }
 
 impl State {
@@ -362,6 +372,9 @@ impl State {
             watches: HashMap::new(),
             input: BTreeMap::new(),
             claimed: HashMap::new(),
+            prompt_model: None,
+            prompt_model_status: "not loaded".to_string(),
+            last_prompt_classes: None,
         }
     }
 
@@ -381,6 +394,7 @@ impl State {
     /// Re-read the config and the session list.
     fn reload(&mut self) {
         self.config = Config::load();
+        self.load_prompt_model();
 
         let mut listed = HashSet::new();
         for integration in &Integration::ALL {
@@ -442,6 +456,29 @@ impl State {
     /// Give each git project whose own program runs (not started by an
     /// agent) to its most recently active session, which then sends
     /// heartbeats for it.
+    /// Load the prompt model if it's downloaded and not loaded yet.
+    fn load_prompt_model(&mut self) {
+        if self.prompt_model.is_some() {
+            return;
+        }
+        if !prompt_model::is_installed() {
+            self.prompt_model_status = "not downloaded".to_string();
+            return;
+        }
+        match PromptModel::load_installed() {
+            Ok(model) => {
+                self.prompt_model = Some(model);
+                self.prompt_model_status = prompt_model::MODEL_NAME.to_string();
+            }
+            Err(e) => {
+                if self.log && self.prompt_model_status != e {
+                    eprintln!("prompt model: {e}");
+                }
+                self.prompt_model_status = e;
+            }
+        }
+    }
+
     fn find_running_programs(&mut self) {
         if self.processes_read.elapsed() >= PROCESSES_RELOAD {
             self.processes = Processes::snapshot();
@@ -532,6 +569,14 @@ impl State {
         session.last_activity_ms = session.last_activity_ms.max(event.time_ms);
         match event.kind {
             AgentEventKind::Prompt { text, pasted_chars } => {
+                // Only the scores are kept, never the text.
+                let classes = self
+                    .prompt_model
+                    .as_ref()
+                    .map(|model| prompt_model::per_mille(&model.classify(&text)));
+                if classes.is_some() {
+                    self.last_prompt_classes = classes;
+                }
                 let chars = text.chars().count();
                 let pasted = pasted_chars.unwrap_or(0).min(chars);
                 session.running = true;
@@ -545,6 +590,13 @@ impl State {
                 prompts.submitted += 1;
                 prompts.typed_chars = prompts.typed_chars.saturating_add(count(chars - pasted));
                 prompts.pasted_chars = prompts.pasted_chars.saturating_add(count(pasted));
+                if let Some(classes) = classes {
+                    prompts.model = prompt_model::MODEL_NAME.to_string();
+                    if classes[prompt_model::CORRECTION] >= 500 {
+                        prompts.corrections += 1;
+                    }
+                    prompts.classes.push(classes);
+                }
             }
             AgentEventKind::Response { text } => {
                 let minute = session.minute(minute_ms);
@@ -941,6 +993,8 @@ impl State {
         debug.heartbeats = self.heartbeats;
         debug.queued = queued;
         debug.watched_folders = self.watches.len();
+        debug.prompt_model = self.prompt_model_status.clone();
+        debug.last_prompt_classes = self.last_prompt_classes;
     }
 }
 

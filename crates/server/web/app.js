@@ -221,7 +221,7 @@ function renderHeartbeats() {
 const KEY_ORDER = [
   "version", "minute_ms", "os", "agent", "agent_session_id", "session_name", "project",
   "agent_running", "activity", "input_kinds", "slots", "tested_programs", "running_programs", "prompts", "interrupts", "responses", "files",
-  "submitted", "typed_chars", "pasted_chars", "corrections", "finished", "chars",
+  "submitted", "typed_chars", "pasted_chars", "corrections", "model", "classes", "finished", "chars",
   "input", "keys", "mouse", "focus", "path", "working_dir", "agent_edits", "added", "removed",
 ];
 
