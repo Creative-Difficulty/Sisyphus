@@ -198,6 +198,9 @@ pub enum AgentEventKind {
         /// placeholder like `[Pasted text #1 +40 lines]`), so small pastes
         /// count as typed. `None` if the prompt is not in the history.
         pasted_chars: Option<usize>,
+        /// The agent says a program sent it, not its interactive interface
+        /// (Claude Code's SDK and `claude -p`).
+        scripted: bool,
     },
     /// The user ran a slash command such as `/clear`.
     Command { name: String, args: String },

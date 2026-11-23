@@ -1,7 +1,9 @@
 //! Wayland: key and mouse counts from the input helper service
 //! ([`crate::input_helper`]), which the user installs once with their
-//! password. It sends lines `<keys> <mouse>` over a Unix socket that only
-//! this user may read; which keys were pressed never leaves it.
+//! password. It sends lines `<keys> <mouse> <virtual keys> <virtual
+//! mouse>` over a Unix socket that only this user may read; which keys
+//! were pressed never leaves it. Helpers installed before the virtual
+//! counts existed send only the first two.
 
 use std::io::{BufRead, BufReader};
 use std::os::unix::net::UnixStream;
@@ -98,9 +100,7 @@ fn read(stream: UnixStream, shared: &Mutex<Shared>, stop: &AtomicBool) {
             Ok(0) => return,
             Ok(_) => {
                 if let Some(counts) = parse(&line) {
-                    let mut shared = lock(shared);
-                    shared.counts.keys = shared.counts.keys.saturating_add(counts.keys);
-                    shared.counts.mouse = shared.counts.mouse.saturating_add(counts.mouse);
+                    lock(shared).counts.add(counts);
                 }
                 line.clear();
             }
@@ -114,12 +114,19 @@ fn read(stream: UnixStream, shared: &Mutex<Shared>, stop: &AtomicBool) {
     }
 }
 
-/// `"<keys> <mouse>\n"`.
+/// `"<keys> <mouse> [<virtual keys> <virtual mouse>]\n"`.
 fn parse(line: &str) -> Option<InputCounts> {
     let mut parts = line.split_whitespace();
     let keys = parts.next()?.parse().ok()?;
     let mouse = parts.next()?.parse().ok()?;
-    Some(InputCounts { keys, mouse })
+    let injected_keys = parts.next().and_then(|p| p.parse().ok()).unwrap_or(0);
+    let injected_mouse = parts.next().and_then(|p| p.parse().ok()).unwrap_or(0);
+    Some(InputCounts {
+        keys,
+        mouse,
+        injected_keys,
+        injected_mouse,
+    })
 }
 
 #[cfg(test)]
@@ -132,7 +139,17 @@ mod tests {
             parse("3 120\n"),
             Some(InputCounts {
                 keys: 3,
-                mouse: 120
+                mouse: 120,
+                ..Default::default()
+            })
+        );
+        assert_eq!(
+            parse("3 120 2 0\n"),
+            Some(InputCounts {
+                keys: 3,
+                mouse: 120,
+                injected_keys: 2,
+                injected_mouse: 0,
             })
         );
         assert_eq!(parse("garbage\n"), None);

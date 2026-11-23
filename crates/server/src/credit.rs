@@ -6,7 +6,10 @@
 //! agent ran earn credit). Then:
 //! - Concurrent sessions of a user share each real minute: if their
 //!   multipliers add up to more than 1.0, each gets its share.
-//! - Offline heartbeats count; they're flagged on the heartbeat.
+//! - Offline heartbeats count; they're flagged on the heartbeat. Stale ones
+//!   (received more than an hour late, or dated before the device was
+//!   linked) earn nothing: multiplier, credit and AI time 0, and no
+//!   attention carries over from them.
 //!
 //! Not decided yet, so not applied: handling mouse jigglers, the struggle
 //! value, and edit-claim checks.
@@ -26,8 +29,9 @@ use sqlx::{PgConnection, PgPool, Row};
 /// attention value per heartbeat. 4: in the agent's window only more than
 /// five key presses count. 5: same credit; each minute also stores its
 /// operating system, task and languages for the dashboard's stats. 6:
-/// same credit; also prompts sent and changed files per minute.
-pub const FORMULA: i32 = 6;
+/// same credit; also prompts sent and changed files per minute. 7: stale
+/// heartbeats earn nothing.
+pub const FORMULA: i32 = 7;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -244,6 +248,9 @@ pub struct Stored<'a> {
     pub device_id: &'a str,
     pub seq: i64,
     pub offline: bool,
+    /// Received more than an hour late or dated before the device was
+    /// linked: earns nothing.
+    pub stale: bool,
     pub body: &'a str,
 }
 
@@ -289,7 +296,11 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .map(|row| Carry {
         attention: row.get("attention_end"),
     });
-    let outcome = compute(&body, carry);
+    let mut outcome = compute(&body, carry);
+    if hb.stale {
+        outcome.multiplier = 0.0;
+        outcome.carry.attention = 0.0;
+    }
     // The task carries over from the session's last minute with one until
     // a new prompt is scored.
     let task = match latest_task(&body.prompts) {
@@ -320,7 +331,11 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .bind(hb.seq)
     .bind(outcome.carry.attention)
     .bind(outcome.multiplier)
-    .bind(if body.agent_running { MINUTE_MS } else { 0 })
+    .bind(if body.agent_running && !hb.stale {
+        MINUTE_MS
+    } else {
+        0
+    })
     .bind(hb.offline)
     .bind(FORMULA)
     .bind(&body.os)
@@ -389,7 +404,7 @@ pub async fn backfill(db: &PgPool) -> sqlx::Result<usize> {
         .execute(&mut *tx)
         .await?;
     let rows = sqlx::query(
-        "SELECT h.device_id, h.seq, h.offline, h.body::text AS body, h.user_id
+        "SELECT h.device_id, h.seq, h.offline, h.stale, h.body::text AS body, h.user_id
          FROM heartbeats h
          WHERE h.user_id IS NOT NULL
            AND NOT EXISTS (SELECT 1 FROM session_minutes m
@@ -406,6 +421,7 @@ pub async fn backfill(db: &PgPool) -> sqlx::Result<usize> {
             device_id: row.get("device_id"),
             seq: row.get("seq"),
             offline: row.get("offline"),
+            stale: row.get("stale"),
             body: row.get("body"),
         };
         if let Some(minute) = process(&mut tx, stored).await? {

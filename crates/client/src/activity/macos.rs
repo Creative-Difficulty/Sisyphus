@@ -24,8 +24,11 @@ unsafe extern "C" {
     fn objc_autoreleasePoolPop(pool: *mut c_void);
 }
 
-/// `kCGEventSourceStateCombinedSessionState`
+/// `kCGEventSourceStateCombinedSessionState`: hardware and events posted
+/// by apps.
 const COMBINED_SESSION_STATE: i32 = 0;
+/// `kCGEventSourceStateHIDSystemState`: hardware only.
+const HID_SYSTEM_STATE: i32 = 1;
 /// `kCGAnyInputEventType`
 const ANY_INPUT_EVENT: u32 = !0;
 
@@ -36,8 +39,9 @@ const KEY_EVENTS: [u32; 1] = [10];
 const MOUSE_EVENTS: [u32; 8] = [1, 3, 25, 5, 6, 7, 27, 22];
 
 pub struct Monitor {
-    /// The event counters at the last `take_input`.
-    counters: Option<(u32, u32)>,
+    /// The event counters at the last `take_input`: keys and mouse, for
+    /// all events and for hardware only.
+    counters: Option<[u32; 4]>,
 }
 
 impl Monitor {
@@ -46,20 +50,28 @@ impl Monitor {
     }
 
     pub fn take_input(&mut self) -> Option<(InputCounts, InputKinds)> {
-        let sum = |types: &[u32]| {
+        let sum = |state: i32, types: &[u32]| {
             types.iter().fold(0u32, |sum, &t| {
                 // SAFETY: a plain C function taking two integers.
-                sum.wrapping_add(unsafe {
-                    CGEventSourceCounterForEventType(COMBINED_SESSION_STATE, t)
-                })
+                sum.wrapping_add(unsafe { CGEventSourceCounterForEventType(state, t) })
             })
         };
-        let now = (sum(&KEY_EVENTS), sum(&MOUSE_EVENTS));
+        let now = [
+            sum(COMBINED_SESSION_STATE, &KEY_EVENTS),
+            sum(COMBINED_SESSION_STATE, &MOUSE_EVENTS),
+            sum(HID_SYSTEM_STATE, &KEY_EVENTS),
+            sum(HID_SYSTEM_STATE, &MOUSE_EVENTS),
+        ];
         let before = self.counters.replace(now).unwrap_or(now);
+        let delta: [u32; 4] = std::array::from_fn(|i| now[i].wrapping_sub(before[i]));
         Some((
             InputCounts {
-                keys: now.0.wrapping_sub(before.0),
-                mouse: now.1.wrapping_sub(before.1),
+                keys: delta[0],
+                mouse: delta[1],
+                // Events apps posted (autotypers, jigglers, remote control)
+                // count in the session but not in the hardware state.
+                injected_keys: delta[0].saturating_sub(delta[2]),
+                injected_mouse: delta[1].saturating_sub(delta[3]),
             },
             InputKinds::Exact,
         ))

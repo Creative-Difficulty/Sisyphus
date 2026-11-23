@@ -32,6 +32,8 @@ fn minute(i: u64) -> Heartbeat {
         },
         interrupts: 0,
         responses: Responses::default(),
+        seconds: Default::default(),
+        injected: Default::default(),
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {
@@ -153,4 +155,36 @@ fn future_dated_heartbeats_are_rejected() {
         Err(UploadError::FutureDated { at: 3 })
     );
     assert!(verify_at(&batch(&w, &hbs[..3]), &ChainTip::GENESIS, now).is_ok());
+}
+
+#[test]
+fn minutes_must_start_on_a_whole_minute() {
+    // One real minute claimed at T, T+1 s, …: each would be a "different"
+    // minute and earn a full minute of credit.
+    let mut w = ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]));
+    let hbs: Vec<_> = (0..3)
+        .map(|i| {
+            let mut hb = minute(0);
+            hb.minute_ms += i * 1_000;
+            w.sign(hb)
+        })
+        .collect();
+    assert_eq!(
+        verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS),
+        Err(UploadError::Misaligned { at: 1 })
+    );
+}
+
+#[test]
+fn heartbeats_an_hour_late_are_stale() {
+    let (_, hbs) = signed(1);
+    let t = hbs[0].heartbeat.minute_ms;
+    let at = |delay| StoredHeartbeat {
+        signed: hbs[0].clone(),
+        received_at_ms: t + delay,
+    };
+    assert!(!at(10 * 60_000).is_stale());
+    assert!(at(10 * 60_000).is_offline());
+    assert!(!at(60 * 60_000).is_stale());
+    assert!(at(60 * 60_000 + 1).is_stale());
 }

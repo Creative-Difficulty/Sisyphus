@@ -35,6 +35,8 @@ fn minute(i: u64) -> Heartbeat {
         },
         interrupts: 0,
         responses: Responses::default(),
+        seconds: Default::default(),
+        injected: Default::default(),
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {

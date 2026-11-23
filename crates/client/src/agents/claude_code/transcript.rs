@@ -101,6 +101,25 @@ impl TranscriptParser {
 }
 
 fn user_events(entry: &Value) -> Vec<AgentEventKind> {
+    let mut events = user_events_of(entry);
+    // `entrypoint` names how the session was started: `cli`, an editor or
+    // desktop app, or `sdk-cli` / `sdk-ts` / `sdk-py` for programs (the
+    // Agent SDK, `claude -p`).
+    if entry
+        .get("entrypoint")
+        .and_then(Value::as_str)
+        .is_some_and(|e| e.starts_with("sdk"))
+    {
+        for event in &mut events {
+            if let AgentEventKind::Prompt { scripted, .. } = event {
+                *scripted = true;
+            }
+        }
+    }
+    events
+}
+
+fn user_events_of(entry: &Value) -> Vec<AgentEventKind> {
     let flag = |name| entry.get(name).and_then(Value::as_bool) == Some(true);
     if flag("isMeta") || flag("isCompactSummary") || flag("isVisibleInTranscriptOnly") {
         return Vec::new();
@@ -138,6 +157,7 @@ fn user_events(entry: &Value) -> Vec<AgentEventKind> {
                 out.push(AgentEventKind::Prompt {
                     text: prompt.join("\n"),
                     pasted_chars: None,
+                    scripted: false,
                 });
             }
             out
@@ -181,6 +201,7 @@ fn text_events(text: &str, from_human: bool) -> Option<AgentEventKind> {
     Some(AgentEventKind::Prompt {
         text: text.to_string(),
         pasted_chars: None,
+        scripted: false,
     })
 }
 
@@ -292,9 +313,28 @@ mod tests {
                 kind: AgentEventKind::Prompt {
                     text: "Fix it".into(),
                     pasted_chars: None,
+                    scripted: false,
                 }
             }]
         );
+    }
+
+    #[test]
+    fn sdk_prompts_are_scripted() {
+        let mut p = TranscriptParser::new();
+        let line = |entrypoint: &str| {
+            format!(
+                r#"{{"type":"user","entrypoint":"{entrypoint}","message":{{"role":"user","content":"go on"}},"timestamp":"1970-01-01T00:00:01Z"}}"#
+            )
+        };
+        let scripted = |kinds: Vec<AgentEventKind>| match kinds.as_slice() {
+            [AgentEventKind::Prompt { scripted, .. }] => *scripted,
+            other => panic!("not one prompt: {other:?}"),
+        };
+        assert!(scripted(kinds(&mut p, &line("sdk-cli"))));
+        assert!(scripted(kinds(&mut p, &line("sdk-ts"))));
+        assert!(!scripted(kinds(&mut p, &line("cli"))));
+        assert!(!scripted(kinds(&mut p, &line("claude-desktop"))));
     }
 
     #[test]

@@ -3,7 +3,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, InputKinds, Os, Prompts, Responses, SLOTS, Slot, VERSION,
+    Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Prompts, Responses, SECONDS,
+    SLOTS, Seconds, Slot, VERSION,
 };
 
 /// One slot's input, for the whole system.
@@ -16,15 +17,57 @@ pub struct SlotInput {
 }
 
 /// A minute's input, for the whole system.
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy)]
 pub struct MinuteInput {
     pub slots: [SlotInput; SLOTS],
+    /// Key presses and mouse events in each second.
+    pub seconds_keys: [u16; SECONDS],
+    pub seconds_mouse: [u16; SECONDS],
+    /// Input that came from software (see `Heartbeat::injected`).
+    pub injected: Injected,
     /// How keys and mouse were told apart: the weakest way seen in the
     /// minute (`None` before the first reading).
     kinds: Option<InputKinds>,
 }
 
+impl Default for MinuteInput {
+    fn default() -> Self {
+        Self {
+            slots: Default::default(),
+            seconds_keys: [0; SECONDS],
+            seconds_mouse: [0; SECONDS],
+            injected: Injected::default(),
+            kinds: None,
+        }
+    }
+}
+
 impl MinuteInput {
+    /// Add counted input at `second` (0 to 59) of the minute.
+    pub fn add_counts(&mut self, second: usize, keys: u32, mouse: u32, injected: Injected) {
+        let slot = &mut self.slots[(second / 10).min(SLOTS - 1)];
+        slot.keys = slot.keys.saturating_add(keys);
+        slot.mouse = slot.mouse.saturating_add(mouse);
+        let second = second.min(SECONDS - 1);
+        let clamp = |n: u32| u16::try_from(n).unwrap_or(u16::MAX);
+        self.seconds_keys[second] = self.seconds_keys[second].saturating_add(clamp(keys));
+        self.seconds_mouse[second] = self.seconds_mouse[second].saturating_add(clamp(mouse));
+        self.injected.keys = self.injected.keys.saturating_add(injected.keys);
+        self.injected.mouse = self.injected.mouse.saturating_add(injected.mouse);
+    }
+
+    /// The per-second counts as a heartbeat carries them: empty when keys
+    /// and mouse weren't told apart.
+    fn seconds(&self) -> Seconds {
+        if self.kinds() == InputKinds::Unknown {
+            return Seconds::default();
+        }
+        Seconds {
+            keys: self.seconds_keys.to_vec(),
+            mouse: self.seconds_mouse.to_vec(),
+        }
+    }
+
     pub fn add_kinds(&mut self, kinds: InputKinds) {
         self.kinds = Some(self.kinds.map_or(kinds, |k| k.min(kinds)));
     }
@@ -103,10 +146,14 @@ fn index(focus: Focus) -> usize {
 #[derive(Debug, Default)]
 pub struct SessionMinute {
     pub slots: [SlotSamples; SLOTS],
-    /// Slots in which a prompt was submitted to this session. A prompt
-    /// means the user was focused on it (decided 2026-11-21), so those
-    /// slots count as `agent` whatever the window readings say. Input still
-    /// comes only from the OS.
+    /// Slots in which a prompt was submitted to this session (not ones a
+    /// program sent). A prompt means the user was focused on it (decided
+    /// 2026-11-21), so those slots count as `agent` when the window in
+    /// front could be the agent's: a terminal or editor the process match
+    /// missed, or an unknown reading. Not when a browser, another app, a
+    /// test program or nothing was in front (2026-11-23): a prompt sent by
+    /// a script while the user types elsewhere mustn't make that typing
+    /// count as typing to the agent. Input still comes only from the OS.
     pub prompt_slots: [bool; SLOTS],
     pub running: bool,
     /// The project's programs seen in front (relative paths), for
@@ -138,10 +185,12 @@ pub struct Meta<'a> {
 impl SessionMinute {
     /// The focus a heartbeat carries for slot `i`.
     pub fn focus(&self, i: usize) -> Focus {
-        if self.prompt_slots[i] {
-            Focus::Agent
-        } else {
-            self.slots[i].focus()
+        let read = self.slots[i].focus();
+        match read {
+            Focus::Terminal | Focus::Editor | Focus::Unknown if self.prompt_slots[i] => {
+                Focus::Agent
+            }
+            _ => read,
         }
     }
 
@@ -204,6 +253,16 @@ impl SessionMinute {
             prompts: self.prompts,
             interrupts: self.interrupts,
             responses: self.responses,
+            seconds: if meta.activity {
+                meta.input.seconds()
+            } else {
+                Seconds::default()
+            },
+            injected: if meta.activity {
+                meta.input.injected
+            } else {
+                Injected::default()
+            },
             files: self
                 .files
                 .into_iter()
@@ -240,9 +299,29 @@ mod tests {
     }
 
     #[test]
+    fn a_prompt_marks_its_slot_as_agent_only_from_a_possible_agent_window() {
+        for (read, expected) in [
+            (None, Focus::Agent),
+            (Some(Focus::Terminal), Focus::Agent),
+            (Some(Focus::Editor), Focus::Agent),
+            (Some(Focus::Browser), Focus::Browser),
+            (Some(Focus::Other), Focus::Other),
+            (Some(Focus::Testing), Focus::Testing),
+            (Some(Focus::None), Focus::None),
+        ] {
+            let mut minute = SessionMinute::default();
+            if let Some(read) = read {
+                minute.slots[1].add(read);
+            }
+            minute.prompt_slots[1] = true;
+            assert_eq!(minute.focus(1), expected, "{read:?}");
+        }
+    }
+
+    #[test]
     fn a_prompt_marks_its_slot_as_agent() {
         let mut minute = SessionMinute::default();
-        minute.slots[2].add(Focus::Browser);
+        minute.slots[2].add(Focus::Terminal);
         minute.prompt_slots[2] = true;
         let hb = minute.into_heartbeat(Meta {
             minute_ms: 60_000,
@@ -253,15 +332,17 @@ mod tests {
             activity: true,
             input: {
                 let mut input = MinuteInput::default();
-                input.slots[2] = SlotInput {
-                    any: true,
-                    keys: 12,
-                    mouse: 3,
-                };
+                input.slots[2].any = true;
+                input.add_counts(25, 12, 3, Injected { keys: 2, mouse: 0 });
                 input.add_kinds(InputKinds::Exact);
                 input
             },
         });
+        assert_eq!(hb.seconds.keys.len(), 60);
+        assert_eq!(hb.seconds.keys[25], 12);
+        assert_eq!(hb.seconds.mouse[25], 3);
+        assert_eq!(hb.seconds.keys.iter().map(|&k| k as u32).sum::<u32>(), 12);
+        assert_eq!(hb.injected, Injected { keys: 2, mouse: 0 });
         assert_eq!(
             hb.slots[2],
             Slot {

@@ -82,6 +82,7 @@ impl SessionParser {
                         text: text.to_string(),
                         // Filled in from the prompt history, see `history.rs`.
                         pasted_chars: None,
+                        scripted: false,
                     })
                 {
                     out.parser.last_prompt_ms = Some(created);
@@ -272,6 +273,7 @@ mod tests {
                 kind: AgentEventKind::Prompt {
                     text: "Hi".into(),
                     pasted_chars: None,
+                    scripted: false,
                 }
             }]
         );

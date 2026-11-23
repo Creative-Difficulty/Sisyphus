@@ -8,9 +8,13 @@
 //!   counts key presses and mouse events (movements, clicks, scrolling,
 //!   touchpad touches). Which keys were pressed is looked at only to tell
 //!   keys from mouse buttons and is never stored or sent.
-//! - Every quarter second with anything counted, it sends `<keys> <mouse>`
-//!   to the connected app over [`SOCKET`], and only to the user who
-//!   installed it (checked with `SO_PEERCRED`).
+//! - Every quarter second with anything counted, it sends
+//!   `<keys> <mouse> <virtual keys> <virtual mouse>` to the connected app
+//!   over [`SOCKET`], and only to the user who installed it (checked with
+//!   `SO_PEERCRED`). The virtual counts are the part that came from
+//!   virtual (uinput) devices, which software creates: `ydotool` and other
+//!   autotypers, but also key remappers like keyd and kanata. They are
+//!   included in the first two and only reported, never dropped.
 //! - It doesn't run as root: systemd runs it as a throwaway user
 //!   (`DynamicUser`) in the `input` group, without network access or
 //!   capabilities, unable to write anywhere but its socket's folder, and
@@ -57,6 +61,13 @@ pub struct Counts {
     pub mouse: u32,
 }
 
+impl Counts {
+    fn add(&mut self, other: Counts) {
+        self.keys = self.keys.saturating_add(other.keys);
+        self.mouse = self.mouse.saturating_add(other.mouse);
+    }
+}
+
 /// What a device is in the middle of.
 #[derive(Debug, Default)]
 pub struct DeviceState {
@@ -98,6 +109,8 @@ struct Device {
     path: PathBuf,
     file: File,
     state: DeviceState,
+    /// Created by software (uinput) rather than a driver for hardware.
+    is_virtual: bool,
 }
 
 /// Run the service: count and serve until killed.
@@ -112,6 +125,7 @@ pub fn serve(uid: u32) -> Result<(), String> {
     let mut devices: Vec<Device> = Vec::new();
     let mut clients: Vec<UnixStream> = Vec::new();
     let mut counts = Counts::default();
+    let mut virtual_counts = Counts::default();
     let mut scanned: Option<Instant> = None;
     let mut flushed = Instant::now();
     // SAFETY: input_event is plain data; all zero is a valid value.
@@ -171,7 +185,12 @@ pub fn serve(uid: u32) -> Result<(), String> {
                 }
                 let read = n as usize / size_of::<libc::input_event>();
                 for e in &events[..read] {
-                    count(&mut device.state, e.type_, e.code, e.value, &mut counts);
+                    let mut c = Counts::default();
+                    count(&mut device.state, e.type_, e.code, e.value, &mut c);
+                    counts.add(c);
+                    if device.is_virtual {
+                        virtual_counts.add(c);
+                    }
                 }
             }
         }
@@ -182,9 +201,13 @@ pub fn serve(uid: u32) -> Result<(), String> {
         if flushed.elapsed() >= FLUSH {
             flushed = Instant::now();
             if counts != Counts::default() {
-                let line = format!("{} {}\n", counts.keys, counts.mouse);
+                let line = format!(
+                    "{} {} {} {}\n",
+                    counts.keys, counts.mouse, virtual_counts.keys, virtual_counts.mouse
+                );
                 clients.retain_mut(|c| c.write_all(line.as_bytes()).is_ok());
                 counts = Counts::default();
+                virtual_counts = Counts::default();
             }
         }
     }
@@ -209,13 +232,26 @@ fn scan(devices: &mut Vec<Device>) {
             .custom_flags(libc::O_NONBLOCK | libc::O_CLOEXEC)
             .open(&path)
         {
+            let is_virtual = is_virtual(&path);
             devices.push(Device {
                 path,
                 file,
                 state: DeviceState::default(),
+                is_virtual,
             });
         }
     }
+}
+
+/// Whether the input device at `/dev/input/eventN` is virtual: uinput
+/// devices live under `/sys/devices/virtual/input`, whatever bus they
+/// claim to be on.
+fn is_virtual(dev: &Path) -> bool {
+    let Some(name) = dev.file_name() else {
+        return false;
+    };
+    fs::canonicalize(Path::new("/sys/class/input").join(name).join("device"))
+        .is_ok_and(|p| p.starts_with("/sys/devices/virtual"))
 }
 
 /// The user id of the process at the other end of `stream`.

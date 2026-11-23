@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v8).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v9).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -14,11 +14,13 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 8;
+pub const VERSION: u32 = 9;
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
 pub const SLOTS: usize = 6;
+/// Seconds in one heartbeat: the length of [`Seconds`]' arrays.
+pub const SECONDS: usize = 60;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Heartbeat {
@@ -65,6 +67,33 @@ pub struct Heartbeat {
     pub responses: Responses,
     /// Files edited this minute, sorted by path.
     pub files: Vec<FileChange>,
+    /// The minute's input second by second (v9), for spotting machine-made
+    /// rhythm: autotypers and mouse jigglers are regular, people aren't.
+    pub seconds: Seconds,
+    /// Input this minute that came from software rather than a physical
+    /// device (v9), as far as the system tells: events posted by apps on
+    /// macOS, virtual (uinput) devices such as `ydotool` or key remappers
+    /// on Linux with the input helper. 0 where it can't be told (Windows,
+    /// X11). Also counted in `slots` and `seconds`; reviewers judge it.
+    pub injected: Injected,
+}
+
+/// Key presses and mouse events in each second of the minute, for the
+/// whole system (never which keys).
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Seconds {
+    /// [`SECONDS`] entries, or none without activity or when keys and mouse
+    /// can't be told apart (`input_kinds` unknown).
+    pub keys: Vec<u16>,
+    /// Like `keys`.
+    pub mouse: Vec<u16>,
+}
+
+/// Input that came from software, see [`Heartbeat::injected`].
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Injected {
+    pub keys: u32,
+    pub mouse: u32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -169,13 +198,32 @@ pub struct Prompts {
     /// probability of each category from 0 to 1000. Fewer entries than
     /// `submitted` when the model wasn't loaded.
     pub classes: Vec<[u16; PROMPT_CLASSES]>,
+    /// The second within the minute (0 to 59) each prompt was sent, in
+    /// order (v9). A prompt that arrived after its minute closed counts in
+    /// the next one at second 0.
+    pub at: Vec<u8>,
+    /// Prompts the agent says came from a program, not its interactive
+    /// interface (v9): Claude Code's SDK and `claude -p`. Included in
+    /// `submitted`.
+    pub scripted: u32,
 }
 
 /// Agent responses that finished this minute. Counts only, never text.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Responses {
     pub finished: u32,
     /// Characters of their visible text (not thinking, not tool calls).
+    pub chars: u32,
+    /// The second within the minute each response finished, in order, with
+    /// its visible characters (v9). Late ones count at second 0 like
+    /// prompts.
+    pub at: Vec<ResponseAt>,
+}
+
+/// One finished response: when, and how long it was.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ResponseAt {
+    pub second: u8,
     pub chars: u32,
 }
 

@@ -126,6 +126,7 @@ impl Inferred {
         InputCounts {
             keys,
             mouse: std::mem::take(&mut c.mouse),
+            ..Default::default()
         }
     }
 }

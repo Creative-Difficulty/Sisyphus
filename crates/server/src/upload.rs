@@ -8,6 +8,12 @@
 //! heartbeats are stored with the server's receive time (flagged offline
 //! when they arrive more than 5 minutes after their minute), credited (see
 //! `credit.rs`) and the new tip is returned.
+//!
+//! Heartbeats must start on a whole minute (`Misaligned` otherwise). Ones
+//! that arrive more than an hour after their minute, or are dated before
+//! the device was linked, are stored as `stale` and earn nothing (decided
+//! 2026-11-23). Crediting takes a per-user lock, so uploads from two of a
+//! user's devices can't both keep a full share of the same minute.
 
 use axum::Json;
 use axum::extract::State;
@@ -30,7 +36,8 @@ pub async fn upload(State(state): State<AppState>, Json(batch): Json<UploadBatch
                 UploadError::Empty
                 | UploadError::Invalid(_)
                 | UploadError::UnsupportedVersion { .. }
-                | UploadError::FutureDated { .. } => StatusCode::BAD_REQUEST,
+                | UploadError::FutureDated { .. }
+                | UploadError::Misaligned { .. } => StatusCode::BAD_REQUEST,
             };
             (status, Json(e)).into_response()
         }
@@ -79,7 +86,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
     // Linking a device creates its row at the genesis tip. Locking the row
     // serialises concurrent uploads from the same device.
     let row = sqlx::query(
-        "SELECT next_seq, prev, user_id FROM devices
+        "SELECT next_seq, prev, user_id, linked_ms FROM devices
          WHERE device_id = $1 AND user_id IS NOT NULL FOR UPDATE",
     )
     .bind(&device)
@@ -92,21 +99,30 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
     };
 
     let user_id: i64 = row.get("user_id");
+    let linked_ms: i64 = row.get("linked_ms");
     let new_tip = verify_batch(batch, &tip, now as u64).map_err(Rejected::Upload)?;
+    // Minutes are shared among all of the user's sessions and devices
+    // (`credit::share_minute`), which only works if no other upload of the
+    // same user credits at the same time.
+    sqlx::query("SELECT pg_advisory_xact_lock($1)")
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await?;
     let mut minutes = std::collections::BTreeSet::new();
 
     for signed in &batch.heartbeats {
         let body = serde_json::to_string(&signed.heartbeat).expect("heartbeat serializes");
-        let offline = StoredHeartbeat {
+        let stored = StoredHeartbeat {
             signed: signed.clone(),
             received_at_ms: now as u64,
-        }
-        .is_offline();
+        };
+        let offline = stored.is_offline();
+        let stale = stored.is_stale() || (signed.heartbeat.minute_ms as i64) < linked_ms;
         sqlx::query(
             "INSERT INTO heartbeats
                  (device_id, seq, hash, prev, sig, claimed_ms, received_ms, body, offline,
-                  user_id)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10)",
+                  user_id, stale)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11)",
         )
         .bind(&device)
         .bind(signed.seq as i64)
@@ -118,6 +134,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
         .bind(&body)
         .bind(offline)
         .bind(user_id)
+        .bind(stale)
         .execute(&mut *tx)
         .await?;
         let stored = credit::Stored {
@@ -125,6 +142,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
             device_id: &device,
             seq: signed.seq as i64,
             offline,
+            stale,
             body: &body,
         };
         if let Some(minute) = credit::process(&mut tx, stored).await? {

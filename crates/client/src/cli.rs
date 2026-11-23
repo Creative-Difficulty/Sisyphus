@@ -92,7 +92,10 @@ fn activity() {
             })
             .collect();
         let kinds = match monitor.take_input() {
-            Some((c, kinds)) => format!("keys {:>3} mouse {:>4} ({kinds:?})", c.keys, c.mouse),
+            Some((c, kinds)) => format!(
+                "keys {:>3} mouse {:>4} injected {}/{} ({kinds:?})",
+                c.keys, c.mouse, c.injected_keys, c.injected_mouse
+            ),
             None => "keys/mouse unknown".to_string(),
         };
         println!(
@@ -187,7 +190,9 @@ fn watch(args: &[String]) -> Result<(), Box<dyn std::error::Error>> {
 
 fn describe(event: &AgentEvent) -> String {
     let what = match &event.kind {
-        AgentEventKind::Prompt { text, pasted_chars } => {
+        AgentEventKind::Prompt {
+            text, pasted_chars, ..
+        } => {
             let pasted = match pasted_chars {
                 Some(n) => format!("{n}/{} pasted", text.chars().count()),
                 None => "paste unknown".to_string(),

@@ -342,6 +342,7 @@ fn prompt(text: &str) -> Vec<AgentEventKind> {
     vec![AgentEventKind::Prompt {
         text: text.to_string(),
         pasted_chars: None,
+        scripted: false,
     }]
 }
 
@@ -385,6 +386,7 @@ mod tests {
         AgentEventKind::Prompt {
             text: text.into(),
             pasted_chars: None,
+            scripted: false,
         }
     }
 

@@ -279,7 +279,8 @@ mod tests {
             events,
             vec![AgentEventKind::Prompt {
                 text: "fix it".into(),
-                pasted_chars: None
+                pasted_chars: None,
+                scripted: false,
             }]
         );
     }
@@ -313,7 +314,8 @@ mod tests {
             vec![
                 AgentEventKind::Prompt {
                     text: "go".into(),
-                    pasted_chars: None
+                    pasted_chars: None,
+                    scripted: false,
                 },
                 AgentEventKind::Thinking { text: "hm".into() },
                 AgentEventKind::ToolCall {

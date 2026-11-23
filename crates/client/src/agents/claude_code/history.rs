@@ -93,7 +93,10 @@ impl PromptHistory {
     /// Fill in `pasted_chars` on every prompt in `events`.
     pub fn fill(&mut self, session_id: &str, events: &mut [AgentEvent]) {
         for event in events {
-            if let AgentEventKind::Prompt { text, pasted_chars } = &mut event.kind {
+            if let AgentEventKind::Prompt {
+                text, pasted_chars, ..
+            } = &mut event.kind
+            {
                 *pasted_chars = self.pasted_chars(session_id, event.time_ms, text);
             }
         }

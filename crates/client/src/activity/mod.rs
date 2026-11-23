@@ -47,6 +47,20 @@ pub use sisyphus_common::heartbeat::InputKinds;
 pub struct InputCounts {
     pub keys: u32,
     pub mouse: u32,
+    /// The part of `keys` and `mouse` that came from software rather than
+    /// a physical device, where the system tells: events posted by apps
+    /// (macOS), virtual uinput devices (Linux input helper). 0 elsewhere.
+    pub injected_keys: u32,
+    pub injected_mouse: u32,
+}
+
+impl InputCounts {
+    pub fn add(&mut self, other: InputCounts) {
+        self.keys = self.keys.saturating_add(other.keys);
+        self.mouse = self.mouse.saturating_add(other.mouse);
+        self.injected_keys = self.injected_keys.saturating_add(other.injected_keys);
+        self.injected_mouse = self.injected_mouse.saturating_add(other.injected_mouse);
+    }
 }
 
 /// Whether this system needs the input helper to tell keys from mouse

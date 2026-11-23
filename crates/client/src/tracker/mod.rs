@@ -27,7 +27,9 @@ use std::thread::JoinHandle;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use sisyphus_common::attention::{self, Carry};
-use sisyphus_common::heartbeat::{Focus, Heartbeat, PROMPT_CLASSES, SLOT_SECS, SLOTS};
+use sisyphus_common::heartbeat::{
+    Focus, Heartbeat, Injected, PROMPT_CLASSES, ResponseAt, SLOT_SECS, SLOTS,
+};
 
 use crate::activity::process::{self, WindowAgent};
 use crate::activity::{
@@ -207,6 +209,11 @@ fn minute_of(ms: u64) -> u64 {
 
 fn slot_of(ms: u64) -> usize {
     ((ms % MINUTE_MS) / SLOT_MS) as usize
+}
+
+/// The second (0 to 59) within its minute.
+fn second_of(ms: u64) -> usize {
+    ((ms % MINUTE_MS) / 1000) as usize
 }
 
 fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
@@ -568,7 +575,11 @@ impl State {
         };
         session.last_activity_ms = session.last_activity_ms.max(event.time_ms);
         match event.kind {
-            AgentEventKind::Prompt { text, pasted_chars } => {
+            AgentEventKind::Prompt {
+                text,
+                pasted_chars,
+                scripted,
+            } => {
                 // Only the scores are kept, never the text.
                 let classes = self
                     .prompt_model
@@ -584,11 +595,20 @@ impl State {
                 session.last_prompt_ms = session.last_prompt_ms.max(Some(event.time_ms));
                 let minute = session.minute(minute_ms);
                 minute.running = true;
-                if minute_of(event.time_ms) == minute_ms {
+                let in_minute = minute_of(event.time_ms) == minute_ms;
+                if in_minute && !scripted {
                     minute.prompt_slots[slot_of(event.time_ms)] = true;
                 }
                 let prompts = &mut minute.prompts;
                 prompts.submitted += 1;
+                prompts.at.push(if in_minute {
+                    second_of(event.time_ms) as u8
+                } else {
+                    0
+                });
+                if scripted {
+                    prompts.scripted += 1;
+                }
                 prompts.typed_chars = prompts.typed_chars.saturating_add(count(chars - pasted));
                 prompts.pasted_chars = prompts.pasted_chars.saturating_add(count(pasted));
                 if let Some(classes) = classes {
@@ -602,11 +622,17 @@ impl State {
             AgentEventKind::Response { text } => {
                 let minute = session.minute(minute_ms);
                 minute.running = true;
+                let chars = count(text.chars().count());
                 minute.responses.finished += 1;
-                minute.responses.chars = minute
-                    .responses
-                    .chars
-                    .saturating_add(count(text.chars().count()));
+                minute.responses.chars = minute.responses.chars.saturating_add(chars);
+                minute.responses.at.push(ResponseAt {
+                    second: if minute_of(event.time_ms) == minute_ms {
+                        second_of(event.time_ms) as u8
+                    } else {
+                        0
+                    },
+                    chars,
+                });
             }
             AgentEventKind::ToolCall { id, name, input } => {
                 session.minute(minute_ms).running = true;
@@ -681,9 +707,11 @@ impl State {
         let input = self.input.entry(minute_ms).or_default();
         match counted {
             Some((counts, kinds)) => {
-                let s = &mut input.slots[slot];
-                s.keys = s.keys.saturating_add(counts.keys);
-                s.mouse = s.mouse.saturating_add(counts.mouse);
+                let injected = Injected {
+                    keys: counts.injected_keys,
+                    mouse: counts.injected_mouse,
+                };
+                input.add_counts(second_of(now), counts.keys, counts.mouse, injected);
                 input.add_kinds(kinds);
             }
             None => input.add_kinds(InputKinds::Unknown),
@@ -986,6 +1014,8 @@ impl State {
         debug.minute_input = InputCounts {
             keys: now_input.slots.iter().map(|s| s.keys).sum(),
             mouse: now_input.slots.iter().map(|s| s.mouse).sum(),
+            injected_keys: now_input.injected.keys,
+            injected_mouse: now_input.injected.mouse,
         };
         debug.since_input_ms = self.since_input_ms;
         debug.focus = self.focus;

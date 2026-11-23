@@ -14,6 +14,12 @@ use serde::{Deserialize, Serialize};
 /// claims is treated as recorded offline.
 pub const OFFLINE_THRESHOLD_MS: u64 = 5 * 60 * 1000;
 
+/// A heartbeat that reaches the server more than this long after its
+/// minute earns no credit (decided 2026-11-23: agents need the network, so
+/// real work isn't recorded offline for long). It is still stored, so the
+/// device's chain stays whole and reviewers see it.
+pub const STALE_AFTER_MS: u64 = 60 * 60 * 1000;
+
 /// Consecutive new heartbeats from one device.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UploadBatch {
@@ -53,6 +59,12 @@ pub enum UploadError {
     FutureDated {
         at: usize,
     },
+    /// Heartbeat `at` doesn't start on a whole minute. The client always
+    /// sends whole minutes; anything else would let one real minute be
+    /// claimed many times over.
+    Misaligned {
+        at: usize,
+    },
 }
 
 /// A heartbeat as the server stores it.
@@ -75,6 +87,11 @@ impl StoredHeartbeat {
     pub fn is_offline(&self) -> bool {
         self.delay_ms() > OFFLINE_THRESHOLD_MS
     }
+
+    /// True if it arrived too late to earn credit ([`STALE_AFTER_MS`]).
+    pub fn is_stale(&self) -> bool {
+        self.delay_ms() > STALE_AFTER_MS
+    }
 }
 
 /// A heartbeat covers one minute from its `minute_ms`.
@@ -84,6 +101,11 @@ pub const MINUTE_MS: u64 = 60_000;
 /// clock): it can't have been recorded yet.
 pub fn is_future_dated(heartbeat: &crate::heartbeat::Heartbeat, now_ms: u64) -> bool {
     heartbeat.minute_ms.saturating_add(MINUTE_MS) > now_ms
+}
+
+/// Whether `heartbeat`'s minute doesn't start on a whole minute.
+pub fn is_misaligned(heartbeat: &crate::heartbeat::Heartbeat) -> bool {
+    !heartbeat.minute_ms.is_multiple_of(MINUTE_MS)
 }
 
 /// Server side: check a batch against the device's stored chain tip, at
@@ -106,6 +128,13 @@ pub fn verify_batch(
     }
     let new_tip =
         chain::verify(&batch.heartbeats, &batch.device, tip).map_err(UploadError::Invalid)?;
+    if let Some(at) = batch
+        .heartbeats
+        .iter()
+        .position(|h| is_misaligned(&h.heartbeat))
+    {
+        return Err(UploadError::Misaligned { at });
+    }
     if let Some(at) = batch
         .heartbeats
         .iter()

@@ -280,6 +280,8 @@ mod tests {
             prompts: Prompts::default(),
             interrupts: 0,
             responses: Responses::default(),
+            seconds: Default::default(),
+            injected: Default::default(),
             files: Vec::new(),
         }
     }

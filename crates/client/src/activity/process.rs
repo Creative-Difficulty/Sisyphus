@@ -40,6 +40,11 @@ pub struct Process {
 #[derive(Debug, Clone, Default)]
 pub struct Processes {
     by_pid: HashMap<u32, Process>,
+    /// tmux panes on screen right now: the pane's process → the tmux
+    /// clients (`tmux attach`, running in a terminal window) showing it.
+    /// The tmux server runs detached from every window, so an agent in a
+    /// pane never descends from the terminal showing it.
+    tmux: HashMap<u32, Vec<u32>>,
 }
 
 /// How far up the tree to look. Guards against cycles from reused pids.
@@ -60,12 +65,26 @@ impl Processes {
                 process.background = background;
             }
         }
-        Self::from_list(list)
+        // Only ask tmux when an agent may run inside it.
+        let tmux = if list.iter().any(|p| p.name.starts_with("tmux"))
+            && list
+                .iter()
+                .any(|p| p.agent.is_some() || p.manager.is_some())
+        {
+            tmux::panes_on_screen()
+        } else {
+            HashMap::new()
+        };
+        Self {
+            tmux,
+            ..Self::from_list(list)
+        }
     }
 
     pub fn from_list(list: Vec<Process>) -> Self {
         Self {
             by_pid: list.into_iter().map(|p| (p.pid, p)).collect(),
+            tmux: HashMap::new(),
         }
     }
 
@@ -203,7 +222,22 @@ impl Processes {
     /// Without the window's pid (wlr-foreign-toplevel gives only the app
     /// id): an ancestor's executable matches the app id, which can't tell
     /// two windows of the same terminal apart.
+    ///
+    /// Inside tmux: the process's pane is on screen in a tmux client that
+    /// descends from the window.
     fn window_runs(&self, app: &FocusedApp, pid: u32) -> bool {
+        if self.descends_from_window(app, pid) {
+            return true;
+        }
+        let Some(clients) = self.ancestors(pid).find_map(|a| self.tmux.get(&a.pid)) else {
+            return false;
+        };
+        clients
+            .iter()
+            .any(|client| self.descends_from_window(app, *client))
+    }
+
+    fn descends_from_window(&self, app: &FocusedApp, pid: u32) -> bool {
         let mut ancestors = self.ancestors(pid).skip(1);
         match app.pid {
             Some(window) => ancestors.any(|p| p.pid == window),
@@ -212,6 +246,58 @@ impl Processes {
                 !id.is_empty() && ancestors.any(|p| p.name == id)
             }
         }
+    }
+}
+
+/// Which tmux panes are on screen, from the default tmux server.
+mod tmux {
+    use std::collections::HashMap;
+    use std::process::Command;
+
+    /// Pane process → clients showing it. Empty without tmux.
+    pub fn panes_on_screen() -> HashMap<u32, Vec<u32>> {
+        let run = |args: &[&str]| {
+            Command::new("tmux")
+                .args(args)
+                .output()
+                .ok()
+                .filter(|o| o.status.success())
+                .map(|o| String::from_utf8_lossy(&o.stdout).into_owned())
+        };
+        let Some(panes) = run(&[
+            "list-panes",
+            "-a",
+            "-F",
+            "#{pane_pid} #{session_id} #{window_active} #{pane_active}",
+        ]) else {
+            return HashMap::new();
+        };
+        let clients =
+            run(&["list-clients", "-F", "#{client_pid} #{session_id}"]).unwrap_or_default();
+        parse(&panes, &clients)
+    }
+
+    /// A session's clients all show its active window, and in it the
+    /// active pane.
+    pub fn parse(panes: &str, clients: &str) -> HashMap<u32, Vec<u32>> {
+        let mut by_session: HashMap<&str, Vec<u32>> = HashMap::new();
+        for line in clients.lines() {
+            let mut parts = line.split_whitespace();
+            if let (Some(Ok(pid)), Some(session)) = (parts.next().map(str::parse), parts.next()) {
+                by_session.entry(session).or_default().push(pid);
+            }
+        }
+        let mut out = HashMap::new();
+        for line in panes.lines() {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            let [pid, session, "1", "1"] = parts.as_slice() else {
+                continue;
+            };
+            if let (Ok(pid), Some(clients)) = (pid.parse::<u32>(), by_session.get(session)) {
+                out.insert(pid, clients.clone());
+            }
+        }
+        out
     }
 }
 
@@ -650,6 +736,30 @@ mod tests {
             app_id: app_id.to_string(),
             pid,
         }
+    }
+
+    #[test]
+    fn matches_an_agent_in_a_tmux_pane_on_screen() {
+        // tmux's server is detached (parent 1); the window runs a client.
+        let mut t = Processes::from_list(vec![
+            p(1, 0, "systemd", None),
+            p(100, 1, "kitty", None),
+            p(101, 100, "zsh", None),
+            p(102, 101, "tmux", None),
+            p(200, 1, "kitty", None),
+            p(500, 1, "tmux", None),
+            p(501, 500, "zsh", None),
+            p(502, 501, "claude", Some("claude-code")),
+            p(503, 500, "zsh", None),
+        ]);
+        assert!(!t.window_runs_agent(&app("kitty", Some(100)), session("claude-code")));
+        // Session $0: window @1 active, its pane 501 active, client 102.
+        t.tmux = tmux::parse("501 $0 1 1\n503 $0 0 1\n", "102 $0\n");
+        assert!(t.window_runs_agent(&app("kitty", Some(100)), session("claude-code")));
+        assert!(!t.window_runs_agent(&app("kitty", Some(200)), session("claude-code")));
+        // Another window of the session in front: the agent's pane isn't.
+        t.tmux = tmux::parse("501 $0 0 1\n503 $0 1 1\n", "102 $0\n");
+        assert!(!t.window_runs_agent(&app("kitty", Some(100)), session("claude-code")));
     }
 
     #[test]
