@@ -70,6 +70,7 @@
           <p class="big" id="tracked">0h 00m</p>
           <div class="figures">
             <div><strong id="agent-time">0h 00m</strong><span class="muted">agent time</span></div>
+            <div><strong id="prompt-count">0</strong><span class="muted">prompts</span></div>
             <div><strong id="project-count">0</strong><span class="muted">projects</span></div>
             <div><strong id="session-count">0</strong><span class="muted">sessions</span></div>
           </div>
@@ -165,6 +166,7 @@
       <div><strong id="project-tracked">0h 00m</strong><span class="muted">tracked</span></div>
       <div><strong id="project-agent">0h 00m</strong><span class="muted">agent time</span></div>
       <div><strong id="project-sessions">0</strong><span class="muted">sessions</span></div>
+      <div><strong id="project-prompts">0</strong><span class="muted">prompts</span></div>
     </div>
     <div class="timeline" id="project-timeline" role="img"></div>
     <div class="timeline-labels" id="project-timeline-labels" aria-hidden="true"></div>
@@ -174,6 +176,8 @@
       <div><h3>Agents</h3><ul class="bars" id="project-by-agent"></ul></div>
       <div><h3>Systems</h3><ul class="bars" id="project-by-os"></ul></div>
     </div>
+    <h3 class="files-title">Most changed files</h3>
+    <ul class="bars files" id="project-files"></ul>
     <form id="project-settings" class="project-settings">
       <h3>Links</h3>
       <label for="project-repo-input">Repository</label>

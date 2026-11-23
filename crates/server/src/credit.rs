@@ -25,8 +25,9 @@ use sqlx::{PgConnection, PgPool, Row};
 /// 1: per slot, leaving half-life 20 s. 2: per slot, 30 s. 3: one
 /// attention value per heartbeat. 4: in the agent's window only more than
 /// five key presses count. 5: same credit; each minute also stores its
-/// operating system, task and languages for the dashboard's stats.
-pub const FORMULA: i32 = 5;
+/// operating system, task and languages for the dashboard's stats. 6:
+/// same credit; also prompts sent and changed files per minute.
+pub const FORMULA: i32 = 6;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -151,6 +152,21 @@ pub fn latest_task(prompts: &Prompts) -> Option<&'static str> {
         }
     }
     Some(TASKS[best])
+}
+
+/// Each file that changed in the working directory this minute, with its
+/// non-whitespace characters added and removed.
+pub fn changed_files(files: &[File]) -> Vec<(&str, i64)> {
+    files
+        .iter()
+        .map(|f| {
+            (
+                f.path.as_str(),
+                f.working_dir.added.max(0) + f.working_dir.removed.max(0),
+            )
+        })
+        .filter(|(path, chars)| *chars > 0 && !path.is_empty())
+        .collect()
 }
 
 /// The minute's file changes per language, in non-whitespace characters
@@ -293,8 +309,8 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     let inserted = sqlx::query(
         "INSERT INTO session_minutes
              (session_id, minute_ms, user_id, device_id, seq, attention_end,
-              multiplier, credit_ms, ai_ms, offline, formula, os, task)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 0, $8, $9, $10, $11, $12)
+              multiplier, credit_ms, ai_ms, offline, formula, os, task, prompts)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 0, $8, $9, $10, $11, $12, $13)
          ON CONFLICT (session_id, minute_ms) DO NOTHING",
     )
     .bind(&id)
@@ -309,6 +325,7 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .bind(FORMULA)
     .bind(&body.os)
     .bind(&task)
+    .bind(body.prompts.submitted.min(i32::MAX as u32) as i32)
     .execute(&mut *db)
     .await?
     .rows_affected();
@@ -323,6 +340,19 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
         .bind(&id)
         .bind(body.minute_ms)
         .bind(language)
+        .bind(chars)
+        .execute(&mut *db)
+        .await?;
+    }
+    for (path, chars) in changed_files(&body.files) {
+        sqlx::query(
+            "INSERT INTO minute_files (session_id, minute_ms, path, chars)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT DO NOTHING",
+        )
+        .bind(&id)
+        .bind(body.minute_ms)
+        .bind(path)
         .bind(chars)
         .execute(&mut *db)
         .await?;
@@ -437,6 +467,10 @@ mod tests {
         assert_eq!(
             languages(&body.files),
             vec![("JavaScript", 12), ("Rust", 40)]
+        );
+        assert_eq!(
+            changed_files(&body.files),
+            vec![("src/main.rs", 35), ("src/lib.rs", 5), ("web/app.js", 12)]
         );
         let none: Body =
             serde_json::from_str(r#"{"minute_ms": 0, "agent": "codex", "agent_session_id": "s"}"#)

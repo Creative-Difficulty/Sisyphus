@@ -127,15 +127,19 @@ product must:
     - Tasks come from the prompt model: each minute counts for the top
       task of its session's latest prompt ("No prompt yet" before one).
   - projects (decided 2026-11-23): clicking a project opens a popup with
-    its stats, its repository and live demo links, and fields to change
-    them
+    its stats (including prompts sent and its most changed files, by
+    characters changed), its repository and live demo links, and fields
+    to change them
+  - prompts sent, on the Overview (for the date range and filters) and
+    per project
   - git integration (decided 2026-11-23, like Hack Club's Hackatime):
     users connect GitHub on the website (OAuth, public data only; the
     token is kept so the server can search as them, and deleted on
     disconnect). The server then links each project to the public
-    repository with the project's folder name, in the user's account or
-    in one of their organisations where they have commits (only if exactly
-    one matches). Nothing new is sent from the client: git remotes are not
+    repository with the project's folder name, in the user's account, in
+    one of their organisations where they have commits, or among the
+    public repositories they contributed to (commits or pull requests),
+    only if exactly one matches. Nothing new is sent from the client: git remotes are not
     uploaded. Private repositories and renamed folders are set by hand in
     the project's popup, which also takes a live demo link. Links are
     visible only to the user (and reviewers).

@@ -34,6 +34,8 @@ struct ProjectStat {
     /// Credited time across all its sessions.
     tracked_ms: i64,
     sessions: i64,
+    /// Prompts sent in its sessions.
+    prompts: i64,
     last_active_ms: i64,
     /// Its repository, found on GitHub or set by the user.
     repo_url: Option<String>,
@@ -53,6 +55,7 @@ pub async fn projects(
         "SELECT s.project AS name,
                 coalesce(sum(m.credit_ms), 0)::bigint AS tracked_ms,
                 count(DISTINCT s.id) AS sessions,
+                coalesce(sum(m.prompts), 0)::bigint AS prompts,
                 max(s.last_minute_ms) AS last_active_ms,
                 p.repo_url, coalesce(NOT p.repo_manual, false) AS repo_auto, p.demo_url
          FROM agent_sessions s
@@ -73,6 +76,7 @@ pub async fn projects(
                 name: row.get("name"),
                 tracked_ms: row.get("tracked_ms"),
                 sessions: row.get("sessions"),
+                prompts: row.get("prompts"),
                 last_active_ms: row.get("last_active_ms"),
                 repo_url: row.get("repo_url"),
                 repo_auto: row.get("repo_auto"),

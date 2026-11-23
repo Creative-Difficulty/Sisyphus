@@ -199,6 +199,7 @@ function renderOverview(data) {
   setText("agent-time", duration(data.agent_ms));
   setText("project-count", data.projects);
   setText("session-count", data.sessions);
+  setText("prompt-count", count(data.prompts));
   renderTimeline(data, document.getElementById("timeline"), document.getElementById("timeline-labels"));
   renderBars("project", data.by_project);
   renderBars("language", data.by_language);
@@ -224,7 +225,10 @@ function renderProjects(data) {
     const button = el("button", "row");
     button.type = "button";
     const about = el("div", "about");
-    about.append(el("div", "title", p.name), el("div", "sub", sessionCount(p.sessions)));
+    about.append(
+      el("div", "title", p.name),
+      el("div", "sub", `${sessionCount(p.sessions)}, ${plural(p.prompts, "prompt")}`),
+    );
     button.append(about, el("span", "age", duration(p.tracked_ms)));
     button.addEventListener("click", () => openProject(p.name));
     li.append(button);
@@ -234,8 +238,39 @@ function renderProjects(data) {
   list.replaceChildren(...(items.length ? items : [el("li", "empty", "No projects tracked yet")]));
 }
 
+function plural(n, word) {
+  return `${count(n)} ${word}${n === 1 ? "" : "s"}`;
+}
+
 function sessionCount(n) {
-  return `${n} session${n === 1 ? "" : "s"}`;
+  return plural(n, "session");
+}
+
+// "1,234" in the browser's language.
+function count(n) {
+  return new Intl.NumberFormat().format(n);
+}
+
+// A project's most changed files: characters added and removed.
+function renderFiles(files) {
+  const list = document.getElementById("project-files");
+  if (!files.length) {
+    list.replaceChildren(el("li", "empty", "No file changes tracked"));
+    return;
+  }
+  const max = files[0].chars;
+  list.replaceChildren(
+    ...files.map((file) => {
+      const li = el("li");
+      const row = el("div", "bar");
+      row.title = file.path;
+      const fill = el("span", "fill");
+      fill.style.width = `${Math.max(4, (100 * file.chars) / max)}%`;
+      row.append(el("span", "name", file.path), fill, el("span", "time", `${count(file.chars)} chars`));
+      li.append(row);
+      return li;
+    }),
+  );
 }
 
 // A project's popup: its links, all-time stats and the links' settings.
@@ -271,7 +306,7 @@ async function openProject(name) {
   document.getElementById("project-repo-input").value = project.repo_url || "";
   document.getElementById("project-demo-input").value = project.demo_url || "";
   setText("project-status", "");
-  for (const id of ["project-timeline", "project-timeline-labels", "project-by-language", "project-by-task", "project-by-agent", "project-by-os"]) {
+  for (const id of ["project-timeline", "project-timeline-labels", "project-by-language", "project-by-task", "project-by-agent", "project-by-os", "project-files"]) {
     document.getElementById(id).replaceChildren();
   }
   if (!projectDialog.open) projectDialog.showModal();
@@ -282,6 +317,8 @@ async function openProject(name) {
     setText("project-tracked", duration(data.tracked_ms));
     setText("project-agent", duration(data.agent_ms));
     setText("project-sessions", data.sessions);
+    setText("project-prompts", count(data.prompts));
+    renderFiles(data.files);
     renderTimeline(data, document.getElementById("project-timeline"), document.getElementById("project-timeline-labels"));
     for (const kind of ["language", "task", "agent", "os"]) {
       renderBars(kind, data[`by_${kind}`], document.getElementById(`project-by-${kind}`), false);

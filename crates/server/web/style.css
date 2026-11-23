@@ -386,6 +386,10 @@ dialog.project .figures div { align-items: flex-start; }
 dialog.project .figures strong { font-size: 26px; }
 dialog.project .timeline { margin-top: 24px; height: 110px; }
 dialog.project .breakdowns { margin-top: 28px; }
+dialog.project .files-title { margin-top: 32px; }
+/* File paths get more room than the other bars' names. */
+.bars.files .bar { grid-template-columns: minmax(0, 22em) 1fr auto; }
+@media (max-width: 640px) { .bars.files .bar { grid-template-columns: minmax(0, 11em) 1fr auto; } }
 .project-settings { margin-top: 32px; display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
 .project-settings label { font-size: 15px; margin-top: 6px; }
 .project-settings input {

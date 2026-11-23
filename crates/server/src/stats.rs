@@ -13,6 +13,9 @@
 //!   (`minute_languages`). With a language filter, only that share counts.
 //! - Tasks: each minute counts for the top task of its session's latest
 //!   scored prompt (`session_minutes.task`).
+//! - Prompts: the prompts sent in the minutes that pass the filters.
+//! - Files (only with a project filter): the project's most changed files
+//!   (`minute_files`).
 
 use axum::Json;
 use axum::extract::{Query, State};
@@ -43,6 +46,8 @@ pub struct Stats {
     agent_ms: i64,
     sessions: i64,
     projects: i64,
+    /// Prompts sent in the minutes that pass the filters.
+    prompts: i64,
     /// `hour`, `day` or `week`.
     unit: &'static str,
     /// One per hour/day/week from the range's start to now, empty ones
@@ -53,6 +58,10 @@ pub struct Stats {
     by_os: Vec<Item>,
     by_language: Vec<Item>,
     by_task: Vec<Item>,
+    /// With a project filter: its most changed files, by non-whitespace
+    /// characters added and removed in the working directory (at most
+    /// [`FILES`]). Empty without one: paths are relative to each project.
+    files: Vec<FileStat>,
     /// Every value the filters can take (all time, not just this range).
     options: Options,
 }
@@ -73,6 +82,15 @@ struct Item {
 }
 
 #[derive(Serialize)]
+struct FileStat {
+    path: String,
+    chars: i64,
+}
+
+/// Most changed files listed for a project.
+const FILES: usize = 10;
+
+#[derive(Serialize)]
 struct Options {
     projects: Vec<String>,
     agents: Vec<String>,
@@ -88,7 +106,8 @@ struct Options {
 const BASE: &str = "
 WITH u AS (SELECT coalesce(timezone, 'UTC') AS tz FROM users WHERE id = $1),
 weighted AS (
-    SELECT m.session_id, m.minute_ms, m.credit_ms, m.ai_ms, m.os, m.task, s.project, s.agent,
+    SELECT m.session_id, m.minute_ms, m.credit_ms, m.ai_ms, m.os, m.task, m.prompts,
+           s.project, s.agent,
            CASE
                WHEN $6::text IS NULL THEN 1.0::float8
                WHEN $6 = '' THEN CASE WHEN EXISTS (
@@ -183,7 +202,8 @@ pub async fn stats(
                     SELECT max(weight) AS w FROM base WHERE ai_ms > 0 GROUP BY minute_ms) a), 0)::float8
                     AS agent,
                 count(DISTINCT session_id) AS sessions,
-                count(DISTINCT project) AS projects
+                count(DISTINCT project) AS projects,
+                coalesce(sum(prompts), 0)::bigint AS prompts
          FROM base"
     );
     let totals = query!(totals_sql).fetch_one(db).await.map_err(failed)?;
@@ -254,6 +274,33 @@ pub async fn stats(
     );
     let by_language = items(query!(languages_sql).fetch_all(db).await.map_err(failed)?);
 
+    let mut files = Vec::new();
+    if filters.project.is_some() {
+        let files_sql = format!(
+            "{BASE}
+             SELECT f.path, sum(f.chars)::bigint AS chars
+             FROM base b JOIN minute_files f
+                  ON f.session_id = b.session_id AND f.minute_ms = b.minute_ms
+             GROUP BY f.path ORDER BY 2 DESC, 1"
+        );
+        for row in query!(files_sql).fetch_all(db).await.map_err(failed)? {
+            let path: String = row.get("path");
+            // With a language filter, only that language's files.
+            if let Some(language) = filters.language.as_deref()
+                && (language.is_empty() || crate::language::of(&path) != language)
+            {
+                continue;
+            }
+            files.push(FileStat {
+                path,
+                chars: row.get("chars"),
+            });
+            if files.len() == FILES {
+                break;
+            }
+        }
+    }
+
     let options = sqlx::query(
         "SELECT
              ARRAY(SELECT DISTINCT project FROM agent_sessions WHERE user_id = $1 ORDER BY 1)
@@ -280,6 +327,7 @@ pub async fn stats(
         agent_ms: ms(&totals, "agent"),
         sessions: totals.get("sessions"),
         projects: totals.get("projects"),
+        prompts: totals.get("prompts"),
         unit,
         buckets,
         by_project,
@@ -287,6 +335,7 @@ pub async fn stats(
         by_os,
         by_language,
         by_task,
+        files,
         options: Options {
             projects: options.get("projects"),
             agents: options.get("agents"),
