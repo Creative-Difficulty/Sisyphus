@@ -165,8 +165,25 @@ product must:
     session id), attention per slot, the multiplier per minute, sharing
     concurrent sessions' minutes, AI time kept apart, offline flags; rebuilt
     from the stored heartbeats when the formula changes
-  - Not built: the struggle value, the edit-claim check, the mouse-jiggle
-    rule.
+  - against minting time (2026-11-23): heartbeats must start on a whole
+    minute; heartbeats received more than an hour late or dated before
+    their device was linked are stored but earn nothing; crediting locks
+    per user, so two devices can't both keep a full share of one minute
+  - the review page for the fraud squad, `/review` ("Pulse", 2026-11-23):
+    any user's heartbeats over up to 7 days, drawn as an EKG-like strip of
+    keys and mouse per second with prompts, responses, credit and flags, a
+    rhythm fingerprint (keys in one second against the next), and a
+    reading clock (response length against reply delay); with the flags
+    below. Only for reviewers (Slack IDs in `REVIEWERS`)
+  - flags for reviewers (2026-11-23), computed from the stored heartbeats
+    and never applied to credit: prompt text without the key presses to
+    type it, prompts without any input, scripted prompts, injected input,
+    typing at a machine-steady rhythm, superhuman typing, input at
+    clockwork intervals (jigglers), replies faster than reading, prompts on
+    a timer, edit claims beyond the folder's changes, two computers at
+    once, six hours without a break, late heartbeats
+  - Not built: the struggle value, applying the edit-claim check or any
+    flag to credit, the mouse-jiggle rule.
 
 ## Decided, not built
 
@@ -196,7 +213,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 8,
+    "version": 9,
     "minute_ms": 1795201380000,
     "os": "linux",
 
@@ -227,14 +244,17 @@ product must:
       "model": "sisyphus-prompt-1",
       "classes": [
         [3, 912, 40, 0, 2, 31, 0, 0, 1, 12, 770, 0, 4, 0, 0, 96, 0, 2, 0, 0, 1, 3]
-      ]
+      ],
+      "at": [42],
+      "scripted": 0
     },
 
     "interrupts": 0,
 
     "responses": {
       "finished": 1,
-      "chars": 4200
+      "chars": 4200,
+      "at": [{ "second": 12, "chars": 4200 }]
     },
 
     "files": [
@@ -243,10 +263,31 @@ product must:
         "working_dir": { "added": 200, "removed": 7 },
         "agent_edits": { "added": 193, "removed": 7 }
       }
-    ]
+    ],
+
+    "seconds": {
+      "keys": [0, 3, 5, 6, 0, 0, 4, "… 60 in all"],
+      "mouse": [0, 0, 12, 30, 0, 0, 0, "… 60 in all"]
+    },
+    "injected": { "keys": 0, "mouse": 0 }
   }
 }
 ```
+
+- Version 9 (decided 2026-11-23, against autotypers and jigglers):
+  - `seconds`: key presses and mouse events in each of the minute's 60
+    seconds, for the whole system (never which keys); empty without
+    activity or when keys and mouse can't be told apart. People type in
+    bursts; machines keep time.
+  - `injected`: the part of the minute's input that came from software,
+    where the system tells (macOS events posted by apps, Linux virtual
+    devices through the input helper); 0 elsewhere. Key remappers count
+    too, so it's only shown to reviewers.
+  - `prompts.at` / `responses.at`: the second each prompt was sent and
+    each response finished (with its length), so reply delays can be
+    compared with reading time.
+  - `prompts.scripted`: prompts the agent says a program sent (Claude
+    Code's SDK, `claude -p`).
 
 - `minute_ms`: the minute the client claims; the server checks it against its
   receive time.
@@ -407,7 +448,17 @@ product must:
   which the agent ran earn credit. Attention is still followed through the
   others.
 - Offline heartbeats count (decided 2026-11-21); the server flags them on
-  the stored heartbeat for reviewers.
+  the stored heartbeat for reviewers. But only up to an hour late
+  (decided 2026-11-23: real AI agents never track offline work): a
+  heartbeat received more than an hour after its minute, or dated before
+  its device was linked to the account, is stored and shown to reviewers
+  but earns nothing.
+- Heartbeats must start on a whole minute (decided 2026-11-23), and
+  crediting is serialised per user, so one real minute can never be
+  credited more than once in total.
+- Suspicious patterns are flagged for reviewers, not applied to credit
+  (decided 2026-11-23). Reviewers are the Slack IDs in the server's
+  `REVIEWERS` setting (decided 2026-11-23).
 - No mouse-jiggle rule for now (decided 2026-11-21); it comes later and has
   to exist before credit can be trusted.
 - The user sets their time zone in the website's settings; "today" and
@@ -511,8 +562,13 @@ product must:
   not be exact.
 - "Make the value of actions": the meaning is unclear; ask before acting on
   it.
-- Against mouse jigglers and autotypers (raised 2026-11-21, nothing
-  decided; ask first):
+- Against mouse jigglers and autotypers (raised 2026-11-21). Built on
+  2026-11-23 at the user's request: per-second input in heartbeats (v9),
+  injected input where the OS tells (macOS posted events, Linux virtual
+  devices), scripted prompts (Claude Code's SDK / `claude -p`), prompts
+  only marking their slot as the agent's from a terminal, editor or
+  unknown window, agents in tmux matched to the terminal showing them,
+  and the reviewer flags above. Still ideas (ask first):
   - Input already only counts while the agent's window has focus, and
     attention needs agent-side evidence: prompts, tool approvals,
     interrupts, matching file edits. Moving the mouse produces none.
