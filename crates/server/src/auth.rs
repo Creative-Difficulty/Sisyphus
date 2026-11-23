@@ -588,9 +588,14 @@ async fn app_token(
     // Link the device, unless it already belongs to someone else.
     let now = now_ms();
     let linked = sqlx::query(
-        "INSERT INTO devices (device_id, next_seq, prev, first_seen_ms, last_seen_ms, user_id)
-         VALUES ($1, 0, $2, $3, $3, $4)
-         ON CONFLICT (device_id) DO UPDATE SET user_id = EXCLUDED.user_id
+        "INSERT INTO devices
+             (device_id, next_seq, prev, first_seen_ms, last_seen_ms, user_id, linked_ms)
+         VALUES ($1, 0, $2, $3, $3, $4, $3)
+         ON CONFLICT (device_id) DO UPDATE SET
+             user_id = EXCLUDED.user_id,
+             -- Heartbeats dated before a new link earn nothing (see upload.rs).
+             linked_ms = CASE WHEN devices.user_id IS NULL
+                              THEN EXCLUDED.linked_ms ELSE devices.linked_ms END
          WHERE devices.user_id IS NULL OR devices.user_id = EXCLUDED.user_id
          RETURNING device_id",
     )
@@ -644,11 +649,17 @@ async fn logout(State(state): State<AppState>, headers: HeaderMap) -> Response {
 #[derive(Serialize)]
 struct Me {
     name: Option<String>,
+    /// May use the review page (`/review`).
+    reviewer: bool,
 }
 
 async fn me(State(state): State<AppState>, headers: HeaderMap) -> Response {
     match current_user(&state, &headers).await {
-        Some(user) => Json(Me { name: user.name }).into_response(),
+        Some(user) => Json(Me {
+            reviewer: crate::review::is_reviewer(&state, user.id).await,
+            name: user.name,
+        })
+        .into_response(),
         None => api_error(StatusCode::UNAUTHORIZED, "not logged in"),
     }
 }

@@ -38,7 +38,9 @@ mod github;
 mod language;
 mod oidc;
 mod projects;
+mod review;
 mod settings;
+mod signals;
 mod stats;
 mod upload;
 mod web;
@@ -57,6 +59,8 @@ pub struct AppState {
     pub secure: bool,
     /// Signed app requests already answered, against replays.
     pub seen_requests: Arc<app::SeenRequests>,
+    /// Slack IDs of the users who may use the review page (`REVIEWERS`).
+    pub reviewers: Arc<std::collections::HashSet<String>>,
 }
 
 impl AppState {
@@ -164,6 +168,7 @@ async fn main() {
         public_url: public_url.into(),
         secure,
         seen_requests: Arc::default(),
+        reviewers: Arc::new(review::reviewers_from_env()),
     };
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
@@ -177,6 +182,8 @@ async fn main() {
         .route("/api/settings", get(settings::get).post(settings::save))
         .route("/api/app/today", get(app::today))
         .route("/api/app/logout", post(app::logout))
+        .route("/api/review/users", get(review::users))
+        .route("/api/review/timeline", get(review::timeline))
         .merge(auth::routes())
         .merge(github::routes())
         .merge(web::routes())
