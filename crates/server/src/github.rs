@@ -18,10 +18,12 @@
 //! repository with the project's folder name: under the user's account,
 //! else under the user's public organisations where the user has commits,
 //! and only if exactly one organisation matches (a common name like
-//! "website" isn't linked to the wrong one). Private repositories are never
-//! linked. A miss is retried after 14 days; at most 50 GitHub requests per
-//! user per day. Projects whose repository the user set or cleared are left
-//! alone.
+//! "website" isn't linked to the wrong one), else the one public
+//! repository with that name the user contributed to (commits or pull
+//! requests in the past year, GitHub's `repositoriesContributedTo`).
+//! Private repositories are never linked. A miss is retried after 14
+//! days; at most 50 GitHub requests per user per day. Projects whose
+//! repository the user set or cleared are left alone.
 //!
 //! Configured by `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` (an OAuth
 //! app whose callback URL is `PUBLIC_URL` + `/auth/github/callback`);
@@ -101,16 +103,31 @@ impl GitHub {
         &self.redirect_uri
     }
 
-    fn api_get(&self, token: &str, path: &str) -> Result<Answer, String> {
+    /// A GET, or a POST of `body` (GraphQL).
+    fn request(
+        &self,
+        token: &str,
+        path: &str,
+        body: Option<&serde_json::Value>,
+    ) -> Result<Answer, String> {
         let url = format!("{}{path}", self.api_url);
-        let mut response = self
-            .http
-            .get(&url)
-            .header("Authorization", &format!("Bearer {token}"))
-            .header("Accept", "application/vnd.github+json")
-            .header("X-GitHub-Api-Version", "2022-11-28")
-            .call()
-            .map_err(|e| format!("request to {url} failed: {e}"))?;
+        let authorization = format!("Bearer {token}");
+        let sent = match body {
+            None => self
+                .http
+                .get(&url)
+                .header("Authorization", &authorization)
+                .header("Accept", "application/vnd.github+json")
+                .header("X-GitHub-Api-Version", "2022-11-28")
+                .call(),
+            Some(body) => self
+                .http
+                .post(&url)
+                .header("Authorization", &authorization)
+                .header("Accept", "application/vnd.github+json")
+                .send_json(body),
+        };
+        let mut response = sent.map_err(|e| format!("request to {url} failed: {e}"))?;
         let status = response.status().as_u16();
         let body = if status == 200 {
             response
@@ -253,7 +270,7 @@ fn exchange(github: &GitHub, code: &str) -> Result<(String, i64, String), String
         .as_str()
         .ok_or_else(|| format!("no token from GitHub: {}", body["error"]))?
         .to_string();
-    let user = github.api_get(&token, "/user")?;
+    let user = github.request(&token, "/user", None)?;
     if user.status != 200 {
         return Err(format!("/user answered {}", user.status));
     }
@@ -477,9 +494,9 @@ async fn pass(db: &PgPool, github: &Arc<GitHub>, budget: &mut Budget) -> sqlx::R
         .map(|row| row.get("project"))
         .filter(|name: &String| is_repo_name(name))
         .collect();
-        let mut orgs: Option<Vec<String>> = None;
+        let mut lists = Lists::default();
         for name in names {
-            let found = lookup(github, budget, user_id, &login, &token, &name, &mut orgs).await;
+            let found = lookup(github, budget, user_id, &login, &token, &name, &mut lists).await;
             match found {
                 Ok(url) => {
                     sqlx::query(
@@ -526,8 +543,20 @@ fn is_repo_name(name: &str) -> bool {
             .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'_' | b'-'))
 }
 
+/// A user's organisations and the public repositories they contributed
+/// to, fetched once per pass when first needed.
+#[derive(Default)]
+struct Lists {
+    orgs: Option<Vec<String>>,
+    /// (name, url)
+    contributed: Option<Vec<(String, String)>>,
+}
+
 /// The project's public repository, or `None` if there's no unambiguous
-/// one.
+/// one: the user's own, else one in exactly one of their organisations
+/// with their commits, else exactly one public repository with that name
+/// they contributed to (commits or pull requests, GitHub's
+/// `repositoriesContributedTo`: the past year, not their own).
 async fn lookup(
     github: &Arc<GitHub>,
     budget: &mut Budget,
@@ -535,11 +564,12 @@ async fn lookup(
     login: &str,
     token: &str,
     name: &str,
-    orgs: &mut Option<Vec<String>>,
+    lists: &mut Lists,
 ) -> Result<Option<String>, Stop> {
     if let Some(url) = public_repo(github, budget, user_id, token, login, name).await? {
         return Ok(Some(url));
     }
+    let orgs = &mut lists.orgs;
     if orgs.is_none() {
         let answer = api(
             github,
@@ -547,6 +577,7 @@ async fn lookup(
             user_id,
             token,
             format!("/users/{}/orgs", url_encode(login)),
+            None,
         )
         .await?;
         *orgs = Some(
@@ -576,6 +607,7 @@ async fn lookup(
                 url_encode(&org),
                 url_encode(login)
             ),
+            None,
         )
         .await?;
         if commits.body.as_array().is_some_and(|list| !list.is_empty()) {
@@ -585,11 +617,58 @@ async fn lookup(
             }
         }
     }
-    Ok(if matches.len() == 1 {
-        matches.pop()
-    } else {
-        None
-    })
+    match matches.len() {
+        1 => return Ok(matches.pop()),
+        0 => {}
+        // Ambiguous between organisations: leave it to the user.
+        _ => return Ok(None),
+    }
+
+    if lists.contributed.is_none() {
+        let query = serde_json::json!({
+            "query": "query($login: String!) { user(login: $login) { \
+                repositoriesContributedTo(first: 100, privacy: PUBLIC, \
+                includeUserRepositories: false, \
+                contributionTypes: [COMMIT, PULL_REQUEST]) { nodes { name url isPrivate } } } }",
+            "variables": { "login": login },
+        });
+        let answer = api(
+            github,
+            budget,
+            user_id,
+            token,
+            "/graphql".into(),
+            Some(query),
+        )
+        .await?;
+        lists.contributed = Some(contributed(&answer.body));
+    }
+    let mut found = lists
+        .contributed
+        .iter()
+        .flatten()
+        .filter(|(repo, _)| repo.eq_ignore_ascii_case(name))
+        .map(|(_, url)| url.clone())
+        .collect::<Vec<_>>();
+    Ok(if found.len() == 1 { found.pop() } else { None })
+}
+
+/// The public repositories in a `repositoriesContributedTo` answer.
+fn contributed(body: &serde_json::Value) -> Vec<(String, String)> {
+    body["data"]["user"]["repositoriesContributedTo"]["nodes"]
+        .as_array()
+        .map(|nodes| {
+            nodes
+                .iter()
+                .filter(|node| node["isPrivate"].as_bool() == Some(false))
+                .filter_map(|node| {
+                    let name = node["name"].as_str()?;
+                    let url = node["url"].as_str().filter(|u| u.starts_with("https://"))?;
+                    Some((name.to_string(), url.to_string()))
+                })
+                .collect()
+        })
+        .unwrap_or_default()
 }
 
 async fn public_repo(
@@ -606,6 +685,7 @@ async fn public_repo(
         user_id,
         token,
         format!("/repos/{}/{name}", url_encode(owner)),
+        None,
     )
     .await?;
     if answer.status != 200 || answer.body["private"].as_bool() != Some(false) {
@@ -624,12 +704,13 @@ async fn api(
     user_id: i64,
     token: &str,
     path: String,
+    body: Option<serde_json::Value>,
 ) -> Result<Answer, Stop> {
     if !budget.spend(user_id) {
         return Err(Stop::Later);
     }
     let (github, token) = (github.clone(), token.to_string());
-    let answer = tokio::task::spawn_blocking(move || github.api_get(&token, &path))
+    let answer = tokio::task::spawn_blocking(move || github.request(&token, &path, body.as_ref()))
         .await
         .map_err(|_| Stop::Later)?
         .map_err(|e| {
@@ -665,6 +746,23 @@ mod tests {
             "QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
         );
         assert_eq!(basic_auth("a", "b"), "YTpi");
+    }
+
+    #[test]
+    fn contributed_repos() {
+        let body = serde_json::json!({"data": {"user": {"repositoriesContributedTo": {"nodes": [
+            {"name": "game", "url": "https://github.com/friend/game", "isPrivate": false},
+            {"name": "secret", "url": "https://github.com/friend/secret", "isPrivate": true},
+            {"name": "odd", "url": "javascript:x", "isPrivate": false}
+        ]}}}});
+        assert_eq!(
+            contributed(&body),
+            vec![(
+                "game".to_string(),
+                "https://github.com/friend/game".to_string()
+            )]
+        );
+        assert!(contributed(&serde_json::json!({"errors": []})).is_empty());
     }
 
     #[test]
