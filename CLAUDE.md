@@ -33,6 +33,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 ```sh
 cargo build                                  # whole workspace
 cargo build --release -p sisyphus-client     # release client
+cargo build --release -p sisyphus-client --no-default-features  # as the release workflow builds it (no debug screen)
 cargo test --workspace                       # all tests
 cargo test -p sisyphus-common --test chain   # one integration test file
 cargo test -p sisyphus-client opencode::session::tests::abort_is_an_interrupt  # one test, by path filter
@@ -48,7 +49,7 @@ cargo run -p sisyphus-client -- track                         # record and uploa
 cargo run -p sisyphus-server                 # needs DATABASE_URL (from the environment or .env, see .env.example)
 ```
 
-No `rust-toolchain` file or CI config exists. Edition 2024, resolver 3 (let-chains are used). Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
+No `rust-toolchain` file. CI: `.github/workflows/release.yml` runs when a `v*` tag is pushed (`git tag v0.1.0 && git push origin v0.1.0`): it builds the client without the debug screen for Linux (x86_64, aarch64), Windows (x86_64) and macOS (aarch64, x86_64) and publishes the archives with `SHA256SUMS.txt` as a GitHub release. It doesn't run tests or build the server. Edition 2024, resolver 3 (let-chains are used). Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
 
 ## Architecture
 
@@ -287,7 +288,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
   - an "Input helper" row (Linux Wayland, or wherever it's installed): Running / Not running, "Restart" and "Uninstall" (whenever installed), or "Set up" when it doesn't answer; each runs `pkexec … input-helper install|restart|uninstall` (`input_helper::run_as_admin`). Uninstalling on Wayland brings the required popup back.
   - a server row: a text field with the server address, "Save" (enabled once changed) and "Reset" back to production (only when a custom server is set). Only https, or http on localhost, is accepted. If the account doesn't belong to the new server, the window goes back to the login step.
 - Top bar: gear on the dashboard, back arrow in settings and the debug screen, nothing during first start; a sun/moon icon top right switches light/dark and saves the choice.
-- Debug screen (`debug.rs`): Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, how keys and mouse are told apart and this minute's counts, backends, watched folders, the prompt model's state and the last prompt's top act and task, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
+- Debug screen (`debug.rs`): only with the client's `debug-screen` feature (default on; release builds from CI turn it off with `--no-default-features`, decided 2026-11-23). Ctrl+D pressed twice within 0.8 s opens it from any screen and closes it again (`keyboard::listen`, only key presses no widget used). It redraws every second from `Tracker::debug()` (`DebugInfo`, updated by the tracker each second): per followed session the current heartbeat's attention and credit multiplier so far (computed with `sisyphus_common::attention` from the last sent heartbeat's attention and the open minutes' readings), running and in-front state; the last input, the app class in front, how keys and mouse are told apart and this minute's counts, backends, watched folders, the prompt model's state and the last prompt's top act and task, heartbeats this run, the upload queue and the last upload; and the last heartbeat as JSON. Without a tracker in this window it says why.
 - Dashboard:
   - Top half: recent sessions of all connected agents, newest first, as pink bubbles with logo, title, project folder and age. A running session shows "working" and a deeper pink bubble. Sessions are not clickable.
   - Bottom half: "Recorded today" and three figures. "Recorded today" and the "agent time" figure come from the server (`GET /api/app/today`: `tracked_ms`, `agent_ms`, for the local day; decided 2026-11-21), fetched with each 10 s refresh. "prompts" and "sessions" are placeholders (zero).

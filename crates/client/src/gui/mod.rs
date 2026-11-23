@@ -478,7 +478,12 @@ impl App {
 
     fn subscription(&self) -> Subscription<Message> {
         let system = iced::system::theme_changes().map(Message::SystemTheme);
-        let keys = iced::keyboard::listen().filter_map(debug_key);
+        // Without the debug screen, Ctrl+D isn't listened for at all.
+        let keys = if cfg!(feature = "debug-screen") {
+            iced::keyboard::listen().filter_map(debug_key)
+        } else {
+            Subscription::none()
+        };
         match self.screen {
             Screen::Sessions(_) => {
                 Subscription::batch([system, keys, Subscription::run(refresh_ticks)])

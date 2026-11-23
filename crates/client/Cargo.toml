@@ -3,6 +3,12 @@ name = "sisyphus-client"
 version.workspace = true
 edition.workspace = true
 
+[features]
+default = ["debug-screen"]
+# The debug screen (Ctrl+D twice). Release builds from CI are made with
+# --no-default-features, so users don't get it.
+debug-screen = []
+
 [dependencies]
 sisyphus-common.workspace = true
 serde_json.workspace = true
