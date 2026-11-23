@@ -24,8 +24,9 @@ use sqlx::{PgConnection, PgPool, Row};
 /// The version of the calculation below.
 /// 1: per slot, leaving half-life 20 s. 2: per slot, 30 s. 3: one
 /// attention value per heartbeat. 4: in the agent's window only more than
-/// five key presses count.
-pub const FORMULA: i32 = 4;
+/// five key presses count. 5: same credit; each minute also stores its
+/// operating system, task and languages for the dashboard's stats.
+pub const FORMULA: i32 = 5;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -51,6 +52,27 @@ pub struct Body {
     pub prompts: Prompts,
     #[serde(default)]
     pub interrupts: u32,
+    #[serde(default)]
+    pub os: String,
+    #[serde(default)]
+    pub files: Vec<File>,
+}
+
+/// An edited file: its path relative to the project and what changed in
+/// the working directory.
+#[derive(Debug, Deserialize)]
+pub struct File {
+    pub path: String,
+    #[serde(default)]
+    pub working_dir: Changes,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct Changes {
+    #[serde(default)]
+    pub added: i64,
+    #[serde(default)]
+    pub removed: i64,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize)]
@@ -95,6 +117,53 @@ pub enum Focus {
 pub struct Prompts {
     #[serde(default)]
     pub submitted: u32,
+    /// The prompt model's scores (0 to 1000) per scored prompt.
+    #[serde(default)]
+    pub classes: Vec<Vec<i64>>,
+}
+
+/// The prompt model's task categories, in the order of its scores after
+/// the 9 acts (`sisyphus-prompt-1`; `prompt_model::LABELS` in the client).
+pub const TASKS: [&str; 13] = [
+    "feature",
+    "bug_fix",
+    "error_paste",
+    "refactor",
+    "understand_code",
+    "learn_concept",
+    "ui_styling",
+    "tests",
+    "setup_deploy",
+    "docs_writing",
+    "planning_design",
+    "review",
+    "other",
+];
+const ACTS: usize = 9;
+
+/// The top task of the minute's last scored prompt, if it has one.
+pub fn latest_task(prompts: &Prompts) -> Option<&'static str> {
+    let scores = prompts.classes.last()?.get(ACTS..ACTS + TASKS.len())?;
+    let mut best = 0;
+    for (i, score) in scores.iter().enumerate() {
+        if *score > scores[best] {
+            best = i;
+        }
+    }
+    Some(TASKS[best])
+}
+
+/// The minute's file changes per language, in non-whitespace characters
+/// (added and removed), sorted by language.
+pub fn languages(files: &[File]) -> Vec<(&'static str, i64)> {
+    let mut out = std::collections::BTreeMap::new();
+    for file in files {
+        let chars = file.working_dir.added.max(0) + file.working_dir.removed.max(0);
+        if chars > 0 {
+            *out.entry(crate::language::of(&file.path)).or_insert(0) += chars;
+        }
+    }
+    out.into_iter().collect()
 }
 
 pub use sisyphus_common::attention::{Carry, Outcome};
@@ -205,11 +274,27 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
         attention: row.get("attention_end"),
     });
     let outcome = compute(&body, carry);
+    // The task carries over from the session's last minute with one until
+    // a new prompt is scored.
+    let task = match latest_task(&body.prompts) {
+        Some(task) => task.to_string(),
+        None => sqlx::query(
+            "SELECT task FROM session_minutes
+             WHERE session_id = $1 AND minute_ms < $2
+             ORDER BY minute_ms DESC LIMIT 1",
+        )
+        .bind(&id)
+        .bind(body.minute_ms)
+        .fetch_optional(&mut *db)
+        .await?
+        .map(|row| row.get("task"))
+        .unwrap_or_default(),
+    };
     let inserted = sqlx::query(
         "INSERT INTO session_minutes
              (session_id, minute_ms, user_id, device_id, seq, attention_end,
-              multiplier, credit_ms, ai_ms, offline, formula)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 0, $8, $9, $10)
+              multiplier, credit_ms, ai_ms, offline, formula, os, task)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 0, $8, $9, $10, $11, $12)
          ON CONFLICT (session_id, minute_ms) DO NOTHING",
     )
     .bind(&id)
@@ -222,10 +307,27 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .bind(if body.agent_running { MINUTE_MS } else { 0 })
     .bind(hb.offline)
     .bind(FORMULA)
+    .bind(&body.os)
+    .bind(&task)
     .execute(&mut *db)
     .await?
     .rows_affected();
-    Ok((inserted > 0).then_some(body.minute_ms))
+    if inserted == 0 {
+        return Ok(None);
+    }
+    for (language, chars) in languages(&body.files) {
+        sqlx::query(
+            "INSERT INTO minute_languages (session_id, minute_ms, language, chars)
+             VALUES ($1, $2, $3, $4)",
+        )
+        .bind(&id)
+        .bind(body.minute_ms)
+        .bind(language)
+        .bind(chars)
+        .execute(&mut *db)
+        .await?;
+    }
+    Ok(Some(body.minute_ms))
 }
 
 /// Share one real minute among the user's sessions: if their multipliers
@@ -314,6 +416,33 @@ mod tests {
         let out = compute(&idle, Some(Carry { attention: 1.0 }));
         let leave = attention::decay(attention::LEAVE_HALF_LIFE_SECS);
         assert!((out.multiplier - leave).abs() < 1e-9);
+    }
+
+    #[test]
+    fn task_and_languages() {
+        let body: Body = serde_json::from_str(
+            r#"{"minute_ms": 0, "agent": "codex", "agent_session_id": "s",
+                "prompts": {"submitted": 2, "classes": [
+                    [0,0,0,0,0,0,0,0,0, 900,0,0,0,0,0,0,0,0,0,0,0,0],
+                    [0,0,0,0,0,0,0,0,0, 100,800,0,0,0,0,0,0,0,0,0,0,0]]},
+                "files": [
+                    {"path": "src/main.rs", "working_dir": {"added": 30, "removed": 5}},
+                    {"path": "src/lib.rs", "working_dir": {"added": 5, "removed": 0}},
+                    {"path": "README.md", "working_dir": {"added": 0, "removed": 0}},
+                    {"path": "web/app.js", "working_dir": {"added": 10, "removed": 2}}]}"#,
+        )
+        .unwrap();
+        // The last prompt decides.
+        assert_eq!(latest_task(&body.prompts), Some("bug_fix"));
+        assert_eq!(
+            languages(&body.files),
+            vec![("JavaScript", 12), ("Rust", 40)]
+        );
+        let none: Body =
+            serde_json::from_str(r#"{"minute_ms": 0, "agent": "codex", "agent_session_id": "s"}"#)
+                .unwrap();
+        assert_eq!(latest_task(&none.prompts), None);
+        assert!(languages(&none.files).is_empty());
     }
 
     #[test]
