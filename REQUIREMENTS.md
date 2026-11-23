@@ -611,5 +611,36 @@ product must:
   - Project identity from the git `origin` remote (or a project file like
     `.wakatime-project`), so the same repo matches across machines and
     folder renames. Would also help the git integration.
+- Gaps compared to steer (EwoudVV/steer, another AGPLv3 entry for the
+  bounty, by duck, live at steer.duck.hackclub.app; raised 2026-11-23,
+  nothing decided; ask first). steer infers time from the gaps between
+  prompts and doesn't read input or focus, but it is ahead on:
+  - Public profiles (bounty requirement 5): a public page per user and
+    per project that updates live, and a README badge with the project's
+    hours.
+  - Submitting a project: one command freezes a project's hours into a
+    review page that never changes, with a written justification, the
+    checks, every day and session, and the commits checked against GitHub
+    (missing or differently timed commits marked). Reviewers log in with
+    Hack Club to approve, cut or reject the hours with a note the user
+    sees, and every event behind the page can be downloaded. Our Pulse view
+    is live per user, not a frozen record per submission.
+  - Hosting cost (bounty requirement 11): a load test that runs the real
+    server with simulated clients, and a written estimate of the cost at
+    the bounty's numbers.
+  - Install and updates: a one-line installer (`curl … | sh`, `irm … |
+    iex`), a `doctor` command that checks the setup, an `uninstall`, and
+    automatic updates checked against GitHub releases once a day.
+  - More agents (bounty requirement 7): Copilot (VS Code and CLI), Cursor
+    and Freebuff, and ChatGPT and claude.ai in the browser through a
+    Chrome extension.
+  - A public "faking time" page for reviewers: what is trusted, what is
+    checked, what isn't caught, and the results of AI agents trying to
+    fake time.
+  - Checking the counting: a simulation of different kinds of users
+    compared counting rules against real logs, and optional check-ins
+    ("what are you doing right now?") collect ground truth to tune them.
+  - Coding by hand between prompts counts: file changes and commits within
+    30 minutes of using an AI tool.
 - Rejected: having the AI commit after every round. It conflicts with the
   rule against touching user repositories.
