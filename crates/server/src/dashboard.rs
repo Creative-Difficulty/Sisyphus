@@ -3,7 +3,8 @@
 //! - `GET /api/dashboard`: tracked time, agent time and counts for a date
 //!   range and filters, per hour/day/week, and broken down by project,
 //!   agent, operating system, language and task (Overview; `stats.rs`).
-//! - `GET /api/projects`: every project with its tracked time (Projects).
+//! - `GET /api/projects`: every project with its tracked time, repository
+//!   and live demo (Projects; changed with `projects.rs`).
 //! - `GET /api/heartbeats?offset=N`: the heartbeats the user's devices
 //!   uploaded, newest first, 100 at a time, exactly as stored (Heartbeats,
 //!   a debug view).
@@ -34,6 +35,11 @@ struct ProjectStat {
     tracked_ms: i64,
     sessions: i64,
     last_active_ms: i64,
+    /// Its repository, found on GitHub or set by the user.
+    repo_url: Option<String>,
+    /// Found automatically (not set by the user).
+    repo_auto: bool,
+    demo_url: Option<String>,
 }
 
 pub async fn projects(
@@ -47,10 +53,13 @@ pub async fn projects(
         "SELECT s.project AS name,
                 coalesce(sum(m.credit_ms), 0)::bigint AS tracked_ms,
                 count(DISTINCT s.id) AS sessions,
-                max(s.last_minute_ms) AS last_active_ms
-         FROM agent_sessions s LEFT JOIN session_minutes m ON m.session_id = s.id
+                max(s.last_minute_ms) AS last_active_ms,
+                p.repo_url, coalesce(NOT p.repo_manual, false) AS repo_auto, p.demo_url
+         FROM agent_sessions s
+              LEFT JOIN session_minutes m ON m.session_id = s.id
+              LEFT JOIN projects p ON p.user_id = s.user_id AND p.name = s.project
          WHERE s.user_id = $1
-         GROUP BY s.project
+         GROUP BY s.project, p.repo_url, p.repo_manual, p.demo_url
          ORDER BY last_active_ms DESC",
     )
     .bind(user.id)
@@ -65,6 +74,9 @@ pub async fn projects(
                 tracked_ms: row.get("tracked_ms"),
                 sessions: row.get("sessions"),
                 last_active_ms: row.get("last_active_ms"),
+                repo_url: row.get("repo_url"),
+                repo_auto: row.get("repo_auto"),
+                demo_url: row.get("demo_url"),
             })
             .collect(),
     }))

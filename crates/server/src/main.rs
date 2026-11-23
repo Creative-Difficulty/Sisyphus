@@ -12,6 +12,9 @@
 //!   Without them, login is disabled.
 //! - `HACKCLUB_AUTH_URL`: Hack Club Auth's base URL (default
 //!   `https://auth.hackclub.com`).
+//! - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: the GitHub OAuth app for
+//!   connecting GitHub and finding projects' repositories (`github.rs`).
+//!   Without them, connecting GitHub is disabled.
 
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -31,8 +34,10 @@ mod credit;
 mod crypto;
 mod dashboard;
 mod devices;
+mod github;
 mod language;
 mod oidc;
+mod projects;
 mod settings;
 mod stats;
 mod upload;
@@ -44,6 +49,8 @@ pub struct AppState {
     pub db: PgPool,
     /// `None` when login isn't configured.
     pub hackclub: Option<Arc<oidc::HackClubAuth>>,
+    /// `None` when connecting GitHub isn't configured.
+    pub github: Option<Arc<github::GitHub>>,
     /// Without a trailing slash.
     pub public_url: Arc<str>,
     /// Cookies are only `Secure` (and use the `__Host-` prefix) on https.
@@ -116,6 +123,17 @@ async fn main() {
         ),
     }
 
+    let github = github::GitHub::from_env(&public_url).map(Arc::new);
+    match &github {
+        Some(g) => println!(
+            "connecting GitHub enabled, callback URL {}",
+            g.redirect_uri()
+        ),
+        None => eprintln!(
+            "warning: GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET not set, connecting GitHub is disabled"
+        ),
+    }
+
     let db = PgPoolOptions::new()
         .max_connections(10)
         .connect(&database_url)
@@ -136,9 +154,13 @@ async fn main() {
         Err(e) => eprintln!("crediting stored heartbeats failed: {e}"),
     }
 
+    if let Some(github) = &github {
+        github::spawn_matcher(db.clone(), github.clone());
+    }
     let state = AppState {
         db,
         hackclub,
+        github,
         public_url: public_url.into(),
         secure,
         seen_requests: Arc::default(),
@@ -148,6 +170,7 @@ async fn main() {
         .route("/api/upload", post(upload::upload))
         .route("/api/dashboard", get(stats::stats))
         .route("/api/projects", get(dashboard::projects))
+        .route("/api/projects/settings", post(projects::save))
         .route("/api/devices", get(devices::list))
         .route("/api/devices/unlink", post(devices::unlink))
         .route("/api/heartbeats", get(dashboard::heartbeats))
@@ -155,6 +178,7 @@ async fn main() {
         .route("/api/app/today", get(app::today))
         .route("/api/app/logout", post(app::logout))
         .merge(auth::routes())
+        .merge(github::routes())
         .merge(web::routes())
         .layer(middleware::from_fn_with_state(
             state.clone(),

@@ -347,7 +347,7 @@ fn pending_code(state: &AppState, headers: &HeaderMap) -> Option<String> {
     cookie(headers, &state.cookie_name("confirm", CONFIRM_PATH)).filter(|c| is_hex(c, 64))
 }
 
-fn from_this_site(state: &AppState, headers: &HeaderMap) -> bool {
+pub(crate) fn from_this_site(state: &AppState, headers: &HeaderMap) -> bool {
     headers
         .get(ORIGIN)
         .and_then(|v| v.to_str().ok())
@@ -665,7 +665,7 @@ fn is_hex(value: &str, len: usize) -> bool {
     value.len() == len && value.bytes().all(|b| b.is_ascii_hexdigit())
 }
 
-fn cookie(headers: &HeaderMap, name: &str) -> Option<String> {
+pub(crate) fn cookie(headers: &HeaderMap, name: &str) -> Option<String> {
     headers
         .get_all(COOKIE)
         .iter()
@@ -677,7 +677,7 @@ fn cookie(headers: &HeaderMap, name: &str) -> Option<String> {
         })
 }
 
-fn redirect(location: &str, cookies: &[HeaderValue]) -> Response {
+pub(crate) fn redirect(location: &str, cookies: &[HeaderValue]) -> Response {
     let mut response = (StatusCode::SEE_OTHER, [(LOCATION, location)]).into_response();
     for cookie in cookies {
         response.headers_mut().append(SET_COOKIE, cookie.clone());
@@ -694,7 +694,7 @@ fn with_cookies(mut response: Response, cookies: &[HeaderValue]) -> Response {
 
 /// A small page in the site's style for login results and errors. Messages
 /// are fixed strings, never user input.
-fn message_page(status: StatusCode, message: &'static str) -> Response {
+pub(crate) fn message_page(status: StatusCode, message: &'static str) -> Response {
     let html = format!(
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">\
          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
