@@ -108,6 +108,15 @@
           <button class="pill small" type="submit">Save</button>
         </form>
         <p id="settings-status" class="muted status"></p>
+        <div id="github-setting" class="setting" hidden>
+          <div class="about">
+            <div class="title">GitHub</div>
+            <div class="sub" id="github-sub"></div>
+          </div>
+          <a id="github-connect" class="pill small" href="/auth/github" hidden>Connect</a>
+          <button id="github-disconnect" class="link" type="button" hidden>Disconnect</button>
+        </div>
+        <p id="github-status" class="muted status"></p>
       </section>
 
       <section id="view-heartbeats" hidden>
@@ -133,6 +142,50 @@
       </button>
     </div>
     <pre id="dialog-body"></pre>
+  </dialog>
+
+  <dialog id="project-dialog" class="project" aria-labelledby="project-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="project-title"></h2>
+        <p class="muted" id="project-sub"></p>
+      </div>
+      <button id="project-close" class="icon" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="links">
+      <a id="project-repo" class="pill small" target="_blank" rel="noopener noreferrer" hidden>Repository</a>
+      <a id="project-demo" class="pill small" target="_blank" rel="noopener noreferrer" hidden>Live demo</a>
+    </div>
+    <div class="figures">
+      <div><strong id="project-tracked">0h 00m</strong><span class="muted">tracked</span></div>
+      <div><strong id="project-agent">0h 00m</strong><span class="muted">agent time</span></div>
+      <div><strong id="project-sessions">0</strong><span class="muted">sessions</span></div>
+    </div>
+    <div class="timeline" id="project-timeline" role="img"></div>
+    <div class="timeline-labels" id="project-timeline-labels" aria-hidden="true"></div>
+    <div class="breakdowns">
+      <div><h3>Languages</h3><ul class="bars" id="project-by-language"></ul></div>
+      <div><h3>Tasks</h3><ul class="bars" id="project-by-task"></ul></div>
+      <div><h3>Agents</h3><ul class="bars" id="project-by-agent"></ul></div>
+      <div><h3>Systems</h3><ul class="bars" id="project-by-os"></ul></div>
+    </div>
+    <form id="project-settings" class="project-settings">
+      <h3>Links</h3>
+      <label for="project-repo-input">Repository</label>
+      <input id="project-repo-input" type="url" placeholder="https://github.com/you/project" autocomplete="off">
+      <p class="muted hint" id="project-repo-hint"></p>
+      <label for="project-demo-input">Live demo</label>
+      <input id="project-demo-input" type="url" placeholder="https://…" autocomplete="off">
+      <div class="actions">
+        <button class="pill small" type="submit">Save</button>
+        <span id="project-status" class="muted"></span>
+      </div>
+    </form>
   </dialog>
 
   <dialog id="remove-dialog" class="confirm" aria-labelledby="remove-title">

@@ -377,6 +377,36 @@ h3 { font-weight: 600; font-size: 18px; margin-bottom: 10px; }
 .bars .time { font-size: 14px; color: var(--muted); white-space: nowrap; }
 .bars .empty, .bars .more-items { color: var(--muted); font-size: 14px; padding: 3px 8px; }
 
+/* A project's popup: links, stats, then the links' settings. */
+dialog.project { width: min(860px, calc(100vw - 32px)); overflow-y: auto; scrollbar-color: var(--pink) transparent; }
+dialog.project .links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+dialog.project .links .pill { text-decoration: none; }
+dialog.project .figures { justify-content: flex-start; gap: 44px; }
+dialog.project .figures div { align-items: flex-start; }
+dialog.project .figures strong { font-size: 26px; }
+dialog.project .timeline { margin-top: 24px; height: 110px; }
+dialog.project .breakdowns { margin-top: 28px; }
+.project-settings { margin-top: 32px; display: flex; flex-direction: column; gap: 6px; max-width: 520px; }
+.project-settings label { font-size: 15px; margin-top: 6px; }
+.project-settings input {
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bubble);
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 18px;
+}
+.project-settings input:focus { outline: 2px solid var(--pink); }
+.project-settings .hint { font-size: 13px; min-height: 0; }
+.project-settings .hint:empty { display: none; }
+.project-settings .actions { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+.project-settings .actions span { font-size: 14px; }
+
+/* Settings: the GitHub row's link button and the space between rows. */
+.setting + .status + .setting { margin-top: 12px; }
+.setting a.pill.small { text-decoration: none; }
+
 /* Phones: the views become a row of pills above the content. */
 @media (max-width: 640px) {
   .layout { flex-direction: column; gap: 24px; align-items: stretch; padding: 24px 16px 40px; }

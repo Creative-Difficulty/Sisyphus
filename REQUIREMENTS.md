@@ -126,6 +126,19 @@ product must:
       changes".
     - Tasks come from the prompt model: each minute counts for the top
       task of its session's latest prompt ("No prompt yet" before one).
+  - projects (decided 2026-11-23): clicking a project opens a popup with
+    its stats, its repository and live demo links, and fields to change
+    them
+  - git integration (decided 2026-11-23, like Hack Club's Hackatime):
+    users connect GitHub on the website (OAuth, public data only; the
+    token is kept so the server can search as them, and deleted on
+    disconnect). The server then links each project to the public
+    repository with the project's folder name, in the user's account or
+    in one of their organisations where they have commits (only if exactly
+    one matches). Nothing new is sent from the client: git remotes are not
+    uploaded. Private repositories and renamed folders are set by hand in
+    the project's popup, which also takes a live demo link. Links are
+    visible only to the user (and reviewers).
   - a debug view, Heartbeats (dotted outline in the sidebar), listing every
     heartbeat the user's devices uploaded; clicking one shows the stored
     record in a popup

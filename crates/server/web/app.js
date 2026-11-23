@@ -1,8 +1,8 @@
 // Shows the login screen or, once logged in, the dashboard: a sidebar with
 // Overview (tracked time for a date range and filters: per hour/day/week,
 // and by project, language, task, agent and system; clicking a bar filters
-// by it), Projects (each project with its
-// tracked time), Devices (each linked device with its system and tracked
+// by it), Projects (each project with its tracked time; clicking one opens
+// its stats, repository and live demo links, and their settings), Devices (each linked device with its system and tracked
 // time; removing one unlinks it), Settings and Heartbeats (a debug view of every uploaded heartbeat;
 // clicking one shows it in full). Refreshed every 10 seconds. Data is only
 // ever inserted as text, never as HTML.
@@ -21,14 +21,6 @@ function el(tag, className, text) {
   if (className) node.className = className;
   if (text !== undefined) node.textContent = text;
   return node;
-}
-
-function bubble(title, sub, right) {
-  const li = el("li");
-  const about = el("div", "about");
-  about.append(el("div", "title", title), el("div", "sub", sub));
-  li.append(about, el("span", "age", right));
-  return li;
 }
 
 function setText(id, value) {
@@ -137,7 +129,7 @@ function renderFilters(options) {
 }
 
 // One bar per hour (today), day, or week (all time beyond three months).
-function renderTimeline(data) {
+function renderTimeline(data, timeline, labelRow) {
   const fmt = (options) =>
     new Intl.DateTimeFormat(undefined, { timeZone: data.timezone, ...options });
   const name = {
@@ -162,18 +154,16 @@ function renderTimeline(data) {
     bars.push(column);
     labels.push(el("span", "", i % every === 0 ? name.format(b.start_ms) : ""));
   });
-  const timeline = document.getElementById("timeline");
   timeline.replaceChildren(...bars);
   timeline.setAttribute("aria-label", `Tracked time per ${data.unit}`);
-  document.getElementById("timeline-labels").replaceChildren(...labels);
+  labelRow.replaceChildren(...labels);
 }
 
-// A breakdown: one bar per value, longest first; clicking one filters by
-// it. At most 8, the rest summed up below.
+// A breakdown: one bar per value, longest first; on the Overview clicking
+// one filters by it. At most 8, the rest summed up below.
 const SHOWN = 8;
 
-function renderBars(kind, items) {
-  const list = document.getElementById(`by-${kind}`);
+function renderBars(kind, items, list = document.getElementById(`by-${kind}`), filtering = true) {
   const shown = items.filter((item) => item.tracked_ms >= 30000);
   if (!shown.length) {
     list.replaceChildren(el("li", "empty", "Nothing tracked"));
@@ -182,10 +172,12 @@ function renderBars(kind, items) {
   const max = shown[0].tracked_ms;
   const rows = shown.slice(0, SHOWN).map((item) => {
     const li = el("li");
-    const button = el("button", "bar");
-    button.type = "button";
-    button.title = kind in filters ? "Show all" : `Only ${label(kind, item.name)}`;
-    button.addEventListener("click", () => setFilter(kind, kind in filters ? ALL : item.name));
+    const button = el(filtering ? "button" : "div", "bar");
+    if (filtering) {
+      button.type = "button";
+      button.title = kind in filters ? "Show all" : `Only ${label(kind, item.name)}`;
+      button.addEventListener("click", () => setFilter(kind, kind in filters ? ALL : item.name));
+    }
     const fill = el("span", "fill");
     fill.style.width = `${Math.max(4, (100 * item.tracked_ms) / max)}%`;
     button.append(el("span", "name", label(kind, item.name)), fill, el("span", "time", duration(item.tracked_ms)));
@@ -207,7 +199,7 @@ function renderOverview(data) {
   setText("agent-time", duration(data.agent_ms));
   setText("project-count", data.projects);
   setText("session-count", data.sessions);
-  renderTimeline(data);
+  renderTimeline(data, document.getElementById("timeline"), document.getElementById("timeline-labels"));
   renderBars("project", data.by_project);
   renderBars("language", data.by_language);
   renderBars("task", data.by_task);
@@ -226,12 +218,117 @@ async function loadOverview() {
 }
 
 function renderProjects(data) {
-  const items = data.projects.map((p) =>
-    bubble(p.name, `${p.sessions} session${p.sessions === 1 ? "" : "s"}`, duration(p.tracked_ms)),
-  );
+  projects = data.projects;
+  const items = data.projects.map((p) => {
+    const li = el("li");
+    const button = el("button", "row");
+    button.type = "button";
+    const about = el("div", "about");
+    about.append(el("div", "title", p.name), el("div", "sub", sessionCount(p.sessions)));
+    button.append(about, el("span", "age", duration(p.tracked_ms)));
+    button.addEventListener("click", () => openProject(p.name));
+    li.append(button);
+    return li;
+  });
   const list = document.getElementById("projects");
   list.replaceChildren(...(items.length ? items : [el("li", "empty", "No projects tracked yet")]));
 }
+
+function sessionCount(n) {
+  return `${n} session${n === 1 ? "" : "s"}`;
+}
+
+// A project's popup: its links, all-time stats and the links' settings.
+let projects = [];
+let openProjectName = null;
+const projectDialog = document.getElementById("project-dialog");
+
+function findProject(name) {
+  return projects.find((p) => p.name === name);
+}
+
+function showProjectLinks(project) {
+  for (const [id, url] of [["project-repo", project.repo_url], ["project-demo", project.demo_url]]) {
+    const link = document.getElementById(id);
+    link.hidden = !url;
+    // Only http(s) links are stored; checked again here.
+    if (url && /^https?:\/\//i.test(url)) link.href = url;
+    else link.removeAttribute("href");
+  }
+  setText(
+    "project-repo-hint",
+    project.repo_url && project.repo_auto ? "Found on GitHub" : "",
+  );
+}
+
+async function openProject(name) {
+  const project = findProject(name);
+  if (!project) return;
+  openProjectName = name;
+  setText("project-title", name);
+  setText("project-sub", `Last active ${when(project.last_active_ms)}`);
+  showProjectLinks(project);
+  document.getElementById("project-repo-input").value = project.repo_url || "";
+  document.getElementById("project-demo-input").value = project.demo_url || "";
+  setText("project-status", "");
+  for (const id of ["project-timeline", "project-timeline-labels", "project-by-language", "project-by-task", "project-by-agent", "project-by-os"]) {
+    document.getElementById(id).replaceChildren();
+  }
+  if (!projectDialog.open) projectDialog.showModal();
+  try {
+    const params = new URLSearchParams({ range: "all", project: name });
+    const data = await getJson(`/api/dashboard?${params}`);
+    if (openProjectName !== name) return;
+    setText("project-tracked", duration(data.tracked_ms));
+    setText("project-agent", duration(data.agent_ms));
+    setText("project-sessions", data.sessions);
+    renderTimeline(data, document.getElementById("project-timeline"), document.getElementById("project-timeline-labels"));
+    for (const kind of ["language", "task", "agent", "os"]) {
+      renderBars(kind, data[`by_${kind}`], document.getElementById(`project-by-${kind}`), false);
+    }
+  } catch (_) {
+    setText("project-status", "Could not load the stats");
+  }
+}
+
+document.getElementById("project-close").addEventListener("click", () => projectDialog.close());
+projectDialog.addEventListener("click", (event) => {
+  if (event.target === projectDialog) projectDialog.close();
+});
+projectDialog.addEventListener("close", () => {
+  openProjectName = null;
+});
+
+document.getElementById("project-settings").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const name = openProjectName;
+  if (name === null) return;
+  const repo = document.getElementById("project-repo-input").value.trim();
+  const demo = document.getElementById("project-demo-input").value.trim();
+  try {
+    const response = await fetch("/api/projects/settings", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, repo_url: repo || null, demo_url: demo || null }),
+    });
+    if (response.status === 400) {
+      setText("project-status", "Links must start with https:// or http://");
+      return;
+    }
+    if (!response.ok) {
+      setText("project-status", "Could not save");
+      return;
+    }
+    setText("project-status", "Saved");
+    const data = await getJson("/api/projects");
+    renderProjects(data);
+    const project = findProject(name);
+    if (project && openProjectName === name) showProjectLinks(project);
+  } catch (_) {
+    setText("project-status", "Could not save");
+  }
+});
 
 // Devices: an icon for the operating system, drawn for this site.
 const SVG = "http://www.w3.org/2000/svg";
@@ -456,6 +553,33 @@ function zones() {
   }
 }
 
+// GitHub: connecting it lets the server find projects' public
+// repositories by their folder names.
+async function loadGithub() {
+  const github = await getJson("/api/github");
+  document.getElementById("github-setting").hidden = !github.enabled;
+  if (!github.enabled) return;
+  const connected = Boolean(github.login);
+  setText(
+    "github-sub",
+    connected
+      ? `Connected as @${github.login}. Projects are linked to your public repositories with the same name.`
+      : "Links your projects to your public repositories with the same name",
+  );
+  document.getElementById("github-connect").hidden = connected;
+  document.getElementById("github-disconnect").hidden = !connected;
+}
+
+document.getElementById("github-disconnect").addEventListener("click", async () => {
+  try {
+    const response = await fetch("/api/github/disconnect", { method: "POST", credentials: "same-origin" });
+    setText("github-status", response.ok ? "Disconnected. Repositories already linked stay." : "Could not disconnect");
+    if (response.ok) await loadGithub();
+  } catch (_) {
+    setText("github-status", "Could not disconnect");
+  }
+});
+
 async function loadSettings() {
   const settings = await getJson("/api/settings");
   const current = settings.timezone || browserZone();
@@ -508,7 +632,11 @@ function showView() {
     else link.removeAttribute("aria-current");
   }
   if (view === "heartbeats") loadHeartbeats(false).catch(() => {});
-  if (view === "settings") loadSettings().catch(() => {});
+  if (view === "settings") {
+    loadSettings().catch(() => {});
+    setText("github-status", "");
+    loadGithub().catch(() => {});
+  }
 }
 
 function showLoggedIn(loggedIn, name) {
