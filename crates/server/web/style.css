@@ -228,6 +228,8 @@ body:has(#app:not([hidden])) header { max-width: none; padding: 20px 32px 0; }
 }
 .pill.small { padding: 8px 20px; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
 .status { margin-top: 10px; font-size: 14px; min-height: 1.35em; }
+/* An empty status line takes no room (popups, between settings rows). */
+.status:empty { min-height: 0; margin-top: 0; }
 
 /* The debug view sits a little apart from the real ones, dotted. */
 .nav.debug {
@@ -429,6 +431,9 @@ dialog.project .files-title { margin-top: 32px; }
 /* Settings: the GitHub row's link button and the space between rows. */
 .setting + .status + .setting { margin-top: 12px; }
 .setting a.pill.small { text-decoration: none; }
+/* A text button at a row's end: its padding plus the row's makes the same
+   22px as on the left. */
+.setting > .link { padding: 8px 10px; }
 
 /* Phones: the views become a row of pills above the content. */
 @media (max-width: 640px) {
