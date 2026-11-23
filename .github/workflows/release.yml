@@ -1,0 +1,84 @@
+# Builds the client for Windows, macOS and Linux and publishes the builds as
+# a new GitHub release. Runs when a version tag (v*) is pushed:
+#
+#   git tag v0.1.0 && git push origin v0.1.0
+#
+# Release builds leave out the debug screen (--no-default-features).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { os: ubuntu-22.04, target: x86_64-unknown-linux-gnu, name: linux-x86_64 }
+          - { os: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu, name: linux-aarch64 }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc, name: windows-x86_64 }
+          - { os: macos-latest, target: aarch64-apple-darwin, name: macos-aarch64 }
+          - { os: macos-15-intel, target: x86_64-apple-darwin, name: macos-x86_64 }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal --target ${{ matrix.target }}
+          rustup default stable
+
+      - name: Build
+        shell: bash
+        run: cargo build --release --locked --no-default-features -p sisyphus-client --target ${{ matrix.target }}
+
+      - name: Package
+        shell: bash
+        run: |
+          dir="sisyphus-${GITHUB_REF_NAME}-${{ matrix.name }}"
+          mkdir -p "$dir" dist
+          bin="target/${{ matrix.target }}/release/sisyphus-client"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp "$bin.exe" "$dir"/
+            7z a "dist/$dir.zip" "$dir" > /dev/null
+          else
+            cp "$bin" "$dir"/
+            tar -czf "dist/$dir.tar.gz" "$dir"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Checksums
+        run: cd dist && sha256sum * > SHA256SUMS.txt
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Sisyphus $GITHUB_REF_NAME" \
+            --generate-notes
