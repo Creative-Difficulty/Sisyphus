@@ -1,5 +1,7 @@
 // Shows the login screen or, once logged in, the dashboard: a sidebar with
-// Overview (tracked time and figures), Projects (each project with its
+// Overview (tracked time for a date range and filters: per hour/day/week,
+// and by project, language, task, agent and system; clicking a bar filters
+// by it), Projects (each project with its
 // tracked time), Devices (each linked device with its system and tracked
 // time; removing one unlinks it), Settings and Heartbeats (a debug view of every uploaded heartbeat;
 // clicking one shows it in full). Refreshed every 10 seconds. Data is only
@@ -33,16 +35,194 @@ function setText(id, value) {
   document.getElementById(id).textContent = value;
 }
 
+// Overview: the date range and filters, sent to /api/dashboard. A filter
+// is either absent (everything) or a value; "" selects minutes without
+// one (no file changes, no prompt yet, an unknown system).
+const filters = { range: "today" };
+const FILTERS = ["project", "agent", "os", "language", "task"];
+const ALL = "\u0000all";
+
+const RANGE_LABEL = {
+  today: "Tracked today",
+  week: "Tracked this week",
+  "30d": "Tracked in the last 30 days",
+  all: "Tracked in total",
+};
+// A filter's "everything" option.
+const ANY = {
+  project: "Projects",
+  agent: "Agents",
+  os: "Systems",
+  language: "Languages",
+  task: "Tasks",
+};
+const AGENTS = { "claude-code": "Claude Code", opencode: "opencode", codex: "Codex" };
+const TASKS = {
+  feature: "Features",
+  bug_fix: "Bug fixes",
+  error_paste: "Error pastes",
+  refactor: "Refactoring",
+  understand_code: "Understanding code",
+  learn_concept: "Learning concepts",
+  ui_styling: "UI and styling",
+  tests: "Tests",
+  setup_deploy: "Setup and deployment",
+  docs_writing: "Docs and writing",
+  planning_design: "Planning and design",
+  review: "Review",
+  other: "Other tasks",
+};
+
+// How a filter value is shown.
+function label(kind, value) {
+  switch (kind) {
+    case "project": return value || "No folder";
+    case "agent": return AGENTS[value] || value;
+    case "os": return osName(value);
+    case "language": return value || "No file changes";
+    case "task": return value ? TASKS[value] || value : "No prompt yet";
+  }
+  return value;
+}
+
+function dashboardUrl() {
+  const params = new URLSearchParams({ range: filters.range });
+  for (const kind of FILTERS) {
+    if (kind in filters) params.set(kind, filters[kind]);
+  }
+  return `/api/dashboard?${params}`;
+}
+
+function setFilter(kind, value) {
+  if (value === ALL) delete filters[kind];
+  else filters[kind] = value;
+  loadOverview().catch(() => {});
+}
+
+for (const kind of ["range", ...FILTERS]) {
+  document.getElementById(`filter-${kind}`).addEventListener("change", (event) =>
+    setFilter(kind, event.target.value),
+  );
+}
+
+// Each filter lists every value the user has, plus "none" where that
+// exists, and the selected value even if it has none in this range.
+function renderFilters(options) {
+  const values = {
+    project: options.projects,
+    agent: options.agents,
+    os: options.os,
+    language: [...options.languages, ""],
+    task: options.tasks,
+  };
+  for (const kind of FILTERS) {
+    const select = document.getElementById(`filter-${kind}`);
+    const list = [...new Set(values[kind])];
+    if (kind in filters && !list.includes(filters[kind])) list.push(filters[kind]);
+    list.sort((a, b) => (a === "") - (b === "") || label(kind, a).localeCompare(label(kind, b)));
+    const all = el("option", "", ANY[kind]);
+    all.value = ALL;
+    select.replaceChildren(
+      all,
+      ...list.map((value) => {
+        const option = el("option", "", label(kind, value));
+        option.value = value;
+        return option;
+      }),
+    );
+    select.value = kind in filters ? filters[kind] : ALL;
+    select.classList.toggle("set", kind in filters);
+  }
+  document.getElementById("filter-range").value = filters.range;
+}
+
+// One bar per hour (today), day, or week (all time beyond three months).
+function renderTimeline(data) {
+  const fmt = (options) =>
+    new Intl.DateTimeFormat(undefined, { timeZone: data.timezone, ...options });
+  const name = {
+    hour: fmt({ hour: "2-digit" }),
+    day: data.range === "week" ? fmt({ weekday: "short" }) : fmt({ day: "numeric", month: "short" }),
+    week: fmt({ day: "numeric", month: "short" }),
+  }[data.unit];
+  const full = data.unit === "hour" ? fmt({ hour: "2-digit", minute: "2-digit" }) : fmt({ dateStyle: "medium" });
+  const max = Math.max(60000, ...data.buckets.map((b) => Math.max(b.tracked_ms, b.agent_ms)));
+  // At most about 8 labels.
+  const every = Math.max(1, Math.ceil(data.buckets.length / 8));
+  const bars = [];
+  const labels = [];
+  data.buckets.forEach((b, i) => {
+    const column = el("div", "column");
+    column.title = `${full.format(b.start_ms)}: ${duration(b.tracked_ms)} tracked, ${duration(b.agent_ms)} agent time`;
+    const agent = el("div", "agent");
+    agent.style.height = `${(100 * b.agent_ms) / max}%`;
+    const tracked = el("div", "tracked");
+    tracked.style.height = `${(100 * b.tracked_ms) / max}%`;
+    column.append(agent, tracked);
+    bars.push(column);
+    labels.push(el("span", "", i % every === 0 ? name.format(b.start_ms) : ""));
+  });
+  const timeline = document.getElementById("timeline");
+  timeline.replaceChildren(...bars);
+  timeline.setAttribute("aria-label", `Tracked time per ${data.unit}`);
+  document.getElementById("timeline-labels").replaceChildren(...labels);
+}
+
+// A breakdown: one bar per value, longest first; clicking one filters by
+// it. At most 8, the rest summed up below.
+const SHOWN = 8;
+
+function renderBars(kind, items) {
+  const list = document.getElementById(`by-${kind}`);
+  const shown = items.filter((item) => item.tracked_ms >= 30000);
+  if (!shown.length) {
+    list.replaceChildren(el("li", "empty", "Nothing tracked"));
+    return;
+  }
+  const max = shown[0].tracked_ms;
+  const rows = shown.slice(0, SHOWN).map((item) => {
+    const li = el("li");
+    const button = el("button", "bar");
+    button.type = "button";
+    button.title = kind in filters ? "Show all" : `Only ${label(kind, item.name)}`;
+    button.addEventListener("click", () => setFilter(kind, kind in filters ? ALL : item.name));
+    const fill = el("span", "fill");
+    fill.style.width = `${Math.max(4, (100 * item.tracked_ms) / max)}%`;
+    button.append(el("span", "name", label(kind, item.name)), fill, el("span", "time", duration(item.tracked_ms)));
+    li.append(button);
+    return li;
+  });
+  const rest = shown.slice(SHOWN);
+  if (rest.length) {
+    const ms = rest.reduce((sum, item) => sum + item.tracked_ms, 0);
+    rows.push(el("li", "more-items", `${rest.length} more, ${duration(ms)}`));
+  }
+  list.replaceChildren(...rows);
+}
+
 function renderOverview(data) {
-  setText("today", duration(data.tracked_today_ms));
-  setText("week", duration(data.tracked_week_ms));
-  setText("total", duration(data.tracked_total_ms));
-  setText("agent-today", duration(data.agent_today_ms));
-  setText("agent-week", duration(data.agent_week_ms));
-  setText("agent-total", duration(data.agent_total_ms));
+  renderFilters(data.options);
+  setText("tracked-label", RANGE_LABEL[data.range]);
+  setText("tracked", duration(data.tracked_ms));
+  setText("agent-time", duration(data.agent_ms));
   setText("project-count", data.projects);
   setText("session-count", data.sessions);
-  setText("device-count", data.devices);
+  renderTimeline(data);
+  renderBars("project", data.by_project);
+  renderBars("language", data.by_language);
+  renderBars("task", data.by_task);
+  renderBars("agent", data.by_agent);
+  renderBars("os", data.by_os);
+}
+
+// Answers can arrive out of order when filters change quickly; only the
+// newest request is shown.
+let overviewRequest = 0;
+
+async function loadOverview() {
+  const request = ++overviewRequest;
+  const data = await getJson(dashboardUrl());
+  if (request === overviewRequest) renderOverview(data);
 }
 
 function renderProjects(data) {
@@ -349,14 +529,15 @@ async function getJson(url) {
 
 async function refresh() {
   try {
+    const request = ++overviewRequest;
     const [overview, projects, devices, me] = await Promise.all([
-      getJson("/api/dashboard"),
+      getJson(dashboardUrl()),
       getJson("/api/projects"),
       getJson("/api/devices"),
       getJson("/api/me"),
     ]);
     showLoggedIn(true, me.name);
-    renderOverview(overview);
+    if (request === overviewRequest) renderOverview(overview);
     renderProjects(projects);
     renderDevices(devices);
     // Only reload the first page, so loaded pages and an open popup stay.

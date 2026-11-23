@@ -31,8 +31,10 @@ mod credit;
 mod crypto;
 mod dashboard;
 mod devices;
+mod language;
 mod oidc;
 mod settings;
+mod stats;
 mod upload;
 mod web;
 
@@ -144,7 +146,7 @@ async fn main() {
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
         .route("/api/upload", post(upload::upload))
-        .route("/api/dashboard", get(dashboard::dashboard))
+        .route("/api/dashboard", get(stats::stats))
         .route("/api/projects", get(dashboard::projects))
         .route("/api/devices", get(devices::list))
         .route("/api/devices/unlink", post(devices::unlink))

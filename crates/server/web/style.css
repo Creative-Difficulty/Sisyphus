@@ -296,8 +296,86 @@ dialog::backdrop { background: rgba(42, 16, 34, 0.45); }
   scrollbar-color: var(--pink) transparent;
 }
 
-.today .figures + .figures { margin-top: 28px; }
 #view-overview { padding-top: 24px; }
+
+/* Overview: filters as pills; a set filter turns pink. */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.filters select {
+  appearance: none;
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 30px 7px 14px;
+  /* Equal shares of one row, whatever their options' lengths. */
+  flex: 1 1 0;
+  min-width: 108px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  /* A small chevron, pink; white on a set filter. */
+  background: var(--bubble) no-repeat right 12px center / 12px
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23e02a78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.filters select.set, #filter-range {
+  background-color: var(--pink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  color: #fff;
+  font-weight: 600;
+}
+.filters option { color: var(--text); background: var(--bg); font-weight: 400; }
+
+/* Tracked time per hour/day/week: agent time faint behind it. */
+.timeline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 140px;
+  margin-top: 36px;
+}
+.timeline .column { flex: 1; height: 100%; position: relative; min-width: 0; }
+.timeline .agent, .timeline .tracked {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 6px 6px 2px 2px;
+}
+.timeline .agent { background: var(--bubble); }
+.timeline .tracked { background: var(--pink); }
+.timeline-labels { display: flex; gap: 3px; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.timeline-labels span { flex: 1; min-width: 0; white-space: nowrap; overflow: visible; }
+
+/* Breakdowns: one bar per value, two columns on wide screens. */
+.breakdowns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px 40px;
+  margin-top: 44px;
+}
+h3 { font-weight: 600; font-size: 18px; margin-bottom: 10px; }
+.bars { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.bars .bar {
+  display: grid;
+  grid-template-columns: minmax(0, 9em) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+.bars .bar:hover { background: var(--bubble); }
+.bars .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bars .fill { height: 14px; border-radius: 999px; background: var(--pink); }
+.bars .time { font-size: 14px; color: var(--muted); white-space: nowrap; }
+.bars .empty, .bars .more-items { color: var(--muted); font-size: 14px; padding: 3px 8px; }
 
 /* Phones: the views become a row of pills above the content. */
 @media (max-width: 640px) {
@@ -310,4 +388,6 @@ dialog::backdrop { background: rgba(42, 16, 34, 0.45); }
   .setting { flex-wrap: wrap; border-radius: 26px; }
   .setting .about { flex-basis: 100%; }
   .setting select { max-width: none; flex: 1; min-width: 0; }
+  .breakdowns { grid-template-columns: 1fr; }
+  .big { font-size: 64px; }
 }

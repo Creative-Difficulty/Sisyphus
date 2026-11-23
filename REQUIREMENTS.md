@@ -113,9 +113,19 @@ product must:
 - Server (axum + Postgres):
   - accepts signed heartbeat batches, checks the chain and signatures, and
     stores them with its own receive time
-  - a web dashboard in the client's style with a sidebar: Overview (tracked
-    time, agent time and counts), Projects (each project with its tracked time) and
-    Settings (the time zone)
+  - a web dashboard in the client's style with a sidebar: Overview, Projects
+    (each project with its tracked time) and Settings (the time zone)
+  - the Overview's stats (decided 2026-11-23, modelled on Hack Club's
+    Hackatime): a date range (today, this week, last 30 days, all time)
+    and filters by project, agent, system, language and task; tracked
+    time, agent time and counts; tracked time per hour/day/week; tracked
+    time by project, language, task, agent and system, drawn as pink bars.
+    - Languages come from the edited files' names: a minute's credit is
+      split across the languages of the files that changed in it, by
+      characters changed; minutes without file changes count as "No file
+      changes".
+    - Tasks come from the prompt model: each minute counts for the top
+      task of its session's latest prompt ("No prompt yet" before one).
   - a debug view, Heartbeats (dotted outline in the sidebar), listing every
     heartbeat the user's devices uploaded; clicking one shows the stored
     record in a popup

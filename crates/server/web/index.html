@@ -50,23 +50,40 @@
     </nav>
 
     <main>
-      <!-- Tracked time is a placeholder until the server credits time. -->
-      <section id="view-overview" class="today">
-        <p class="muted">Tracked today</p>
-        <p class="big" id="today">0h 00m</p>
-        <div class="figures">
-          <div><strong id="week">0h 00m</strong><span class="muted">this week</span></div>
-          <div><strong id="total">0h 00m</strong><span class="muted">all time</span></div>
+      <section id="view-overview">
+        <div class="filters">
+          <select id="filter-range" aria-label="Date range">
+            <option value="today">Today</option>
+            <option value="week">This week</option>
+            <option value="30d">Last 30 days</option>
+            <option value="all">All time</option>
+          </select>
+          <select id="filter-project" aria-label="Project"></select>
+          <select id="filter-agent" aria-label="Agent"></select>
+          <select id="filter-os" aria-label="System"></select>
+          <select id="filter-language" aria-label="Language"></select>
+          <select id="filter-task" aria-label="Task"></select>
         </div>
-        <div class="figures">
-          <div><strong id="agent-today">0h 00m</strong><span class="muted">agent time today</span></div>
-          <div><strong id="agent-week">0h 00m</strong><span class="muted">this week</span></div>
-          <div><strong id="agent-total">0h 00m</strong><span class="muted">all time</span></div>
+
+        <div class="today">
+          <p class="muted" id="tracked-label">Tracked today</p>
+          <p class="big" id="tracked">0h 00m</p>
+          <div class="figures">
+            <div><strong id="agent-time">0h 00m</strong><span class="muted">agent time</span></div>
+            <div><strong id="project-count">0</strong><span class="muted">projects</span></div>
+            <div><strong id="session-count">0</strong><span class="muted">sessions</span></div>
+          </div>
         </div>
-        <div class="figures">
-          <div><strong id="project-count">0</strong><span class="muted">projects</span></div>
-          <div><strong id="session-count">0</strong><span class="muted">sessions</span></div>
-          <div><strong id="device-count">0</strong><span class="muted">devices</span></div>
+
+        <div class="timeline" id="timeline" role="img"></div>
+        <div class="timeline-labels" id="timeline-labels" aria-hidden="true"></div>
+
+        <div class="breakdowns">
+          <div><h3>Projects</h3><ul class="bars" id="by-project"></ul></div>
+          <div><h3>Languages</h3><ul class="bars" id="by-language"></ul></div>
+          <div><h3>Tasks</h3><ul class="bars" id="by-task"></ul></div>
+          <div><h3>Agents</h3><ul class="bars" id="by-agent"></ul></div>
+          <div><h3>Systems</h3><ul class="bars" id="by-os"></ul></div>
         </div>
       </section>
 

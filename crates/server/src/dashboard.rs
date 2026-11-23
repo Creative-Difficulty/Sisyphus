@@ -1,6 +1,8 @@
 //! What the logged-in user's web dashboard shows. 401 without a session.
 //!
-//! - `GET /api/dashboard`: tracked time and a few figures (Overview).
+//! - `GET /api/dashboard`: tracked time, agent time and counts for a date
+//!   range and filters, per hour/day/week, and broken down by project,
+//!   agent, operating system, language and task (Overview; `stats.rs`).
 //! - `GET /api/projects`: every project with its tracked time (Projects).
 //! - `GET /api/heartbeats?offset=N`: the heartbeats the user's devices
 //!   uploaded, newest first, 100 at a time, exactly as stored (Heartbeats,
@@ -19,21 +21,6 @@ use sqlx::Row;
 use crate::{AppState, auth};
 
 #[derive(Serialize)]
-pub struct Dashboard {
-    tracked_today_ms: i64,
-    tracked_week_ms: i64,
-    tracked_total_ms: i64,
-    /// Time an agent ran (AI time, not credit); a minute with several
-    /// agents running counts once.
-    agent_today_ms: i64,
-    agent_week_ms: i64,
-    agent_total_ms: i64,
-    projects: i64,
-    sessions: i64,
-    devices: i64,
-}
-
-#[derive(Serialize)]
 pub struct Projects {
     projects: Vec<ProjectStat>,
 }
@@ -47,55 +34,6 @@ struct ProjectStat {
     tracked_ms: i64,
     sessions: i64,
     last_active_ms: i64,
-}
-
-pub async fn dashboard(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-) -> Result<Json<Dashboard>, StatusCode> {
-    let user = auth::current_user(&state, &headers)
-        .await
-        .ok_or(StatusCode::UNAUTHORIZED)?;
-    let (day, week) = day_and_week_start(&state.db, user.id)
-        .await
-        .map_err(failed)?;
-    let row = sqlx::query(
-        "SELECT coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $2), 0)::bigint AS today,
-                coalesce(sum(credit_ms) FILTER (WHERE minute_ms >= $3), 0)::bigint AS week,
-                coalesce(sum(credit_ms), 0)::bigint AS total,
-                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0 AND minute_ms >= $2)
-                    AS agent_today,
-                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0 AND minute_ms >= $3)
-                    AS agent_week,
-                60000 * count(DISTINCT minute_ms) FILTER (WHERE ai_ms > 0) AS agent_total
-         FROM session_minutes WHERE user_id = $1",
-    )
-    .bind(user.id)
-    .bind(day)
-    .bind(week)
-    .fetch_one(&state.db)
-    .await
-    .map_err(failed)?;
-    let counts = sqlx::query(
-        "SELECT (SELECT count(DISTINCT project) FROM agent_sessions WHERE user_id = $1) AS projects,
-                (SELECT count(*) FROM agent_sessions WHERE user_id = $1) AS sessions,
-                (SELECT count(*) FROM devices WHERE user_id = $1) AS devices",
-    )
-    .bind(user.id)
-    .fetch_one(&state.db)
-    .await
-    .map_err(failed)?;
-    Ok(Json(Dashboard {
-        tracked_today_ms: row.get("today"),
-        tracked_week_ms: row.get("week"),
-        tracked_total_ms: row.get("total"),
-        agent_today_ms: row.get("agent_today"),
-        agent_week_ms: row.get("agent_week"),
-        agent_total_ms: row.get("agent_total"),
-        projects: counts.get("projects"),
-        sessions: counts.get("sessions"),
-        devices: counts.get("devices"),
-    }))
 }
 
 pub async fn projects(
@@ -132,7 +70,7 @@ pub async fn projects(
     }))
 }
 
-fn failed(e: sqlx::Error) -> StatusCode {
+pub fn failed(e: sqlx::Error) -> StatusCode {
     eprintln!("dashboard query failed: {e}");
     StatusCode::INTERNAL_SERVER_ERROR
 }
