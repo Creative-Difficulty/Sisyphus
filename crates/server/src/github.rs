@@ -22,7 +22,9 @@
 //! repository with that name the user contributed to (commits or pull
 //! requests in the past year, GitHub's `repositoriesContributedTo`).
 //! Private repositories are never linked. A miss is retried after 14
-//! days; at most 50 GitHub requests per user per day. Projects whose
+//! days, or on the next pass when the matcher's version ([`MATCHER`]) is
+//! newer than the one that missed; at most 50 GitHub requests per user per
+//! day. Projects whose
 //! repository the user set or cleared are left alone.
 //!
 //! Configured by `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` (an OAuth
@@ -50,6 +52,10 @@ use crate::{AppState, now_ms};
 const STATE_TTL_S: i64 = 600;
 const CALLBACK_PATH: &str = "/auth/github/callback";
 const PASS_EVERY: Duration = Duration::from_secs(600);
+/// The matcher's version. Bump it whenever it can find more: misses of
+/// older versions are looked up again on the next pass. 1: account and
+/// organisations. 2: also repositories the user contributed to.
+const MATCHER: i32 = 2;
 /// How long a miss suppresses another lookup.
 const RETRY_MISS_MS: i64 = 14 * 86_400_000;
 /// GitHub requests the matcher may make per user per day.
@@ -484,10 +490,12 @@ async fn pass(db: &PgPool, github: &Arc<GitHub>, budget: &mut Budget) -> sqlx::R
              WHERE s.user_id = $1
                AND (p.name IS NULL
                     OR (NOT p.repo_manual AND p.repo_url IS NULL
-                        AND (p.repo_checked_ms IS NULL OR p.repo_checked_ms < $2)))",
+                        AND (p.repo_checked_ms IS NULL OR p.repo_checked_ms < $2
+                             OR p.repo_checked_by < $3)))",
         )
         .bind(user_id)
         .bind(now - RETRY_MISS_MS)
+        .bind(MATCHER)
         .fetch_all(db)
         .await?
         .into_iter()
@@ -500,17 +508,19 @@ async fn pass(db: &PgPool, github: &Arc<GitHub>, budget: &mut Budget) -> sqlx::R
             match found {
                 Ok(url) => {
                     sqlx::query(
-                        "INSERT INTO projects (user_id, name, repo_url, repo_checked_ms)
-                         VALUES ($1, $2, $3, $4)
+                        "INSERT INTO projects (user_id, name, repo_url, repo_checked_ms, repo_checked_by)
+                         VALUES ($1, $2, $3, $4, $5)
                          ON CONFLICT (user_id, name) DO UPDATE SET
                              repo_url = CASE WHEN projects.repo_manual THEN projects.repo_url
                                              ELSE EXCLUDED.repo_url END,
-                             repo_checked_ms = EXCLUDED.repo_checked_ms",
+                             repo_checked_ms = EXCLUDED.repo_checked_ms,
+                             repo_checked_by = EXCLUDED.repo_checked_by",
                     )
                     .bind(user_id)
                     .bind(&name)
                     .bind(&url)
                     .bind(now)
+                    .bind(MATCHER)
                     .execute(db)
                     .await?;
                 }
