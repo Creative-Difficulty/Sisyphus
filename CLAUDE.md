@@ -33,7 +33,7 @@ The team talks in German; code, comments, docs and commit messages are in Englis
 ```sh
 cargo build                                  # whole workspace
 cargo build --release -p sisyphus-client     # release client
-cargo build --release -p sisyphus-client --no-default-features  # as the release workflow builds it (no debug screen)
+cargo build --release -p sisyphus-client --no-default-features  # as the release workflow builds it (no debug screen, no CLI)
 cargo test --workspace                       # all tests
 cargo test -p sisyphus-common --test chain   # one integration test file
 cargo test -p sisyphus-client opencode::session::tests::abort_is_an_interrupt  # one test, by path filter
@@ -49,7 +49,7 @@ cargo run -p sisyphus-client -- track                         # record and uploa
 cargo run -p sisyphus-server                 # needs DATABASE_URL (from the environment or .env, see .env.example)
 ```
 
-No `rust-toolchain` file. CI: `.github/workflows/release.yml` runs when a `v*` tag is pushed (`git tag v0.1.0 && git push origin v0.1.0`): it builds the client without the debug screen for Linux (x86_64, aarch64), Windows (x86_64) and macOS (aarch64, x86_64) and publishes the archives with `SHA256SUMS.txt` as a GitHub release. It doesn't run tests or build the server. Edition 2024, resolver 3 (let-chains are used). Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
+No `rust-toolchain` file. CI: `.github/workflows/release.yml` runs when a `v*` tag is pushed (`git tag v0.1.0 && git push origin v0.1.0`): it builds the client without the debug screen and the CLI (`--no-default-features`) for Linux (x86_64, aarch64), Windows (x86_64) and macOS (aarch64, x86_64) and publishes the archives with `SHA256SUMS.txt` as a GitHub release. It doesn't run tests or build the server. Edition 2024, resolver 3 (let-chains are used). Dependencies are declared in `[workspace.dependencies]` in the root `Cargo.toml` and referenced with `.workspace = true`.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ Three crates in `crates/`:
   - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 8 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`, v7 `os`, v8 `prompts.model` and `prompts.classes`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v8`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
 - **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `prompt_model`, `tracker`) plus a binary (`main.rs`).
   - `prompt_model/`: the local prompt classifier, see "Prompt model" below.
-  - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands.
+  - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands (`cli.rs`), only with the `cli` feature (default on). Release builds from CI leave it out (decided 2026-11-23): a window-only app that opens the window whatever the arguments, and on Windows a GUI-subsystem `.exe` without a console window. `input-helper` (Linux) stays in every build, because polkit and the helper's service run the app with it.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
   - `login.rs`: logs the app in through the server (see "Accounts" below). Blocking; the window runs it on a worker thread. It refuses non-https servers except on localhost.
   - `server.rs`: signed requests to the server (see "Signed app requests" below): `today()` and `logout()`, plus the local day's start (`libc::localtime_r` on Unix, `GetTimeZoneInformation` on Windows).

@@ -3,7 +3,8 @@
 #
 #   git tag v0.1.0 && git push origin v0.1.0
 #
-# Release builds leave out the debug screen (--no-default-features).
+# Release builds leave out the debug screen and the command line
+# (--no-default-features): a window-only app.
 name: Release
 
 on:

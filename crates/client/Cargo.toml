@@ -4,10 +4,15 @@ version.workspace = true
 edition.workspace = true
 
 [features]
-default = ["debug-screen"]
-# The debug screen (Ctrl+D twice). Release builds from CI are made with
-# --no-default-features, so users don't get it.
+default = ["debug-screen", "cli"]
+# Release builds from CI are made with --no-default-features, so users get
+# neither of these: a window-only app.
+# The debug screen (Ctrl+D twice).
 debug-screen = []
+# The command-line commands (sessions, watch, activity, track). Without
+# it, Windows builds don't open a console window. `input-helper` is always
+# there.
+cli = []
 
 [dependencies]
 sisyphus-common.workspace = true
