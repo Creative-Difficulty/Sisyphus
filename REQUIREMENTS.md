@@ -114,7 +114,21 @@ product must:
   - accepts signed heartbeat batches, checks the chain and signatures, and
     stores them with its own receive time
   - a web dashboard in the client's style with a sidebar: Overview, Projects
-    (each project with its tracked time) and Settings (the time zone)
+    (each project with its tracked time), Leaderboard and Settings (the
+    time zone, the public profile)
+  - public profiles (decided 2026-11-23): public by default, also for
+    existing accounts, and turned off in the website's settings. A profile
+    (`/u/ID`) shows the name, tracked and agent time for a date range, the
+    time chart, time by language, task, agent and system, and each project
+    with its time and its repository and live demo links. Never session
+    titles or file paths. A private profile is visible only to its owner.
+  - a leaderboard (decided 2026-11-23): public profiles ranked by tracked
+    time, today, this week (default), the last 30 days or all time;
+    clicking someone opens their profile
+  - README badges (decided 2026-11-23): each project's popup has a badge
+    maker (four styles, a preview, Markdown to copy). The badge shows the
+    project's all-time tracked time and links to the profile; while the
+    profile is private it says "not public"
   - the Overview's stats (decided 2026-11-23, modelled on Hack Club's
     Hackatime): a date range (today, this week, last 30 days, all time)
     and filters by project, agent, system, language and task; tracked
@@ -615,9 +629,8 @@ product must:
   bounty, by duck, live at steer.duck.hackclub.app; raised 2026-11-23,
   nothing decided; ask first). steer infers time from the gaps between
   prompts and doesn't read input or focus, but it is ahead on:
-  - Public profiles (bounty requirement 5): a public page per user and
-    per project that updates live, and a README badge with the project's
-    hours.
+  - Public profiles (bounty requirement 5): built on 2026-11-23 (profiles,
+    leaderboard, badges). steer also has a public page per project.
   - Submitting a project: one command freezes a project's hours into a
     review page that never changes, with a written justification, the
     checks, every day and session, and the commits checked against GitHub
