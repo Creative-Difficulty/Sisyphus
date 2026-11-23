@@ -37,6 +37,7 @@ mod devices;
 mod github;
 mod language;
 mod oidc;
+mod profile;
 mod projects;
 mod review;
 mod settings;
@@ -180,6 +181,11 @@ async fn main() {
         .route("/api/devices/unlink", post(devices::unlink))
         .route("/api/heartbeats", get(dashboard::heartbeats))
         .route("/api/settings", get(settings::get).post(settings::save))
+        .route("/api/settings/profile", post(settings::save_profile))
+        .route("/api/u/{id}", get(profile::profile))
+        .route("/api/u/{id}/dashboard", get(profile::profile_stats))
+        .route("/api/leaderboard", get(profile::leaderboard))
+        .route("/badge/{id}/{file}", get(profile::badge))
         .route("/api/app/today", get(app::today))
         .route("/api/app/logout", post(app::logout))
         .route("/api/review/users", get(review::users))

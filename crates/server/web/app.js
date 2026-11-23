@@ -2,13 +2,20 @@
 // Overview (tracked time for a date range and filters: per hour/day/week,
 // and by project, language, task, agent and system; clicking a bar filters
 // by it), Projects (each project with its tracked time; clicking one opens
-// its stats, repository and live demo links, and their settings), Devices (each linked device with its system and tracked
-// time; removing one unlinks it), Settings and Heartbeats (a debug view of every uploaded heartbeat;
-// clicking one shows it in full). Refreshed every 10 seconds. Data is only
-// ever inserted as text, never as HTML.
+// its stats, a README badge maker, repository and live demo links, and
+// their settings), Leaderboard (public profiles ranked by tracked time;
+// clicking one opens it), Devices (each linked device with its system and
+// tracked time; removing one unlinks it), Settings and Heartbeats (a debug
+// view of every uploaded heartbeat; clicking one shows it in full). At
+// /u/ID it shows that public profile instead, logged in or not. Refreshed
+// every 10 seconds. Data is only ever inserted as text, never as HTML.
 
 const REFRESH_MS = 10_000;
-const VIEWS = ["overview", "projects", "devices", "settings", "heartbeats"];
+const VIEWS = ["overview", "projects", "leaderboard", "devices", "settings", "heartbeats"];
+// The logged-in user's id (for badges and their profile's link), once known.
+let myId = null;
+// Whether the logged-in user's profile is public, once known.
+let myProfilePublic = true;
 
 // "2h 05m"
 function duration(ms) {
@@ -353,6 +360,7 @@ async function openProject(name) {
   document.getElementById("project-repo-input").value = project.repo_url || "";
   document.getElementById("project-demo-input").value = project.demo_url || "";
   setText("project-status", "");
+  renderBadge(name);
   for (const id of ["project-timeline", "project-timeline-labels", "project-by-language", "project-by-task", "project-by-agent", "project-by-os", "project-files"]) {
     document.getElementById(id).replaceChildren();
   }
@@ -374,6 +382,70 @@ async function openProject(name) {
     setText("project-status", "Could not load the stats");
   }
 }
+
+// README badge: pick a style, see it, copy its Markdown. The badge links
+// to the public profile and says "not public" while that is off.
+const BADGE_STYLES = [
+  ["flat", "Flat"],
+  ["flat-square", "Flat square"],
+  ["for-the-badge", "For the badge"],
+  ["pink", "Pink"],
+];
+let badgeStyle = "flat";
+try {
+  const saved = localStorage.getItem("sisyphus-badge-style");
+  if (BADGE_STYLES.some(([id]) => id === saved)) badgeStyle = saved;
+} catch (_) {}
+
+// Encoded for a URL inside Markdown: parentheses would end the link.
+function urlPart(text) {
+  return encodeURIComponent(text).replace(/\(/g, "%28").replace(/\)/g, "%29");
+}
+
+function renderBadge(name) {
+  const styles = document.getElementById("badge-styles");
+  styles.replaceChildren(
+    ...BADGE_STYLES.map(([id, title]) => {
+      const button = el("button", `style-pill${id === badgeStyle ? " active" : ""}`, title);
+      button.type = "button";
+      button.setAttribute("role", "radio");
+      button.setAttribute("aria-checked", String(id === badgeStyle));
+      button.addEventListener("click", () => {
+        badgeStyle = id;
+        try {
+          localStorage.setItem("sisyphus-badge-style", id);
+        } catch (_) {}
+        renderBadge(name);
+      });
+      return button;
+    }),
+  );
+  if (myId === null) return;
+  const query = badgeStyle === "flat" ? "" : `?style=${badgeStyle}`;
+  const image = `${location.origin}/badge/${myId}/${urlPart(name)}.svg${query}`;
+  // A changing query, so the preview follows the latest time.
+  document.getElementById("badge-preview").src = `${image}${query ? "&" : "?"}t=${Date.now()}`;
+  setText("badge-markdown", `[![Sisyphus](${image})](${location.origin}/u/${myId})`);
+  setText("badge-copy", "Copy");
+  setText(
+    "badge-hint",
+    myProfilePublic ? "" : "Your profile is private, so the badge says “not public”. You can change that in Settings.",
+  );
+}
+
+document.getElementById("badge-copy").addEventListener("click", async () => {
+  const text = document.getElementById("badge-markdown").textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    setText("badge-copy", "Copied");
+  } catch (_) {
+    // Without clipboard access, select it so it can be copied by hand.
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("badge-markdown"));
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+  }
+});
 
 document.getElementById("project-close").addEventListener("click", () => projectDialog.close());
 projectDialog.addEventListener("click", (event) => {
@@ -679,6 +751,8 @@ async function loadSettings() {
     }),
   );
   setText("settings-status", settings.timezone ? "" : "Not saved yet, so UTC is used for now");
+  myProfilePublic = settings.public_profile;
+  renderProfileSetting();
 }
 
 document.getElementById("settings").addEventListener("submit", async (event) => {
@@ -695,6 +769,62 @@ document.getElementById("settings").addEventListener("submit", async (event) => 
     if (response.ok) refresh();
   } catch (_) {
     setText("settings-status", "Could not save");
+  }
+});
+
+// Leaderboard: public profiles by tracked time; each opens its profile.
+async function loadLeaderboard() {
+  const range = document.getElementById("leaderboard-range").value;
+  const data = await getJson(`/api/leaderboard?range=${encodeURIComponent(range)}`);
+  const items = data.users.map((u) => {
+    const li = el("li", u.me ? "me" : "");
+    const link = el("a", "row");
+    link.href = `/u/${u.id}`;
+    const about = el("div", "about");
+    about.append(el("div", "title", u.name || "Someone"), el("div", "sub", `${duration(u.agent_ms)} agent time`));
+    link.append(el("span", "rank", String(u.rank)), about, el("span", "age", duration(u.tracked_ms)));
+    li.append(link);
+    return li;
+  });
+  const list = document.getElementById("leaderboard");
+  list.replaceChildren(...(items.length ? items : [el("li", "empty", "Nobody tracked anything yet")]));
+  document.getElementById("leaderboard-note").hidden = myProfilePublic;
+}
+
+document.getElementById("leaderboard-range").addEventListener("change", () => loadLeaderboard().catch(() => {}));
+
+// Settings: the public profile.
+function renderProfileSetting() {
+  setText(
+    "profile-sub",
+    myProfilePublic
+      ? "Anyone can see your time, projects and their links, and you're on the leaderboard"
+      : "Only you can see your profile. You're not on the leaderboard and badges say “not public”",
+  );
+  setText("profile-toggle", myProfilePublic ? "Make private" : "Make public");
+  const view = document.getElementById("profile-view");
+  view.hidden = myId === null;
+  if (myId !== null) view.href = `/u/${myId}`;
+}
+
+document.getElementById("profile-toggle").addEventListener("click", async () => {
+  const next = !myProfilePublic;
+  try {
+    const response = await fetch("/api/settings/profile", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ public: next }),
+    });
+    if (!response.ok) {
+      setText("profile-status", "Could not save");
+      return;
+    }
+    myProfilePublic = next;
+    setText("profile-status", next ? "Your profile is public" : "Your profile is private");
+    renderProfileSetting();
+  } catch (_) {
+    setText("profile-status", "Could not save");
   }
 });
 
@@ -716,7 +846,9 @@ function showView() {
     else link.removeAttribute("aria-current");
   }
   if (view === "heartbeats") loadHeartbeats(false).catch(() => {});
+  if (view === "leaderboard") loadLeaderboard().catch(() => {});
   if (view === "settings") {
+    setText("profile-status", "");
     loadSettings().catch(() => {});
     setText("github-status", "");
     loadGithub().catch(() => {});
@@ -742,18 +874,24 @@ async function getJson(url) {
 async function refresh() {
   try {
     const request = ++overviewRequest;
-    const [overview, projects, devices, me] = await Promise.all([
+    const [overview, projects, devices, me, settings] = await Promise.all([
       getJson(dashboardUrl()),
       getJson("/api/projects"),
       getJson("/api/devices"),
       getJson("/api/me"),
+      getJson("/api/settings"),
     ]);
     showLoggedIn(true, me.name);
+    const firstTime = myId === null;
+    myId = me.id;
+    myProfilePublic = settings.public_profile;
+    if (firstTime && openProjectName !== null) renderBadge(openProjectName);
     if (request === overviewRequest) renderOverview(overview);
     renderProjects(projects);
     renderDevices(devices);
     // Only reload the first page, so loaded pages and an open popup stay.
     if (currentView() === "heartbeats" && heartbeats.length <= 100) await loadHeartbeats(false);
+    if (currentView() === "leaderboard") await loadLeaderboard();
   } catch (error) {
     if (error.message === "logged out") showLoggedIn(false);
     // Otherwise keep showing the last data; the next refresh tries again.
@@ -773,7 +911,83 @@ document.getElementById("theme").addEventListener("click", () => {
   } catch (_) {}
 });
 
-window.addEventListener("hashchange", showView);
-showView();
-refresh();
-setInterval(refresh, REFRESH_MS);
+// A public profile (/u/ID): its stats for a date range and its projects
+// with their links. Works logged out too.
+async function loadProfile(id) {
+  const range = document.getElementById("profile-range").value;
+  let profile;
+  let data;
+  try {
+    [profile, data] = await Promise.all([
+      getJson(`/api/u/${id}`),
+      getJson(`/api/u/${id}/dashboard?range=${encodeURIComponent(range)}`),
+    ]);
+  } catch (error) {
+    if (error.message.endsWith(" 404")) {
+      document.getElementById("profile-content").hidden = true;
+      document.getElementById("profile-missing").hidden = false;
+    }
+    return;
+  }
+  document.getElementById("profile-missing").hidden = true;
+  document.getElementById("profile-content").hidden = false;
+  const name = profile.name || "Someone";
+  document.title = `${name} – Sisyphus`;
+  setText("profile-name", name);
+  const note = document.getElementById("profile-note");
+  note.hidden = profile.public;
+  note.textContent = profile.public ? "" : "Your profile is private: only you can see this page";
+  setText("profile-tracked-label", RANGE_LABEL[data.range]);
+  setText("profile-tracked", duration(data.tracked_ms));
+  setText("profile-agent", duration(data.agent_ms));
+  setText("profile-prompts", count(data.prompts));
+  setText("profile-projects", data.projects);
+  setText("profile-sessions", data.sessions);
+  renderTimeline(data, document.getElementById("profile-timeline"), document.getElementById("profile-timeline-labels"));
+  for (const kind of ["language", "task", "agent", "os"]) {
+    renderBars(kind, data[`by_${kind}`], document.getElementById(`profile-by-${kind}`), false);
+  }
+  const items = profile.projects.map((p) => {
+    const li = el("li");
+    const about = el("div", "about");
+    about.append(el("div", "title", p.name));
+    const links = el("span", "row-links");
+    links.append(
+      ...[
+        linkButton(p.repo_url, "repo", `Open the repository of ${p.name}`),
+        linkButton(p.demo_url, "demo", `Open the live demo of ${p.name}`),
+      ].filter(Boolean),
+    );
+    li.append(about, el("span", "age", duration(p.tracked_ms)), links);
+    return li;
+  });
+  document
+    .getElementById("profile-project-list")
+    .replaceChildren(...(items.length ? items : [el("li", "empty", "No projects tracked yet")]));
+}
+
+// The header's account: the name and "Log out" when logged in.
+async function profileAccount() {
+  try {
+    const me = await getJson("/api/me");
+    const account = document.getElementById("account-name");
+    account.hidden = !me.name;
+    account.textContent = me.name || "";
+    document.getElementById("logout").hidden = false;
+  } catch (_) {}
+}
+
+const profileMatch = location.pathname.match(/^\/u\/(\d+)\/?$/);
+if (profileMatch) {
+  const id = profileMatch[1];
+  document.getElementById("profile-page").hidden = false;
+  document.getElementById("profile-range").addEventListener("change", () => loadProfile(id));
+  profileAccount();
+  loadProfile(id);
+  setInterval(() => loadProfile(id), REFRESH_MS);
+} else {
+  window.addEventListener("hashchange", showView);
+  showView();
+  refresh();
+  setInterval(refresh, REFRESH_MS);
+}

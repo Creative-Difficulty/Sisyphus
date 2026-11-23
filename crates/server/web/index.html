@@ -9,7 +9,7 @@
 </head>
 <body>
   <header>
-    <h1>Sisyphus</h1>
+    <h1><a class="home" href="/">Sisyphus</a></h1>
     <div class="account">
       <span id="account-name" class="muted" hidden></span>
       <form id="logout" method="post" action="/auth/logout" hidden>
@@ -43,6 +43,7 @@
     <nav class="sidebar" aria-label="Views">
       <a class="nav" href="#overview" data-view="overview">Overview</a>
       <a class="nav" href="#projects" data-view="projects">Projects</a>
+      <a class="nav" href="#leaderboard" data-view="leaderboard">Leaderboard</a>
       <a class="nav" href="#devices" data-view="devices">Devices</a>
       <a class="nav" href="#settings" data-view="settings">Settings</a>
       <!-- Debug: everything the devices uploaded, as stored. -->
@@ -93,6 +94,22 @@
         <ul id="projects" class="bubbles"></ul>
       </section>
 
+      <section id="view-leaderboard" hidden>
+        <div class="section-head">
+          <h2>Leaderboard</h2>
+          <div class="filters">
+            <select id="leaderboard-range" class="set" aria-label="Date range">
+              <option value="today">Today</option>
+              <option value="week" selected>This week</option>
+              <option value="30d">Last 30 days</option>
+              <option value="all">All time</option>
+            </select>
+          </div>
+        </div>
+        <p id="leaderboard-note" class="muted note" hidden>Your profile is private, so you aren't listed. You can make it public in <a href="#settings">Settings</a>.</p>
+        <ol id="leaderboard" class="bubbles ranks"></ol>
+      </section>
+
       <section id="view-devices" hidden>
         <h2>Devices</h2>
         <ul id="devices" class="bubbles"></ul>
@@ -109,6 +126,15 @@
           <button class="pill small" type="submit">Save</button>
         </form>
         <p id="settings-status" class="muted status"></p>
+        <div class="setting">
+          <div class="about">
+            <div class="title">Public profile</div>
+            <div class="sub" id="profile-sub"></div>
+          </div>
+          <a id="profile-view" class="link" href="#">View</a>
+          <button id="profile-toggle" class="pill small" type="button"></button>
+        </div>
+        <p id="profile-status" class="muted status"></p>
         <div id="github-setting" class="setting" hidden>
           <div class="about">
             <div class="title">GitHub</div>
@@ -128,6 +154,50 @@
       </section>
     </main>
   </div>
+
+  <!-- A public profile (/u/ID), for anyone. -->
+  <main id="profile-page" class="profile-page" hidden>
+    <div id="profile-content" hidden>
+      <div class="section-head">
+        <div>
+          <h2 id="profile-name"></h2>
+          <p id="profile-note" class="muted note" hidden></p>
+        </div>
+        <div class="filters">
+          <select id="profile-range" class="set" aria-label="Date range">
+            <option value="today">Today</option>
+            <option value="week" selected>This week</option>
+            <option value="30d">Last 30 days</option>
+            <option value="all">All time</option>
+          </select>
+        </div>
+      </div>
+      <div class="today">
+        <p class="muted" id="profile-tracked-label">Tracked this week</p>
+        <p class="big" id="profile-tracked">0h 00m</p>
+        <div class="figures">
+          <div><strong id="profile-agent">0h 00m</strong><span class="muted">agent time</span></div>
+          <div><strong id="profile-prompts">0</strong><span class="muted">prompts</span></div>
+          <div><strong id="profile-projects">0</strong><span class="muted">projects</span></div>
+          <div><strong id="profile-sessions">0</strong><span class="muted">sessions</span></div>
+        </div>
+      </div>
+      <div class="timeline" id="profile-timeline" role="img"></div>
+      <div class="timeline-labels" id="profile-timeline-labels" aria-hidden="true"></div>
+      <div class="breakdowns">
+        <div><h3>Languages</h3><ul class="bars" id="profile-by-language"></ul></div>
+        <div><h3>Tasks</h3><ul class="bars" id="profile-by-task"></ul></div>
+        <div><h3>Agents</h3><ul class="bars" id="profile-by-agent"></ul></div>
+        <div><h3>Systems</h3><ul class="bars" id="profile-by-os"></ul></div>
+      </div>
+      <h3 class="profile-projects-title">Projects</h3>
+      <ul id="profile-project-list" class="bubbles"></ul>
+    </div>
+    <div id="profile-missing" class="message" hidden>
+      <p class="muted">This profile is private or doesn't exist</p>
+      <a class="pill" href="/">Go to Sisyphus</a>
+    </div>
+  </main>
 
   <dialog id="heartbeat-dialog" aria-labelledby="dialog-title">
     <div class="dialog-head">
@@ -178,6 +248,16 @@
     </div>
     <h3 class="files-title">Most changed files</h3>
     <ul class="bars files" id="project-files"></ul>
+    <div class="badge-maker">
+      <h3>README badge</h3>
+      <div class="badge-styles" id="badge-styles" role="radiogroup" aria-label="Badge style"></div>
+      <div class="badge-preview"><img id="badge-preview" alt="Badge preview"></div>
+      <div class="badge-code">
+        <code id="badge-markdown"></code>
+        <button id="badge-copy" class="pill small" type="button">Copy</button>
+      </div>
+      <p class="muted hint" id="badge-hint"></p>
+    </div>
     <form id="project-settings" class="project-settings">
       <h3>Links</h3>
       <label for="project-repo-input">Repository</label>

@@ -435,6 +435,74 @@ dialog.project .files-title { margin-top: 32px; }
    22px as on the left. */
 .setting > .link { padding: 8px 10px; }
 
+/* The title links home (from a public profile). */
+h1 a.home { color: inherit; text-decoration: none; }
+a.link { text-decoration: none; }
+
+/* A view's title with its date range on the right. */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-bottom: 18px;
+}
+.section-head h2 { margin-bottom: 0; overflow-wrap: anywhere; }
+.section-head .filters { margin-bottom: 0; }
+.section-head .filters select { flex: none; min-width: 150px; }
+.note { font-size: 14px; margin-bottom: 14px; }
+.section-head .note { margin: 4px 0 0; }
+
+/* Leaderboard: rank, name, time; your own row a deeper pink. */
+.bubbles a.row { text-decoration: none; }
+.ranks .rank { width: 2.2em; flex: none; text-align: center; font-weight: 600; color: var(--pink); }
+.ranks li.me .row { background: color-mix(in srgb, var(--pink) 30%, transparent); }
+
+/* A public profile. */
+.profile-page { max-width: 860px; padding-top: 32px; }
+body:has(#profile-page:not([hidden])) header { max-width: 860px; }
+.profile-projects-title { margin-top: 44px; }
+.profile-page .bubbles li { padding-right: 12px; }
+
+/* A project's README badge: style pills, a preview, the Markdown. */
+.badge-maker { margin-top: 32px; }
+.badge-styles { display: flex; flex-wrap: wrap; gap: 8px; }
+.style-pill {
+  background: var(--bubble);
+  color: var(--text);
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.style-pill:hover { filter: brightness(0.96); }
+.style-pill.active { background: var(--pink); color: #fff; font-weight: 600; }
+.badge-preview { margin: 18px 0 14px; min-height: 28px; }
+.badge-preview img { display: block; }
+.badge-code {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bubble);
+  border-radius: 999px;
+  padding: 5px 5px 5px 18px;
+  max-width: 100%;
+}
+.badge-code code {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.badge-maker .hint { font-size: 13px; margin-top: 8px; }
+.badge-maker .hint:empty { display: none; }
+
 /* Phones: the views become a row of pills above the content. */
 @media (max-width: 640px) {
   .layout { flex-direction: column; gap: 24px; align-items: stretch; padding: 24px 16px 40px; }
@@ -448,4 +516,5 @@ dialog.project .files-title { margin-top: 32px; }
   .setting select { max-width: none; flex: 1; min-width: 0; }
   .breakdowns { grid-template-columns: 1fr; }
   .big { font-size: 64px; }
+  .profile-page .figures { gap: 24px; }
 }

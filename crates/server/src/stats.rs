@@ -137,7 +137,20 @@ pub async fn stats(
     let user = auth::current_user(&state, &headers)
         .await
         .ok_or(StatusCode::UNAUTHORIZED)?;
-    let db = &state.db;
+    compute(&state.db, user.id, &filters, true)
+        .await
+        .map(Json)
+        .map_err(failed)
+}
+
+/// The stats of `user_id` for `filters`, in that user's time zone. Without
+/// `with_files`, `files` stays empty (public profiles: paths are private).
+pub async fn compute(
+    db: &sqlx::PgPool,
+    user_id: i64,
+    filters: &Filters,
+    with_files: bool,
+) -> sqlx::Result<Stats> {
     let starts = sqlx::query(
         "SELECT (extract(epoch FROM date_trunc('day', now() AT TIME ZONE tz) AT TIME ZONE tz)
                  * 1000)::bigint AS day,
@@ -150,10 +163,9 @@ pub async fn stats(
                 tz
          FROM (SELECT coalesce(timezone, 'UTC') AS tz FROM users WHERE id = $1) u",
     )
-    .bind(user.id)
+    .bind(user_id)
     .fetch_one(db)
-    .await
-    .map_err(failed)?;
+    .await?;
     let now: i64 = starts.get("now");
     let first: Option<i64> = starts.get("first");
     // Where the range starts (for the query) and where its bars start.
@@ -185,7 +197,7 @@ pub async fn stats(
         ($sql:expr) => {
             // Built only from the constants in this file; values are bound.
             sqlx::query(sqlx::AssertSqlSafe($sql))
-                .bind(user.id)
+                .bind(user_id)
                 .bind(start)
                 .bind(filters.project.as_deref())
                 .bind(filters.agent.as_deref())
@@ -206,7 +218,7 @@ pub async fn stats(
                 coalesce(sum(prompts), 0)::bigint AS prompts
          FROM base"
     );
-    let totals = query!(totals_sql).fetch_one(db).await.map_err(failed)?;
+    let totals = query!(totals_sql).fetch_one(db).await?;
 
     let buckets_sql = format!(
         "{BASE},
@@ -236,8 +248,7 @@ pub async fn stats(
         .bind(unit)
         .bind(series_start)
         .fetch_all(db)
-        .await
-        .map_err(failed)?
+        .await?
         .iter()
         .map(|row| Bucket {
             start_ms: row.get("start_ms"),
@@ -253,7 +264,7 @@ pub async fn stats(
              SELECT {column} AS name, sum(credit_ms * weight)::float8 AS tracked
              FROM base GROUP BY 1 ORDER BY 2 DESC, 1"
         );
-        by.push(items(query!(sql).fetch_all(db).await.map_err(failed)?));
+        by.push(items(query!(sql).fetch_all(db).await?));
     }
     let [by_project, by_agent, by_os, by_task] =
         <[Vec<Item>; 4]>::try_from(by).unwrap_or_else(|_| unreachable!("four columns"));
@@ -272,10 +283,10 @@ pub async fn stats(
          SELECT coalesce(language, '') AS name, sum(credit * coalesce(share, 1.0))::float8 AS tracked
          FROM shares GROUP BY 1 ORDER BY 2 DESC, 1"
     );
-    let by_language = items(query!(languages_sql).fetch_all(db).await.map_err(failed)?);
+    let by_language = items(query!(languages_sql).fetch_all(db).await?);
 
     let mut files = Vec::new();
-    if filters.project.is_some() {
+    if with_files && filters.project.is_some() {
         let files_sql = format!(
             "{BASE}
              SELECT f.path, sum(f.chars)::bigint AS chars
@@ -283,7 +294,7 @@ pub async fn stats(
                   ON f.session_id = b.session_id AND f.minute_ms = b.minute_ms
              GROUP BY f.path ORDER BY 2 DESC, 1"
         );
-        for row in query!(files_sql).fetch_all(db).await.map_err(failed)? {
+        for row in query!(files_sql).fetch_all(db).await? {
             let path: String = row.get("path");
             // With a language filter, only that language's files.
             if let Some(language) = filters.language.as_deref()
@@ -315,12 +326,11 @@ pub async fn stats(
              ARRAY(SELECT DISTINCT task FROM session_minutes WHERE user_id = $1 ORDER BY 1)
                  AS tasks",
     )
-    .bind(user.id)
+    .bind(user_id)
     .fetch_one(db)
-    .await
-    .map_err(failed)?;
+    .await?;
 
-    Ok(Json(Stats {
+    Ok(Stats {
         range,
         timezone: starts.get("tz"),
         tracked_ms: ms(&totals, "tracked"),
@@ -343,7 +353,7 @@ pub async fn stats(
             languages: options.get("languages"),
             tasks: options.get("tasks"),
         },
-    }))
+    })
 }
 
 fn ms(row: &PgRow, column: &str) -> i64 {

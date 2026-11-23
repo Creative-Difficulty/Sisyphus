@@ -33,6 +33,11 @@ pub fn routes() -> Router<AppState> {
             "/",
             get(|| async { asset("text/html; charset=utf-8", INDEX) }),
         )
+        // A public profile: the same page, which reads the id from the path.
+        .route(
+            "/u/{id}",
+            get(|| async { asset("text/html; charset=utf-8", INDEX) }),
+        )
         .route("/style.css", get(|| async { asset("text/css", STYLE) }))
         .route(
             "/app.js",
