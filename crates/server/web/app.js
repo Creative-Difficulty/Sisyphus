@@ -231,11 +231,58 @@ function renderProjects(data) {
     );
     button.append(about, el("span", "age", duration(p.tracked_ms)));
     button.addEventListener("click", () => openProject(p.name));
+    li.className = "project-row";
     li.append(button);
+    // Links can't sit inside the button, so they follow it.
+    const repo = linkButton(p.repo_url, "repo", `Open the repository of ${p.name}`);
+    const demo = linkButton(p.demo_url, "demo", `Open the live demo of ${p.name}`);
+    // Always there, so the times line up across rows.
+    const links = el("span", "row-links");
+    links.append(...[repo, demo].filter(Boolean));
+    li.append(links);
     return li;
   });
   const list = document.getElementById("projects");
   list.replaceChildren(...(items.length ? items : [el("li", "empty", "No projects tracked yet")]));
+}
+
+// A round icon link that opens `url` in a new tab; null without a link.
+// Only http(s) links are stored, checked again here.
+const LINK_ICONS = {
+  // A git branch.
+  repo: [
+    ["circle", { cx: 6.5, cy: 5.5, r: 2.2 }],
+    ["circle", { cx: 6.5, cy: 18.5, r: 2.2 }],
+    ["circle", { cx: 17.5, cy: 7.5, r: 2.2 }],
+    ["path", { d: "M6.5 7.7v8.6M17.5 9.7c0 4-4.5 3.6-9.4 7.1" }],
+  ],
+  // A globe.
+  demo: [
+    ["circle", { cx: 12, cy: 12, r: 8.5 }],
+    ["path", { d: "M3.5 12h17M12 3.5c2.4 2.4 3.5 5.2 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.2-3.5-8.5S9.6 5.9 12 3.5z" }],
+  ],
+};
+
+function linkButton(url, kind, label) {
+  if (!url || !/^https?:\/\//i.test(url)) return null;
+  const link = el("a", "icon link-icon");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.title = kind === "repo" ? "Repository" : "Live demo";
+  link.setAttribute("aria-label", label);
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  for (const [tag, attrs] of LINK_ICONS[kind]) {
+    const shape = document.createElementNS(SVG, tag);
+    for (const [key, value] of Object.entries({
+      fill: "none", stroke: "currentColor", "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round", ...attrs,
+    })) shape.setAttribute(key, value);
+    svg.append(shape);
+  }
+  link.append(svg);
+  return link;
 }
 
 function plural(n, word) {

@@ -377,6 +377,25 @@ h3 { font-weight: 600; font-size: 18px; margin-bottom: 10px; }
 .bars .time { font-size: 14px; color: var(--muted); white-space: nowrap; }
 .bars .empty, .bars .more-items { color: var(--muted); font-size: 14px; padding: 3px 8px; }
 
+/* Projects: the bubble is a button, its repository and demo links sit
+   at its right end as round pink icons. */
+.bubbles li.project-row { padding: 0 12px 0 0; gap: 4px; background: var(--bubble); }
+.bubbles li.project-row .row { background: none; flex: 1; min-width: 0; }
+.bubbles li.project-row:has(.row:hover) { filter: brightness(0.96); }
+.row-links { display: flex; justify-content: flex-end; gap: 6px; flex: none; width: 78px; }
+.link-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--pink);
+  color: #fff;
+}
+.link-icon:hover { color: #fff; filter: brightness(1.1); }
+.link-icon svg { width: 20px; height: 20px; }
+
 /* A project's popup: links, stats, then the links' settings. */
 dialog.project { width: min(860px, calc(100vw - 32px)); overflow-y: auto; scrollbar-color: var(--pink) transparent; }
 dialog.project .links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
