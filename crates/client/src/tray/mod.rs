@@ -1,7 +1,8 @@
 //! The tray icon: keeps Sisyphus reachable while its window is closed.
 //! Hovering shows a little info, the menu shows the same info plus "Open
-//! Sisyphus" and "Quit", and a left click opens the window (on macOS any
-//! click opens the menu).
+//! Sisyphus" and "Quit". A left click opens the window on Linux, and on
+//! Windows and macOS a small panel under (or above) the icon; there the
+//! menu is on the right click.
 //!
 //! Linux uses StatusNotifierItem over D-Bus (KDE, waybar, XFCE, GNOME with
 //! the AppIndicator extension; plain GNOME has no tray), Windows and macOS
@@ -19,12 +20,24 @@ mod native;
 use native as backend;
 
 /// What the user did with the tray icon.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Event {
     /// Open (or bring forward) the window.
     Open,
+    /// Show or hide the panel next to the icon (Windows and macOS).
+    Panel(IconRect),
     /// Quit Sisyphus.
     Quit,
+}
+
+/// Where the tray icon is on screen, in physical pixels from the top left
+/// of the main display.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct IconRect {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
 }
 
 /// What the tray shows: one line each, in the menu (greyed out) and the

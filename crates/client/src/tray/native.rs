@@ -29,20 +29,23 @@ impl Tray {
                 _ => Ok(()),
             };
         }));
-        // A left click opens the window. On macOS any click opens the
-        // menu instead, as usual there.
-        if cfg!(windows) {
-            TrayIconEvent::set_event_handler(Some(move |event: TrayIconEvent| {
-                if let TrayIconEvent::Click {
-                    button: MouseButton::Left,
-                    button_state: MouseButtonState::Up,
-                    ..
-                } = event
-                {
-                    let _ = events.send(Event::Open);
-                }
-            }));
-        }
+        // A left click shows the panel; the menu is on the right click.
+        TrayIconEvent::set_event_handler(Some(move |event: TrayIconEvent| {
+            if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                rect,
+                ..
+            } = event
+            {
+                let _ = events.send(Event::Panel(super::IconRect {
+                    x: rect.position.x,
+                    y: rect.position.y,
+                    width: f64::from(rect.size.width),
+                    height: f64::from(rect.size.height),
+                }));
+            }
+        }));
         const SIZE: u32 = 64;
         let rgba = crate::logo::rgba(SIZE).ok_or("could not draw the tray icon")?;
         let image = tray_icon::Icon::from_rgba(rgba, SIZE, SIZE).map_err(|e| e.to_string())?;
@@ -51,7 +54,7 @@ impl Tray {
             .with_icon(image)
             .with_tooltip(super::shorten(&info.tooltip(), TOOLTIP_MAX))
             .with_menu(Box::new(menu(&info)?))
-            .with_menu_on_left_click(cfg!(target_os = "macos"))
+            .with_menu_on_left_click(false)
             .build()
             .map_err(|e| format!("could not show the tray icon: {e}"))?;
         Ok(Self { icon, info })

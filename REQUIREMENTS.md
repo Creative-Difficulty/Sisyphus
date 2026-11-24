@@ -112,7 +112,9 @@ product must:
     tracking in the tray; only "Quit" in the tray menu ends it. Hovering
     and the menu show today's tracked and agent time and the session an
     agent is working on (never the upload queue). Where there is no tray
-    (plain GNOME) closing the window quits
+    (plain GNOME) closing the window quits. On Windows and macOS a left
+    click drops down a small panel at the icon with the same info big and
+    "Open Sisyphus" (2026-11-24); the menu is on the right click
   - a placeholder logo (2026-11-24) as the window and tray icon, on the
     login step and on the website (favicon, header), until a real one
     exists

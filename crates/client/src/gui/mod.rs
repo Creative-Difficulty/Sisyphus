@@ -24,6 +24,7 @@ mod debug;
 mod files;
 mod input_helper;
 mod onboarding;
+mod panel;
 mod sessions;
 mod settings;
 mod style;
@@ -56,6 +57,30 @@ fn window_settings() -> iced::window::Settings {
         #[cfg(all(unix, not(target_os = "macos")))]
         platform_specific: iced::window::settings::PlatformSpecific {
             application_id: APP_ID.to_string(),
+            ..Default::default()
+        },
+        ..Default::default()
+    }
+}
+
+/// The panel at the tray icon: borderless, above other windows, out of the
+/// taskbar, and hidden until it's placed (see `App::toggle_panel`).
+fn panel_settings(icon: crate::tray::IconRect) -> iced::window::Settings {
+    iced::window::Settings {
+        size: panel::SIZE,
+        // Roughly at the icon, so it opens on the icon's screen.
+        position: iced::window::Position::Specific(panel::position(icon, 1.0, None)),
+        visible: false,
+        resizable: false,
+        decorations: false,
+        level: iced::window::Level::AlwaysOnTop,
+        icon: crate::logo::window_icon(),
+        exit_on_close_request: false,
+        #[cfg(windows)]
+        platform_specific: iced::window::settings::PlatformSpecific {
+            skip_taskbar: true,
+            undecorated_shadow: true,
+            corner_preference: iced::window::settings::platform::CornerPreference::Round,
             ..Default::default()
         },
         ..Default::default()
@@ -116,6 +141,22 @@ struct App {
     /// first frame already has the right colours (tiny-skia only redraws
     /// part of the window when the theme changes right after).
     started: bool,
+    /// The panel at the tray icon (Windows and macOS), while it's open.
+    panel: Option<Panel>,
+    /// When the panel last closed because it lost focus: a click on the
+    /// tray icon takes the focus first, and shouldn't open it again.
+    panel_closed_at: Option<std::time::Instant>,
+    /// What an agent is working on, for the tray and the panel: "Working:
+    /// …", "No agent working" or "Not tracking". Updated with the tray.
+    working: String,
+}
+
+/// The open panel at the tray icon.
+struct Panel {
+    id: window::Id,
+    /// Placed and shown; until then it's hidden, waiting for its screen's
+    /// scale factor.
+    shown: bool,
 }
 
 /// What the input helper can be asked to do.
@@ -193,6 +234,12 @@ pub enum Message {
     /// The window's close button was pressed.
     CloseRequested(window::Id),
     WindowClosed(window::Id),
+    WindowUnfocused(window::Id),
+    /// The hidden panel's scale factor and screen size are known: place
+    /// and show it.
+    PlacePanel(window::Id, crate::tray::IconRect, f32, Option<iced::Size>),
+    /// "Open Sisyphus" in the panel.
+    OpenFromPanel,
 }
 
 impl App {
@@ -221,6 +268,9 @@ impl App {
             tray: None,
             tray_events: None,
             started: false,
+            panel: None,
+            panel_closed_at: None,
+            working: String::new(),
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -327,15 +377,45 @@ impl App {
                     }
                 }
             },
+            Message::Tray(crate::tray::Event::Panel(icon)) => self.toggle_panel(icon),
             Message::Tray(crate::tray::Event::Quit) => iced::exit(),
+            Message::PlacePanel(id, icon, scale, monitor) => {
+                let Some(panel) = self.panel.as_mut().filter(|p| p.id == id) else {
+                    return Task::none();
+                };
+                panel.shown = true;
+                Task::batch([
+                    window::move_to(id, panel::position(icon, scale, monitor)),
+                    window::set_mode(id, window::Mode::Windowed),
+                    window::gain_focus(id),
+                ])
+            }
+            Message::OpenFromPanel => {
+                let close = self.close_panel();
+                let open = self.update(Message::Tray(crate::tray::Event::Open));
+                Task::batch([close, open])
+            }
+            Message::WindowUnfocused(id) => {
+                if self.panel.as_ref().is_some_and(|p| p.id == id && p.shown) {
+                    self.panel_closed_at = Some(std::time::Instant::now());
+                    return self.close_panel();
+                }
+                Task::none()
+            }
             Message::CloseRequested(id) => {
-                if self.tray.is_some() {
+                if self.panel.as_ref().is_some_and(|p| p.id == id) {
+                    self.close_panel()
+                } else if self.tray.is_some() {
                     window::close(id)
                 } else {
                     iced::exit()
                 }
             }
             Message::WindowClosed(id) => {
+                if self.panel.as_ref().is_some_and(|p| p.id == id) {
+                    self.panel = None;
+                    return Task::none();
+                }
                 if self.window == Some(id) {
                     self.window = None;
                 }
@@ -484,7 +564,14 @@ impl App {
         }
     }
 
-    fn view(&self, _window: window::Id) -> Element<'_, Message> {
+    fn view(&self, window: window::Id) -> Element<'_, Message> {
+        if self.panel.as_ref().is_some_and(|p| p.id == window) {
+            return panel::view(panel::Status {
+                logged_in: self.config.account().is_some(),
+                today: self.today,
+                working: &self.working,
+            });
+        }
         let screen = match &self.screen {
             Screen::Login => onboarding::login(
                 &self.config,
@@ -567,6 +654,9 @@ impl App {
         let windows = Subscription::batch([
             window::close_requests().map(Message::CloseRequested),
             window::close_events().map(Message::WindowClosed),
+            window::events().filter_map(|(id, event)| {
+                matches!(event, window::Event::Unfocused).then_some(Message::WindowUnfocused(id))
+            }),
         ]);
         // Refresh on every screen, and with the window closed: the tray
         // shows today's time.
@@ -595,6 +685,7 @@ impl App {
     /// Show what's going on in the tray: today's time from the server and
     /// the session an agent is working on.
     fn update_tray(&mut self) {
+        self.working = self.working_line();
         let Some(tray) = &mut self.tray else {
             return;
         };
@@ -611,30 +702,63 @@ impl App {
                 sessions::short_duration(today.agent_ms)
             ));
         }
-        match &self.tracker {
-            None => lines.push("Not tracking".to_string()),
-            Some(tracker) => {
-                let debug = tracker.debug();
-                let mut working = debug.sessions.iter().filter(|s| s.running);
-                match (working.next(), working.count()) {
-                    (None, _) => lines.push("No agent working".to_string()),
-                    (Some(session), others) => {
-                        let title = if session.title.trim().is_empty() {
-                            &session.project
-                        } else {
-                            &session.title
-                        };
-                        let mut line =
-                            format!("Working: {}", crate::tray::shorten(title.trim(), 40));
-                        if others > 0 {
-                            line.push_str(&format!(" and {others} more"));
-                        }
-                        lines.push(line);
-                    }
-                }
-            }
-        }
+        lines.push(self.working.clone());
         tray.set_info(crate::tray::Info { lines });
+    }
+
+    /// "Working: <title>" for the session an agent is working on, "No
+    /// agent working", or "Not tracking" without a tracker.
+    fn working_line(&self) -> String {
+        let Some(tracker) = &self.tracker else {
+            return "Not tracking".to_string();
+        };
+        let debug = tracker.debug();
+        let mut working = debug.sessions.iter().filter(|s| s.running);
+        let Some(session) = working.next() else {
+            return "No agent working".to_string();
+        };
+        let title = if session.title.trim().is_empty() {
+            &session.project
+        } else {
+            &session.title
+        };
+        let mut line = format!("Working: {}", crate::tray::shorten(title.trim(), 40));
+        let others = working.count();
+        if others > 0 {
+            line.push_str(&format!(" and {others} more"));
+        }
+        line
+    }
+
+    /// Show the panel at the tray icon, or hide it if it's open. It opens
+    /// hidden near the icon, then is placed once its screen's scale factor
+    /// is known (the icon's position comes in physical pixels).
+    fn toggle_panel(&mut self, icon: crate::tray::IconRect) -> Task<Message> {
+        if self.panel.is_some() {
+            return self.close_panel();
+        }
+        // The click that took the focus from the panel (and closed it).
+        if self
+            .panel_closed_at
+            .is_some_and(|t| t.elapsed() < Duration::from_millis(400))
+        {
+            return Task::none();
+        }
+        self.update_tray();
+        let (id, open) = window::open(panel_settings(icon));
+        self.panel = Some(Panel { id, shown: false });
+        open.discard()
+            .chain(window::scale_factor(id).then(move |scale| {
+                window::monitor_size(id)
+                    .map(move |monitor| Message::PlacePanel(id, icon, scale, monitor))
+            }))
+    }
+
+    fn close_panel(&mut self) -> Task<Message> {
+        match self.panel.take() {
+            Some(panel) => window::close(panel.id),
+            None => Task::none(),
+        }
     }
 
     fn theme(&self) -> Theme {
