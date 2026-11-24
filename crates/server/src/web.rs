@@ -18,6 +18,8 @@ const REVIEW: &str = include_str!("../web/review.html");
 const REVIEW_STYLE: &str = include_str!("../web/review.css");
 const REVIEW_SCRIPT: &str = include_str!("../web/review.js");
 // The same Fredoka files as the client (SIL Open Font License).
+/// The logo (a placeholder for now), shared with the app.
+const LOGO: &str = include_str!("../../client/assets/logo.svg");
 const FONT_REGULAR: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-Regular.ttf");
 const FONT_SEMIBOLD: &[u8] = include_bytes!("../../client/assets/fonts/Fredoka-SemiBold.ttf");
 const FONT_LICENSE: &str = include_str!("../../client/assets/fonts/Fredoka-OFL.txt");
@@ -55,6 +57,7 @@ pub fn routes() -> Router<AppState> {
             "/review.js",
             get(|| async { asset("text/javascript", REVIEW_SCRIPT) }),
         )
+        .route("/logo.svg", get(|| async { asset("image/svg+xml", LOGO) }))
         .route(
             "/theme.js",
             get(|| async { asset("text/javascript", THEME_SCRIPT) }),

@@ -434,7 +434,8 @@ dialog.project .files-title { margin-top: 32px; }
 .setting > .link { padding: 8px 10px; }
 
 /* The title links home (from a public profile). */
-h1 a.home { color: inherit; text-decoration: none; }
+h1 a.home { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 12px; }
+h1 a.home .logo { width: 1.15em; height: 1.15em; }
 a.link { text-decoration: none; }
 
 /* A view's title with its date range on the right. */
