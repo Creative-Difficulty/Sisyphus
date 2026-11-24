@@ -94,6 +94,34 @@ pub fn shorten(text: &str, max: usize) -> String {
     short
 }
 
+/// macOS: show Sisyphus in the Dock (and the app switcher) only while its
+/// window is open (decided 2026-11-24); otherwise it lives in the menu bar.
+/// Does nothing elsewhere. Must run on the main thread.
+pub fn show_in_dock(visible: bool) {
+    #[cfg(target_os = "macos")]
+    {
+        use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
+        use objc2_foundation::MainThreadMarker;
+        let Some(mtm) = MainThreadMarker::new() else {
+            return;
+        };
+        let app = NSApplication::sharedApplication(mtm);
+        let policy = if visible {
+            NSApplicationActivationPolicy::Regular
+        } else {
+            NSApplicationActivationPolicy::Accessory
+        };
+        app.setActivationPolicy(policy);
+        if visible {
+            // Switching to a regular app doesn't bring it forward.
+            #[allow(deprecated)]
+            app.activateIgnoringOtherApps(true);
+        }
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = visible;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

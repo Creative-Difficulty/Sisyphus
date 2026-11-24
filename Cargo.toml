@@ -49,7 +49,7 @@ windows-sys = { version = "0.61", features = [
 ] }
 # macOS: the frontmost app (NSWorkspace) and the process table (libproc).
 # libc is also used on Linux and macOS for the local time zone.
-objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "libc", "NSRunningApplication", "NSWorkspace"] }
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "libc", "NSApplication", "NSResponder", "NSRunningApplication", "NSWorkspace"] }
 objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSString"] }
 libc = "0.2"
 # Linux X11: the active window and XScreenSaver idle time.
@@ -66,6 +66,9 @@ zbus = "5"
 # windows-sys and objc2 versions above.
 ksni = { version = "0.3", default-features = false, features = ["async-io", "blocking"] }
 tray-icon = { version = "0.26", default-features = false }
+# Build only: embeds the icon and version info in the Windows .exe
+# (approved 2026-11-24). Unused on other targets.
+winresource = { version = "0.1", default-features = false }
 # Draws the logo for the tray and window icons. Already compiled in through
 # iced's svg feature.
 resvg = { version = "0.45", default-features = false }

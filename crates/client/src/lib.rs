@@ -14,3 +14,4 @@ pub mod prompt_model;
 pub mod server;
 pub mod tracker;
 pub mod tray;
+pub mod update;

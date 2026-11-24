@@ -425,9 +425,22 @@ impl Action {
 /// then (installing or restarting) wait for the helper to answer.
 /// Blocking.
 pub fn run_as_admin(action: Action) -> Result<(), String> {
-    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-    let output = Command::new("pkexec")
-        .arg(&exe)
+    // Inside an AppImage the binary lives in a FUSE mount only this user
+    // can read, so root can't run it from there: run the AppImage itself,
+    // unpacked rather than mounted (root may have no FUSE).
+    let appimage = std::env::var_os("APPIMAGE")
+        .map(std::path::PathBuf::from)
+        .filter(|p| p.is_file());
+    let exe = match &appimage {
+        Some(appimage) => appimage.clone(),
+        None => std::env::current_exe().map_err(|e| e.to_string())?,
+    };
+    let mut command = Command::new("pkexec");
+    command.arg(&exe);
+    if appimage.is_some() {
+        command.arg("--appimage-extract-and-run");
+    }
+    let output = command
         .args(["input-helper", action.arg()])
         .output()
         .map_err(|e| match e.kind() {

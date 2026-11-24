@@ -14,6 +14,9 @@ debug-screen = []
 # there.
 cli = []
 
+[build-dependencies]
+winresource.workspace = true
+
 [dependencies]
 sisyphus-common.workspace = true
 serde_json.workspace = true

@@ -32,9 +32,11 @@ mod style;
 use sessions::SessionSummary;
 
 /// Open the window. Blocks until Sisyphus quits: from the tray menu, or
-/// by closing the window where there is no tray.
-pub fn run() -> iced::Result {
-    iced::daemon(App::new, App::update, App::view)
+/// by closing the window where there is no tray. `background` (started at
+/// login or after an update) starts in the tray without the window, once
+/// first start is done and there is a tray.
+pub fn run(background: bool) -> iced::Result {
+    iced::daemon(move || App::new(background), App::update, App::view)
         .subscription(App::subscription)
         .theme(|app: &App, _| app.theme())
         .font(style::FONTS[0])
@@ -149,6 +151,13 @@ struct App {
     /// What an agent is working on, for the tray and the panel: "Working:
     /// …", "No agent working" or "Not tracking". Updated with the tray.
     working: String,
+    /// Started with `--background`: don't open the window at start.
+    background: bool,
+    /// Setting up the tray was tried (it may have failed).
+    tray_tried: bool,
+    /// Checks for and downloads updates; `None` where this copy can't
+    /// update itself (development builds, the plain Linux archive).
+    updater: Option<crate::update::Updater>,
 }
 
 /// The open panel at the tray icon.
@@ -243,7 +252,7 @@ pub enum Message {
 }
 
 impl App {
-    fn new() -> (Self, Task<Message>) {
+    fn new(background: bool) -> (Self, Task<Message>) {
         let mut app = Self {
             config: Config::load(),
             system_dark: false,
@@ -271,6 +280,9 @@ impl App {
             panel: None,
             panel_closed_at: None,
             working: String::new(),
+            background,
+            tray_tried: false,
+            updater: crate::update::Updater::start(),
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -340,6 +352,9 @@ impl App {
                 // Today's time also feeds the tray, so it's loaded with the
                 // window closed too.
                 self.update_tray();
+                if let Some(quit) = self.install_update() {
+                    return quit;
+                }
                 match self.screen {
                     Screen::Sessions(_) if self.window.is_some() => {
                         Task::batch([self.load_sessions(), self.load_today()])
@@ -356,13 +371,24 @@ impl App {
                 Task::none()
             }
             Message::StartTray => {
+                self.tray_tried = true;
                 match crate::tray::Tray::new() {
                     Ok((tray, events)) => {
                         self.tray = Some(tray);
                         self.tray_events = Some(TrayEvents(Arc::new(Mutex::new(Some(events)))));
                         self.update_tray();
+                        if self.window.is_none() {
+                            crate::tray::show_in_dock(false);
+                        }
                     }
-                    Err(e) => eprintln!("closing the window will quit: {e}"),
+                    Err(e) => {
+                        eprintln!("closing the window will quit: {e}");
+                        // Started in the background: without a tray the
+                        // window is the only way to reach Sisyphus.
+                        if self.started && self.window.is_none() {
+                            return self.open_window();
+                        }
+                    }
                 }
                 Task::none()
             }
@@ -418,6 +444,7 @@ impl App {
                 }
                 if self.window == Some(id) {
                     self.window = None;
+                    crate::tray::show_in_dock(false);
                 }
                 if self.tray.is_none() {
                     return iced::exit();
@@ -433,6 +460,15 @@ impl App {
                     return Task::none();
                 }
                 self.started = true;
+                // In the background only once set up, and only with a tray
+                // (or while it's still being set up: it opens the window if
+                // that fails).
+                let stay_hidden = self.background
+                    && matches!(self.screen, Screen::Sessions(_))
+                    && (self.tray.is_some() || !self.tray_tried);
+                if stay_hidden {
+                    return Task::none();
+                }
                 self.open_window()
             }
             Message::ToggleDark => {
@@ -679,7 +715,38 @@ impl App {
     fn open_window(&mut self) -> Task<Message> {
         let (id, open) = window::open(window_settings());
         self.window = Some(id);
+        crate::tray::show_in_dock(true);
         open.discard()
+    }
+
+    /// Install a downloaded update at a quiet moment: the window and the
+    /// panel closed, and no agent working (so no minute with work in it is
+    /// cut short). Returns the task that quits, for the new version to
+    /// start.
+    fn install_update(&mut self) -> Option<Task<Message>> {
+        let ready = self.updater.as_ref()?.ready()?;
+        let quiet = self.window.is_none()
+            && self.panel.is_none()
+            && self
+                .tracker
+                .as_ref()
+                .is_none_or(|t| t.debug().sessions.iter().all(|s| !s.running));
+        if !quiet {
+            return None;
+        }
+        match crate::update::apply(&ready) {
+            Ok(()) => {
+                eprintln!("updating to {}", ready.version);
+                Some(iced::exit())
+            }
+            Err(e) => {
+                eprintln!("installing the update failed: {e}");
+                if let Some(updater) = &self.updater {
+                    updater.failed(e);
+                }
+                None
+            }
+        }
     }
 
     /// Show what's going on in the tray: today's time from the server and

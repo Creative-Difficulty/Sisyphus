@@ -12,9 +12,11 @@ fn main() {
         // app with these arguments.
         #[cfg(all(unix, not(target_os = "macos")))]
         Some("input-helper") => input_helper(&args[1..]),
+        // Started at login or after an update: straight to the tray.
+        Some("--background") => sisyphus_client::gui::run(true).map_err(Into::into),
         #[cfg(feature = "cli")]
         Some(_) => cli::run(&args),
-        _ => sisyphus_client::gui::run().map_err(Into::into),
+        _ => sisyphus_client::gui::run(false).map_err(Into::into),
     };
     if let Err(e) = result {
         eprintln!("error: {e}");
