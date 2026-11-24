@@ -9,6 +9,8 @@ pub mod gui;
 #[cfg(all(unix, not(target_os = "macos")))]
 pub mod input_helper;
 pub mod login;
+pub mod logo;
 pub mod prompt_model;
 pub mod server;
 pub mod tracker;
+pub mod tray;

@@ -61,7 +61,7 @@ Three crates in `crates/`:
   - Heartbeats are hashed and signed, so they must serialize deterministically: no floats, no maps. Changing the hashed format means bumping the domain tag.
   - The tamper-detection tests in `crates/common/tests/` must keep passing.
   - `heartbeat.rs` is the scheme from `REQUIREMENTS.md` ("Heartbeat scheme"), version 9 (v3 added `interrupts`, v4 the `testing` focus and `tested_programs`, v5 per-slot `keys`/`mouse` and `input_kinds`, v6 `running_programs`, v7 `os`, v8 `prompts.model` and `prompts.classes`, v9 per-second `seconds.keys`/`seconds.mouse`, `injected`, `prompts.at`/`prompts.scripted` and `responses.at`): one heartbeat per agent session per minute, domain tag `sisyphus/heartbeat/v9`. `verify_batch` rejects other versions (`UploadError::UnsupportedVersion`); the client's queue drops outdated ones on load and re-aligns the chain.
-- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `prompt_model`, `tracker`) plus a binary (`main.rs`).
+- **`sisyphus-client`**: a library (`lib.rs`: `activity`, `agents`, `config`, `device`, `gui`, `login`, `logo`, `prompt_model`, `tracker`, `tray`) plus a binary (`main.rs`).
   - `prompt_model/`: the local prompt classifier, see "Prompt model" below.
   - Run without arguments, the binary opens the iced window; `sessions`, `watch`, `activity` and `track` are CLI commands (`cli.rs`), only with the `cli` feature (default on). Release builds from CI leave it out (decided 2026-11-23): a window-only app that opens the window whatever the arguments, and on Windows a GUI-subsystem `.exe` without a console window. `input-helper` (Linux) stays in every build, because polkit and the helper's service run the app with it.
   - `device.rs`: this install's ed25519 key, created once from OS randomness and stored as `device.key` (hex) next to the config, mode 0600 on Unix. It never leaves the machine; it signs heartbeats and proves the device when linking.
@@ -256,7 +256,7 @@ Reads, without a keyboard hook, the time since the last input (any key or mouse 
 
 ### Tracker (`crates/client/src/tracker/`)
 
-Records heartbeats (v9) and uploads them. The window starts it (`Tracker::start`) and it runs while the window is open; there is no background service yet. The `track` command runs it without the window.
+Records heartbeats (v9) and uploads them. The app starts it (`Tracker::start`) and it runs until the app quits, also while the window is closed to the tray; there is no background service yet. The `track` command runs it without the window.
 - One tracker per machine: `tracker.lock` next to the config is locked (`File::try_lock`); a second window or `track` doesn't record.
 - `mod.rs`, once a second:
   - every 10 s re-reads the config (connected agents, consent; the `Monitor` is recreated when consent changes) and the session list of the connected agents
@@ -309,6 +309,9 @@ Unknown fields are ignored. Saving replaces the file atomically.
 
 - Rendered in software (tiny-skia; iced's `wgpu` feature is off, decided 2026-11-22): the GPU renderer loaded the graphics drivers (LLVM, Mesa, Vulkan, about 135 MB) into the process. Measured in release builds: window about 70 MB on the dashboard, `track` about 28 MB.
 
+- Runs as an `iced::daemon` and lives in the tray (decided 2026-11-24): closing the window closes it (freeing its memory) but keeps the app, the tracker and the 10 s refresh running; the only way to quit is "Quit" in the tray menu. The window opens at start once the OS theme is known (otherwise tiny-skia redraws only part of the first frame after the theme arrives).
+- Tray (`crates/client/src/tray/`): Linux through StatusNotifierItem over D-Bus (`ksni`, on zbus; no GTK), Windows and macOS through `tray-icon` (created and updated on the main thread, from `update`). Hovering shows "Sisyphus" and the info lines; the menu shows the same lines greyed out, then "Open Sisyphus" and "Quit"; a left click opens the window (on macOS any click opens the menu). The lines (`App::update_tray`, refreshed every 10 s): today's tracked time and agent time from the server (or "Not logged in"), and the session an agent is working on ("Working: <title>", "No agent working", or "Not tracking" without a tracker). Never the upload queue (decided 2026-11-24). Without a tray (plain GNOME, no `StatusNotifierWatcher` on the bus) closing the window quits, as before.
+- Logo (`crates/client/assets/logo.svg`, `logo.rs`): a deliberate placeholder (pink rounded square, dashed outline, faint cross, "S"; decided 2026-11-24) until a real one exists. Used as the window icon, the tray icon (drawn with `resvg`), above the name on the login step, and on the website as favicon and in the header (`/logo.svg`). Not yet: an icon embedded in the Windows `.exe`, a Linux `.desktop` file, a macOS app bundle.
 - `mod.rs`: the app state, `Message`s and screens. `resume()` picks the screen from the config: not logged in → login step; prompt model missing → additional required files; no agents → connect step; Linux Wayland without a running input helper → the input helper popup; otherwise the dashboard.
 - First start (`onboarding.rs`), never the settings screen:
   1. Login step: name, one line, "Log in with Hack Club". After logging in it shows the name and "Continue". Login is required.
@@ -361,7 +364,7 @@ Unknown fields are ignored. Saving replaces the file atomically.
 
 - Agents can't click in the window on Wayland. Verify by launching it and taking a screenshot (on Hyprland: `hyprctl clients -j` for the window geometry, then `grim -g`), and ask the user to click-test.
 - Launch it with `XDG_CONFIG_HOME` pointing at a temporary directory, so the user's real config isn't touched. Write a config there to reach a given state (connected agents, `dark_mode`).
-- Stop it with `pkill -x sisyphus-client`. `pkill -f` also matches the shell running the command.
+- Stop it with `pkill -x sisyphus-client`. `pkill -f` also matches the shell running the command. Closing the window doesn't stop it (it stays in the tray). The tray can be checked over D-Bus: `busctl --user get-property org.kde.StatusNotifierWatcher /StatusNotifierWatcher org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems`, then `org.kde.StatusNotifierItem.ToolTip`, `com.canonical.dbusmenu.GetLayout` on `/MenuBar`, `Activate` (left click) and dbusmenu `Event <id> clicked` (menu items). On Hyprland a window is closed with `hyprctl dispatch "hl.dsp.window.close({window='address:<addr>'})"`; `dbus-run-session` gives a bus without a tray host.
 - `watch` and `activity` never exit; wrap them in `timeout` when scripting.
 
 ### Testing activity

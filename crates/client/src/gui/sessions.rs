@@ -125,7 +125,7 @@ fn stats<'a>(today: Today) -> Element<'a, Message> {
 }
 
 /// "42m", or "1h 05m" from an hour on.
-fn short_duration(ms: u64) -> String {
+pub fn short_duration(ms: u64) -> String {
     let minutes = ms / 60_000;
     if minutes < 60 {
         format!("{minutes}m")

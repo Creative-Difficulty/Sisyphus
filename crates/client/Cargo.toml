@@ -24,14 +24,17 @@ getrandom.workspace = true
 sha2.workspace = true
 hex.workspace = true
 ed25519-dalek.workspace = true
+resvg.workspace = true
 
 [target.'cfg(windows)'.dependencies]
 windows-sys.workspace = true
+tray-icon.workspace = true
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit.workspace = true
 objc2-foundation.workspace = true
 libc.workspace = true
+tray-icon.workspace = true
 
 [target.'cfg(all(unix, not(target_os = "macos")))'.dependencies]
 libc.workspace = true
@@ -40,3 +43,4 @@ wayland-client.workspace = true
 wayland-protocols.workspace = true
 wayland-protocols-wlr.workspace = true
 zbus.workspace = true
+ksni.workspace = true

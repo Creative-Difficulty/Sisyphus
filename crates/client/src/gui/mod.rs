@@ -15,7 +15,7 @@ use std::time::Duration;
 use iced::futures::{SinkExt, Stream, StreamExt};
 use iced::theme::Mode;
 use iced::widget::{button, column, row, space};
-use iced::{Element, Fill, Subscription, Task, Theme};
+use iced::{Element, Fill, Subscription, Task, Theme, window};
 
 use crate::agents::Integration;
 use crate::config::Config;
@@ -30,16 +30,16 @@ mod style;
 
 use sessions::SessionSummary;
 
-/// Open the window. Blocks until it is closed.
+/// Open the window. Blocks until Sisyphus quits: from the tray menu, or
+/// by closing the window where there is no tray.
 pub fn run() -> iced::Result {
-    iced::application(App::new, App::update, App::view)
+    iced::daemon(App::new, App::update, App::view)
         .subscription(App::subscription)
-        .theme(App::theme)
+        .theme(|app: &App, _| app.theme())
         .font(style::FONTS[0])
         .font(style::FONTS[1])
         .default_font(style::FONT)
         .title("Sisyphus")
-        .window(window_settings())
         .run()
 }
 
@@ -47,6 +47,9 @@ fn window_settings() -> iced::window::Settings {
     iced::window::Settings {
         size: iced::Size::new(720.0, 560.0),
         position: iced::window::Position::Centered,
+        icon: crate::logo::window_icon(),
+        // Closing hides Sisyphus in the tray (see `Message::CloseRequested`).
+        exit_on_close_request: false,
         // Without an app id, Wayland compositors report an empty class for
         // this window (and the tracker couldn't tell it apart from nothing
         // in front).
@@ -101,6 +104,18 @@ struct App {
     input_helper_running: Option<(bool, bool)>,
     /// The prompt model download, updated by its worker thread.
     download: Arc<Mutex<files::Download>>,
+    /// The window, while it's open. Closing it keeps Sisyphus running in
+    /// the tray.
+    window: Option<window::Id>,
+    /// The tray icon; `None` until it's set up, or where there is no tray
+    /// (closing the window then quits).
+    tray: Option<crate::tray::Tray>,
+    /// Clicks and menu choices from the tray.
+    tray_events: Option<TrayEvents>,
+    /// The window was opened at start. That waits for the OS theme, so the
+    /// first frame already has the right colours (tiny-skia only redraws
+    /// part of the window when the theme changes right after).
+    started: bool,
 }
 
 /// What the input helper can be asked to do.
@@ -172,6 +187,12 @@ pub enum Message {
     /// Redraw the download progress.
     DownloadTick,
     DownloadFinished(Result<(), String>),
+    /// Set up the tray icon (once the event loop runs).
+    StartTray,
+    Tray(crate::tray::Event),
+    /// The window's close button was pressed.
+    CloseRequested(window::Id),
+    WindowClosed(window::Id),
 }
 
 impl App {
@@ -196,6 +217,10 @@ impl App {
             input_helper_error: None,
             input_helper_running: None,
             download: Arc::default(),
+            window: None,
+            tray: None,
+            tray_events: None,
+            started: false,
         };
         match crate::tracker::Tracker::start(false) {
             Ok(tracker) => app.tracker = Some(tracker),
@@ -207,7 +232,10 @@ impl App {
         app.server_input = app.config.server_url();
         let task = app.resume();
         let theme = iced::system::theme().map(Message::SystemTheme);
-        (app, Task::batch([task, theme]))
+        (
+            app,
+            Task::batch([task, theme, Task::done(Message::StartTray)]),
+        )
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
@@ -258,14 +286,61 @@ impl App {
                 }
                 Task::none()
             }
-            Message::Refresh => match self.screen {
-                Screen::Sessions(_) => Task::batch([self.load_sessions(), self.load_today()]),
-                _ => Task::none(),
-            },
+            Message::Refresh => {
+                // Today's time also feeds the tray, so it's loaded with the
+                // window closed too.
+                self.update_tray();
+                match self.screen {
+                    Screen::Sessions(_) if self.window.is_some() => {
+                        Task::batch([self.load_sessions(), self.load_today()])
+                    }
+                    _ => self.load_today(),
+                }
+            }
             Message::TodayLoaded(result) => {
                 // On failure keep the last value; the next refresh retries.
                 if let Ok(today) = result {
                     self.today = Some(today);
+                }
+                self.update_tray();
+                Task::none()
+            }
+            Message::StartTray => {
+                match crate::tray::Tray::new() {
+                    Ok((tray, events)) => {
+                        self.tray = Some(tray);
+                        self.tray_events = Some(TrayEvents(Arc::new(Mutex::new(Some(events)))));
+                        self.update_tray();
+                    }
+                    Err(e) => eprintln!("closing the window will quit: {e}"),
+                }
+                Task::none()
+            }
+            Message::Tray(crate::tray::Event::Open) => match self.window {
+                Some(id) => Task::batch([window::minimize(id, false), window::gain_focus(id)]),
+                None => {
+                    let open = self.open_window();
+                    // The session list is stale after a while in the tray.
+                    match self.screen {
+                        Screen::Sessions(_) => Task::batch([open, self.show_sessions()]),
+                        _ => open,
+                    }
+                }
+            },
+            Message::Tray(crate::tray::Event::Quit) => iced::exit(),
+            Message::CloseRequested(id) => {
+                if self.tray.is_some() {
+                    window::close(id)
+                } else {
+                    iced::exit()
+                }
+            }
+            Message::WindowClosed(id) => {
+                if self.window == Some(id) {
+                    self.window = None;
+                }
+                if self.tray.is_none() {
+                    return iced::exit();
                 }
                 Task::none()
             }
@@ -274,7 +349,11 @@ impl App {
                 if mode != Mode::None {
                     self.system_dark = mode == Mode::Dark;
                 }
-                Task::none()
+                if self.started {
+                    return Task::none();
+                }
+                self.started = true;
+                self.open_window()
             }
             Message::ToggleDark => {
                 let mut config = self.config.clone();
@@ -358,6 +437,7 @@ impl App {
                 self.config = config;
                 self.today = None;
                 self.screen = Screen::Login;
+                self.update_tray();
                 Task::none()
             }
             Message::Continue => self.resume(),
@@ -404,7 +484,7 @@ impl App {
         }
     }
 
-    fn view(&self) -> Element<'_, Message> {
+    fn view(&self, _window: window::Id) -> Element<'_, Message> {
         let screen = match &self.screen {
             Screen::Login => onboarding::login(
                 &self.config,
@@ -484,14 +564,77 @@ impl App {
         } else {
             Subscription::none()
         };
-        match self.screen {
-            Screen::Sessions(_) => {
-                Subscription::batch([system, keys, Subscription::run(refresh_ticks)])
-            }
-            Screen::Debug => Subscription::batch([system, keys, Subscription::run(debug_ticks)]),
-            Screen::Files => Subscription::batch([system, keys, Subscription::run(download_ticks)]),
-            _ => Subscription::batch([system, keys]),
+        let windows = Subscription::batch([
+            window::close_requests().map(Message::CloseRequested),
+            window::close_events().map(Message::WindowClosed),
+        ]);
+        // Refresh on every screen, and with the window closed: the tray
+        // shows today's time.
+        let mut subscriptions = vec![system, keys, windows, Subscription::run(refresh_ticks)];
+        if let Some(events) = &self.tray_events {
+            subscriptions.push(Subscription::run_with(events.clone(), tray_events));
         }
+        // Redraws only matter while the window is open.
+        if self.window.is_some() {
+            match self.screen {
+                Screen::Debug => subscriptions.push(Subscription::run(debug_ticks)),
+                Screen::Files => subscriptions.push(Subscription::run(download_ticks)),
+                _ => {}
+            }
+        }
+        Subscription::batch(subscriptions)
+    }
+
+    /// Open the window and remember it.
+    fn open_window(&mut self) -> Task<Message> {
+        let (id, open) = window::open(window_settings());
+        self.window = Some(id);
+        open.discard()
+    }
+
+    /// Show what's going on in the tray: today's time from the server and
+    /// the session an agent is working on.
+    fn update_tray(&mut self) {
+        let Some(tray) = &mut self.tray else {
+            return;
+        };
+        let mut lines = Vec::new();
+        if self.config.account().is_none() {
+            lines.push("Not logged in".to_string());
+        } else if let Some(today) = self.today {
+            lines.push(format!(
+                "Today: {}",
+                sessions::short_duration(today.tracked_ms)
+            ));
+            lines.push(format!(
+                "Agent time: {}",
+                sessions::short_duration(today.agent_ms)
+            ));
+        }
+        match &self.tracker {
+            None => lines.push("Not tracking".to_string()),
+            Some(tracker) => {
+                let debug = tracker.debug();
+                let mut working = debug.sessions.iter().filter(|s| s.running);
+                match (working.next(), working.count()) {
+                    (None, _) => lines.push("No agent working".to_string()),
+                    (Some(session), others) => {
+                        let title = if session.title.trim().is_empty() {
+                            &session.project
+                        } else {
+                            &session.title
+                        };
+                        let mut line =
+                            format!("Working: {}", crate::tray::shorten(title.trim(), 40));
+                        if others > 0 {
+                            line.push_str(&format!(" and {others} more"));
+                        }
+                        lines.push(line);
+                    }
+                }
+            }
+        }
+        tray.set_info(crate::tray::Info { lines });
     }
 
     fn theme(&self) -> Theme {
@@ -629,6 +772,41 @@ fn refresh_ticks() -> impl Stream<Item = Message> {
         });
         while rx.next().await.is_some() {
             if output.send(Message::Refresh).await.is_err() {
+                break;
+            }
+        }
+    })
+}
+
+/// The tray's event receiver, handed to its subscription once. Every
+/// value hashes alike, so the subscription keeps running across updates.
+#[derive(Clone)]
+struct TrayEvents(Arc<Mutex<Option<std::sync::mpsc::Receiver<crate::tray::Event>>>>);
+
+impl std::hash::Hash for TrayEvents {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        "tray".hash(state);
+    }
+}
+
+/// Forward the tray's clicks and menu choices. The tray sends on a plain
+/// channel, read on a thread of its own.
+fn tray_events(events: &TrayEvents) -> impl Stream<Item = Message> + use<> {
+    let receiver = events.0.lock().ok().and_then(|mut r| r.take());
+    iced::stream::channel(1, async move |mut output| {
+        let Some(receiver) = receiver else {
+            return;
+        };
+        let (tx, mut rx) = iced::futures::channel::mpsc::unbounded();
+        std::thread::spawn(move || {
+            while let Ok(event) = receiver.recv() {
+                if tx.unbounded_send(event).is_err() {
+                    break;
+                }
+            }
+        });
+        while let Some(event) = rx.next().await {
+            if output.send(Message::Tray(event)).await.is_err() {
                 break;
             }
         }

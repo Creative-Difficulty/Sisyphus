@@ -17,6 +17,7 @@ pub struct LoginState<'a> {
 /// Step 1: log in. Once logged in, shows who and a way on.
 pub fn login<'a>(config: &'a Config, login: LoginState<'a>) -> Element<'a, Message> {
     let mut content = column![
+        style::app_logo(88.0),
         text("Sisyphus").size(44).font(style::BOLD),
         text("Track the time you spend building with AI").style(style::muted),
     ]

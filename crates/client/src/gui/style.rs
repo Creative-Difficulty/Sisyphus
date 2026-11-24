@@ -238,3 +238,10 @@ pub fn logo(integration: &Integration, size: f32) -> svg::Svg<'static> {
         .width(size)
         .height(size)
 }
+
+/// Sisyphus's own logo (a placeholder for now).
+pub fn app_logo(size: f32) -> svg::Svg<'static> {
+    svg(svg::Handle::from_memory(crate::logo::SVG))
+        .width(size)
+        .height(size)
+}

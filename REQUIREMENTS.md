@@ -74,7 +74,8 @@ product must:
     held button is a key, key events halved since releases count too); on
     Linux Wayland exact through the input helper (below), unknown without
     it.
-- Heartbeat recording (v2 scheme), while the window is open: one heartbeat
+- Heartbeat recording (v2 scheme), while the app runs (window open or in
+  the tray): one heartbeat
   per session per minute, signed into the hash chain, queued on disk and
   uploaded every 30 seconds while logged in. File changes are found by
   polling the project folder while its agent runs; agent edit claims come
@@ -107,6 +108,14 @@ product must:
     heartbeat
   - a dashboard of recent sessions with today's credited time and agent
     time from the server (prompts and sessions are still placeholders)
+  - runs in the tray (2026-11-24): closing the window keeps Sisyphus
+    tracking in the tray; only "Quit" in the tray menu ends it. Hovering
+    and the menu show today's tracked and agent time and the session an
+    agent is working on (never the upload queue). Where there is no tray
+    (plain GNOME) closing the window quits
+  - a placeholder logo (2026-11-24) as the window and tray icon, on the
+    login step and on the website (favicon, header), until a real one
+    exists
   - a pink light and dark theme that follows the OS
 - `sisyphus-common`: an ed25519-signed hash chain of heartbeats with
   tamper-detection tests.
@@ -207,8 +216,9 @@ product must:
   heartbeat every minute while its agent runs, or while it doesn't run but
   its agent's window is in front (decided 2026-11-21; mouse-jiggle handling
   comes later).
-- For now the client records only while its window is open; a background
-  service comes later (decided 2026-11-21).
+- For now the client records only while the app runs (its window open,
+  or closed to the tray since 2026-11-24); a background service comes
+  later (decided 2026-11-21).
 - `working_dir` changes are found by checking the project folder for
   changes while the agent runs (decided 2026-11-21).
 - Heartbeats are signed into the hash chain, queued offline and uploaded about
