@@ -119,6 +119,22 @@ product must:
     login step and on the website (favicon, header), until a real one
     exists
   - a pink light and dark theme that follows the OS
+- Distribution (decided 2026-11-24):
+  - download buttons on the website: "Download for <system>" next to
+    "Log in with Hack Club" when logged out, a download icon in the header
+    when logged in; both go through the server's `/download/<system>`,
+    which redirects to the newest GitHub release's file
+  - packages built by the release workflow: a Windows installer (per user,
+    no admin rights, Start menu, starts at login by default, uninstaller),
+    a macOS `.dmg` with one app for Apple silicon and Intel to drag into
+    Applications (Dock icon only while the window is open), and Linux
+    AppImages (x86_64, ARM)
+  - silent over-the-air updates: the app checks the server every few
+    hours, downloads the new version, checks it was signed by the release
+    key (kept as a GitHub secret), and installs it when its window is
+    closed and no agent is working, then starts again in the tray
+  - not yet: code signing (Windows warns, macOS needs "Open Anyway" once),
+    starting at login on macOS and Linux
 - `sisyphus-common`: an ed25519-signed hash chain of heartbeats with
   tamper-detection tests.
 - Server (axum + Postgres):
@@ -656,6 +672,8 @@ product must:
   - Install and updates: a one-line installer (`curl … | sh`, `irm … |
     iex`), a `doctor` command that checks the setup, an `uninstall`, and
     automatic updates checked against GitHub releases once a day.
+    (Installers, a `.dmg`, AppImages and signed automatic updates were
+    built on 2026-11-24.)
   - More agents (bounty requirement 7): Copilot (VS Code and CLI), Cursor
     and Freebuff, and ChatGPT and claude.ai in the browser through a
     Chrome extension.
