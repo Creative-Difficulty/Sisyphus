@@ -1,81 +1,188 @@
-# Builds the client for Windows, macOS and Linux and publishes the builds as
-# a new GitHub release. Runs when a version tag (v*) is pushed:
+# Builds the client for Windows, macOS and Linux, packages it and publishes
+# a GitHub release. Runs when a version tag (v*) is pushed; the tag must
+# match the workspace version in Cargo.toml:
 #
-#   git tag v0.1.0 && git push origin v0.1.0
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# Started by hand (Actions > Release > Run workflow) it is a dry run: it
+# builds and signs everything and keeps the files as the run's artifacts,
+# but publishes nothing.
 #
 # Release builds leave out the debug screen and the command line
-# (--no-default-features): a window-only app.
+# (--no-default-features): a window-only app. What gets published:
+# - Sisyphus-windows-x86_64-setup.exe: the installer (Inno Setup,
+#   packaging/windows/sisyphus.iss)
+# - Sisyphus-macos-universal.dmg: Sisyphus.app (Apple silicon and Intel in
+#   one) to drag into Applications, and the same app as .app.tar.gz for
+#   updates (packaging/macos/app.sh)
+# - Sisyphus-linux-<arch>.AppImage (packaging/linux/appimage.sh), and the
+#   bare binary as sisyphus-linux-<arch>.tar.gz
+# - update.json and update.json.sig: what the app's updater installs,
+#   signed with the release key (the RELEASE_SIGNING_KEY secret)
+# - SHA256SUMS.txt
+#
+# The website's download buttons go through the server's /download/…
+# route, which finds these files by name; keep the names.
 name: Release
 
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build ${{ matrix.name }}
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          version=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "tag $GITHUB_REF_NAME doesn't match the version in Cargo.toml ($version)" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  linux:
+    name: Build Linux ${{ matrix.arch }}
+    needs: version
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
         include:
-          - { os: ubuntu-22.04, target: x86_64-unknown-linux-gnu, name: linux-x86_64 }
-          - { os: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu, name: linux-aarch64 }
-          - { os: windows-latest, target: x86_64-pc-windows-msvc, name: windows-x86_64 }
-          - { os: macos-latest, target: aarch64-apple-darwin, name: macos-aarch64 }
-          - { os: macos-15-intel, target: x86_64-apple-darwin, name: macos-x86_64 }
+          - { os: ubuntu-22.04, arch: x86_64, target: x86_64-unknown-linux-gnu }
+          - { os: ubuntu-22.04-arm, arch: aarch64, target: aarch64-unknown-linux-gnu }
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Rust
-        shell: bash
         run: |
           rustup toolchain install stable --profile minimal --target ${{ matrix.target }}
           rustup default stable
-
       - name: Build
-        shell: bash
         run: cargo build --release --locked --no-default-features -p sisyphus-client --target ${{ matrix.target }}
-
       - name: Package
-        shell: bash
         run: |
-          dir="sisyphus-${GITHUB_REF_NAME}-${{ matrix.name }}"
-          mkdir -p "$dir" dist
-          bin="target/${{ matrix.target }}/release/sisyphus-client"
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            cp "$bin.exe" "$dir"/
-            7z a "dist/$dir.zip" "$dir" > /dev/null
-          else
-            cp "$bin" "$dir"/
-            tar -czf "dist/$dir.tar.gz" "$dir"
-          fi
-
+          bin=target/${{ matrix.target }}/release/sisyphus-client
+          packaging/linux/appimage.sh "$bin" ${{ matrix.arch }} dist
+          dir=sisyphus-linux-${{ matrix.arch }}
+          mkdir "$dir"
+          cp "$bin" "$dir/sisyphus"
+          tar -czf "dist/$dir.tar.gz" "$dir"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.name }}
+          name: linux-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  windows:
+    name: Build Windows
+    needs: version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal --target x86_64-pc-windows-msvc
+          rustup default stable
+      - name: Build
+        shell: bash
+        run: cargo build --release --locked --no-default-features -p sisyphus-client --target x86_64-pc-windows-msvc
+      - name: Installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup --no-progress -y
+          }
+          & $iscc /Q "/DAppVersion=${{ needs.version.outputs.version }}" `
+            "/DBinary=$PWD\target\x86_64-pc-windows-msvc\release\sisyphus-client.exe" `
+            "/DOutputDir=$PWD\dist" packaging\windows\sisyphus.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x86_64
+          path: dist/*
+          if-no-files-found: error
+
+  macos:
+    name: Build macOS
+    needs: version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: |
+          rustup toolchain install stable --profile minimal --target aarch64-apple-darwin --target x86_64-apple-darwin
+          rustup default stable
+      - name: Build
+        run: |
+          for target in aarch64-apple-darwin x86_64-apple-darwin; do
+            cargo build --release --locked --no-default-features -p sisyphus-client --target $target
+          done
+          lipo -create -output sisyphus-universal \
+            target/aarch64-apple-darwin/release/sisyphus-client \
+            target/x86_64-apple-darwin/release/sisyphus-client
+          lipo -info sisyphus-universal
+      - name: Package
+        run: packaging/macos/app.sh sisyphus-universal ${{ needs.version.outputs.version }} dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-universal
           path: dist/*
           if-no-files-found: error
 
   release:
-    name: Publish release
-    needs: build
+    name: Sign and publish
+    needs: [version, linux, windows, macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
 
+      - name: Update manifest
+        env:
+          RELEASE_SIGNING_KEY: ${{ secrets.RELEASE_SIGNING_KEY }}
+        run: |
+          python3 packaging/update-manifest.py ${{ needs.version.outputs.version }} dist
+          key=$(mktemp)
+          trap 'rm -f "$key"' EXIT
+          printf '%s\n' "$RELEASE_SIGNING_KEY" > "$key"
+          # The key must be the one the app trusts.
+          public=$(openssl pkey -in "$key" -pubout -outform DER | tail -c 32 | od -An -tx1 -v | tr -d ' \n')
+          grep -q "\"$public\"" crates/client/src/update.rs || {
+            echo "RELEASE_SIGNING_KEY doesn't match RELEASE_PUBLIC_KEY in update.rs" >&2
+            exit 1
+          }
+          openssl pkeyutl -sign -inkey "$key" -rawin -in dist/update.json \
+            | od -An -tx1 -v | tr -d ' \n' > dist/update.json.sig
+          cat dist/update.json
+
       - name: Checksums
         run: cd dist && sha256sum * > SHA256SUMS.txt
 
+      - name: Keep the files (dry run)
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: dist/*
+
       - name: Create release
+        if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

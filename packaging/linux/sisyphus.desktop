@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Sisyphus
+Comment=Track the time you spend building with AI
+Exec=sisyphus
+Icon=sisyphus
+Categories=Development;Utility;
+StartupWMClass=dev.aelx.Sisyphus
+Terminal=false

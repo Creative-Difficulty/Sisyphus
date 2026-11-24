@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Sisyphus.app's Info.plist. The release workflow replaces @VERSION@.
+     LSUIElement: Sisyphus starts as a menu bar app; the app shows itself
+     in the Dock only while its window is open (tray::show_in_dock). -->
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>
+  <string>Sisyphus</string>
+  <key>CFBundleDisplayName</key>
+  <string>Sisyphus</string>
+  <key>CFBundleIdentifier</key>
+  <string>dev.aelx.Sisyphus</string>
+  <key>CFBundleExecutable</key>
+  <string>sisyphus</string>
+  <key>CFBundleIconFile</key>
+  <string>Sisyphus</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleShortVersionString</key>
+  <string>@VERSION@</string>
+  <key>CFBundleVersion</key>
+  <string>@VERSION@</string>
+  <key>LSMinimumSystemVersion</key>
+  <string>11.0</string>
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.developer-tools</string>
+  <key>LSUIElement</key>
+  <true/>
+  <key>NSHighResolutionCapable</key>
+  <true/>
+</dict>
+</plist>
