@@ -87,6 +87,8 @@ header h1 { flex: 1; }
   text-decoration: none;
 }
 .pill:hover { filter: brightness(1.08); }
+/* The quieter of two pills side by side. */
+.pill.soft { background: var(--bubble); color: var(--pink); }
 /* As a button: no browser outline or font. */
 button.pill { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
 
@@ -95,6 +97,8 @@ button.pill { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
   padding-top: 18vh;
 }
 .welcome p, .message p { margin-bottom: 24px; }
+.welcome-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; }
+.other-systems { margin-top: 16px; font-size: 15px; }
 .message h1 { margin-bottom: 16px; }
 /* The app login's confirmation: a big "Log in", a small "Cancel". */
 .message .pill.confirm { font-size: 20px; padding: 16px 48px; }
@@ -500,6 +504,21 @@ a.link { text-decoration: none; }
 }
 .badge-maker .hint { font-size: 13px; margin-top: 8px; }
 .badge-maker .hint:empty { display: none; }
+
+/* The download popup: one bubble per system, this computer's first and
+   deeper pink. */
+dialog.download { width: min(440px, calc(100vw - 32px)); }
+.download .bubbles a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  color: inherit;
+  text-decoration: none;
+}
+.download .bubbles li:hover { filter: brightness(0.96); }
+.download .bubbles li.mine { background: var(--pink); color: #fff; }
+.download .bubbles li.mine .os, .download .bubbles li.mine .sub { color: #fff; }
 
 /* Phones: the views become a row of pills above the content. */
 @media (max-width: 640px) {

@@ -11,6 +11,12 @@
 <body>
   <header>
     <h1><a class="home" href="/"><img class="logo" src="/logo.svg" alt="">Sisyphus</a></h1>
+    <button id="download-open" class="icon" type="button" aria-label="Download the Sisyphus app" title="Download the app" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3v12M7 10.5l5 5 5-5"/>
+        <path d="M4 16v2.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V16"/>
+      </svg>
+    </button>
     <div class="account">
       <span id="account-name" class="muted" hidden></span>
       <form id="logout" method="post" action="/auth/logout" hidden>
@@ -37,7 +43,11 @@
 
   <main id="welcome" class="welcome" hidden>
     <p class="muted">Track the time you spend building with AI</p>
-    <a class="pill" href="/auth/login">Log in with Hack Club</a>
+    <div class="welcome-actions">
+      <a id="download-main" class="pill" href="/download/windows">Download</a>
+      <a class="pill soft" href="/auth/login">Log in with Hack Club</a>
+    </div>
+    <button id="download-other" class="link other-systems" type="button">Other systems</button>
   </main>
 
   <div id="app" class="layout" hidden>
@@ -281,6 +291,22 @@
       <button id="remove-cancel" class="link" type="button">Cancel</button>
     </div>
     <p id="remove-status" class="muted status"></p>
+  </dialog>
+
+  <dialog id="download-dialog" class="download" aria-labelledby="download-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="download-title">Download Sisyphus</h2>
+        <p class="muted" id="download-version"></p>
+      </div>
+      <button id="download-close" class="icon" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <ul class="bubbles" id="download-list"></ul>
   </dialog>
 
   <script src="/app.js"></script>

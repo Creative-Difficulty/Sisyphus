@@ -7,7 +7,8 @@
 // clicking one opens it), Devices (each linked device with its system and
 // tracked time; removing one unlinks it), Settings and Heartbeats (a debug
 // view of every uploaded heartbeat; clicking one shows it in full). At
-// /u/ID it shows that public profile instead, logged in or not. Refreshed
+// /u/ID it shows that public profile instead, logged in or not. Download
+// buttons (welcome screen, header icon) open /download/SYSTEM. Refreshed
 // every 10 seconds. Data is only ever inserted as text, never as HTML.
 
 const REFRESH_MS = 10_000;
@@ -549,6 +550,91 @@ function osName(os) {
   return os ? (OS[os] || OS.other).name : "Unknown system";
 }
 
+// Downloads: /download/PLATFORM redirects to that system's file of the
+// newest release. The welcome screen's button offers this computer's
+// system; the header's download icon and "Other systems" open a popup with
+// every system.
+const DOWNLOADS = [
+  { platform: "windows", os: "windows", name: "Windows", sub: "64-bit" },
+  { platform: "macos", os: "macos", name: "macOS", sub: "Apple silicon and Intel" },
+  { platform: "linux-x86_64", os: "linux", name: "Linux", sub: "x86_64" },
+  { platform: "linux-aarch64", os: "linux", name: "Linux", sub: "ARM (aarch64)" },
+];
+// Platforms the newest release has, once known (null: offer all).
+let releasePlatforms = null;
+
+// This computer's platform, as far as the browser tells; null on phones
+// and unknown systems.
+function detectPlatform() {
+  const ua = navigator.userAgent || "";
+  const platform = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  if (/Android|iPhone|iPad|iPod|CrOS/.test(ua)) return null;
+  if (/Win/i.test(platform) || /Windows/.test(ua)) return "windows";
+  if (/Mac/i.test(platform) || /Mac OS X/.test(ua)) return "macos";
+  if (/Linux/i.test(platform) || /Linux/.test(ua)) {
+    return /aarch64|arm64|armv8/i.test(platform + " " + ua) ? "linux-aarch64" : "linux-x86_64";
+  }
+  return null;
+}
+const myPlatform = detectPlatform();
+
+function offered(d) {
+  return releasePlatforms === null || releasePlatforms.includes(d.platform);
+}
+
+function renderDownloads() {
+  const mine = DOWNLOADS.find((d) => d.platform === myPlatform && offered(d));
+  const main = document.getElementById("download-main");
+  main.textContent = mine ? `Download for ${mine.name}` : "Download";
+  main.href = mine ? `/download/${mine.platform}` : "#";
+  const list = DOWNLOADS.filter(offered).sort(
+    (a, b) => (b.platform === myPlatform) - (a.platform === myPlatform),
+  );
+  document.getElementById("download-list").replaceChildren(
+    ...list.map((d) => {
+      const li = el("li", d.platform === myPlatform ? "mine" : "");
+      const link = el("a");
+      link.href = `/download/${d.platform}`;
+      const about = el("div", "about");
+      about.append(el("div", "title", d.name), el("div", "sub", d.sub));
+      link.append(osIcon(d.os), about);
+      li.append(link);
+      return li;
+    }),
+  );
+}
+
+async function loadRelease() {
+  try {
+    const release = await getJson("/api/releases/latest");
+    releasePlatforms = release.platforms;
+    setText("download-version", `Version ${release.version}`);
+  } catch (_) {
+    // Offer every system; the server redirects to the release page if a
+    // file is missing.
+  }
+  renderDownloads();
+}
+
+const downloadDialog = document.getElementById("download-dialog");
+function openDownloads() {
+  downloadDialog.showModal();
+}
+document.getElementById("download-open").addEventListener("click", openDownloads);
+document.getElementById("download-other").addEventListener("click", openDownloads);
+document.getElementById("download-main").addEventListener("click", (event) => {
+  if (document.getElementById("download-main").getAttribute("href") === "#") {
+    event.preventDefault();
+    openDownloads();
+  }
+});
+document.getElementById("download-close").addEventListener("click", () => downloadDialog.close());
+downloadDialog.addEventListener("click", (event) => {
+  if (event.target === downloadDialog) downloadDialog.close();
+});
+renderDownloads();
+loadRelease();
+
 function renderDevices(data) {
   const items = data.devices.map((d) => {
     const li = el("li");
@@ -859,6 +945,7 @@ function showLoggedIn(loggedIn, name) {
   document.getElementById("welcome").hidden = loggedIn;
   document.getElementById("app").hidden = !loggedIn;
   document.getElementById("logout").hidden = !loggedIn;
+  document.getElementById("download-open").hidden = !loggedIn;
   const account = document.getElementById("account-name");
   account.hidden = !loggedIn || !name;
   account.textContent = name || "";
@@ -981,6 +1068,7 @@ const profileMatch = location.pathname.match(/^\/u\/(\d+)\/?$/);
 if (profileMatch) {
   const id = profileMatch[1];
   document.getElementById("profile-page").hidden = false;
+  document.getElementById("download-open").hidden = false;
   document.getElementById("profile-range").addEventListener("change", () => loadProfile(id));
   profileAccount();
   loadProfile(id);
