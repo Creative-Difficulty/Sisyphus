@@ -15,6 +15,9 @@
 //! - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: the GitHub OAuth app for
 //!   connecting GitHub and finding projects' repositories (`github.rs`).
 //!   Without them, connecting GitHub is disabled.
+//! - `RELEASES_REPO`: the GitHub repository whose newest release the
+//!   download buttons and app updates use (default
+//!   `Creative-Difficulty/Sisyphus`).
 
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -39,6 +42,7 @@ mod language;
 mod oidc;
 mod profile;
 mod projects;
+mod releases;
 mod review;
 mod settings;
 mod signals;
@@ -62,6 +66,8 @@ pub struct AppState {
     pub seen_requests: Arc<app::SeenRequests>,
     /// Slack IDs of the users who may use the review page (`REVIEWERS`).
     pub reviewers: Arc<std::collections::HashSet<String>>,
+    /// The newest app release, for downloads and updates.
+    pub releases: Arc<releases::Releases>,
 }
 
 impl AppState {
@@ -170,6 +176,7 @@ async fn main() {
         secure,
         seen_requests: Arc::default(),
         reviewers: Arc::new(review::reviewers_from_env()),
+        releases: Arc::new(releases::Releases::from_env()),
     };
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
@@ -188,6 +195,9 @@ async fn main() {
         .route("/badge/{id}/{file}", get(profile::badge))
         .route("/api/app/today", get(app::today))
         .route("/api/app/logout", post(app::logout))
+        .route("/api/app/update", get(releases::update))
+        .route("/api/releases/latest", get(releases::latest))
+        .route("/download/{platform}", get(releases::download))
         .route("/api/review/users", get(review::users))
         .route("/api/review/timeline", get(review::timeline))
         .merge(auth::routes())
