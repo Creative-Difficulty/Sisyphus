@@ -18,7 +18,7 @@ fn minute(i: u64) -> Heartbeat {
         session_name: "Demo".into(),
         project: "demo".into(),
         agent_running: true,
-        activity: true,
+        activity: None,
         input_kinds: InputKinds::Exact,
         slots: [Slot {
             input: true,
@@ -26,11 +26,11 @@ fn minute(i: u64) -> Heartbeat {
             mouse: 1,
             focus: Focus::Agent,
         }; 6],
-        tested_programs: vec![],
-        running_programs: vec![],
+        tested_programs: None,
+        running_programs: None,
         prompts: Prompts {
-            submitted: 1,
             typed_chars: 100 + i as u32,
+            at: vec![5],
             ..Prompts::default()
         },
         interrupts: 0,
@@ -40,18 +40,37 @@ fn minute(i: u64) -> Heartbeat {
         client: "0.3.0".into(),
         models: vec![],
         tools: vec![],
+        programs: vec![],
+        tool_calls: vec![],
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {
                 added: 20,
                 removed: 3,
             },
-            agent_edits: Changes {
-                added: 20,
-                removed: 3,
-            },
+            agent_edits: None,
         }],
     }
+}
+
+/// `hb` in the shape a v9 client wrote it: every field it had is present.
+#[allow(dead_code)]
+fn as_v9(mut hb: Heartbeat) -> Heartbeat {
+    hb.version = 9;
+    hb.activity = Some(true);
+    hb.tested_programs = Some(vec![]);
+    hb.running_programs = Some(vec![]);
+    hb.prompts.submitted = Some(hb.prompts.at.len() as u32);
+    hb.prompts.corrections = Some(0);
+    hb.prompts.at = vec![];
+    hb.responses.finished = Some(0);
+    hb.responses.chars = Some(0);
+    hb.client = String::new();
+    hb.seconds = Some(Default::default());
+    for f in &mut hb.files {
+        f.agent_edits = Some(f.working_dir);
+    }
+    hb
 }
 
 fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
@@ -157,12 +176,10 @@ fn heartbeat_json_roundtrip() {
 #[test]
 fn v9_heartbeats_hash_as_before() {
     let mut hb = minute(0);
-    hb.version = 9;
     hb.agent_session_id = "s".into();
     hb.prompts.typed_chars = 100;
     hb.files = vec![];
-    hb.client = String::new();
-    hb.seconds = Some(Default::default());
+    let hb = as_v9(hb);
     let signed = writer().sign(hb);
     assert_eq!(
         serde_json::to_string(&signed.hash).unwrap(),
@@ -170,7 +187,7 @@ fn v9_heartbeats_hash_as_before() {
     );
     // Its stored JSON reads back the same.
     let json = serde_json::to_string(&signed).unwrap();
-    assert!(!json.contains("\"client\"") && !json.contains("\"tools\""));
+    assert!(!json.contains("\"client\"") && !json.contains("\"tool_calls\""));
     let back: SignedHeartbeat = serde_json::from_str(&json).unwrap();
     assert_eq!(back.expected_hash(), signed.hash);
 }
@@ -178,8 +195,31 @@ fn v9_heartbeats_hash_as_before() {
 #[test]
 fn the_version_is_part_of_the_hash() {
     let a = writer().sign(minute(0));
-    let mut old = minute(0);
-    old.version = 9;
-    let b = writer().sign(old);
+    let b = writer().sign(as_v9(minute(0)));
     assert_ne!(a.hash, b.hash);
+}
+
+/// Nothing that can be computed is written any more, and the helpers
+/// compute it for old and new heartbeats alike.
+#[test]
+fn v12_leaves_out_what_can_be_computed() {
+    let hb = minute(0);
+    let json = serde_json::to_string(&hb).unwrap();
+    for field in [
+        "submitted",
+        "corrections",
+        "finished",
+        "\"chars\"",
+        "activity",
+        "tested_programs",
+        "running_programs",
+        "agent_edits",
+    ] {
+        assert!(!json.contains(field), "{field} in {json}");
+    }
+    let old = as_v9(minute(0));
+    assert_eq!(hb.prompts.count(), 1);
+    assert_eq!(old.prompts.count(), 1);
+    assert!(hb.activity() && old.activity());
+    assert_eq!(hb.responses.count(), 0);
 }

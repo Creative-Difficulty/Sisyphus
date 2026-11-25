@@ -740,8 +740,9 @@ function renderHeartbeats() {
 const KEY_ORDER = [
   "version", "minute_ms", "os", "agent", "agent_session_id", "session_name", "project",
   "agent_running", "activity", "input_kinds", "slots", "tested_programs", "running_programs", "prompts", "interrupts", "responses", "files",
-  "submitted", "typed_chars", "pasted_chars", "corrections", "model", "classes", "finished", "chars",
-  "input", "keys", "mouse", "focus", "path", "working_dir", "agent_edits", "added", "removed",
+  "seconds", "injected", "client", "models", "tools", "programs", "tool_calls",
+  "submitted", "typed_chars", "pasted_chars", "corrections", "model", "classes", "at", "scripted", "finished", "chars",
+  "input", "keys", "mouse", "focus", "kind", "second", "ms", "outcome", "calls", "path", "in_front", "working_dir", "agent_edits", "added", "removed",
 ];
 
 function ordered(value) {

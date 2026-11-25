@@ -3,8 +3,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Prompts, Responses, SLOTS,
-    Slot, ToolCalls, ToolKind, VERSION,
+    Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Program, Prompts, Responses,
+    SLOTS, Slot, ToolCall, VERSION,
 };
 
 /// One slot's input, for the whole system.
@@ -125,22 +125,19 @@ pub struct SessionMinute {
     /// count as typing to the agent. Input still comes only from the OS.
     pub prompt_slots: [bool; SLOTS],
     pub running: bool,
-    /// The project's programs seen in front (relative paths), for
-    /// `tested_programs`.
-    pub tested_programs: BTreeSet<String>,
-    /// The project's programs seen running (relative paths), for
-    /// `running_programs`.
-    pub running_programs: BTreeSet<String>,
+    /// The project's programs seen running (relative paths), and whether
+    /// each was in front.
+    pub programs: BTreeMap<String, bool>,
     pub prompts: Prompts,
     pub interrupts: u32,
     pub responses: Responses,
-    /// Per path: working directory changes, agent claims.
-    pub files: BTreeMap<String, (Changes, Changes)>,
+    /// Per path: working directory changes.
+    pub files: BTreeMap<String, Changes>,
     /// The models that worked in the session this minute.
     pub models: BTreeSet<String>,
-    /// Per kind: tool calls started, and milliseconds of the calls that
-    /// finished this minute.
-    pub tools: BTreeMap<ToolKind, (u32, u32)>,
+    /// The agent's tool calls that finished (or were given up) this
+    /// minute.
+    pub tool_calls: Vec<ToolCall>,
 }
 
 /// The client's version, written into every heartbeat.
@@ -190,11 +187,12 @@ impl SessionMinute {
     pub fn worth_sending(&self) -> bool {
         self.running
             || (0..SLOTS).any(|i| self.focus(i) == Focus::Agent)
-            || self.prompts.submitted > 0
+            || !self.prompts.at.is_empty()
             || self.interrupts > 0
-            || self.responses.finished > 0
-            || !self.files.is_empty()
-            || !self.running_programs.is_empty()
+            || !self.responses.at.is_empty()
+            || self.files.values().any(|c| !c.is_empty())
+            || !self.tool_calls.is_empty()
+            || !self.programs.is_empty()
     }
 
     pub fn into_heartbeat(self, meta: Meta<'_>) -> Heartbeat {
@@ -214,19 +212,15 @@ impl SessionMinute {
             session_name: meta.session_name.to_string(),
             project: meta.project.to_string(),
             agent_running: self.running,
-            activity: meta.activity,
+            activity: None,
             input_kinds: if meta.activity {
                 meta.input.kinds()
             } else {
                 InputKinds::Unknown
             },
             slots,
-            tested_programs: if meta.activity {
-                self.tested_programs.into_iter().collect()
-            } else {
-                Vec::new()
-            },
-            running_programs: self.running_programs.into_iter().collect(),
+            tested_programs: None,
+            running_programs: None,
             prompts: self.prompts,
             interrupts: self.interrupts,
             responses: self.responses,
@@ -238,21 +232,27 @@ impl SessionMinute {
             },
             client: CLIENT_VERSION.to_string(),
             models: self.models.into_iter().collect(),
-            tools: self
-                .tools
-                .into_iter()
-                .map(|(kind, (calls, ms))| ToolCalls { kind, calls, ms })
-                .collect(),
+            tools: Vec::new(),
             files: self
                 .files
                 .into_iter()
-                .filter(|(_, (dir, agent))| !dir.is_empty() || !agent.is_empty())
-                .map(|(path, (working_dir, agent_edits))| FileChange {
+                .filter(|(_, changes)| !changes.is_empty())
+                .map(|(path, working_dir)| FileChange {
                     path,
                     working_dir,
-                    agent_edits,
+                    agent_edits: None,
                 })
                 .collect(),
+            // Without activity nothing tells which program was in front.
+            programs: self
+                .programs
+                .into_iter()
+                .map(|(path, in_front)| Program {
+                    path,
+                    in_front: in_front && meta.activity,
+                })
+                .collect(),
+            tool_calls: self.tool_calls,
         }
     }
 }
@@ -338,7 +338,7 @@ mod tests {
         let mut minute = SessionMinute::default();
         minute.slots[0].add(Focus::Testing);
         assert!(!minute.worth_sending());
-        minute.running_programs.insert("target/debug/game".into());
+        minute.programs.insert("target/debug/game".into(), false);
         assert!(minute.worth_sending());
         let hb = minute.into_heartbeat(Meta {
             minute_ms: 60_000,
@@ -349,20 +349,27 @@ mod tests {
             activity: true,
             input: MinuteInput::default(),
         });
-        assert_eq!(hb.running_programs, ["target/debug/game"]);
+        assert_eq!(
+            hb.programs,
+            [Program {
+                path: "target/debug/game".into(),
+                in_front: false
+            }]
+        );
+        assert_eq!(hb.running_programs(), ["target/debug/game"]);
         assert!(!hb.agent_running);
     }
 
     #[test]
-    fn tools_models_and_client() {
+    fn models_client_and_computed_counts() {
         let mut minute = SessionMinute {
             running: true,
             ..Default::default()
         };
         minute.models.insert("claude-opus-5-5".into());
         minute.models.insert("claude-haiku-5-5".into());
-        minute.tools.insert(ToolKind::Read, (3, 120));
-        minute.tools.insert(ToolKind::Shell, (1, 0));
+        minute.prompts.at = vec![3, 40];
+        minute.files.insert("a.rs".into(), Changes::default());
         let hb = minute.into_heartbeat(Meta {
             minute_ms: 60_000,
             agent: "claude-code",
@@ -374,21 +381,20 @@ mod tests {
         });
         assert_eq!(hb.client, env!("CARGO_PKG_VERSION"));
         assert_eq!(hb.models, ["claude-haiku-5-5", "claude-opus-5-5"]);
-        assert_eq!(
-            hb.tools,
-            [
-                ToolCalls {
-                    kind: ToolKind::Shell,
-                    calls: 1,
-                    ms: 0
-                },
-                ToolCalls {
-                    kind: ToolKind::Read,
-                    calls: 3,
-                    ms: 120
-                },
-            ]
-        );
+        assert_eq!(hb.prompts.count(), 2);
+        // Nothing computable is written; unchanged files aren't listed.
+        let json = serde_json::to_string(&hb).unwrap();
+        for field in [
+            "submitted",
+            "corrections",
+            "finished",
+            "activity",
+            "_programs",
+            "agent_edits",
+            "\"files\":[{",
+        ] {
+            assert!(!json.contains(field), "{field}");
+        }
     }
 
     #[test]
@@ -408,6 +414,5 @@ mod tests {
             input: MinuteInput::default(),
         });
         assert_eq!(hb.slots, [Slot::UNKNOWN; SLOTS]);
-        assert!(!hb.activity);
     }
 }

@@ -28,7 +28,8 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{
-    Focus, Heartbeat, Injected, PROMPT_CLASSES, ResponseAt, SLOT_SECS, SLOTS, ToolKind,
+    self, Changes, EditClaim, Focus, Heartbeat, Injected, PROMPT_CLASSES, ResponseAt, SLOT_SECS,
+    SLOTS, ToolCall, ToolKind,
 };
 
 use crate::activity::process::{self, WindowAgent};
@@ -293,11 +294,11 @@ struct Session {
     attachment: Option<Attachment>,
     /// Attaching failed; don't retry before this.
     retry_at: Option<Instant>,
-    /// Edit claims of tool calls waiting for their result, by call id.
-    calls: HashMap<String, Vec<Claim>>,
-    /// Tool calls waiting for their result, by call id: when they started
-    /// (the agent's clock) and their kind. Cleared when a turn ends.
-    started_calls: HashMap<String, (u64, ToolKind)>,
+    /// Tool calls waiting for their result, by call id. Recorded as
+    /// unfinished when the turn ends without one.
+    calls: HashMap<String, OpenCall>,
+    /// For tool calls without an id: a counter that makes one up.
+    unnamed_calls: u64,
     /// The model the agent named last.
     model: Option<String>,
     minutes: BTreeMap<u64, SessionMinute>,
@@ -319,6 +320,15 @@ impl Session {
     fn minute(&mut self, minute_ms: u64) -> &mut SessionMinute {
         self.minutes.entry(minute_ms).or_default()
     }
+}
+
+/// A tool call waiting for its result.
+struct OpenCall {
+    /// When it was called, by the agent's clock.
+    started_ms: u64,
+    kind: ToolKind,
+    /// What it claims to change, if it succeeds.
+    claims: Vec<Claim>,
 }
 
 struct Watch {
@@ -440,7 +450,7 @@ impl State {
                     attachment: None,
                     retry_at: None,
                     calls: HashMap::new(),
-                    started_calls: HashMap::new(),
+                    unnamed_calls: 0,
                     model: None,
                     minutes: BTreeMap::new(),
                     carry: None,
@@ -608,7 +618,6 @@ impl State {
                     minute.prompt_slots[slot_of(event.time_ms)] = true;
                 }
                 let prompts = &mut minute.prompts;
-                prompts.submitted += 1;
                 prompts.at.push(if in_minute {
                     second_of(event.time_ms) as u8
                 } else {
@@ -621,9 +630,6 @@ impl State {
                 prompts.pasted_chars = prompts.pasted_chars.saturating_add(count(pasted));
                 if let Some(classes) = classes {
                     prompts.model = prompt_model::MODEL_NAME.to_string();
-                    if classes[prompt_model::CORRECTION] >= 500 {
-                        prompts.corrections += 1;
-                    }
                     prompts.classes.push(classes);
                 }
             }
@@ -633,8 +639,6 @@ impl State {
                 minute.running = true;
                 minute.models.extend(model);
                 let chars = count(text.chars().count());
-                minute.responses.finished += 1;
-                minute.responses.chars = minute.responses.chars.saturating_add(chars);
                 minute.responses.at.push(ResponseAt {
                     second: if minute_of(event.time_ms) == minute_ms {
                         second_of(event.time_ms) as u8
@@ -647,68 +651,75 @@ impl State {
             AgentEventKind::ToolCall { id, name, input } => {
                 let claims = claims_of(&name, &input, &session.project);
                 let kind = tools::kind_of(&name, !claims.is_empty());
-                if !id.is_empty() {
-                    session
-                        .started_calls
-                        .insert(id.clone(), (event.time_ms, kind));
-                }
+                let id = if id.is_empty() {
+                    session.unnamed_calls += 1;
+                    format!("#{}", session.unnamed_calls)
+                } else {
+                    id
+                };
+                session.calls.insert(
+                    id,
+                    OpenCall {
+                        started_ms: event.time_ms,
+                        kind,
+                        claims,
+                    },
+                );
                 let model = session.model.clone();
                 let minute = session.minute(minute_ms);
                 minute.running = true;
                 minute.models.extend(model);
-                minute.tools.entry(kind).or_default().0 += 1;
-                if !claims.is_empty() {
-                    session.calls.insert(id, claims);
-                }
             }
             AgentEventKind::ToolResult { id, outcome } => {
-                if let Some((started, kind)) = session.started_calls.remove(&id) {
-                    let ms =
-                        u32::try_from(event.time_ms.saturating_sub(started)).unwrap_or(u32::MAX);
-                    let entry = session.minute(minute_ms).tools.entry(kind).or_default();
-                    entry.1 = entry.1.saturating_add(ms);
-                }
-                let Some(claims) = session.calls.remove(&id) else {
+                let Some(call) = session.calls.remove(&id) else {
                     return;
                 };
-                if outcome != ToolOutcome::Success {
-                    return;
-                }
                 let project = session.project.clone();
-                for claim in claims {
-                    let changes = match &claim.kind {
-                        ClaimKind::Replace(changes) => *changes,
-                        ClaimKind::Write(lines) => {
-                            let before = self
-                                .watches
-                                .get(&project)
-                                .map(|w| w.watch.lines_before_write(&claim.path, lines))
-                                .unwrap_or_default();
-                            diff(&before, lines)
-                        }
-                    };
-                    let session = self.sessions.get_mut(key).expect("checked above");
-                    session
-                        .minute(minute_ms)
-                        .files
-                        .entry(claim.path.clone())
-                        .or_default()
-                        .1
-                        .add(changes);
-                    self.claimed
-                        .insert((project.clone(), claim.path), key.clone());
+                let mut files: BTreeMap<String, Changes> = BTreeMap::new();
+                if outcome == ToolOutcome::Success {
+                    for claim in call.claims {
+                        let changes = match &claim.kind {
+                            ClaimKind::Replace(changes) => *changes,
+                            ClaimKind::Write(lines) => {
+                                let before = self
+                                    .watches
+                                    .get(&project)
+                                    .map(|w| w.watch.lines_before_write(&claim.path, lines))
+                                    .unwrap_or_default();
+                                diff(&before, lines)
+                            }
+                        };
+                        files.entry(claim.path.clone()).or_default().add(changes);
+                        self.claimed
+                            .insert((project.clone(), claim.path), key.clone());
+                    }
                 }
+                let session = self.sessions.get_mut(key).expect("checked above");
+                let outcome = match outcome {
+                    ToolOutcome::Success => heartbeat::ToolOutcome::Ok,
+                    ToolOutcome::Error => heartbeat::ToolOutcome::Error,
+                    ToolOutcome::Rejected => heartbeat::ToolOutcome::Rejected,
+                };
+                record_call(
+                    session,
+                    minute_ms,
+                    event.time_ms,
+                    call.started_ms,
+                    call.kind,
+                    outcome,
+                    files,
+                );
             }
             AgentEventKind::Interrupt { .. } => {
                 session.running = false;
-                session.started_calls.clear();
+                give_up_calls(session, minute_ms, event.time_ms);
                 let minute = session.minute(minute_ms);
                 minute.running = true;
                 minute.interrupts += 1;
             }
             AgentEventKind::TurnEnd { .. } => {
                 session.running = false;
-                session.started_calls.clear();
+                give_up_calls(session, minute_ms, event.time_ms);
             }
             AgentEventKind::TitleChanged { title } => session.title = title,
             AgentEventKind::Model { name } => {
@@ -856,8 +867,12 @@ impl State {
             } else {
                 base
             });
-            minute.tested_programs.extend(tested);
-            minute.running_programs.extend(programs);
+            for path in programs {
+                minute.programs.entry(path).or_default();
+            }
+            for path in tested {
+                minute.programs.insert(path, true);
+            }
             if running {
                 minute.running = true;
             }
@@ -906,7 +921,6 @@ impl State {
                     .files
                     .entry(path)
                     .or_default()
-                    .0
                     .add(changes);
             }
         }
@@ -1015,7 +1029,7 @@ impl State {
                             agent_running: minute.running,
                             input_kinds: input.kinds(),
                             slots: &slots,
-                            prompts: minute.prompts.submitted,
+                            prompts: minute.prompts.count(),
                             interrupts: minute.interrupts,
                         },
                         carry,
@@ -1121,19 +1135,71 @@ fn backfill(
         if empty.contains(&key) {
             let minute = session.minute(key.0);
             minute.slots[key.1].add(focus);
-            minute.tested_programs.extend(tested);
+            for path in tested {
+                minute.programs.insert(path, true);
+            }
         }
+    }
+}
+
+/// Record a finished (or given-up) tool call in the minute `minute_ms`,
+/// which the event at `at_ms` was put into.
+fn record_call(
+    session: &mut Session,
+    minute_ms: u64,
+    at_ms: u64,
+    started_ms: u64,
+    kind: ToolKind,
+    outcome: heartbeat::ToolOutcome,
+    files: BTreeMap<String, Changes>,
+) {
+    let at = if minute_of(at_ms) == minute_ms {
+        second_of(at_ms) as u8
+    } else {
+        0
+    };
+    session.minute(minute_ms).tool_calls.push(ToolCall {
+        kind,
+        at,
+        ms: u32::try_from(at_ms.saturating_sub(started_ms)).unwrap_or(u32::MAX),
+        outcome,
+        files: files
+            .into_iter()
+            .filter(|(_, c)| !c.is_empty())
+            .map(|(path, c)| EditClaim {
+                path,
+                added: c.added,
+                removed: c.removed,
+            })
+            .collect(),
+    });
+}
+
+/// The turn ended: tool calls still without a result never get one.
+fn give_up_calls(session: &mut Session, minute_ms: u64, at_ms: u64) {
+    let mut open: Vec<OpenCall> = session.calls.drain().map(|(_, call)| call).collect();
+    open.sort_by_key(|c| c.started_ms);
+    for call in open {
+        record_call(
+            session,
+            minute_ms,
+            at_ms,
+            call.started_ms,
+            call.kind,
+            heartbeat::ToolOutcome::Unfinished,
+            BTreeMap::new(),
+        );
     }
 }
 
 /// A heartbeat as input to the attention formula.
 fn heartbeat_minute(hb: &Heartbeat) -> attention::Minute<'_> {
     attention::Minute {
-        activity: hb.activity,
+        activity: hb.activity(),
         agent_running: hb.agent_running,
         input_kinds: hb.input_kinds,
         slots: &hb.slots,
-        prompts: hb.prompts.submitted,
+        prompts: hb.prompts.count(),
         interrupts: hb.interrupts,
     }
 }
@@ -1182,11 +1248,74 @@ mod tests {
             attachment: None,
             retry_at: None,
             calls: HashMap::new(),
-            started_calls: HashMap::new(),
+            unnamed_calls: 0,
             model: None,
             minutes: BTreeMap::new(),
             carry: None,
         }
+    }
+
+    #[test]
+    fn tool_calls_are_recorded_when_they_finish() {
+        let m = 1_795_201_380_000;
+        let mut s = session("/nonexistent/test");
+        record_call(
+            &mut s,
+            m,
+            m + 12_500,
+            m + 11_000,
+            ToolKind::Edit,
+            heartbeat::ToolOutcome::Ok,
+            BTreeMap::from([
+                (
+                    "b.rs".to_string(),
+                    Changes {
+                        added: 3,
+                        removed: 1,
+                    },
+                ),
+                ("a.rs".to_string(), Changes::default()),
+            ]),
+        );
+        // Started in the minute before; given up when the turn ended.
+        s.calls.insert(
+            "c".into(),
+            OpenCall {
+                started_ms: m - 5_000,
+                kind: ToolKind::Shell,
+                claims: Vec::new(),
+            },
+        );
+        give_up_calls(&mut s, m, m + 30_000);
+        assert!(s.calls.is_empty());
+        let calls = &s.minutes[&m].tool_calls;
+        assert_eq!(
+            calls[0],
+            ToolCall {
+                kind: ToolKind::Edit,
+                at: 12,
+                ms: 1_500,
+                outcome: heartbeat::ToolOutcome::Ok,
+                files: vec![EditClaim {
+                    path: "b.rs".into(),
+                    added: 3,
+                    removed: 1
+                }],
+            }
+        );
+        assert_eq!(calls[1].outcome, heartbeat::ToolOutcome::Unfinished);
+        assert_eq!((calls[1].at, calls[1].ms), (30, 35_000));
+        // A result arriving after its minute closed counts at second 0.
+        record_call(
+            &mut s,
+            m + 60_000,
+            m + 10_000,
+            m,
+            ToolKind::Read,
+            heartbeat::ToolOutcome::Error,
+            BTreeMap::new(),
+        );
+        assert_eq!(s.minutes[&(m + 60_000)].tool_calls[0].at, 0);
     }
 
     #[test]
@@ -1243,15 +1372,15 @@ mod tests {
         let minute = &s.minutes[&m];
         assert_eq!(minute.focus(0), Focus::Testing);
         assert_eq!(
-            minute.tested_programs.iter().collect::<Vec<_>>(),
-            ["target/debug/game"]
+            minute.programs.iter().collect::<Vec<_>>(),
+            [(&"target/debug/game".to_string(), &true)]
         );
 
         // Not a git repository: just another app.
         let mut plain = session("/nonexistent/test");
         backfill(&mut plain, &history, m);
         assert_eq!(plain.minutes[&m].focus(0), Focus::Other);
-        assert!(plain.minutes[&m].tested_programs.is_empty());
+        assert!(plain.minutes[&m].programs.is_empty());
     }
 
     #[test]

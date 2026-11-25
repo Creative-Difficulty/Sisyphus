@@ -15,7 +15,7 @@ fn minute(i: u64) -> Heartbeat {
         session_name: "Demo".into(),
         project: "demo".into(),
         agent_running: true,
-        activity: true,
+        activity: None,
         input_kinds: InputKinds::Exact,
         slots: [Slot {
             input: true,
@@ -23,11 +23,11 @@ fn minute(i: u64) -> Heartbeat {
             mouse: 1,
             focus: Focus::Agent,
         }; 6],
-        tested_programs: vec![],
-        running_programs: vec![],
+        tested_programs: None,
+        running_programs: None,
         prompts: Prompts {
-            submitted: 1,
             typed_chars: 100 + i as u32,
+            at: vec![5],
             ..Prompts::default()
         },
         interrupts: 0,
@@ -37,18 +37,37 @@ fn minute(i: u64) -> Heartbeat {
         client: "0.3.0".into(),
         models: vec![],
         tools: vec![],
+        programs: vec![],
+        tool_calls: vec![],
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {
                 added: 20,
                 removed: 3,
             },
-            agent_edits: Changes {
-                added: 20,
-                removed: 3,
-            },
+            agent_edits: None,
         }],
     }
+}
+
+/// `hb` in the shape a v9 client wrote it: every field it had is present.
+#[allow(dead_code)]
+fn as_v9(mut hb: Heartbeat) -> Heartbeat {
+    hb.version = 9;
+    hb.activity = Some(true);
+    hb.tested_programs = Some(vec![]);
+    hb.running_programs = Some(vec![]);
+    hb.prompts.submitted = Some(hb.prompts.at.len() as u32);
+    hb.prompts.corrections = Some(0);
+    hb.prompts.at = vec![];
+    hb.responses.finished = Some(0);
+    hb.responses.chars = Some(0);
+    hb.client = String::new();
+    hb.seconds = Some(Default::default());
+    for f in &mut hb.files {
+        f.agent_edits = Some(f.working_dir);
+    }
+    hb
 }
 
 fn signed(n: u64) -> (ChainWriter, Vec<SignedHeartbeat>) {
@@ -153,10 +172,7 @@ fn other_versions_are_rejected() {
 #[test]
 fn v9_is_still_accepted() {
     let mut w = ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]));
-    let mut old = minute(0);
-    old.version = 9;
-    old.client = String::new();
-    old.seconds = Some(Default::default());
+    let old = as_v9(minute(0));
     let hbs = vec![w.sign(old), w.sign(minute(1))];
     assert!(verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS).is_ok());
 }

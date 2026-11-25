@@ -40,6 +40,8 @@ const MINUTE_MS: i64 = 60_000;
 /// older bodies still parse.
 #[derive(Debug, Deserialize)]
 pub struct Body {
+    #[serde(default)]
+    pub version: u32,
     pub minute_ms: i64,
     pub agent: String,
     pub agent_session_id: String,
@@ -49,8 +51,9 @@ pub struct Body {
     pub project: String,
     #[serde(default)]
     pub agent_running: bool,
+    /// v9 to v11 (and older) only; see [`Body::activity`].
     #[serde(default)]
-    pub activity: bool,
+    pub activity: Option<bool>,
     #[serde(default)]
     pub input_kinds: InputKinds,
     #[serde(default)]
@@ -120,13 +123,32 @@ pub enum Focus {
     Unknown,
 }
 
+impl Body {
+    /// Whether activity was read: since v12 always (the field is gone);
+    /// before, as the heartbeat says, and not at all without the field.
+    pub fn activity(&self) -> bool {
+        self.activity.unwrap_or(self.version >= 12)
+    }
+}
+
 #[derive(Debug, Default, Deserialize)]
 pub struct Prompts {
+    /// v11 and older only; see [`Prompts::count`].
     #[serde(default)]
-    pub submitted: u32,
+    pub submitted: Option<u32>,
+    /// The second each prompt was sent (v9): one entry per prompt.
+    #[serde(default)]
+    pub at: Vec<i64>,
     /// The prompt model's scores (0 to 1000) per scored prompt.
     #[serde(default)]
     pub classes: Vec<Vec<i64>>,
+}
+
+impl Prompts {
+    /// Prompts submitted: listed in `at` since v12.
+    pub fn count(&self) -> u32 {
+        self.submitted.unwrap_or(self.at.len() as u32)
+    }
 }
 
 /// The prompt model's task categories, in the order of its scores after
@@ -213,7 +235,7 @@ pub fn compute(body: &Body, carry: Option<Carry>) -> Outcome {
         .collect();
     attention::minute(
         &attention::Minute {
-            activity: body.activity,
+            activity: body.activity(),
             agent_running: body.agent_running,
             input_kinds: match body.input_kinds {
                 InputKinds::Exact => heartbeat::InputKinds::Exact,
@@ -221,7 +243,7 @@ pub fn compute(body: &Body, carry: Option<Carry>) -> Outcome {
                 InputKinds::Unknown => heartbeat::InputKinds::Unknown,
             },
             slots: &slots,
-            prompts: body.prompts.submitted,
+            prompts: body.prompts.count(),
             interrupts: body.interrupts,
         },
         carry,
@@ -342,7 +364,7 @@ pub async fn process(db: &mut PgConnection, hb: Stored<'_>) -> sqlx::Result<Opti
     .bind(FORMULA)
     .bind(&body.os)
     .bind(&task)
-    .bind(body.prompts.submitted.min(i32::MAX as u32) as i32)
+    .bind(body.prompts.count().min(i32::MAX as u32) as i32)
     .execute(&mut *db)
     .await?
     .rows_affected();
@@ -440,6 +462,27 @@ pub async fn backfill(db: &PgPool) -> sqlx::Result<usize> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A v12 heartbeat (no `activity`, prompts only in `at`) earns what the
+    /// same minute did as v11; one without the field from before activity
+    /// existed doesn't count as read.
+    #[test]
+    fn v12_counts_like_v11() {
+        let slots = r#"[{"input":false,"keys":0,"mouse":0,"focus":"unknown"},{"input":false,"keys":0,"mouse":0,"focus":"unknown"},{"input":false,"keys":0,"mouse":0,"focus":"unknown"},{"input":false,"keys":0,"mouse":0,"focus":"unknown"},{"input":false,"keys":0,"mouse":0,"focus":"unknown"},{"input":false,"keys":0,"mouse":0,"focus":"unknown"}]"#;
+        let body = |version: u32, extra: &str| -> Body {
+            serde_json::from_str(&format!(
+                r#"{{"version":{version},"minute_ms":0,"agent":"a","agent_session_id":"s","agent_running":true,"slots":{slots},{extra}}}"#
+            ))
+            .unwrap()
+        };
+        let v11 = body(11, r#""activity":true,"prompts":{"submitted":1,"at":[4]}"#);
+        let v12 = body(12, r#""prompts":{"at":[4]}"#);
+        assert!(v12.activity());
+        assert_eq!(v12.prompts.count(), 1);
+        assert_eq!(compute(&v11, None), compute(&v12, None));
+        assert_eq!(compute(&v12, None).multiplier, 1.0);
+        assert!(!body(4, r#""prompts":{}"#).activity());
+    }
 
     #[test]
     fn stored_bodies_use_the_shared_formula() {

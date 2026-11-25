@@ -273,11 +273,11 @@ mod tests {
             session_name: "t".into(),
             project: "p".into(),
             agent_running: true,
-            activity: false,
+            activity: None,
             input_kinds: sisyphus_common::heartbeat::InputKinds::Unknown,
             slots: [Slot::UNKNOWN; SLOTS],
-            tested_programs: Vec::new(),
-            running_programs: Vec::new(),
+            tested_programs: None,
+            running_programs: None,
             prompts: Prompts::default(),
             interrupts: 0,
             responses: Responses::default(),
@@ -286,6 +286,8 @@ mod tests {
             client: "0.3.0".into(),
             models: vec![],
             tools: vec![],
+            programs: vec![],
+            tool_calls: vec![],
             files: Vec::new(),
         }
     }
