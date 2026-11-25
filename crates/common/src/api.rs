@@ -14,12 +14,6 @@ use serde::{Deserialize, Serialize};
 /// claims is treated as recorded offline.
 pub const OFFLINE_THRESHOLD_MS: u64 = 5 * 60 * 1000;
 
-/// A heartbeat that reaches the server more than this long after its
-/// minute earns no credit (decided 2026-11-23: agents need the network, so
-/// real work isn't recorded offline for long). It is still stored, so the
-/// device's chain stays whole and reviewers see it.
-pub const STALE_AFTER_MS: u64 = 60 * 60 * 1000;
-
 /// Consecutive new heartbeats from one device.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UploadBatch {
@@ -82,15 +76,11 @@ impl StoredHeartbeat {
             .saturating_sub(self.signed.heartbeat.minute_ms)
     }
 
-    /// True if it was likely recorded offline. Its claimed time then rests on
-    /// the device clock alone, so reviewers see it flagged.
+    /// True if it arrived late: likely recorded offline. It still earns
+    /// credit (decided 2026-11-25), but its claimed time rests on the device
+    /// clock alone, so it is stored with this flag.
     pub fn is_offline(&self) -> bool {
         self.delay_ms() > OFFLINE_THRESHOLD_MS
-    }
-
-    /// True if it arrived too late to earn credit ([`STALE_AFTER_MS`]).
-    pub fn is_stale(&self) -> bool {
-        self.delay_ms() > STALE_AFTER_MS
     }
 }
 

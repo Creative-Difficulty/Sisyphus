@@ -192,15 +192,14 @@ fn minutes_must_start_on_a_whole_minute() {
 }
 
 #[test]
-fn heartbeats_an_hour_late_are_stale() {
+fn late_heartbeats_are_offline() {
     let (_, hbs) = signed(1);
     let t = hbs[0].heartbeat.minute_ms;
     let at = |delay| StoredHeartbeat {
         signed: hbs[0].clone(),
         received_at_ms: t + delay,
     };
-    assert!(!at(10 * 60_000).is_stale());
-    assert!(at(10 * 60_000).is_offline());
-    assert!(!at(60 * 60_000).is_stale());
-    assert!(at(60 * 60_000 + 1).is_stale());
+    assert!(!at(5 * 60_000).is_offline());
+    assert!(at(5 * 60_000 + 1).is_offline());
+    assert!(at(24 * 60 * 60_000).is_offline());
 }

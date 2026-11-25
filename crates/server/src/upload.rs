@@ -9,9 +9,10 @@
 //! when they arrive more than 5 minutes after their minute), credited (see
 //! `credit.rs`) and the new tip is returned.
 //!
-//! Heartbeats must start on a whole minute (`Misaligned` otherwise). Ones
-//! that arrive more than an hour after their minute, or are dated before
-//! the device was linked, are stored as `stale` and earn nothing (decided
+//! Heartbeats must start on a whole minute (`Misaligned` otherwise). Late
+//! ones earn credit like any other, with their `offline` flag (decided
+//! 2026-11-25). Ones dated before the device was linked (recorded while
+//! logged out) are stored as `stale` and earn nothing (decided
 //! 2026-11-23). Crediting takes a per-user lock, so uploads from two of a
 //! user's devices can't both keep a full share of the same minute.
 
@@ -117,7 +118,7 @@ async fn store(db: &PgPool, batch: &UploadBatch) -> Result<UploadAck, Rejected> 
             received_at_ms: now as u64,
         };
         let offline = stored.is_offline();
-        let stale = stored.is_stale() || (signed.heartbeat.minute_ms as i64) < linked_ms;
+        let stale = (signed.heartbeat.minute_ms as i64) < linked_ms;
         sqlx::query(
             "INSERT INTO heartbeats
                  (device_id, seq, hash, prev, sig, claimed_ms, received_ms, body, offline,

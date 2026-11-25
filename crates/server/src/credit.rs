@@ -30,8 +30,10 @@ use sqlx::{PgConnection, PgPool, Row};
 /// five key presses count. 5: same credit; each minute also stores its
 /// operating system, task and languages for the dashboard's stats. 6:
 /// same credit; also prompts sent and changed files per minute. 7: stale
-/// heartbeats earn nothing.
-pub const FORMULA: i32 = 7;
+/// heartbeats earn nothing. 8: heartbeats that arrived more than an hour
+/// late earn credit again; only ones dated before their device was linked
+/// are stale.
+pub const FORMULA: i32 = 8;
 
 const MINUTE_MS: i64 = 60_000;
 /// The parts of a stored heartbeat body the calculation reads. Lenient, so
@@ -248,8 +250,8 @@ pub struct Stored<'a> {
     pub device_id: &'a str,
     pub seq: i64,
     pub offline: bool,
-    /// Received more than an hour late or dated before the device was
-    /// linked: earns nothing.
+    /// Dated before the device was linked (recorded while logged out):
+    /// earns nothing. Late heartbeats are only `offline`.
     pub stale: bool,
     pub body: &'a str,
 }
