@@ -19,8 +19,11 @@
 //! session can log its prompts under a different session id, so if nothing
 //! matches in the same session, an entry from any session at the same time
 //! is used, as long as it is the only one whose length fits the prompt.
-//! Queued prompts (sent while the agent is busy) are usually not in the
-//! history at all. Only lengths are kept, never the pasted text.
+//! Prompts sent while the agent was busy are often not in the history at
+//! all. When they are, the transcript has them only once they were handed
+//! to the agent, which can be minutes later; those are matched by their
+//! text within [`QUEUED_WINDOW_MS`] in the same session. Only lengths and a
+//! hash of the typed text are kept, never the text itself.
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -32,6 +35,9 @@ use crate::agents::{AgentEvent, AgentEventKind, FileStamp};
 
 /// How far apart a history entry and a transcript prompt may be.
 const MATCH_WINDOW_MS: u64 = 2_000;
+/// How far apart they may be when matched by text: a prompt sent while the
+/// agent was busy reaches the transcript only when it is handed over.
+const QUEUED_WINDOW_MS: u64 = 10 * 60 * 1000;
 
 const PLACEHOLDERS: [&str; 2] = ["[Pasted text #", "[Image #"];
 
@@ -40,6 +46,8 @@ struct Entry {
     session_id: String,
     time_ms: u64,
     typed_chars: usize,
+    /// Hash of the typed text (`display` without placeholders), trimmed.
+    typed_hash: u64,
     has_paste: bool,
 }
 
@@ -80,13 +88,12 @@ impl PromptHistory {
     /// Re-reads the file once if the prompt isn't found and the file has
     /// changed, since a live prompt may be newer than the loaded history.
     pub fn pasted_chars(&mut self, session_id: &str, time_ms: u64, prompt: &str) -> Option<usize> {
-        let prompt_chars = prompt.chars().count();
-        if self.find(session_id, time_ms, prompt_chars).is_none()
+        if self.find(session_id, time_ms, prompt).is_none()
             && self.path.as_deref().and_then(FileStamp::of) != self.stamp
         {
             self.reload();
         }
-        let entry = self.find(session_id, time_ms, prompt_chars)?;
+        let entry = self.find(session_id, time_ms, prompt)?;
         Some(pasted_chars(entry, prompt))
     }
 
@@ -102,7 +109,48 @@ impl PromptHistory {
         }
     }
 
-    fn find(&self, session_id: &str, time_ms: u64, prompt_chars: usize) -> Option<&Entry> {
+    fn find(&self, session_id: &str, time_ms: u64, prompt: &str) -> Option<&Entry> {
+        let prompt_chars = prompt.chars().count();
+        self.find_by_time(session_id, time_ms, prompt_chars)
+            .or_else(|| self.find_queued(session_id, time_ms, prompt, prompt_chars))
+    }
+
+    /// A prompt sent while the agent was busy: the same session's entry with
+    /// the same text, or the only one with a paste that fits, within
+    /// [`QUEUED_WINDOW_MS`].
+    fn find_queued(
+        &self,
+        session_id: &str,
+        time_ms: u64,
+        prompt: &str,
+        prompt_chars: usize,
+    ) -> Option<&Entry> {
+        let start = self
+            .entries
+            .partition_point(|e| e.time_ms < time_ms.saturating_sub(QUEUED_WINDOW_MS));
+        let nearby: Vec<&Entry> = self.entries[start..]
+            .iter()
+            .take_while(|e| e.time_ms <= time_ms + QUEUED_WINDOW_MS)
+            .filter(|e| e.session_id == session_id)
+            .collect();
+        let hash = text_hash(prompt);
+        if let Some(entry) = nearby
+            .iter()
+            .filter(|e| !e.has_paste && e.typed_hash == hash)
+            .min_by_key(|e| e.time_ms.abs_diff(time_ms))
+        {
+            return Some(entry);
+        }
+        let mut pasted = nearby
+            .into_iter()
+            .filter(|e| e.has_paste && e.typed_chars <= prompt_chars);
+        match (pasted.next(), pasted.next()) {
+            (Some(entry), None) => Some(entry),
+            _ => None,
+        }
+    }
+
+    fn find_by_time(&self, session_id: &str, time_ms: u64, prompt_chars: usize) -> Option<&Entry> {
         let start = self
             .entries
             .partition_point(|e| e.time_ms < time_ms.saturating_sub(MATCH_WINDOW_MS));
@@ -143,13 +191,21 @@ fn parse_entry(line: &str) -> Option<Entry> {
         .get("pastedContents")
         .and_then(Value::as_object)
         .is_some_and(|p| !p.is_empty());
-    let typed_chars = strip_placeholders(display).chars().count();
+    let typed = strip_placeholders(display);
     Some(Entry {
         session_id,
         time_ms,
-        typed_chars,
+        typed_chars: typed.chars().count(),
+        typed_hash: text_hash(&typed),
         has_paste,
     })
+}
+
+fn text_hash(text: &str) -> u64 {
+    use std::hash::{Hash, Hasher};
+    let mut h = std::hash::DefaultHasher::new();
+    text.trim().hash(&mut h);
+    h.finish()
 }
 
 /// `display` without paste and image placeholders.
@@ -263,11 +319,28 @@ mod tests {
     }
 
     #[test]
+    fn prompts_sent_mid_turn_match_by_text() {
+        let mut h = history(&[
+            r#"{"display":"push it","pastedContents":{},"timestamp":1000,"sessionId":"s"}"#,
+            r#"{"display":"also this","pastedContents":{},"timestamp":2000,"sessionId":"s"}"#,
+        ]);
+        // Handed to the agent a minute after it was sent.
+        assert_eq!(h.pasted_chars("s", 61_000, "push it"), Some(0));
+        // Another session's entry, or one with other text, doesn't match.
+        assert_eq!(h.pasted_chars("t", 61_000, "push it"), None);
+        assert_eq!(h.pasted_chars("s", 61_000, "something else"), None);
+        // Too late.
+        assert_eq!(h.pasted_chars("s", 11 * 60_000, "push it"), None);
+    }
+
+    #[test]
     fn no_paste_and_no_match() {
         let mut h =
             history(&[r#"{"display":"hi","pastedContents":{},"timestamp":1000,"sessionId":"s"}"#]);
         assert_eq!(h.pasted_chars("s", 1000, "hi"), Some(0));
-        assert_eq!(h.pasted_chars("s", 9000, "hi"), None);
+        // Further off it must be the same text.
+        assert_eq!(h.pasted_chars("s", 9000, "hi"), Some(0));
+        assert_eq!(h.pasted_chars("s", 9000, "ho"), None);
         // Another session at the same time, but the length doesn't fit.
         assert_eq!(h.pasted_chars("other", 1000, "hello"), None);
     }

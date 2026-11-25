@@ -13,9 +13,14 @@
 //! - `system` with subtype `turn_duration` (turn finished) or
 //!   `compact_boundary` (conversation compacted).
 //! - `custom-title` / `ai-title`: the session title, repeated many times.
+//! - `attachment` of type `queued_command`: a message the user sent while
+//!   the agent was working, handed to it mid-turn. Such prompts never get a
+//!   `user` line. Only `commandMode: "prompt"` from a human counts; the same
+//!   attachment also carries background task notifications and messages
+//!   from sub-agents.
 //!
-//! Everything else (`attachment`, `api-request*`, `queue-operation`, ...) is
-//! ignored. The format is undocumented and changes between versions, so
+//! Everything else (other attachments, `api-request*`, `queue-operation`,
+//! ...) is ignored. The format is undocumented and changes between versions, so
 //! unknown lines and fields are skipped rather than treated as errors.
 
 use serde_json::Value;
@@ -68,6 +73,7 @@ impl TranscriptParser {
 
         let kinds = match entry.get("type").and_then(Value::as_str) {
             Some("user") => user_events(&entry),
+            Some("attachment") => queued_prompt(&entry),
             Some("assistant") => assistant_events(&entry),
             Some("system") => system_events(&entry),
             Some("custom-title") => self.title_events(&entry, "customTitle", true),
@@ -100,8 +106,46 @@ impl TranscriptParser {
     }
 }
 
+/// A message the user sent while the agent was working (see the module
+/// docs), as a prompt.
+fn queued_prompt(entry: &Value) -> Vec<AgentEventKind> {
+    let Some(attachment) = entry.get("attachment") else {
+        return Vec::new();
+    };
+    let field = |name| attachment.get(name).and_then(Value::as_str);
+    if field("type") != Some("queued_command") || field("commandMode") != Some("prompt") {
+        return Vec::new();
+    }
+    let human = match attachment.pointer("/origin/kind").and_then(Value::as_str) {
+        Some(kind) => kind == "human",
+        None => attachment.get("humanTurn").and_then(Value::as_bool) == Some(true),
+    };
+    if !human {
+        return Vec::new();
+    }
+    // A string, or content blocks when images were attached.
+    let text = match attachment.get("prompt") {
+        Some(Value::String(text)) => text.clone(),
+        Some(Value::Array(blocks)) => blocks
+            .iter()
+            .filter_map(|b| b.get("text").and_then(Value::as_str))
+            .collect::<Vec<_>>()
+            .join("\n"),
+        _ => return Vec::new(),
+    };
+    let mut events: Vec<_> = text_events(&text, true).into_iter().collect();
+    mark_scripted(entry, &mut events);
+    events
+}
+
 fn user_events(entry: &Value) -> Vec<AgentEventKind> {
     let mut events = user_events_of(entry);
+    mark_scripted(entry, &mut events);
+    events
+}
+
+/// Mark prompts of a session a program started as scripted.
+fn mark_scripted(entry: &Value, events: &mut [AgentEventKind]) {
     // `entrypoint` names how the session was started: `cli`, an editor or
     // desktop app, or `sdk-cli` / `sdk-ts` / `sdk-py` for programs (the
     // Agent SDK, `claude -p`).
@@ -110,13 +154,12 @@ fn user_events(entry: &Value) -> Vec<AgentEventKind> {
         .and_then(Value::as_str)
         .is_some_and(|e| e.starts_with("sdk"))
     {
-        for event in &mut events {
+        for event in events {
             if let AgentEventKind::Prompt { scripted, .. } = event {
                 *scripted = true;
             }
         }
     }
-    events
 }
 
 fn user_events_of(entry: &Value) -> Vec<AgentEventKind> {
@@ -432,6 +475,32 @@ mod tests {
                 text: "No response requested.".into()
             }]
         );
+    }
+
+    #[test]
+    fn messages_sent_mid_turn_are_prompts() {
+        let mut p = TranscriptParser::new();
+        let queued = r#"{"type":"attachment","isSidechain":false,"timestamp":"2026-11-25T14:42:27.403Z","attachment":{"type":"queued_command","prompt":"Also push the next release","commandMode":"prompt","origin":{"kind":"human"},"humanTurn":true}}"#;
+        let events = p.parse_line(queued);
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0].time_ms, 1_795_617_747_403);
+        assert_eq!(
+            events[0].kind,
+            AgentEventKind::Prompt {
+                text: "Also push the next release".into(),
+                pasted_chars: None,
+                scripted: false,
+            }
+        );
+        // Background task notifications and sub-agents' messages come the
+        // same way but aren't the user's.
+        let notification = r#"{"type":"attachment","attachment":{"type":"queued_command","prompt":"<task-notification>done</task-notification>","commandMode":"task-notification","origin":{"kind":"task-notification"}}}"#;
+        let peer = r#"{"type":"attachment","attachment":{"type":"queued_command","prompt":"<agent-message>hi</agent-message>","commandMode":"prompt","origin":{"kind":"peer"}}}"#;
+        let other =
+            r#"{"type":"attachment","attachment":{"type":"edited_text_file","filename":"a.rs"}}"#;
+        for line in [notification, peer, other] {
+            assert_eq!(kinds(&mut p, line), vec![], "{line}");
+        }
     }
 
     #[test]
