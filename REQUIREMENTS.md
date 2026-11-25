@@ -208,24 +208,13 @@ product must:
     concurrent sessions' minutes, AI time kept apart, offline flags; rebuilt
     from the stored heartbeats when the formula changes
   - against minting time (2026-11-23): heartbeats must start on a whole
-    minute; heartbeats received more than an hour late or dated before
-    their device was linked are stored but earn nothing; crediting locks
+    minute; heartbeats dated before their device was linked are stored but
+    earn nothing (late ones earn credit with a flag, 2026-11-25); crediting locks
     per user, so two devices can't both keep a full share of one minute
-  - the review page for the fraud squad, `/review` ("Pulse", 2026-11-23):
-    any user's heartbeats over up to 7 days, drawn as an EKG-like strip of
-    keys and mouse (per second for v9/v10 heartbeats, per slot since v11) with prompts, responses, credit and flags, a
-    rhythm fingerprint (keys in one second against the next), and a
-    reading clock (response length against reply delay); with the flags
-    below. Only for reviewers (Slack IDs in `REVIEWERS`)
-  - flags for reviewers (2026-11-23), computed from the stored heartbeats
-    and never applied to credit: prompt text without the key presses to
-    type it, prompts without any input, scripted prompts, injected input,
-    typing at a machine-steady rhythm, superhuman typing, input at
-    clockwork intervals (jigglers), replies faster than reading, prompts on
-    a timer, edit claims beyond the folder's changes, two computers at
-    once, six hours without a break, late heartbeats
-  - Not built: the struggle value, applying the edit-claim check or any
-    flag to credit, the mouse-jiggle rule.
+  - the review page Pulse and its flags (2026-11-23) were removed
+    completely on 2026-11-25
+  - Not built: the struggle value, applying the edit-claim check to
+    credit, the mouse-jiggle rule.
 
 ## Decided, not built
 
@@ -322,9 +311,7 @@ product must:
 
 - Version 11 (decided 2026-11-25): no more `seconds`. Keys and mouse are
   counted only per 10-second slot, as before v9; 120 numbers a minute
-  were too much. The flags that need per-second counts (machine-steady
-  typing, superhuman typing, clockwork input) only work on v9 and v10
-  heartbeats.
+  were too much.
 
 - Version 10 (decided 2026-11-25, from comparing with sablier):
   - `client`: the Sisyphus app's version that recorded the heartbeat, so
@@ -346,7 +333,7 @@ product must:
   - `injected`: the part of the minute's input that came from software,
     where the system tells (macOS events posted by apps, Linux virtual
     devices through the input helper); 0 elsewhere. Key remappers count
-    too, so it's only shown to reviewers.
+    too, so it's never shown publicly.
   - `prompts.at` / `responses.at`: the second each prompt was sent and
     each response finished (with its length), so reply delays can be
     compared with reading time.
@@ -511,18 +498,17 @@ product must:
 - No time after a turn ends for now (decided 2026-11-21): only minutes in
   which the agent ran earn credit. Attention is still followed through the
   others.
-- Offline heartbeats count (decided 2026-11-21); the server flags them on
-  the stored heartbeat for reviewers. But only up to an hour late
-  (decided 2026-11-23: real AI agents never track offline work): a
-  heartbeat received more than an hour after its minute, or dated before
-  its device was linked to the account, is stored and shown to reviewers
-  but earns nothing.
+- Offline heartbeats count (decided 2026-11-21); the server flags them
+  (`offline`, more than 5 minutes late) on the stored heartbeat. However
+  late they arrive, they earn credit (decided 2026-11-25; the one-hour
+  limit of 2026-11-23 is gone). A heartbeat dated before its device was
+  linked to the account (recorded while logged out) is stored but earns
+  nothing.
 - Heartbeats must start on a whole minute (decided 2026-11-23), and
   crediting is serialised per user, so one real minute can never be
   credited more than once in total.
-- Suspicious patterns are flagged for reviewers, not applied to credit
-  (decided 2026-11-23). Reviewers are the Slack IDs in the server's
-  `REVIEWERS` setting (decided 2026-11-23).
+- The review page Pulse, its flags and the `REVIEWERS` setting (decided
+  2026-11-23) were removed completely (decided 2026-11-25).
 - No mouse-jiggle rule for now (decided 2026-11-21); it comes later and has
   to exist before credit can be trusted.
 - The user sets their time zone in the website's settings; "today" and
@@ -687,8 +673,8 @@ product must:
     checks, every day and session, and the commits checked against GitHub
     (missing or differently timed commits marked). Reviewers log in with
     Hack Club to approve, cut or reject the hours with a note the user
-    sees, and every event behind the page can be downloaded. Our Pulse view
-    is live per user, not a frozen record per submission.
+    sees, and every event behind the page can be downloaded. We have no
+    review page (Pulse was removed on 2026-11-25).
   - Hosting cost (bounty requirement 11): a load test that runs the real
     server with simulated clients, and a written estimate of the cost at
     the bounty's numbers.
