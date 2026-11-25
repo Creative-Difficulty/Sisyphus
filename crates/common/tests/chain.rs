@@ -162,6 +162,7 @@ fn v9_heartbeats_hash_as_before() {
     hb.prompts.typed_chars = 100;
     hb.files = vec![];
     hb.client = String::new();
+    hb.seconds = Some(Default::default());
     let signed = writer().sign(hb);
     assert_eq!(
         serde_json::to_string(&signed.hash).unwrap(),

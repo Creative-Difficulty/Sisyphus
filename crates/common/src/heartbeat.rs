@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v10).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v11).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -16,10 +16,10 @@
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 10;
+pub const VERSION: u32 = 11;
 /// The oldest version the server still accepts, so clients that haven't
 /// updated yet keep uploading. v9 heartbeats lack `client`, `models` and
-/// `tools`.
+/// `tools`; v11 dropped `seconds`.
 pub const MIN_VERSION: u32 = 9;
 
 /// Whether the server accepts heartbeats of `version`.
@@ -79,14 +79,16 @@ pub struct Heartbeat {
     pub responses: Responses,
     /// Files edited this minute, sorted by path.
     pub files: Vec<FileChange>,
-    /// The minute's input second by second (v9), for spotting machine-made
-    /// rhythm: autotypers and mouse jigglers are regular, people aren't.
-    pub seconds: Seconds,
+    /// The minute's input second by second, only in v9 and v10 heartbeats
+    /// (dropped in v11, decided 2026-11-25: the slots' counts are enough).
+    /// Always present in those, so they hash as before.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub seconds: Option<Seconds>,
     /// Input this minute that came from software rather than a physical
     /// device (v9), as far as the system tells: events posted by apps on
     /// macOS, virtual (uinput) devices such as `ydotool` or key remappers
     /// on Linux with the input helper. 0 where it can't be told (Windows,
-    /// X11). Also counted in `slots` and `seconds`; reviewers judge it.
+    /// X11). Also counted in `slots`; reviewers judge it.
     pub injected: Injected,
 
     // Added in v10. Absent in v9 heartbeats, and left out of the encoding
@@ -136,7 +138,7 @@ pub struct ToolCalls {
 }
 
 /// Key presses and mouse events in each second of the minute, for the
-/// whole system (never which keys).
+/// whole system (never which keys). v9 and v10 only.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Seconds {
     /// [`SECONDS`] entries, or none without activity or when keys and mouse

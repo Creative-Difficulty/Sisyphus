@@ -160,14 +160,16 @@ async function loadTimeline(user, from, to) {
 function summarize(heartbeats, flags) {
   const sum = (f) => heartbeats.reduce((n, h) => n + f(h), 0);
   const total = (a) => (a ? a.reduce((n, x) => n + x, 0) : 0);
+  // Per-second counts exist only in v9 and v10 heartbeats; else the slots'.
+  const slotTotal = (h, f) => (h.slots || []).reduce((n, s) => n + s[f], 0);
   const severities = { high: 0, medium: 0, low: 0 };
   for (const f of flags) severities[f.severity] = (severities[f.severity] || 0) + 1;
   return {
     heartbeats: heartbeats.length,
     credited_ms: sum((h) => h.credit_ms || 0),
     agent_ms: sum((h) => h.ai_ms || 0),
-    keys: sum((h) => total(h.keys)),
-    mouse: sum((h) => total(h.mouse)),
+    keys: sum((h) => (h.keys ? total(h.keys) : slotTotal(h, "keys"))),
+    mouse: sum((h) => (h.mouse ? total(h.mouse) : slotTotal(h, "mouse"))),
     injected: sum((h) => (h.injected ? h.injected.keys + h.injected.mouse : 0)),
     prompts: sum((h) => h.prompts.submitted),
     scripted_prompts: sum((h) => h.prompts.scripted || 0),

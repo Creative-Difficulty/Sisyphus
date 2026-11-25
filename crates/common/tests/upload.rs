@@ -156,6 +156,7 @@ fn v9_is_still_accepted() {
     let mut old = minute(0);
     old.version = 9;
     old.client = String::new();
+    old.seconds = Some(Default::default());
     let hbs = vec![w.sign(old), w.sign(minute(1))];
     assert!(verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS).is_ok());
 }

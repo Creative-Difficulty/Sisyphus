@@ -3,8 +3,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
-    Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Prompts, Responses, SECONDS,
-    SLOTS, Seconds, Slot, ToolCalls, ToolKind, VERSION,
+    Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Prompts, Responses, SLOTS,
+    Slot, ToolCalls, ToolKind, VERSION,
 };
 
 /// One slot's input, for the whole system.
@@ -17,29 +17,14 @@ pub struct SlotInput {
 }
 
 /// A minute's input, for the whole system.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub struct MinuteInput {
     pub slots: [SlotInput; SLOTS],
-    /// Key presses and mouse events in each second.
-    pub seconds_keys: [u16; SECONDS],
-    pub seconds_mouse: [u16; SECONDS],
     /// Input that came from software (see `Heartbeat::injected`).
     pub injected: Injected,
     /// How keys and mouse were told apart: the weakest way seen in the
     /// minute (`None` before the first reading).
     kinds: Option<InputKinds>,
-}
-
-impl Default for MinuteInput {
-    fn default() -> Self {
-        Self {
-            slots: Default::default(),
-            seconds_keys: [0; SECONDS],
-            seconds_mouse: [0; SECONDS],
-            injected: Injected::default(),
-            kinds: None,
-        }
-    }
 }
 
 impl MinuteInput {
@@ -48,24 +33,8 @@ impl MinuteInput {
         let slot = &mut self.slots[(second / 10).min(SLOTS - 1)];
         slot.keys = slot.keys.saturating_add(keys);
         slot.mouse = slot.mouse.saturating_add(mouse);
-        let second = second.min(SECONDS - 1);
-        let clamp = |n: u32| u16::try_from(n).unwrap_or(u16::MAX);
-        self.seconds_keys[second] = self.seconds_keys[second].saturating_add(clamp(keys));
-        self.seconds_mouse[second] = self.seconds_mouse[second].saturating_add(clamp(mouse));
         self.injected.keys = self.injected.keys.saturating_add(injected.keys);
         self.injected.mouse = self.injected.mouse.saturating_add(injected.mouse);
-    }
-
-    /// The per-second counts as a heartbeat carries them: empty when keys
-    /// and mouse weren't told apart.
-    fn seconds(&self) -> Seconds {
-        if self.kinds() == InputKinds::Unknown {
-            return Seconds::default();
-        }
-        Seconds {
-            keys: self.seconds_keys.to_vec(),
-            mouse: self.seconds_mouse.to_vec(),
-        }
     }
 
     pub fn add_kinds(&mut self, kinds: InputKinds) {
@@ -261,11 +230,7 @@ impl SessionMinute {
             prompts: self.prompts,
             interrupts: self.interrupts,
             responses: self.responses,
-            seconds: if meta.activity {
-                meta.input.seconds()
-            } else {
-                Seconds::default()
-            },
+            seconds: None,
             injected: if meta.activity {
                 meta.input.injected
             } else {
@@ -353,10 +318,7 @@ mod tests {
                 input
             },
         });
-        assert_eq!(hb.seconds.keys.len(), 60);
-        assert_eq!(hb.seconds.keys[25], 12);
-        assert_eq!(hb.seconds.mouse[25], 3);
-        assert_eq!(hb.seconds.keys.iter().map(|&k| k as u32).sum::<u32>(), 12);
+        assert_eq!(hb.seconds, None);
         assert_eq!(hb.injected, Injected { keys: 2, mouse: 0 });
         assert_eq!(
             hb.slots[2],
