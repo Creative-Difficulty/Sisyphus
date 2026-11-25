@@ -7,7 +7,7 @@
 //! server stored.
 
 use crate::chain::{self, ChainError, ChainTip, DeviceId, SignedHeartbeat};
-use crate::heartbeat::VERSION;
+use crate::heartbeat::is_supported;
 use serde::{Deserialize, Serialize};
 
 /// A heartbeat that reaches the server more than this long after the time it
@@ -119,7 +119,7 @@ pub fn verify_batch(
     if let Some(at) = batch
         .heartbeats
         .iter()
-        .position(|h| h.heartbeat.version != VERSION)
+        .position(|h| !is_supported(h.heartbeat.version))
     {
         return Err(UploadError::UnsupportedVersion { at });
     }

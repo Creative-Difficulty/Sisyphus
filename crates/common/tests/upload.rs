@@ -34,6 +34,9 @@ fn minute(i: u64) -> Heartbeat {
         responses: Responses::default(),
         seconds: Default::default(),
         injected: Default::default(),
+        client: "0.3.0".into(),
+        models: vec![],
+        tools: vec![],
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {
@@ -143,6 +146,18 @@ fn other_versions_are_rejected() {
         verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS),
         Err(UploadError::UnsupportedVersion { at: 1 })
     );
+}
+
+/// Clients that haven't updated yet still send v9; they are accepted, also
+/// mixed with v10 in one batch (a queue from before an update).
+#[test]
+fn v9_is_still_accepted() {
+    let mut w = ChainWriter::new(SigningKey::from_bytes(&[7u8; 32]));
+    let mut old = minute(0);
+    old.version = 9;
+    old.client = String::new();
+    let hbs = vec![w.sign(old), w.sign(minute(1))];
+    assert!(verify_batch(&batch(&w, &hbs), &ChainTip::GENESIS).is_ok());
 }
 
 #[test]

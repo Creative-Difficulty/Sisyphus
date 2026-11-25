@@ -52,6 +52,18 @@ pub struct Body {
     pub interrupts: u32,
     pub responses: Responses,
     pub files: Vec<File>,
+    /// v10: the client's version, the models and tool calls by kind.
+    pub client: String,
+    pub models: Vec<String>,
+    pub tools: Vec<Tools>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Tools {
+    pub kind: String,
+    pub calls: u32,
+    pub ms: u32,
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]

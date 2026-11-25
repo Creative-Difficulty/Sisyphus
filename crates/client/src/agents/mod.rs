@@ -224,6 +224,10 @@ pub enum AgentEventKind {
     Compacted,
     /// The session's title changed.
     TitleChanged { title: String },
+    /// The model the agent's next output comes from, as the agent names it
+    /// (`claude-opus-5-5`). Claude Code and opencode send it with every
+    /// reply, Codex once per turn.
+    Model { name: String },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

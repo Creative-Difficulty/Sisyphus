@@ -1,4 +1,4 @@
-//! A heartbeat is one minute of one agent session (heartbeat scheme v9).
+//! A heartbeat is one minute of one agent session (heartbeat scheme v10).
 //!
 //! The client sends one per session for every minute its agent ran or the
 //! user had the agent's window in front. The server computes attention, the
@@ -8,13 +8,24 @@
 //! Rules, because heartbeats are hashed and signed:
 //! - No floats and no maps, so serialization is deterministic.
 //! - Counts, timings, coarse app classes, paths relative to the project
-//!   folder (edited files and the project's own programs) and the agent's session title only. Never prompt or response
-//!   text, file contents, absolute paths, window titles or keystrokes.
+//!   folder (edited files and the project's own programs), the agent's
+//!   session title, the client's version and the agent's model names only.
+//!   Never prompt or response text, file contents, absolute paths, window
+//!   titles or keystrokes.
 
 use serde::{Deserialize, Serialize};
 
 /// The version this crate writes.
-pub const VERSION: u32 = 9;
+pub const VERSION: u32 = 10;
+/// The oldest version the server still accepts, so clients that haven't
+/// updated yet keep uploading. v9 heartbeats lack `client`, `models` and
+/// `tools`.
+pub const MIN_VERSION: u32 = 9;
+
+/// Whether the server accepts heartbeats of `version`.
+pub fn is_supported(version: u32) -> bool {
+    (MIN_VERSION..=VERSION).contains(&version)
+}
 
 /// Seconds in one slot, and slots in one heartbeat.
 pub const SLOT_SECS: u64 = 10;
@@ -24,7 +35,8 @@ pub const SECONDS: usize = 60;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Heartbeat {
-    /// Always [`VERSION`].
+    /// [`VERSION`] for heartbeats this crate writes; the server accepts
+    /// [`MIN_VERSION`] and later.
     pub version: u32,
     /// Start of the minute (unix ms, device clock). The device clock is not
     /// trusted; the server records its own receive time separately.
@@ -76,6 +88,51 @@ pub struct Heartbeat {
     /// on Linux with the input helper. 0 where it can't be told (Windows,
     /// X11). Also counted in `slots` and `seconds`; reviewers judge it.
     pub injected: Injected,
+
+    // Added in v10. Absent in v9 heartbeats, and left out of the encoding
+    // when empty, so v9 heartbeats hash the same as before.
+    /// The Sisyphus client's version that recorded this, e.g. `0.3.0`.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub client: String,
+    /// The models that worked in this session this minute, as the agent
+    /// names them (`claude-opus-5-5`), sorted. Empty when the agent didn't
+    /// produce anything this minute or doesn't say.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub models: Vec<String>,
+    /// The agent's tool calls, by kind, in [`ToolKind`] order; only kinds
+    /// with calls or time this minute.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tools: Vec<ToolCalls>,
+}
+
+/// What a tool call does, coarsely. Never the tool's input or output.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ToolKind {
+    /// Runs a command.
+    Shell,
+    /// Changes files.
+    Edit,
+    /// Reads or searches files.
+    Read,
+    /// Searches or fetches the web.
+    Web,
+    /// Starts a sub-agent.
+    Agent,
+    /// Anything else: plans, to-do lists, MCP tools, ...
+    Other,
+}
+
+/// One kind of tool call in a minute.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ToolCalls {
+    pub kind: ToolKind,
+    /// Calls the agent started this minute.
+    pub calls: u32,
+    /// Milliseconds from call to result, summed over the calls that
+    /// finished this minute, by the agent's own timestamps. Includes the
+    /// time the user took to approve or reject a call.
+    pub ms: u32,
 }
 
 /// Key presses and mouse events in each second of the minute, for the

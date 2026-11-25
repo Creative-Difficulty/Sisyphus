@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use sisyphus_common::heartbeat::{
     Changes, FileChange, Focus, Heartbeat, Injected, InputKinds, Os, Prompts, Responses, SECONDS,
-    SLOTS, Seconds, Slot, VERSION,
+    SLOTS, Seconds, Slot, ToolCalls, ToolKind, VERSION,
 };
 
 /// One slot's input, for the whole system.
@@ -167,7 +167,15 @@ pub struct SessionMinute {
     pub responses: Responses,
     /// Per path: working directory changes, agent claims.
     pub files: BTreeMap<String, (Changes, Changes)>,
+    /// The models that worked in the session this minute.
+    pub models: BTreeSet<String>,
+    /// Per kind: tool calls started, and milliseconds of the calls that
+    /// finished this minute.
+    pub tools: BTreeMap<ToolKind, (u32, u32)>,
 }
+
+/// The client's version, written into every heartbeat.
+const CLIENT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// What a heartbeat needs besides the minute itself.
 pub struct Meta<'a> {
@@ -263,6 +271,13 @@ impl SessionMinute {
             } else {
                 Injected::default()
             },
+            client: CLIENT_VERSION.to_string(),
+            models: self.models.into_iter().collect(),
+            tools: self
+                .tools
+                .into_iter()
+                .map(|(kind, (calls, ms))| ToolCalls { kind, calls, ms })
+                .collect(),
             files: self
                 .files
                 .into_iter()
@@ -374,6 +389,44 @@ mod tests {
         });
         assert_eq!(hb.running_programs, ["target/debug/game"]);
         assert!(!hb.agent_running);
+    }
+
+    #[test]
+    fn tools_models_and_client() {
+        let mut minute = SessionMinute {
+            running: true,
+            ..Default::default()
+        };
+        minute.models.insert("claude-opus-5-5".into());
+        minute.models.insert("claude-haiku-5-5".into());
+        minute.tools.insert(ToolKind::Read, (3, 120));
+        minute.tools.insert(ToolKind::Shell, (1, 0));
+        let hb = minute.into_heartbeat(Meta {
+            minute_ms: 60_000,
+            agent: "claude-code",
+            agent_session_id: "s",
+            session_name: "t",
+            project: "p",
+            activity: true,
+            input: MinuteInput::default(),
+        });
+        assert_eq!(hb.client, env!("CARGO_PKG_VERSION"));
+        assert_eq!(hb.models, ["claude-haiku-5-5", "claude-opus-5-5"]);
+        assert_eq!(
+            hb.tools,
+            [
+                ToolCalls {
+                    kind: ToolKind::Shell,
+                    calls: 1,
+                    ms: 0
+                },
+                ToolCalls {
+                    kind: ToolKind::Read,
+                    calls: 3,
+                    ms: 120
+                },
+            ]
+        );
     }
 
     #[test]

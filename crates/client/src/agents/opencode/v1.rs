@@ -3,7 +3,7 @@
 //! These keep sessions in `session`, one row per prompt or model reply in
 //! `message`, and that message's content in `part` rows. `message.data` is
 //! JSON with a `role` (`user` or `assistant`), `time.created`, and for
-//! replies `time.completed`, `finish` and `error`. `part.data` is JSON
+//! replies `time.completed`, `finish`, `error` and `modelID`. `part.data` is JSON
 //! shaped by its `type`:
 //!
 //! - `text`: prompt or reply text. Parts marked `synthetic` or `ignored`
@@ -160,6 +160,9 @@ fn to_v2(message: &Value, parts: &[Value]) -> (&'static str, Value) {
                     message.pointer("/time/completed"),
                 ),
             );
+            if let Some(id) = message.get("modelID") {
+                data.insert("model".into(), json!({ "id": id }));
+            }
             if let Some(finish) = message.get("finish") {
                 data.insert("finish".into(), finish.clone());
             }
@@ -282,6 +285,21 @@ mod tests {
                 pasted_chars: None,
                 scripted: false,
             }]
+        );
+    }
+
+    #[test]
+    fn reply_names_its_model() {
+        let events = parse(&[(
+            "a",
+            json!({"role": "assistant", "modelID": "big-pickle", "time": {"created": 2, "completed": 3}, "finish": "stop"}),
+            vec![json!({"type": "text", "text": "hi"})],
+        )]);
+        assert_eq!(
+            events[0],
+            AgentEventKind::Model {
+                name: "big-pickle".into()
+            }
         );
     }
 

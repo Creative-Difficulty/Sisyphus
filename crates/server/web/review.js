@@ -828,10 +828,17 @@ function fillTip(tip, lane, m, t) {
     row("Typed and pasted", `${number(p.typed_chars)} / ${number(p.pasted_chars)} chars`, p.typed_chars > keys * 1.5 + 10);
   }
   if (h.responses && h.responses.finished) row("Responses", `${h.responses.finished}, ${number(h.responses.chars)} chars`);
+  if (h.models && h.models.length) row(h.models.length > 1 ? "Models" : "Model", h.models.join(", "));
+  if (h.tools && h.tools.length) {
+    const calls = h.tools.filter((x) => x.calls).map((x) => `${x.calls} ${x.kind}`);
+    const ms = h.tools.reduce((n, x) => n + x.ms, 0);
+    row("Tool calls", `${calls.join(", ") || "none started"}${ms ? `, ${duration(ms)}` : ""}`);
+  }
   const files = m.hbs.reduce((n, x) => n + (x.files ? x.files.length : 0), 0);
   if (files) row("Files changed", String(files));
   row("Credit", m.credit ? `${duration(m.credit)} (attention ${Math.round(m.multiplier * 100)}%)` : "none");
   if (m.hbs.length > 1) row("Sessions this minute", String(m.hbs.length));
+  row("Client", h.client || `not reported (scheme v${h.version})`);
   if (m.stale) row("Stale", "earned nothing", true);
   else if (m.offline) row("Arrived late", duration(h.received_ms - h.minute_ms), true);
 }

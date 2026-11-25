@@ -242,9 +242,17 @@ fn assistant_events(entry: &Value) -> Vec<AgentEventKind> {
     let Some(blocks) = entry.pointer("/message/content").and_then(Value::as_array) else {
         return Vec::new();
     };
-    blocks
-        .iter()
-        .filter_map(|block| {
+    // Lines Claude Code writes itself (errors, notices) say `<synthetic>`.
+    let model = entry
+        .pointer("/message/model")
+        .and_then(Value::as_str)
+        .filter(|m| !m.is_empty() && !m.starts_with('<'))
+        .map(|name| AgentEventKind::Model {
+            name: name.to_string(),
+        });
+    model
+        .into_iter()
+        .chain(blocks.iter().filter_map(|block| {
             let str_field = |name| {
                 block
                     .get(name)
@@ -269,7 +277,7 @@ fn assistant_events(entry: &Value) -> Vec<AgentEventKind> {
                 }),
                 _ => None,
             }
-        })
+        }))
         .collect()
 }
 
@@ -400,6 +408,29 @@ mod tests {
                     input: serde_json::json!({"command":"ls"})
                 },
             ]
+        );
+    }
+
+    #[test]
+    fn model_comes_before_the_blocks() {
+        let mut p = TranscriptParser::new();
+        let line = r#"{"type":"assistant","message":{"model":"claude-opus-5-5","content":[{"type":"text","text":"Hi"}]}}"#;
+        assert_eq!(
+            kinds(&mut p, line),
+            vec![
+                AgentEventKind::Model {
+                    name: "claude-opus-5-5".into()
+                },
+                AgentEventKind::Response { text: "Hi".into() },
+            ]
+        );
+        // Lines Claude Code writes itself name no real model.
+        let synthetic = r#"{"type":"assistant","message":{"model":"<synthetic>","content":[{"type":"text","text":"No response requested."}]}}"#;
+        assert_eq!(
+            kinds(&mut p, synthetic),
+            vec![AgentEventKind::Response {
+                text: "No response requested.".into()
+            }]
         );
     }
 

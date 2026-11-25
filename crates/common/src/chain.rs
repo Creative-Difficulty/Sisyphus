@@ -70,8 +70,9 @@ fn hash_of(seq: u64, prev: &Hash, heartbeat: &Heartbeat) -> Hash {
     })
     .expect("heartbeat serialization cannot fail");
     let mut d = Sha256::new();
-    // Domain tag; bump the version when the hashed format changes.
-    d.update(b"sisyphus/heartbeat/v9\0");
+    // Domain tag, by the heartbeat's scheme version (accepted versions are
+    // checked before hashing); bump the version when the format changes.
+    d.update(format!("sisyphus/heartbeat/v{}\0", heartbeat.version).as_bytes());
     d.update(&body);
     Hex(d.finalize().into())
 }

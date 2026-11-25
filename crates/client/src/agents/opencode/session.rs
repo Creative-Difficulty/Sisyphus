@@ -8,7 +8,8 @@
 //! - `assistant`: one model step. `content` is a list of `reasoning`, `text`
 //!   and `tool` blocks; `time.completed` is set when the step ends, `finish`
 //!   says why (`tool-calls` means the agent keeps going), and `error` is set
-//!   when it failed or was aborted (`error.type == "aborted"`).
+//!   when it failed or was aborted (`error.type == "aborted"`). `model.id`
+//!   names the model.
 //! - `compaction`: the conversation was summarized.
 //! - `synthetic`, `system`, `idle`, `model-switched`, ...: generated or
 //!   bookkeeping rows, ignored.
@@ -128,6 +129,20 @@ impl Emitter<'_> {
             .and_then(Value::as_array)
             .map(Vec::as_slice)
             .unwrap_or(&[]);
+
+        if let Some(model) = data
+            .pointer("/model/id")
+            .and_then(Value::as_str)
+            .filter(|m| !m.is_empty())
+        {
+            let created = data
+                .pointer("/time/created")
+                .and_then(Value::as_u64)
+                .unwrap_or(time_updated);
+            self.once("model", created, || AgentEventKind::Model {
+                name: model.to_string(),
+            });
+        }
 
         for (i, block) in blocks.iter().enumerate() {
             let field = |name| block.get(name).and_then(Value::as_str).unwrap_or("");
@@ -350,6 +365,20 @@ mod tests {
             p.process("a", "assistant", 131, &finished.to_string()),
             vec![]
         );
+    }
+
+    #[test]
+    fn model_once_per_step() {
+        let mut p = SessionParser::new();
+        let row = r#"{"time":{"created":1},"model":{"id":"big-pickle","providerID":"opencode"},"content":[]}"#;
+        let model = vec![AgentEvent {
+            time_ms: 1,
+            kind: AgentEventKind::Model {
+                name: "big-pickle".into(),
+            },
+        }];
+        assert_eq!(p.process("a", "assistant", 1, row), model);
+        assert_eq!(p.process("a", "assistant", 2, row), vec![]);
     }
 
     #[test]

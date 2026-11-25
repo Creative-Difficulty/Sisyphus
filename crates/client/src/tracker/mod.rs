@@ -28,7 +28,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use sisyphus_common::attention::{self, Carry};
 use sisyphus_common::heartbeat::{
-    Focus, Heartbeat, Injected, PROMPT_CLASSES, ResponseAt, SLOT_SECS, SLOTS,
+    Focus, Heartbeat, Injected, PROMPT_CLASSES, ResponseAt, SLOT_SECS, SLOTS, ToolKind,
 };
 
 use crate::activity::process::{self, WindowAgent};
@@ -43,6 +43,7 @@ mod edits;
 pub mod files;
 mod minute;
 pub mod queue;
+mod tools;
 
 use edits::{Claim, ClaimKind, claims_of};
 use files::{ProjectWatch, diff};
@@ -294,6 +295,11 @@ struct Session {
     retry_at: Option<Instant>,
     /// Edit claims of tool calls waiting for their result, by call id.
     calls: HashMap<String, Vec<Claim>>,
+    /// Tool calls waiting for their result, by call id: when they started
+    /// (the agent's clock) and their kind. Cleared when a turn ends.
+    started_calls: HashMap<String, (u64, ToolKind)>,
+    /// The model the agent named last.
+    model: Option<String>,
     minutes: BTreeMap<u64, SessionMinute>,
     /// Attention at the end of the latest minute sent, as the server will
     /// compute it.
@@ -434,6 +440,8 @@ impl State {
                     attachment: None,
                     retry_at: None,
                     calls: HashMap::new(),
+                    started_calls: HashMap::new(),
+                    model: None,
                     minutes: BTreeMap::new(),
                     carry: None,
                 });
@@ -620,8 +628,10 @@ impl State {
                 }
             }
             AgentEventKind::Response { text } => {
+                let model = session.model.clone();
                 let minute = session.minute(minute_ms);
                 minute.running = true;
+                minute.models.extend(model);
                 let chars = count(text.chars().count());
                 minute.responses.finished += 1;
                 minute.responses.chars = minute.responses.chars.saturating_add(chars);
@@ -635,13 +645,29 @@ impl State {
                 });
             }
             AgentEventKind::ToolCall { id, name, input } => {
-                session.minute(minute_ms).running = true;
                 let claims = claims_of(&name, &input, &session.project);
+                let kind = tools::kind_of(&name, !claims.is_empty());
+                if !id.is_empty() {
+                    session
+                        .started_calls
+                        .insert(id.clone(), (event.time_ms, kind));
+                }
+                let model = session.model.clone();
+                let minute = session.minute(minute_ms);
+                minute.running = true;
+                minute.models.extend(model);
+                minute.tools.entry(kind).or_default().0 += 1;
                 if !claims.is_empty() {
                     session.calls.insert(id, claims);
                 }
             }
             AgentEventKind::ToolResult { id, outcome } => {
+                if let Some((started, kind)) = session.started_calls.remove(&id) {
+                    let ms =
+                        u32::try_from(event.time_ms.saturating_sub(started)).unwrap_or(u32::MAX);
+                    let entry = session.minute(minute_ms).tools.entry(kind).or_default();
+                    entry.1 = entry.1.saturating_add(ms);
+                }
                 let Some(claims) = session.calls.remove(&id) else {
                     return;
                 };
@@ -675,17 +701,26 @@ impl State {
             }
             AgentEventKind::Interrupt { .. } => {
                 session.running = false;
+                session.started_calls.clear();
                 let minute = session.minute(minute_ms);
                 minute.running = true;
                 minute.interrupts += 1;
             }
             AgentEventKind::TurnEnd { .. } => {
                 session.running = false;
+                session.started_calls.clear();
             }
             AgentEventKind::TitleChanged { title } => session.title = title,
-            AgentEventKind::Command { .. }
-            | AgentEventKind::Thinking { .. }
-            | AgentEventKind::Compacted => {}
+            AgentEventKind::Model { name } => {
+                let name = model_name(&name);
+                session.model = Some(name.clone());
+                session.minute(minute_ms).models.insert(name);
+            }
+            AgentEventKind::Thinking { .. } => {
+                let model = session.model.clone();
+                session.minute(minute_ms).models.extend(model);
+            }
+            AgentEventKind::Command { .. } | AgentEventKind::Compacted => {}
         }
     }
 
@@ -1120,6 +1155,14 @@ fn count(n: usize) -> u32 {
     u32::try_from(n).unwrap_or(u32::MAX)
 }
 
+/// A model's name as heartbeats carry it: trimmed, at most
+/// [`MODEL_NAME_CHARS`] characters.
+fn model_name(name: &str) -> String {
+    name.trim().chars().take(MODEL_NAME_CHARS).collect()
+}
+
+const MODEL_NAME_CHARS: usize = 100;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1139,6 +1182,8 @@ mod tests {
             attachment: None,
             retry_at: None,
             calls: HashMap::new(),
+            started_calls: HashMap::new(),
+            model: None,
             minutes: BTreeMap::new(),
             carry: None,
         }

@@ -15,7 +15,7 @@ use std::time::Duration;
 use ed25519_dalek::SigningKey;
 use sisyphus_common::api::{UploadAck, UploadBatch, UploadError};
 use sisyphus_common::chain::{ChainTip, ChainWriter, SignedHeartbeat};
-use sisyphus_common::heartbeat::{Heartbeat, VERSION};
+use sisyphus_common::heartbeat::{Heartbeat, is_supported};
 
 /// At most this many heartbeats per upload request.
 const BATCH: usize = 500;
@@ -56,9 +56,10 @@ impl Queue {
     /// Load the queue in `dir`, continuing its chain.
     pub fn load(dir: PathBuf, key: SigningKey) -> Self {
         let mut pending = read_pending(&dir.join("queue.jsonl"));
-        // Heartbeats of an older scheme version would be refused forever.
-        // Dropping them leaves a gap, which the next upload re-aligns.
-        pending.retain(|h| h.heartbeat.version == VERSION);
+        // Heartbeats of a scheme version the server no longer accepts
+        // would be refused forever. Dropping them leaves a gap, which the
+        // next upload re-aligns.
+        pending.retain(|h| is_supported(h.heartbeat.version));
         let saved = std::fs::read_to_string(dir.join("chain.json"))
             .ok()
             .and_then(|s| serde_json::from_str::<ChainTip>(&s).ok())
@@ -260,7 +261,7 @@ fn read_pending(path: &std::path::Path) -> Vec<SignedHeartbeat> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sisyphus_common::heartbeat::{Prompts, Responses, SLOTS, Slot};
+    use sisyphus_common::heartbeat::{Prompts, Responses, SLOTS, Slot, VERSION};
 
     fn heartbeat(minute: u64) -> Heartbeat {
         Heartbeat {
@@ -282,6 +283,9 @@ mod tests {
             responses: Responses::default(),
             seconds: Default::default(),
             injected: Default::default(),
+            client: "0.3.0".into(),
+            models: vec![],
+            tools: vec![],
             files: Vec::new(),
         }
     }

@@ -25,7 +25,8 @@
 //!
 //! Their record types don't overlap, so both are parsed without knowing
 //! which one a file uses. Both have `event_msg` `task_complete` (a turn
-//! ended) and a top-level `compacted` line.
+//! ended), a top-level `compacted` line, and a `turn_context` line at the
+//! start of each turn naming the `model`.
 //!
 //! Tool calls are `response_item` lines in both formats: `function_call`,
 //! `custom_tool_call`, `local_shell_call` and `web_search_call`, written
@@ -110,6 +111,16 @@ impl RolloutParser {
             // The paginated `ContextCompaction` item and the legacy
             // `context_compacted` event repeat this; only this line counts.
             Some("compacted") => vec![AgentEventKind::Compacted],
+            // Written at the start of every turn.
+            Some("turn_context") => payload
+                .get("model")
+                .and_then(Value::as_str)
+                .filter(|m| !m.is_empty())
+                .map(|name| AgentEventKind::Model {
+                    name: name.to_string(),
+                })
+                .into_iter()
+                .collect(),
             _ => Vec::new(),
         };
         for kind in &kinds {
@@ -388,6 +399,18 @@ mod tests {
             pasted_chars: None,
             scripted: false,
         }
+    }
+
+    #[test]
+    fn turn_context_names_the_model() {
+        let mut p = RolloutParser::new();
+        let line = r#"{"timestamp":"2026-02-26T20:19:08.007Z","type":"turn_context","payload":{"turn_id":"t","cwd":"/p","approval_policy":"on-request","model":"gpt-5.5-codex"}}"#;
+        assert_eq!(
+            kinds(&mut p, line),
+            vec![AgentEventKind::Model {
+                name: "gpt-5.5-codex".into()
+            }]
+        );
     }
 
     #[test]

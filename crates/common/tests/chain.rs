@@ -37,6 +37,9 @@ fn minute(i: u64) -> Heartbeat {
         responses: Responses::default(),
         seconds: Default::default(),
         injected: Default::default(),
+        client: "0.3.0".into(),
+        models: vec![],
+        tools: vec![],
         files: vec![FileChange {
             path: "src/main.rs".into(),
             working_dir: Changes {
@@ -147,4 +150,35 @@ fn heartbeat_json_roundtrip() {
         serde_json::from_str::<SignedHeartbeat>(&json).unwrap(),
         hbs[0]
     );
+}
+
+/// v9 heartbeats from clients that haven't updated must hash exactly as
+/// they did before v10 added fields.
+#[test]
+fn v9_heartbeats_hash_as_before() {
+    let mut hb = minute(0);
+    hb.version = 9;
+    hb.agent_session_id = "s".into();
+    hb.prompts.typed_chars = 100;
+    hb.files = vec![];
+    hb.client = String::new();
+    let signed = writer().sign(hb);
+    assert_eq!(
+        serde_json::to_string(&signed.hash).unwrap(),
+        "\"43a399a15c8ed5cc3195aba03f969ba56c11c5767a7fda7be102eb439d136e17\""
+    );
+    // Its stored JSON reads back the same.
+    let json = serde_json::to_string(&signed).unwrap();
+    assert!(!json.contains("\"client\"") && !json.contains("\"tools\""));
+    let back: SignedHeartbeat = serde_json::from_str(&json).unwrap();
+    assert_eq!(back.expected_hash(), signed.hash);
+}
+
+#[test]
+fn the_version_is_part_of_the_hash() {
+    let a = writer().sign(minute(0));
+    let mut old = minute(0);
+    old.version = 9;
+    let b = writer().sign(old);
+    assert_ne!(a.hash, b.hash);
 }

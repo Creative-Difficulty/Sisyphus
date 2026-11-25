@@ -217,6 +217,7 @@ fn describe(event: &AgentEvent) -> String {
         AgentEventKind::TurnEnd { duration_ms } => format!("turn end   {duration_ms:?} ms"),
         AgentEventKind::Compacted => "compacted".to_string(),
         AgentEventKind::TitleChanged { title } => format!("title      {title}"),
+        AgentEventKind::Model { name } => format!("model      {name}"),
     };
     format!("{} {what}", event.time_ms)
 }
