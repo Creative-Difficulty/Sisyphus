@@ -13,14 +13,20 @@
 //! - `system` with subtype `turn_duration` (turn finished) or
 //!   `compact_boundary` (conversation compacted).
 //! - `custom-title` / `ai-title`: the session title, repeated many times.
-//! - `attachment` of type `queued_command`: a message the user sent while
-//!   the agent was working, handed to it mid-turn. Such prompts never get a
-//!   `user` line. Only `commandMode: "prompt"` from a human counts; the same
-//!   attachment also carries background task notifications and messages
-//!   from sub-agents.
+//! - `queue-operation` with `operation: "enqueue"`: a message the user sent
+//!   while the agent was working, written the moment it was sent. It later
+//!   reaches the agent either mid-turn, as an `attachment` of type
+//!   `queued_command` (no `user` line), or as the next turn's `user` line;
+//!   both are written only then, often seconds to minutes later. So the
+//!   prompt is taken from the enqueue line and the later copy is skipped.
+//!   Enqueued text starting with `<` (task notifications, sub-agents'
+//!   messages) or `/` (commands) is left to the later line, whose origin
+//!   says who sent it.
+//! - `attachment` of type `queued_command` with `commandMode: "prompt"`
+//!   from a human: a prompt, unless its enqueue line already gave it.
 //!
-//! Everything else (other attachments, `api-request*`, `queue-operation`,
-//! ...) is ignored. The format is undocumented and changes between versions, so
+//! Everything else (other attachments, `api-request*`, other queue
+//! operations, ...) is ignored. The format is undocumented and changes between versions, so
 //! unknown lines and fields are skipped rather than treated as errors.
 
 use serde_json::Value;
@@ -39,6 +45,9 @@ pub struct TranscriptParser {
     title: Option<String>,
     has_custom_title: bool,
     last_time_ms: u64,
+    /// Prompts taken from enqueue lines whose later copy hasn't been seen
+    /// yet, by text.
+    enqueued: std::collections::HashMap<String, usize>,
 }
 
 impl TranscriptParser {
@@ -72,8 +81,9 @@ impl TranscriptParser {
         }
 
         let kinds = match entry.get("type").and_then(Value::as_str) {
-            Some("user") => user_events(&entry),
-            Some("attachment") => queued_prompt(&entry),
+            Some("queue-operation") => self.enqueued_prompt(&entry),
+            Some("user") => self.skip_enqueued(user_events(&entry)),
+            Some("attachment") => self.skip_enqueued(queued_prompt(&entry)),
             Some("assistant") => assistant_events(&entry),
             Some("system") => system_events(&entry),
             Some("custom-title") => self.title_events(&entry, "customTitle", true),
@@ -84,6 +94,48 @@ impl TranscriptParser {
         kinds
             .into_iter()
             .map(|kind| AgentEvent { time_ms, kind })
+            .collect()
+    }
+
+    /// A prompt sent while the agent was working, from its enqueue line.
+    fn enqueued_prompt(&mut self, entry: &Value) -> Vec<AgentEventKind> {
+        if entry.get("operation").and_then(Value::as_str) != Some("enqueue") {
+            return Vec::new();
+        }
+        let Some(text) = entry.get("content").and_then(Value::as_str) else {
+            return Vec::new();
+        };
+        let trimmed = text.trim();
+        if trimmed.is_empty() || trimmed.starts_with('<') || trimmed.starts_with('/') {
+            return Vec::new();
+        }
+        *self.enqueued.entry(trimmed.to_string()).or_default() += 1;
+        vec![AgentEventKind::Prompt {
+            text: text.to_string(),
+            pasted_chars: None,
+            scripted: false,
+        }]
+    }
+
+    /// Drop prompts already taken from their enqueue line.
+    fn skip_enqueued(&mut self, events: Vec<AgentEventKind>) -> Vec<AgentEventKind> {
+        events
+            .into_iter()
+            .filter(|event| {
+                let AgentEventKind::Prompt { text, .. } = event else {
+                    return true;
+                };
+                match self.enqueued.get_mut(text.trim()) {
+                    Some(n) => {
+                        *n -= 1;
+                        if *n == 0 {
+                            self.enqueued.remove(text.trim());
+                        }
+                        false
+                    }
+                    None => true,
+                }
+            })
             .collect()
     }
 
@@ -501,6 +553,41 @@ mod tests {
         for line in [notification, peer, other] {
             assert_eq!(kinds(&mut p, line), vec![], "{line}");
         }
+    }
+
+    #[test]
+    fn queued_prompts_count_when_sent_and_once() {
+        let mut p = TranscriptParser::new();
+        let enqueue = r#"{"type":"queue-operation","operation":"enqueue","timestamp":"2026-11-25T14:42:27.403Z","sessionId":"s","content":"Also push it"}"#;
+        let handed = r#"{"type":"attachment","timestamp":"2026-11-25T14:42:27.403Z","attachment":{"type":"queued_command","prompt":"Also push it","commandMode":"prompt","origin":{"kind":"human"}}}"#;
+        let next_turn = r#"{"type":"user","timestamp":"2026-11-25T14:45:00.000Z","origin":{"kind":"human"},"message":{"content":"Also push it"}}"#;
+        let prompt = |text: &str| AgentEventKind::Prompt {
+            text: text.into(),
+            pasted_chars: None,
+            scripted: false,
+        };
+        let events = p.parse_line(enqueue);
+        assert_eq!(events[0].time_ms, 1_795_617_747_403);
+        assert_eq!(events[0].kind, prompt("Also push it"));
+        // Handed over mid-turn: already counted.
+        assert_eq!(kinds(&mut p, handed), vec![]);
+        // Sent once more later as its own prompt: that one counts.
+        assert_eq!(kinds(&mut p, next_turn), vec![prompt("Also push it")]);
+
+        // Queued, then sent as the next turn's prompt.
+        assert_eq!(kinds(&mut p, enqueue), vec![prompt("Also push it")]);
+        assert_eq!(kinds(&mut p, next_turn), vec![]);
+
+        // Notifications, sub-agents' messages and commands are left to
+        // their later line.
+        for content in ["<task-notification>x</task-notification>", "/context"] {
+            let line = format!(
+                r#"{{"type":"queue-operation","operation":"enqueue","content":"{content}"}}"#
+            );
+            assert_eq!(kinds(&mut p, &line), vec![], "{content}");
+        }
+        let dequeue = r#"{"type":"queue-operation","operation":"dequeue"}"#;
+        assert_eq!(kinds(&mut p, dequeue), vec![]);
     }
 
     #[test]
