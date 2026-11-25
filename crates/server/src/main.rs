@@ -43,9 +43,7 @@ mod oidc;
 mod profile;
 mod projects;
 mod releases;
-mod review;
 mod settings;
-mod signals;
 mod stats;
 mod upload;
 mod web;
@@ -64,8 +62,6 @@ pub struct AppState {
     pub secure: bool,
     /// Signed app requests already answered, against replays.
     pub seen_requests: Arc<app::SeenRequests>,
-    /// Slack IDs of the users who may use the review page (`REVIEWERS`).
-    pub reviewers: Arc<std::collections::HashSet<String>>,
     /// The newest app release, for downloads and updates.
     pub releases: Arc<releases::Releases>,
 }
@@ -175,7 +171,6 @@ async fn main() {
         public_url: public_url.into(),
         secure,
         seen_requests: Arc::default(),
-        reviewers: Arc::new(review::reviewers_from_env()),
         releases: Arc::new(releases::Releases::from_env()),
     };
     let app = Router::new()
@@ -198,8 +193,6 @@ async fn main() {
         .route("/api/app/update", get(releases::update))
         .route("/api/releases/latest", get(releases::latest))
         .route("/download/{platform}", get(releases::download))
-        .route("/api/review/users", get(review::users))
-        .route("/api/review/timeline", get(review::timeline))
         .merge(auth::routes())
         .merge(github::routes())
         .merge(web::routes())

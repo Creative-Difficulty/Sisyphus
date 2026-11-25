@@ -12,11 +12,6 @@ const INDEX: &str = include_str!("../web/index.html");
 const STYLE: &str = include_str!("../web/style.css");
 const SCRIPT: &str = include_str!("../web/app.js");
 const THEME_SCRIPT: &str = include_str!("../web/theme.js");
-// Pulse, the reviewers' page (`review.rs` serves its data, only to
-// reviewers; the page itself holds nothing).
-const REVIEW: &str = include_str!("../web/review.html");
-const REVIEW_STYLE: &str = include_str!("../web/review.css");
-const REVIEW_SCRIPT: &str = include_str!("../web/review.js");
 // The same Fredoka files as the client (SIL Open Font License).
 /// The logo (a placeholder for now), shared with the app.
 const LOGO: &str = include_str!("../../client/assets/logo.svg");
@@ -44,18 +39,6 @@ pub fn routes() -> Router<AppState> {
         .route(
             "/app.js",
             get(|| async { asset("text/javascript", SCRIPT) }),
-        )
-        .route(
-            "/review",
-            get(|| async { asset("text/html; charset=utf-8", REVIEW) }),
-        )
-        .route(
-            "/review.css",
-            get(|| async { asset("text/css", REVIEW_STYLE) }),
-        )
-        .route(
-            "/review.js",
-            get(|| async { asset("text/javascript", REVIEW_SCRIPT) }),
         )
         .route("/logo.svg", get(|| async { asset("image/svg+xml", LOGO) }))
         .route(

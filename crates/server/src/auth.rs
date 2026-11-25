@@ -651,15 +651,12 @@ struct Me {
     /// The user's id, which their public profile (`/u/{id}`) and badges use.
     id: i64,
     name: Option<String>,
-    /// May use the review page (`/review`).
-    reviewer: bool,
 }
 
 async fn me(State(state): State<AppState>, headers: HeaderMap) -> Response {
     match current_user(&state, &headers).await {
         Some(user) => Json(Me {
             id: user.id,
-            reviewer: crate::review::is_reviewer(&state, user.id).await,
             name: user.name,
         })
         .into_response(),

@@ -88,7 +88,7 @@ pub struct Heartbeat {
     /// device (v9), as far as the system tells: events posted by apps on
     /// macOS, virtual (uinput) devices such as `ydotool` or key remappers
     /// on Linux with the input helper. 0 where it can't be told (Windows,
-    /// X11). Also counted in `slots`; reviewers judge it.
+    /// X11). Also counted in `slots`.
     pub injected: Injected,
 
     // Added in v10. Absent in v9 heartbeats, and left out of the encoding
