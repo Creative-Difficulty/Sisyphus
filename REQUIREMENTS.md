@@ -35,7 +35,8 @@ product must:
 
 - Never credit more time than was actually tracked.
 - Only counts, timings, coarse app classes, the operating system family,
-  paths of edited files and of the project's own programs (relative to the project folder) and the
+  the client's version, the names of the models the agent used (decided
+  2026-11-25), paths of edited files and of the project's own programs (relative to the project folder) and the
   agent's session titles leave the machine. Never
   prompt text, file contents, absolute paths, window titles or keystrokes.
   Paths and session titles are visible only to the user and reviewers, never
@@ -255,7 +256,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 9,
+    "version": 10,
     "minute_ms": 1795201380000,
     "os": "linux",
 
@@ -311,10 +312,29 @@ product must:
       "keys": [0, 3, 5, 6, 0, 0, 4, "… 60 in all"],
       "mouse": [0, 0, 12, 30, 0, 0, 0, "… 60 in all"]
     },
-    "injected": { "keys": 0, "mouse": 0 }
+    "injected": { "keys": 0, "mouse": 0 },
+
+    "client": "0.3.0",
+    "models": ["claude-opus-5-5"],
+    "tools": [
+      { "kind": "shell", "calls": 2, "ms": 8400 },
+      { "kind": "read", "calls": 5, "ms": 310 }
+    ]
   }
 }
 ```
+
+- Version 10 (decided 2026-11-25, from comparing with sablier):
+  - `client`: the Sisyphus app's version that recorded the heartbeat, so
+    reviewers can tell a known client bug from a suspicious pattern.
+  - `models`: the models that worked in the session this minute, as the
+    agent names them (`claude-opus-5-5`), sorted.
+  - `tools`: the agent's tool calls by kind (`shell`, `edit`, `read`,
+    `web`, `agent` for sub-agents, `other`): calls started this minute and
+    the milliseconds from call to result of those that finished this
+    minute (including the time the user took to approve). Never a tool's
+    input or output. Shows how much the agent did on its own.
+  - The server still accepts v9 from apps that haven't updated yet.
 
 - Version 9 (decided 2026-11-23, against autotypers and jigglers):
   - `seconds`: key presses and mouse events in each of the minute's 60
