@@ -213,7 +213,7 @@ product must:
     per user, so two devices can't both keep a full share of one minute
   - the review page for the fraud squad, `/review` ("Pulse", 2026-11-23):
     any user's heartbeats over up to 7 days, drawn as an EKG-like strip of
-    keys and mouse per second with prompts, responses, credit and flags, a
+    keys and mouse (per second for v9/v10 heartbeats, per slot since v11) with prompts, responses, credit and flags, a
     rhythm fingerprint (keys in one second against the next), and a
     reading clock (response length against reply delay); with the flags
     below. Only for reviewers (Slack IDs in `REVIEWERS`)
@@ -256,7 +256,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 10,
+    "version": 11,
     "minute_ms": 1795201380000,
     "os": "linux",
 
@@ -308,10 +308,6 @@ product must:
       }
     ],
 
-    "seconds": {
-      "keys": [0, 3, 5, 6, 0, 0, 4, "… 60 in all"],
-      "mouse": [0, 0, 12, 30, 0, 0, 0, "… 60 in all"]
-    },
     "injected": { "keys": 0, "mouse": 0 },
 
     "client": "0.3.0",
@@ -323,6 +319,12 @@ product must:
   }
 }
 ```
+
+- Version 11 (decided 2026-11-25): no more `seconds`. Keys and mouse are
+  counted only per 10-second slot, as before v9; 120 numbers a minute
+  were too much. The flags that need per-second counts (machine-steady
+  typing, superhuman typing, clockwork input) only work on v9 and v10
+  heartbeats.
 
 - Version 10 (decided 2026-11-25, from comparing with sablier):
   - `client`: the Sisyphus app's version that recorded the heartbeat, so
@@ -337,7 +339,7 @@ product must:
   - The server still accepts v9 from apps that haven't updated yet.
 
 - Version 9 (decided 2026-11-23, against autotypers and jigglers):
-  - `seconds`: key presses and mouse events in each of the minute's 60
+  - `seconds` (dropped again in v11): key presses and mouse events in each of the minute's 60
     seconds, for the whole system (never which keys); empty without
     activity or when keys and mouse can't be told apart. People type in
     bursts; machines keep time.
@@ -625,7 +627,8 @@ product must:
 - "Make the value of actions": the meaning is unclear; ask before acting on
   it.
 - Against mouse jigglers and autotypers (raised 2026-11-21). Built on
-  2026-11-23 at the user's request: per-second input in heartbeats (v9),
+  2026-11-23 at the user's request: per-second input in heartbeats (v9;
+  dropped again in v11, 2026-11-25),
   injected input where the OS tells (macOS posted events, Linux virtual
   devices), scripted prompts (Claude Code's SDK / `claude -p`), prompts
   only marking their slot as the agent's from a terminal, editor or
