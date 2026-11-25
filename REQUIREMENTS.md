@@ -245,7 +245,7 @@ product must:
   "hash": "4b1e…",
   "sig": "d07a…",
   "heartbeat": {
-    "version": 11,
+    "version": 12,
     "minute_ms": 1795201380000,
     "os": "linux",
 
@@ -255,7 +255,6 @@ product must:
     "project": "Sisyphus",
 
     "agent_running": true,
-    "activity": true,
     "input_kinds": "exact",
     "slots": [
       { "input": true, "keys": 41, "mouse": 0, "focus": "agent" },
@@ -265,14 +264,10 @@ product must:
       { "input": true, "keys": 0, "mouse": 212, "focus": "editor" },
       { "input": false, "keys": 0, "mouse": 0, "focus": "testing" }
     ],
-    "tested_programs": ["target/debug/game"],
-    "running_programs": ["target/debug/game"],
 
     "prompts": {
-      "submitted": 1,
       "typed_chars": 86,
       "pasted_chars": 0,
-      "corrections": 1,
       "model": "sisyphus-prompt-1",
       "classes": [
         [3, 912, 40, 0, 2, 31, 0, 0, 1, 12, 770, 0, 4, 0, 0, 96, 0, 2, 0, 0, 1, 3]
@@ -284,30 +279,40 @@ product must:
     "interrupts": 0,
 
     "responses": {
-      "finished": 1,
-      "chars": 4200,
       "at": [{ "second": 12, "chars": 4200 }]
     },
 
     "files": [
-      {
-        "path": "CLAUDE.md",
-        "working_dir": { "added": 200, "removed": 7 },
-        "agent_edits": { "added": 193, "removed": 7 }
-      }
+      { "path": "CLAUDE.md", "working_dir": { "added": 200, "removed": 7 } }
     ],
 
     "injected": { "keys": 0, "mouse": 0 },
 
     "client": "0.3.0",
     "models": ["claude-opus-5-5"],
-    "tools": [
-      { "kind": "shell", "calls": 2, "ms": 8400 },
-      { "kind": "read", "calls": 5, "ms": 310 }
+    "programs": [{ "path": "target/debug/game", "in_front": true }],
+    "tool_calls": [
+      { "kind": "read", "at": 8, "ms": 310, "outcome": "ok" },
+      { "kind": "edit", "at": 14, "ms": 2100, "outcome": "ok",
+        "files": [{ "path": "CLAUDE.md", "added": 193, "removed": 7 }] },
+      { "kind": "shell", "at": 20, "ms": 8400, "outcome": "rejected" }
     ]
   }
 }
 ```
+
+- Version 12 (decided 2026-11-25): nothing that can be computed from
+  another field is sent. Gone: `activity` (always read), the prompt count
+  (`prompts.at` has one entry per prompt), `prompts.corrections` (from the
+  scores), the response count and characters (from `responses.at`).
+  `tested_programs` and `running_programs` became `programs`, each with
+  `in_front`. Each tool call is recorded once in `tool_calls`, in the minute
+  it finished: its kind, the second, how long from call to result, its
+  outcome (`ok`, `error`, `rejected`, or `unfinished` when the turn ended
+  first) and, for successful edits, the characters it claims per file.
+  This replaces `tools` and the files' `agent_edits`; `files` lists only
+  what changed in the working directory. The server still accepts v9 to
+  v11.
 
 - Version 11 (decided 2026-11-25): no more `seconds`. Keys and mouse are
   counted only per 10-second slot, as before v9; 120 numbers a minute
@@ -370,7 +375,8 @@ product must:
     slot, so a short flash into another window doesn't change it. `unknown`
     when activity isn't allowed, or the system can't tell (for example GNOME
     without the Window Calls extension).
-- `testing` and `tested_programs` (decided 2026-11-21, scheme version 4):
+- `testing` and `tested_programs` (decided 2026-11-21, scheme version 4;
+  since v12 `programs` entries with `in_front`):
   the user is testing what they build. A slot's focus is `testing` when the
   window in front runs an executable that lives inside the session's
   project folder, and that folder is a git repository (it has `.git`).
@@ -380,7 +386,8 @@ product must:
   absolute. Scripts run by an interpreter outside the project (`python
   main.py`, `node server.js`) aren't recognised, because the executable is
   the interpreter.
-- `running_programs` (decided 2026-11-21, scheme version 6): the
+- `running_programs` (decided 2026-11-21, scheme version 6; since v12
+  `programs`): the
   project's own programs (same rule as `testing`, any window or none)
   that ran this minute, relative paths. While one runs, the project's
   most recently active session sends a heartbeat every minute even when
@@ -392,24 +399,25 @@ product must:
 - `interrupts` (added 2026-11-21, scheme version 3): times the user
   stopped the agent mid-turn this minute.
 - `prompts`: counts and the local model's scores only, never text.
-  - `corrections` counts prompts the local model scored at 500 or more as
-    corrections.
+  - Corrections are prompts the local model scored at 500 or more as
+    corrections (computed from `classes` since v12).
   - `model` (decided 2026-11-22, scheme version 8): the prompt model's
     name, empty when no prompt was scored this minute.
   - `classes` (decided 2026-11-22, scheme version 8): per scored prompt, in
     the order they were sent, the probability of each of the model's 22
     categories as a whole number from 0 to 1000 (heartbeats have no
-    floats). Fewer entries than `submitted` if the model wasn't loaded.
-- `responses` (added 2026-11-21): counts only, never text.
-  - `finished`: agent responses that finished this minute.
-  - `chars`: characters of their visible response text (not thinking, not
-    tool calls). Lets the server check reading time: a human can't sensibly
-    answer a long response seconds after it ends.
-- `files`: one entry per file edited this minute, sorted by path.
+    floats). Fewer entries than prompts if the model wasn't loaded.
+- `responses` (added 2026-11-21): never text. Per response (`at`) the
+  second it finished and the characters of its visible text (not
+  thinking, not tool calls). Lets the server check reading time: a human
+  can't sensibly answer a long response seconds after it ends.
+- `files`: one entry per file that changed in the working directory this
+  minute, sorted by path.
   - `path` is relative to the project folder.
   - `working_dir` counts non-whitespace characters added and removed, as
     actually seen in the file while the agent runs.
-  - `agent_edits` is what the agent's edit calls claim for that file.
+  - What the agent's edit calls claim is in `tool_calls` (v12; before, the
+    file's `agent_edits`).
 - Input is detected without a keylogger hook: OS "time since last input"
   APIs, key/mouse counts (see Built), plus the class of the focused app.
 - Activity is read without asking (decided 2026-11-21: the consent step
